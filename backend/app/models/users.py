@@ -11,7 +11,5 @@ class User(_database.Base):
     hashed_password: Column[str] = Column(String)
 
     def verify_password(self, password:str)-> bool:
-        if self.hashed_password is None:
-            raise ValueError("Password not set")
         return bcrypt.verify(password, self.hashed_password)
 

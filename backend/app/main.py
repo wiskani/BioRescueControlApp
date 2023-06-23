@@ -40,6 +40,6 @@ async def startup() -> None:
             else:
                 print("La contraseña debe tener al menos 8 caracteres y menos de 30")
         permissions: str = "admin"
-        user: UsersCreate = UsersCreate(id=id, email=email, permissions=permissions, password=password)
+        user: UsersCreate = UsersCreate(id=id, email=email, permissions=permissions, hashed_password=password)
         await create_user(db, user)
         print("User created")
