@@ -16,7 +16,7 @@ async def get_user_by_email(db: Session, email: EmailStr) -> (User | None):
     return db.query(User).filter(User.email == email).first()
 
 #Create a user
-async def create_user(db: Session, user: UsersCreate) -> User:
+async def create_user(db: Session, user: UsersCreate) -> (User | HTTPException):
     db_user = await get_user_by_email(db, user.email)
     if db_user:
         return HTTPException(status_code=400, detail="Email already registered")

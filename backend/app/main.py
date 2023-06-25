@@ -1,9 +1,11 @@
 import getpass
 
-from fastapi import FastAPI
+from functools import lru_cache
+from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from pydantic import EmailStr, ValidationError
 
+from app.api.config import Settings
 from app.db.database import engine, SessionLocal
 from app.crud.users import get_first_user, create_user
 from app.schemas.users import UsersCreate
@@ -12,13 +14,32 @@ import app.db.database as _database
 
 #routes import
 import app.routers.auth as  _auth
+import app.routers.users as _users
 
 _database.Base.metadata.create_all(bind=engine)
 
 
 app:FastAPI = FastAPI()
 
+#New decorator for cache
+@lru_cache()
+def get_settings():
+    return Settings()
+
 app.include_router(_auth.router)
+app.include_router(_users.router)
+
+#Route is used for import settings
+@app.get("/api/settings")
+async def settings(
+    settings: Settings = Depends(get_settings)
+) :
+    return {
+        "SECRET_KEY": settings.SECRET_KEY,
+        "APP_MAX": settings.APP_MAX
+    }
+
+
 
 # Create first user
 @app.on_event("startup")

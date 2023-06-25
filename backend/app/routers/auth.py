@@ -10,7 +10,7 @@ router: APIRouter = APIRouter()
 
 #Create token
 @router.post(
-    path="/token",
+    path="/api/token",
     status_code=status.HTTP_200_OK,
     summary="Create token",
     tags=["Auth"],

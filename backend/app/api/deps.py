@@ -1,17 +1,26 @@
-import os
+from pydantic import EmailStr
 from typing import Generator
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer
 from jwt import encode, decode
 
+from app.routers.config import get_settings, Settings
 from app.db.database import SessionLocal
 from app.models.users import User
 from app.schemas.users import Users, UsersCreate
 from app.crud.users import get_user_by_email
 
-oauth2_scheme:OAuth2PasswordBearer = OAuth2PasswordBearer(tokenUrl="/api/token")
-JWT_SECRET = os.getenv("JWT_SECRET")
+oauth2scheme:OAuth2PasswordBearer = OAuth2PasswordBearer(tokenUrl="/api/token")
+
+
+settings: Settings  = get_settings()
+JWT_SECRET = settings.SECRET_KEY
+
+if JWT_SECRET is None:
+    raise ValueError("JWT_SECRET no esta definido")
+print(JWT_SECRET)
+
 
 #Dependency
 def get_db()-> Generator[Session, None, None]:
@@ -28,7 +37,12 @@ async def create_token(user: User) -> dict[str, str]:
     return dict(access_token=token, token_type="bearer")
 
 #Get current user
-async def get_current_user(db: Session=Depends(get_db), token: str = Depends(oauth2_scheme)) -> Users:
+async def get_current_user(db: Session=Depends(get_db), token: str = Depends(oauth2scheme)) -> Users:
+    if token is None:
+        raise HTTPException(
+            status_code=401,
+            detail="lost token"
+        )
     try:
         payload: dict[str, str] = decode(token, JWT_SECRET, algorithms=["HS256"])
         user  = db.query(User).get(payload["id"])
@@ -40,7 +54,7 @@ async def get_current_user(db: Session=Depends(get_db), token: str = Depends(oau
     return Users.from_orm(user)
 
 #Authentication for login
-async def authenticate_user(email: str, password: str, db: Session) -> (Users | bool):
+async def authenticate_user(email: EmailStr, password: str, db: Session) -> (Users | bool):
     user:(User | None) = await get_user_by_email(db=db, email=email)
     if not user:
         return False
