@@ -7,7 +7,7 @@ class User(_database.Base):
     __tablename__:str = "users"
     id: Column[int] = Column(Integer, primary_key=True, index=True)
     email: Column[str] = Column(String, unique=True, index=True)
-    permissions:Column = Column(String)
+    permissions:Column[str] = Column(String)
     hashed_password: Column[str] = Column(String)
 
     def verify_password(self, password:str)-> bool:

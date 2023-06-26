@@ -19,7 +19,6 @@ JWT_SECRET = settings.SECRET_KEY
 
 if JWT_SECRET is None:
     raise ValueError("JWT_SECRET no esta definido")
-print(JWT_SECRET)
 
 
 #Dependency
