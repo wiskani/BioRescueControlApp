@@ -25,7 +25,7 @@ async def create_user(db: Session, user: UsersCreate) -> (User | HTTPException):
     if db_user:
         return HTTPException(status_code=400, detail="Email already registered")
     else:
-        db_user: User = User(email=user.email, permissions=user.permissions, hashed_password=bcrypt.hash(user.hashed_password))
+        db_user: User = User(email=user.email, name=user.name, last_name=user.last_name, permissions=user.permissions, hashed_password=bcrypt.hash(user.hashed_password))
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
@@ -36,6 +36,8 @@ async def update_user(db: Session, user_id: int, user: Users) -> (User | HTTPExc
     db_user = await get_user_by_id(db, user_id)
     if db_user:
         db_user.email = user.email
+        db_user.name = user.name
+        db_user.last_name = user.last_name
         db_user.permissions = user.permissions
         db_user.hashed_password = bcrypt.hash(user.hashed_password)
         db.commit()

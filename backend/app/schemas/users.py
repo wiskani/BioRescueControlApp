@@ -5,6 +5,8 @@ class Users(BaseModel):
     id: int
     email: EmailStr = Field(... )
     permissions: str = Field(...)
+    name: str = Field(...)
+    last_name: str 
     class Config:
         orm_mode: bool  = True
 

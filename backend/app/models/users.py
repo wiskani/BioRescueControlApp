@@ -7,6 +7,8 @@ class User(_database.Base):
     __tablename__:str = "users"
     id: Column[int] = Column(Integer, primary_key=True, index=True)
     email: Column[str] = Column(String, unique=True, index=True)
+    name: Column[str] = Column(String, index=True)
+    last_name: Column [str] = Column(String, index=True)
     permissions:Column[str] = Column(String)
     hashed_password: Column[str] = Column(String)
 

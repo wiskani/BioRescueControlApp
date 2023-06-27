@@ -33,7 +33,7 @@ app.dependency_overrides[get_db] = override_get_db
 
 def override_get_currrent_user() -> Users :
     email: EmailStr = EmailStr("dummy@dummy.com")
-    user: Users = Users(id=5, email= email, permissions="admin")
+    user: Users = Users(id=5, email= email, name="dummy", last_name="dummy", permissions="admin")
     return user
 
 app.dependency_overrides[get_current_user]= override_get_currrent_user

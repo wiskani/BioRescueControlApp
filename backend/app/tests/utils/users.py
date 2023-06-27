@@ -5,6 +5,9 @@ from pydantic import EmailStr
 def random_name_user() -> str:
     return "".join(random.choices(string.ascii_lowercase, k=6))
 
+def radom_last_name() -> str:
+    return "".join(random.choices(string.ascii_lowercase, k=6))
+
 def random_pasword_user() -> str:
     return "".join(random.choices(string.ascii_lowercase, k=10))
 
