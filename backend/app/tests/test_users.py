@@ -10,6 +10,8 @@ from app.tests.utils.users import *
 # test for user creation
 def test_create_user() -> None:
     mail: EmailStr | str = random_email_user()
+    name: str = random_name_user()
+    last_name: str = radom_last_name()
     password: str = random_password()
     id_number: int = random_int_user()
 
@@ -17,6 +19,8 @@ def test_create_user() -> None:
         "/api/users/", json={
             "id": id_number,
             "email": mail,
+            "name": name,
+            "last_name": last_name,
             "permissions":"admin",
             "hashed_password": password,
         },
@@ -24,6 +28,8 @@ def test_create_user() -> None:
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     assert data["email"] == mail
+    assert data["name"] == name
+    assert data["last_name"] == last_name
     assert "id" in data
     assert "hashed_password" not in data
     user_id: Union[int, str] = data["id"]
@@ -32,6 +38,8 @@ def test_create_user() -> None:
 # test for user creation with invalid email
 def test_create_user_invalid_email() -> None:
     mail: EmailStr = random_email_user()
+    name: str = random_name_user()
+    last_name: str = radom_last_name()
     password: str = random_password()
     id_number: int = random_int_user()
     id_number_2: int = random_int_user()
@@ -40,6 +48,8 @@ def test_create_user_invalid_email() -> None:
         "/api/users/", json={
             "id": id_number,
             "email": mail,
+            "name": name,
+            "last_name": last_name,
             "permissions":"admin",
             "hashed_password": password,
         },
@@ -48,6 +58,8 @@ def test_create_user_invalid_email() -> None:
         "/api/users/", json={
             "id": id_number_2,
             "email": mail,
+            "name": name,
+            "last_name": last_name,
             "permissions":"admin",
             "hashed_password": password,
         },
@@ -59,6 +71,8 @@ def test_create_user_invalid_email() -> None:
 # test for update user
 def test_update_user() -> None:
     mail: EmailStr = random_email_user()
+    name: str = random_name_user()
+    last_name: str = radom_last_name()
     password: str = random_password()
     id_number: int = random_int_user()
 
@@ -66,6 +80,8 @@ def test_update_user() -> None:
         "/api/users/", json={
             "id": id_number,
             "email": mail,
+            "name": name,
+            "last_name": last_name,
             "permissions":"admin",
             "hashed_password": password,
         },
