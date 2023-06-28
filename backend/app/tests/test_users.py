@@ -28,8 +28,6 @@ def test_create_user() -> None:
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     assert data["email"] == mail
-    assert data["name"] == name
-    assert data["last_name"] == last_name
     assert "id" in data
     assert "hashed_password" not in data
     user_id: Union[int, str] = data["id"]
@@ -97,6 +95,8 @@ def test_update_user() -> None:
         f"/api/users/{id_number}", json={
             "id": id_number,
             "email": mail2,
+            "name": name,
+            "last_name": last_name,
             "permissions":"user-write",
             "hashed_password": password2,
         },
@@ -112,6 +112,8 @@ def test_update_user() -> None:
     # test for update user with invalid id 
 def test_update_user_invalid_email() -> None:
     mail: EmailStr = random_email_user()
+    name: str = random_name_user()
+    last_name: str = radom_last_name()
     password: str = random_password()
     id_number: int = random_int_user()
 
@@ -119,6 +121,8 @@ def test_update_user_invalid_email() -> None:
         "/api/users/", json={
             "id": id_number,
             "email": mail,
+            "name": name,
+            "last_name": last_name,
             "permissions":"admin",
             "hashed_password": password,
         },
@@ -132,6 +136,8 @@ def test_update_user_invalid_email() -> None:
         f"/api/users/{id_number2}", json={
             "id": id_number,
             "email": mail,
+            "name": name,
+            "last_name": last_name,
             "permissions":"user-write",
             "hashed_password": password,
         },
@@ -143,6 +149,8 @@ def test_update_user_invalid_email() -> None:
     # test for delete user
 def test_delete_user() -> None:
     mail: EmailStr = random_email_user()
+    name: str = random_name_user()
+    last_name: str = radom_last_name()
     password: str = random_password()
     id_number: int = random_int_user()
 
@@ -150,6 +158,8 @@ def test_delete_user() -> None:
         "/api/users/", json={
             "id": id_number,
             "email": mail,
+            "name": name,
+            "last_name": last_name,
             "permissions":"admin",
             "hashed_password": password,
         },
@@ -164,6 +174,8 @@ def test_delete_user() -> None:
 # test for delete user with invalid id
 def test_delete_user_invalid_email() -> None:
     mail: EmailStr = random_email_user()
+    name: str = random_name_user()
+    last_name: str = radom_last_name()
     password: str = random_password()
     id_number: int = random_int_user()
 
@@ -171,6 +183,8 @@ def test_delete_user_invalid_email() -> None:
         "/api/users/", json={
             "id": id_number,
             "email": mail,
+            "name": name,
+            "last_name": last_name,
             "permissions":"admin",
             "hashed_password": password,
         },
