@@ -7,4 +7,21 @@ const AppBar = () => {
     const { data: session } = useSession();
 
     return(
-    )
+        <div>
+            <div>
+                {
+                    session?.user ? (
+                        <>
+                            <p > {session.user.name}</p>
+                            <button  onClick={() => signOut()}>Sign Out</button>
+                        </>
+                    ): (
+                        <button onClick={() => signIn('/api/token')}>Sign In</button>
+                    )
+                }
+            </div>
+        </div>
+    );
+}
+
+export default AppBar;

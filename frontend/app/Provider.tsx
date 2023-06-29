@@ -7,7 +7,7 @@ interface Props {
 }
 function Provider({ children }: Props) {
     return (
-        <SessionProvider session={null}>
+        <SessionProvider >
             {children}
         </SessionProvider>
     );
