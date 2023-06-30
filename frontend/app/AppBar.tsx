@@ -16,7 +16,7 @@ const AppBar = () => {
                             <button  onClick={() => signOut()}>Sign Out</button>
                         </>
                     ): (
-                        <button onClick={() => signIn('/api/token')}>Sign In</button>
+                        <button onClick={() => signIn()}>Sign In</button>
                     )
                 }
             </div>
