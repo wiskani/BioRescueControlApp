@@ -1,6 +1,8 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-export default NextAuth({
+import type { NextAuthOptions } from 'next-auth'
+
+export const authOptions: NextAuthOptions={
     // Configure one or more authentication providers
     providers: [
         CredentialsProvider({
@@ -16,7 +18,7 @@ export default NextAuth({
                     body: JSON.stringify(
                         `grant_type=&username=${credentials?.username}&password=${credentials?.password}&scope=&client_id=&client_secret=`
                 )}
-                const res = await fetch("/api/token", requestOptions)
+                const res = await fetch("http://localhost:8000/api/token", requestOptions)
                 const user = await res.json()
                 console.log(user)
                 if (user) {
@@ -36,7 +38,4 @@ export default NextAuth({
             return session
         }
     },
-    pages: {
-        signIn: '/token',
-    },
-})
+}
