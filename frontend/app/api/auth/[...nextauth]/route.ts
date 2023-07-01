@@ -1,8 +1,7 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import type { NextAuthOptions } from 'next-auth'
 
-export const authOptions: NextAuthOptions={
+const handler = NextAuth({
     // Configure one or more authentication providers
     providers: [
         CredentialsProvider({
@@ -38,6 +37,6 @@ export const authOptions: NextAuthOptions={
             return session
         }
     },
-}
+})
 
-export default NextAuth(authOptions);
+export { handler as GET, handler as POST } ;

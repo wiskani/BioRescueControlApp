@@ -9,7 +9,7 @@ from app.tests.utils.users import *
 
 # test for user creation
 def test_create_user() -> None:
-    mail: EmailStr | str = random_email_user()
+    mail: Union [EmailStr , str] = random_email_user()
     name: str = random_name_user()
     last_name: str = radom_last_name()
     password: str = random_password()

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from typing import Union
 
 from app.schemas.users import UsersCreate,  Users, UsersResponse
 from app.models.users import User
@@ -20,8 +21,8 @@ async def create_new_user(
     new_user: UsersCreate,
     db: Session = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(required_permissions=["admin"])), # Check if user is authorized
-) -> Users | HTTPException:
-    db_user: User | None  = await get_user_by_email(db=db, email=new_user.email)
+) -> Union[Users, HTTPException]:
+    db_user: Union[User, None]  = await get_user_by_email(db=db, email=new_user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     else:
@@ -40,8 +41,8 @@ async def update_user_by_id(
     user: UsersCreate,
     db: Session = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(required_permissions=["admin"])), # Check if user is authorized
-) -> Users | HTTPException:
-    db_user: User | None = await get_user_by_id(db=db, user_id=user_id)
+) -> Union[Users, HTTPException]:
+    db_user: Union[User, None] = await get_user_by_id(db=db, user_id=user_id)
     if db_user:
         return await update_user(db=db, user_id=user_id, user=user)
     else:
@@ -59,8 +60,8 @@ async def delete_user_by_id(
     user_id: int,
     db: Session = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(required_permissions=["admin"])), # Check if user is authorized
-) -> Users | HTTPException:
-    db_user: User | None = await get_user_by_id(db=db, user_id=user_id)
+) -> Union[Users, HTTPException]:
+    db_user: Union[User, None] = await get_user_by_id(db=db, user_id=user_id)
     if db_user:
         return await delete_user(db=db, user_id=user_id)
     else:

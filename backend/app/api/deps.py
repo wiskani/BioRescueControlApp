@@ -1,5 +1,5 @@
 from pydantic import EmailStr
-from typing import Generator
+from typing import Generator, Union
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer
@@ -53,8 +53,8 @@ async def get_current_user(db: Session=Depends(get_db), token: str = Depends(oau
     return Users.from_orm(user)
 
 #Authentication for login
-async def authenticate_user(email: EmailStr, password: str, db: Session) -> (Users | bool):
-    user:(User | None) = await get_user_by_email(db=db, email=email)
+async def authenticate_user(email: EmailStr, password: str, db: Session) -> Union[Users, bool]:
+    user: Union[User, None] = await get_user_by_email(db=db, email=email)
     if not user:
         return False
     if not user.verify_password(password):
