@@ -14,7 +14,7 @@ router: APIRouter = APIRouter()
     path="/api/users",
     response_model=UsersResponse,
     status_code=status.HTTP_201_CREATED,
-    tags=["users"],
+    tags=["Users"],
     summary="Create a new user",
 )
 async def create_new_user(
@@ -33,7 +33,7 @@ async def create_new_user(
     path="/api/users/{user_id}",
     status_code=status.HTTP_200_OK,
     response_model=None,
-    tags=["users"],
+    tags=["Users"],
     summary="Update a user by id",
 )
 async def update_user_by_id(
@@ -53,7 +53,7 @@ async def update_user_by_id(
     path="/api/users/{user_id}",
     response_model=None,
     status_code=status.HTTP_200_OK,
-    tags=["users"],
+    tags=["Users"],
     summary="Delete a user by id",
 )
 async def delete_user_by_id(

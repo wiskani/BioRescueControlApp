@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_db, create_token, authenticate_user
+from app.api.deps import get_db, create_token, authenticate_user, get_current_user
 from app.schemas.users import Users
 
 router: APIRouter = APIRouter()
@@ -26,4 +26,17 @@ async def generate_token(
             detail="Correo o password incorrecto"
         )
     return await create_token(user)
+
+#Get current user
+@router.get(
+    path="/api/users/me",
+    response_model=Users,
+    status_code=status.HTTP_200_OK,
+    tags=["Auth"],
+    summary="Get current user",
+)
+async def get_the_current_user(
+    current_user: Users = Depends(get_current_user)
+) -> Users:
+    return current_user     
 
