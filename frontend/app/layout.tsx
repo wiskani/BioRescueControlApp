@@ -1,6 +1,5 @@
 import './globals.css'
 import { ReactNode } from 'react'
-import AppBar from './AppBar';
 import Provider from './Provider'
 
 interface IProps {
@@ -14,7 +13,6 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Provider>
-          <AppBar />
            {children}
         </Provider>
       </body>

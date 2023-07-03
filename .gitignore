@@ -132,7 +132,6 @@ typings/
 
 # gatsby files
 .cache/
-public
 
 # IDE - VSCode
 .vscode/
