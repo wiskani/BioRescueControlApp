@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime
 from passlib.hash import bcrypt
+from datetime import datetime
 
 import app.db.database as _database
 
@@ -10,6 +11,7 @@ class User(_database.Base):
     name: Column[str] = Column(String, index=True)
     last_name: Column [str] = Column(String, index=True)
     permissions:Column[str] = Column(String)
+    created_at: Column[datetime] = Column(DateTime, default=datetime.now())
     hashed_password: Column[str] = Column(String)
 
     def verify_password(self, password:str)-> bool:

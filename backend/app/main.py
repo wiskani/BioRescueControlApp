@@ -15,6 +15,7 @@ import app.db.database as _database
 #routes import
 import app.routers.auth as  _auth
 import app.routers.users as _users
+import app.routers.species as _species
 
 _database.Base.metadata.create_all(bind=engine)
 
@@ -28,6 +29,7 @@ def get_settings():
 
 app.include_router(_auth.router)
 app.include_router(_users.router)
+app.include_router(_species.router)
 
 #Route is used for import settings
 @app.get("/api/settings")
