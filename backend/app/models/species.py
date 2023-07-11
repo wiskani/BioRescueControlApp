@@ -21,6 +21,8 @@ class Genus(_database.Base):
     create_at: Column[datetime] = Column(DateTime, default=datetime.utcnow)
 
     # Relationships
+    family_id: Column = Column(Integer, ForeignKey("family.id"))
+    family = relationship("Family", back_populates="genus")
     species = relationship("Specie", back_populates="genus")
 
 class Family(_database.Base):
@@ -29,14 +31,28 @@ class Family(_database.Base):
     family_name: Column = Column(String, unique=True, index=True)
     create_at: Column[datetime] = Column(DateTime, default=datetime.utcnow)
 
+    # Relationships
+    order_id: Column = Column(Integer, ForeignKey("order.id"))
+    order = relationship("Order", back_populates="family")
+    genus = relationship("Genus", back_populates="family")
+
 class Order(_database.Base):
     __tablename__:str = "order"
     id: Column = Column(Integer, primary_key=True, index=True)
     order_name: Column = Column(String, unique=True, index=True)
     create_at: Column[datetime] = Column(DateTime, default=datetime.utcnow)
 
-class Class(_database.Base):
-    __tablename__:str = "class"
+    # Relationships
+    class__id: Column = Column(Integer, ForeignKey("class_.id"))
+    class_ = relationship("Class_", back_populates="order")
+    family = relationship("Family", back_populates="order")
+
+
+class Class_(_database.Base):
+    __tablename__:str = "class_"
     id: Column = Column(Integer, primary_key=True, index=True)
     class_name: Column = Column(String, unique=True, index=True)
     create_at: Column[datetime] = Column(DateTime, default=datetime.utcnow)
+
+    # Relationships
+    order = relationship("Order", back_populates="class_")
