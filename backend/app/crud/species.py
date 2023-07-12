@@ -167,7 +167,7 @@ async def update_order(db: Session, order_id: int, order: OrdersCreate) -> Order
     if not db_order:
         raise HTTPException(status_code=404, detail="Order not found")
     db_order.order_name = order.order_name
-    db_order.class_id = order.class_id
+    db_order.class__id = order.class__id
     db.commit()
     db.refresh(db_order)
     return db_order
@@ -185,7 +185,6 @@ async def delete_order(db: Session, order_id: int) -> Order:
 async def create_class(db: Session, class_: ClassesCreate) -> Class_:
     db_class = Class_(
         class_name = class_.class_name,
-        phylum_id = class_.phylum_id
     )
     db.add(db_class)
     db.commit()
@@ -210,7 +209,6 @@ async def update_class(db: Session, class_id: int, class_: ClassesCreate) -> Cla
     if not db_class:
         raise HTTPException(status_code=404, detail="Class not found")
     db_class.class_name = class_.class_name
-    db_class.phylum_id = class_.phylum_id
     db.commit()
     db.refresh(db_class)
     return db_class

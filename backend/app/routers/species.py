@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Union
 
-from app.schemas.species import Species, SpeciesCreate, Genuses, GenusesCreate, Families, FamiliesCreate, Orders, OrdersCreate, Classes, ClassesCreate
+from app.schemas.species import Species, SpeciesCreate, Genuses, GenusesCreate, Families, FamiliesCreate, Orders, OrdersCreate, Classes, ClassesCreate, SpeciesResponse, GenusesResponse, FamiliesResponse, OrdersResponse, ClassesResponse
 from app.models.species import Specie, Genus, Family, Order, Class_
 from app.crud.species import (
     # Species
@@ -52,7 +52,7 @@ router: APIRouter = APIRouter()
 #Create specie
 @router.post(
     path="/api/species",
-    response_model=Species,
+    response_model=SpeciesResponse,
     status_code=status.HTTP_201_CREATED,
     tags=["Species"],
     summary="Create a specie",
@@ -73,7 +73,7 @@ async def create_a_new_specie(
 #Get all species
 @router.get(
     path="/api/species",
-    response_model=List[Species],
+    response_model=List[SpeciesResponse],
     status_code=status.HTTP_200_OK,
     tags=["Species"],
     summary="Get all species",
@@ -87,7 +87,7 @@ async def get_all_species_(
 #Get specie by id
 @router.get(
     path="/api/species/{specie_id}",
-    response_model=Species,
+    response_model=SpeciesResponse,
     status_code=status.HTTP_200_OK,
     tags=["Species"],
     summary="Get a specie by id",
@@ -108,7 +108,7 @@ async def get_a_specie_by_id(
 #Update specie
 @router.put(
     path="/api/species/{specie_id}",
-    response_model=Species,
+    response_model=SpeciesResponse,
     status_code=status.HTTP_200_OK,
     tags=["Species"],
     summary="Update a specie",
@@ -130,7 +130,7 @@ async def update_a_specie(
 #Delete specie
 @router.delete(
     path="/api/species/{specie_id}",
-    response_model=Species,
+    response_model=SpeciesResponse,
     status_code=status.HTTP_200_OK,
     tags=["Species"],
     summary="Delete a specie",
@@ -152,7 +152,7 @@ async def delete_a_specie(
 #Create genus
 @router.post(
     path="/api/genuses",
-    response_model=Genuses,
+    response_model=GenusesResponse,
     status_code=status.HTTP_201_CREATED,
     tags=["Genuses"],
     summary="Create a genus",
@@ -173,7 +173,7 @@ async def create_a_new_genus(
 #Get all genuses
 @router.get(
     path="/api/genuses",
-    response_model=List[Genuses],
+    response_model=List[GenusesResponse],
     status_code=status.HTTP_200_OK,
     tags=["Genuses"],
     summary="Get all genuses",
@@ -187,7 +187,7 @@ async def get_all_genuses_(
 #Get genus by id
 @router.get(
     path="/api/genuses/{genus_id}",
-    response_model=Genuses,
+    response_model=GenusesResponse,
     status_code=status.HTTP_200_OK,
     tags=["Genuses"],
     summary="Get a genus by id",
@@ -208,7 +208,7 @@ async def get_a_genus_by_id(
 #Update genus
 @router.put(
     path="/api/genuses/{genus_id}",
-    response_model=Genuses,
+    response_model=GenusesResponse,
     status_code=status.HTTP_200_OK,
     tags=["Genuses"],
     summary="Update a genus",
@@ -231,7 +231,7 @@ async def update_a_genus(
 #Delete genus
 @router.delete(
     path="/api/genuses/{genus_id}",
-    response_model=Genuses,
+    response_model=GenusesResponse,
     status_code=status.HTTP_200_OK,
     tags=["Genuses"],
     summary="Delete a genus",
@@ -252,7 +252,7 @@ async def delete_a_genus(
 #Create family
 @router.post(
     path="/api/families",
-    response_model=Families,
+    response_model=FamiliesResponse,
     status_code=status.HTTP_201_CREATED,
     tags=["Families"],
     summary="Create a family",
@@ -273,7 +273,7 @@ async def create_a_new_family(
 #Get all families
 @router.get(
     path="/api/families",
-    response_model=List[Families],
+    response_model=List[FamiliesResponse],
     status_code=status.HTTP_200_OK,
     tags=["Families"],
     summary="Get all families",
@@ -308,7 +308,7 @@ async def get_a_family_by_id(
 #Update family
 @router.put(
     path="/api/families/{family_id}",
-    response_model=Families,
+    response_model=FamiliesResponse,
     status_code=status.HTTP_200_OK,
     tags=["Families"],
     summary="Update a family",
@@ -330,7 +330,7 @@ async def update_a_family(
 #Delete family
 @router.delete(
     path="/api/families/{family_id}",
-    response_model=Families,
+    response_model=FamiliesResponse,
     status_code=status.HTTP_200_OK,
     tags=["Families"],
     summary="Delete a family",
@@ -351,7 +351,7 @@ async def delete_a_family(
 #Create order
 @router.post(
     path="/api/orders",
-    response_model=Orders,
+    response_model=OrdersResponse,
     status_code=status.HTTP_201_CREATED,
     tags=["Orders"],
     summary="Create a order",
@@ -372,7 +372,7 @@ async def create_a_new_order(
 #Get all orders
 @router.get(
     path="/api/orders",
-    response_model=List[Orders],
+    response_model=List[OrdersResponse],
     status_code=status.HTTP_200_OK,
     tags=["Orders"],
     summary="Get all orders",
@@ -386,7 +386,7 @@ async def get_all_orders_(
 #Get order by id
 @router.get(
     path="/api/orders/{order_id}",
-    response_model=Orders,
+    response_model=OrdersResponse,
     status_code=status.HTTP_200_OK,
     tags=["Orders"],
     summary="Get a order by id",
@@ -407,7 +407,7 @@ async def get_a_order_by_id(
 #Update order
 @router.put(
     path="/api/orders/{order_id}",
-    response_model=Orders,
+    response_model=OrdersResponse,
     status_code=status.HTTP_200_OK,
     tags=["Orders"],
     summary="Update a order",
@@ -429,7 +429,7 @@ async def update_a_order(
 #Delete order
 @router.delete(
     path="/api/orders/{order_id}",
-    response_model=Orders,
+    response_model=OrdersResponse,
     status_code=status.HTTP_200_OK,
     tags=["Orders"],
     summary="Delete a order",
@@ -450,7 +450,7 @@ async def delete_a_order(
 #Create Class
 @router.post(
     path="/api/classes",
-    response_model=Classes,
+    response_model=ClassesResponse,
     status_code=status.HTTP_201_CREATED,
     tags=["Classes"],
     summary="Create a class",
@@ -471,7 +471,7 @@ async def create_a_new_class(
 #Get all classes
 @router.get(
     path="/api/classes",
-    response_model=List[Classes],
+    response_model=List[ClassesResponse],
     status_code=status.HTTP_200_OK,
     tags=["Classes"],
     summary="Get all classes",
@@ -485,7 +485,7 @@ async def get_all_classes_(
 #Get class by id
 @router.get(
     path="/api/classes/{class_id}",
-    response_model=Classes,
+    response_model=ClassesResponse,
     status_code=status.HTTP_200_OK,
     tags=["Classes"],
     summary="Get a class by id",
@@ -506,7 +506,7 @@ async def get_a_class_by_id(
 #Update class
 @router.put(
     path="/api/classes/{class_id}",
-    response_model=Classes,
+    response_model=ClassesResponse,
     status_code=status.HTTP_200_OK,
     tags=["Classes"],
     summary="Update a class",
@@ -528,7 +528,7 @@ async def update_a_class(
 #Delete class
 @router.delete(
     path="/api/classes/{class_id}",
-    response_model=Classes,
+    response_model=ClassesResponse,
     status_code=status.HTTP_200_OK,
     tags=["Classes"],
     summary="Delete a class",
