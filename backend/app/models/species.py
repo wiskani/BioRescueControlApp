@@ -14,6 +14,9 @@ class Specie(_database.Base):
     genus_id: Column = Column(Integer, ForeignKey("genus.id"))
     genus = relationship("Genus", back_populates="species")
 
+    # Relationships with flora_rescue
+    flora_rescue = relationship("FloraRescue", back_populates="specie_bryophyte")
+
 class Genus(_database.Base):
     __tablename__:str = "genus"
     id: Column = Column(Integer, primary_key=True, index=True)
