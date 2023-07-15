@@ -16,6 +16,7 @@ import app.db.database as _database
 import app.routers.auth as  _auth
 import app.routers.users as _users
 import app.routers.species as _species
+import app.routers.rescue_flora as _rescue_flora
 
 _database.Base.metadata.create_all(bind=engine)
 
@@ -30,6 +31,7 @@ def get_settings():
 app.include_router(_auth.router)
 app.include_router(_users.router)
 app.include_router(_species.router)
+app.include_router(_rescue_flora.router)
 
 #Route is used for import settings
 @app.get("/api/settings")

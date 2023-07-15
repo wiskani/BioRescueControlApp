@@ -81,7 +81,7 @@ async def create_a_new_specie(
 async def get_all_species_(
     db: Session = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
-) -> List[Species]:
+) -> Union[List[Species], HTTPException]:
     return await get_all_species(db)
 
 #Get specie by id
