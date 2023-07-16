@@ -532,7 +532,7 @@ def test_update_flora_rescue() -> None:
     data = response.json()
     assert "id" in data
     assert data["epiphyte_number"] == 7
-    assert data["rescue_date"] == "2021-12-10T00:00:00"
+    assert data["rescue_date"] == "2021-12-11T00:00:00"
     assert data["rescue_area_latitude"] >= -90 and data["rescue_area_latitude"] <= 90
     assert data["rescue_area_longitude"] >= -180 and data["rescue_area_longitude"] <= 180
     assert data["dap_bryophyte"] == 7.0

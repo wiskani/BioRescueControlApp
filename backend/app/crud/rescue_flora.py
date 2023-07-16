@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from typing import List, Union
 from fastapi import HTTPException
+from datetime import date
 
 from app.schemas.rescue_flora import (
         #Flora rescue zone
@@ -140,6 +141,8 @@ async def get_all_flora_rescues(db: Session) -> List[FloraRescue]:
 
 # Create a new flora rescue
 async def create_flora_rescue(db: Session, flora_rescue: FloraRescueBase) -> FloraRescue:
+    print("dato_cretate ", flora_rescue.rescue_date)
+    print("Typo de dato de create: ", type(flora_rescue.rescue_date))
     db_flora_rescue = FloraRescue(
             epiphyte_number = flora_rescue.epiphyte_number,
             rescue_date = flora_rescue.rescue_date,
@@ -164,22 +167,23 @@ async def create_flora_rescue(db: Session, flora_rescue: FloraRescueBase) -> Flo
 # Update a flora rescue
 async def update_flora_rescue(db: Session, flora_rescue_id: int, flora_rescue: FloraRescueBase) -> FloraRescue:
     db_flora_rescue = db.query(FloraRescue).filter(FloraRescue.id == flora_rescue_id).first()
+
     if not db_flora_rescue:
         raise HTTPException(status_code=404, detail="Flora rescue not found")
-    db_flora_rescue.epiphyte_number = flora_rescue.epiphyte_number,
-    db_flora_rescue.rescue_date = flora_rescue.rescue_date,
-    db_flora_rescue.rescue_area_latitude = flora_rescue.rescue_area_latitude,
-    db_flora_rescue.rescue_area_longitude = flora_rescue.rescue_area_longitude,
-    db_flora_rescue.dap_bryophyte = flora_rescue.dap_bryophyte,
-    db_flora_rescue.height_bryophyte = flora_rescue.height_bryophyte,
-    db_flora_rescue.bryophyte_position = flora_rescue.bryophyte_position,
-    db_flora_rescue.growth_habit = flora_rescue.growth_habit,
-    db_flora_rescue.epiphyte_phenology = flora_rescue.epiphyte_phenology,
-    db_flora_rescue.health_status_epiphyte = flora_rescue.health_status_epiphyte,
-    db_flora_rescue.other_observations = flora_rescue.other_observations,
-    db_flora_rescue.specie_bryophyte_id = flora_rescue.specie_bryophyte_id,
-    db_flora_rescue.specie_epiphyte_id = flora_rescue.specie_epiphyte_id,
-    db_flora_rescue.rescue_zone_id = flora_rescue.rescue_zone_id,
+    db_flora_rescue.epiphyte_number = flora_rescue.epiphyte_number
+    db_flora_rescue.rescue_date = flora_rescue.rescue_date
+    db_flora_rescue.rescue_area_latitude = flora_rescue.rescue_area_latitude
+    db_flora_rescue.rescue_area_longitude = flora_rescue.rescue_area_longitude
+    db_flora_rescue.dap_bryophyte = flora_rescue.dap_bryophyte
+    db_flora_rescue.height_bryophyte = flora_rescue.height_bryophyte
+    db_flora_rescue.bryophyte_position = flora_rescue.bryophyte_position
+    db_flora_rescue.growth_habit = flora_rescue.growth_habit
+    db_flora_rescue.epiphyte_phenology = flora_rescue.epiphyte_phenology
+    db_flora_rescue.health_status_epiphyte = flora_rescue.health_status_epiphyte
+    db_flora_rescue.other_observations = flora_rescue.other_observations
+    db_flora_rescue.specie_bryophyte_id = flora_rescue.specie_bryophyte_id
+    db_flora_rescue.specie_epiphyte_id = flora_rescue.specie_epiphyte_id
+    db_flora_rescue.rescue_zone_id = flora_rescue.rescue_zone_id
     db.commit()
     db.refresh(db_flora_rescue)
     return db_flora_rescue
@@ -230,17 +234,17 @@ async def update_plant_nursery(db: Session, plant_nursery_id: int, plant_nursery
     db_plant_nursery = db.query(PlantNursery).filter(PlantNursery.id == plant_nursery_id).first()
     if not db_plant_nursery:
         raise HTTPException(status_code=404, detail="Plant nursery not found")
-    db_plant_nursery.entry_date = plant_nursery.entry_date,
-    db_plant_nursery.cod_reg = plant_nursery.cod_reg,
-    db_plant_nursery.health_status_epiphyte = plant_nursery.health_status_epiphyte,
-    db_plant_nursery.flowering_date = plant_nursery.flowering_date,
-    db_plant_nursery.treatment_product = plant_nursery.treatment_product,
-    db_plant_nursery.is_phytosanitary_treatment = plant_nursery.is_phytosanitary_treatment,
-    db_plant_nursery.substrate = plant_nursery.substrate,
-    db_plant_nursery.departure_date = plant_nursery.departure_date,
-    db_plant_nursery.flora_rescue_id = plant_nursery.flora_rescue_id,
-    db_plant_nursery.specie_id = plant_nursery.specie_id,
-    db_plant_nursery.relaction_zone_id = plant_nursery.relaction_zone_id,
+    db_plant_nursery.entry_date = plant_nursery.entry_date
+    db_plant_nursery.cod_reg = plant_nursery.cod_reg
+    db_plant_nursery.health_status_epiphyte = plant_nursery.health_status_epiphyte
+    db_plant_nursery.flowering_date = plant_nursery.flowering_date
+    db_plant_nursery.treatment_product = plant_nursery.treatment_product
+    db_plant_nursery.is_phytosanitary_treatment = plant_nursery.is_phytosanitary_treatment
+    db_plant_nursery.substrate = plant_nursery.substrate
+    db_plant_nursery.departure_date = plant_nursery.departure_date
+    db_plant_nursery.flora_rescue_id = plant_nursery.flora_rescue_id
+    db_plant_nursery.specie_id = plant_nursery.specie_id
+    db_plant_nursery.relaction_zone_id = plant_nursery.relaction_zone_id
     db.commit()
     db.refresh(db_plant_nursery)
     return db_plant_nursery
@@ -299,23 +303,23 @@ async def update_flora_relocation(db: Session, flora_relocation_id: int, flora_r
     if not db_flora_relocation:
         raise HTTPException(status_code=404, detail="Flora relocation not found")
 
-    db_flora_relocation.relocation_date = flora_relocation.relocation_date,
-    db_flora_relocation.size = flora_relocation.size,
-    db_flora_relocation.epiphyte_phenology = flora_relocation.epiphyte_phenology,
-    db_flora_relocation.johanson_zone = flora_relocation.johanson_zone,
-    db_flora_relocation.relocation_position_latitude = flora_relocation.relocation_position_latitude,
-    db_flora_relocation.relocation_position_longitude = flora_relocation.relocation_position_longitude,
-    db_flora_relocation.bryophyte_number = flora_relocation.bryophyte_number,
-    db_flora_relocation.dap_bryophyte = flora_relocation.dap_bryophyte,
-    db_flora_relocation.height_bryophyte = flora_relocation.height_bryophyte,
-    db_flora_relocation.bryophyte_position = flora_relocation.bryophyte_position,
-    db_flora_relocation.bark_type = flora_relocation.bark_type,
-    db_flora_relocation.is_infested_lianas = flora_relocation.is_infested_lianas,
-    db_flora_relocation.relocation_number = flora_relocation.relocation_number,
-    db_flora_relocation.other_observations = flora_relocation.other_observations,
-    db_flora_relocation.flora_rescue_id = flora_relocation.flora_rescue_id,
-    db_flora_relocation.specie_bryophyte_id = flora_relocation.specie_bryophyte_id,
-    db_flora_relocation.relaction_zone_id = flora_relocation.relaction_zone_id,
+    db_flora_relocation.relocation_date = flora_relocation.relocation_date
+    db_flora_relocation.size = flora_relocation.size
+    db_flora_relocation.epiphyte_phenology = flora_relocation.epiphyte_phenology
+    db_flora_relocation.johanson_zone = flora_relocation.johanson_zone
+    db_flora_relocation.relocation_position_latitude = flora_relocation.relocation_position_latitude
+    db_flora_relocation.relocation_position_longitude = flora_relocation.relocation_position_longitude
+    db_flora_relocation.bryophyte_number = flora_relocation.bryophyte_number
+    db_flora_relocation.dap_bryophyte = flora_relocation.dap_bryophyte
+    db_flora_relocation.height_bryophyte = flora_relocation.height_bryophyte
+    db_flora_relocation.bryophyte_position = flora_relocation.bryophyte_position
+    db_flora_relocation.bark_type = flora_relocation.bark_type
+    db_flora_relocation.is_infested_lianas = flora_relocation.is_infested_lianas
+    db_flora_relocation.relocation_number = flora_relocation.relocation_number
+    db_flora_relocation.other_observations = flora_relocation.other_observations
+    db_flora_relocation.flora_rescue_id = flora_relocation.flora_rescue_id
+    db_flora_relocation.specie_bryophyte_id = flora_relocation.specie_bryophyte_id
+    db_flora_relocation.relaction_zone_id = flora_relocation.relaction_zone_id
     db.commit()
     db.refresh(db_flora_relocation)
     return db_flora_relocation
