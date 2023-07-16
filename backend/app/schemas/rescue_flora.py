@@ -37,7 +37,7 @@ class FloraRescueBase(BaseModel):
     rescue_area_longitude: float
     dap_bryophyte: float
     height_bryophyte: float
-    bryophyte_position: float
+    bryophyte_position: int 
     growth_habit: str = Field( max_length=50)
     epiphyte_phenology: str = Field( max_length=50)
     health_status_epiphyte: str = Field( max_length=50)

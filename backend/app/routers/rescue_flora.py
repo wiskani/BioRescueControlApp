@@ -66,6 +66,10 @@ from app.api.deps import PermissonsChecker, get_db
 
 router:APIRouter = APIRouter()
 
+"""
+ENDPOINTS FOR RESCUE ZONE
+"""
+
 #Create a rescue zone endpoint
 @router.post(
         path="/api/rescue_flora/rescue_zone",
@@ -148,7 +152,6 @@ async def update_a_rescue_zone(
 #Delete a rescue zone endpoint
 @router.delete(
         path="/api/rescue_flora/rescue_zone/{rescue_zone_id}",
-        response_model=FloraRescueZoneResponse,
         status_code=status.HTTP_200_OK,
         tags=["Rescue Zone"],
         summary="Delete a rescue zone",
@@ -157,7 +160,7 @@ async def delete_a_rescue_zone(
         rescue_zone_id:int,
         db:Session=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Union[Dict, HTTPException]:
+        )->Dict:
     db_rescue_zone = await get_flora_rescue_zone_by_id(db, rescue_zone_id)
     if not db_rescue_zone:
         raise HTTPException(
@@ -166,6 +169,10 @@ async def delete_a_rescue_zone(
                 )
     await delete_flora_rescue_zone(db, rescue_zone_id)
     return {"detail":"Rescue zone deleted"}
+
+"""
+ENDPOINTS FOR RELOCATION ZONE
+"""
 
 #Create a relocation zone endpoint
 @router.post(
@@ -249,7 +256,6 @@ async def update_a_relocation_zone(
 #Delete a relocation zone endpoint
 @router.delete(
         path="/api/rescue_flora/relocation_zone/{relocation_zone_id}",
-        response_model=FloraRelocationZoneResponse,
         status_code=status.HTTP_200_OK,
         tags=["Relocation Zone"],
         summary="Delete a relocation zone",
@@ -258,7 +264,7 @@ async def delete_a_relocation_zone(
         relocation_zone_id:int,
         db:Session=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Union[Dict, HTTPException]:
+        )->Dict:
     db_relocation_zone = await get_flora_relocation_zone_by_id(db, relocation_zone_id)
     if not db_relocation_zone:
         raise HTTPException(
@@ -267,6 +273,11 @@ async def delete_a_relocation_zone(
                 )
     await delete_flora_relocation_zone(db, relocation_zone_id)
     return {"detail":"Relocation zone deleted"}
+
+
+"""
+ENDPOINTS FOR FLORA RESCUE
+"""
 
 #Create a flora rescue endpoint
 @router.post(
@@ -350,7 +361,6 @@ async def update_a_flora_rescue(
 #Delete a flora rescue endpoint
 @router.delete(
         path="/api/rescue_flora/{flora_rescue_id}",
-        response_model=FloraRescueResponse,
         status_code=status.HTTP_200_OK,
         tags=["Flora Rescue"],
         summary="Delete a flora rescue",
@@ -359,7 +369,7 @@ async def delete_a_flora_rescue(
         flora_rescue_id:int,
         db:Session=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Union[Dict, HTTPException]:
+        )->Dict:
     db_flora_rescue = await get_flora_rescue_by_id(db, flora_rescue_id)
     if not db_flora_rescue:
         raise HTTPException(
@@ -451,7 +461,6 @@ async def update_a_plant_nursery(
 #Delete a plant nursery endpoint
 @router.delete(
         path="/api/rescue_flora/plant_nursery/{plant_nursery_id}",
-        response_model=PlantNurseryResponse,
         status_code=status.HTTP_200_OK,
         tags=["Plant Nursery"],
         summary="Delete a plant nursery",
@@ -460,7 +469,7 @@ async def delete_a_plant_nursery(
         plant_nursery_id:int,
         db:Session=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Union[Dict, HTTPException]:
+        )->Dict:
     db_plant_nursery = await get_plant_nursery_by_id(db, plant_nursery_id)
     if not db_plant_nursery:
         raise HTTPException(
@@ -552,7 +561,6 @@ async def update_a_flora_relocation(
 #Delete a flora relocation endpoint
 @router.delete(
         path="/api/rescue_flora/flora_relocation/{flora_relocation_id}",
-        response_model=FloraRelocationResponse,
         status_code=status.HTTP_200_OK,
         tags=["Flora Relocation"],
         summary="Delete a flora relocation",
@@ -561,7 +569,7 @@ async def delete_a_flora_relocation(
         flora_relocation_id:int,
         db:Session=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Union[Dict, HTTPException]:
+        )->Dict:
     db_flora_relocation = await get_flora_relocation_by_id(db, flora_relocation_id)
     if not db_flora_relocation:
         raise HTTPException(

@@ -26,6 +26,9 @@ from app.schemas.rescue_flora import (
 from app.models.rescue_flora import FloraRescueZone, FloraRelocationZone, FloraRescue, PlantNursery, FloraRelocation
 
 # Purpose: CRUD operations for rescue flora
+"""
+CRUD FOR FLORA RESCUE ZONE
+"""
 
 # Get if flora rescue zone exists 
 async def get_flora_rescue_zone(db: Session, flora_rescue_zone_name: str) -> Union [FloraRescueZoneBase, None]:
@@ -74,9 +77,13 @@ async def delete_flora_rescue_zone(db: Session, flora_rescue_zone_id: int) -> Fl
     db.commit()
     return db_flora_rescue_zone
 
+"""
+CRUD FOR FLORA RELOCATION ZONE
+"""
+
 # Get if flora relocation zone exists
 async def get_flora_relocation_zone(db: Session, flora_relocation_zone_name: str) -> Union [FloraRelocationZoneBase, None]:
-    return db.query(FloraRelocationZone).filter(FloraRelocationZone.id == flora_relocation_zone_name).first()
+    return db.query(FloraRelocationZone).filter(FloraRelocationZone.name == flora_relocation_zone_name).first()
 
 # Get flora relocation zone by id
 async def get_flora_relocation_zone_by_id(db: Session, flora_relocation_zone_id: int) -> Union [FloraRelocationZoneResponse, None]:
@@ -90,9 +97,6 @@ async def get_all_flora_relocation_zones(db: Session) -> List[FloraRelocationZon
 async def create_flora_relocation_zone(db: Session, flora_relocation_zone: FloraRelocationZoneBase) -> FloraRelocationZone:
     db_flora_relocation_zone = FloraRelocationZone(
             name = flora_relocation_zone.name,
-            description = flora_relocation_zone.description,
-            latitude = flora_relocation_zone.latitude,
-            longitude = flora_relocation_zone.longitude,
             )
     db.add(db_flora_relocation_zone)
     db.commit()
@@ -105,9 +109,6 @@ async def update_flora_relocation_zone(db: Session, flora_relocation_zone_id: in
     if not db_flora_relocation_zone:
         raise HTTPException(status_code=404, detail="Flora relocation zone not found")
     db_flora_relocation_zone.name = flora_relocation_zone.name
-    db_flora_relocation_zone.description = flora_relocation_zone.description
-    db_flora_relocation_zone.latitude = flora_relocation_zone.latitude
-    db_flora_relocation_zone.longitude = flora_relocation_zone.longitude
     db.commit()
     db.refresh(db_flora_relocation_zone)
     return db_flora_relocation_zone
@@ -120,6 +121,10 @@ async def delete_flora_relocation_zone(db: Session, flora_relocation_zone_id: in
     db.delete(db_flora_relocation_zone)
     db.commit()
     return db_flora_relocation_zone
+
+"""
+CRUD FOR FLORA RESCUE
+"""
 
 # Get if flora rescue exists by epiphyte number
 async def get_flora_rescue(db: Session, flora_rescue_epiphyte_number: int) -> Union [FloraRescueBase, None]:
@@ -149,6 +154,7 @@ async def create_flora_rescue(db: Session, flora_rescue: FloraRescueBase) -> Flo
             other_observations = flora_rescue.other_observations,
             specie_bryophyte_id = flora_rescue.specie_bryophyte_id,
             specie_epiphyte_id = flora_rescue.specie_epiphyte_id,
+            rescue_zone_id = flora_rescue.rescue_zone_id,
             )
     db.add(db_flora_rescue)
     db.commit()
@@ -173,6 +179,7 @@ async def update_flora_rescue(db: Session, flora_rescue_id: int, flora_rescue: F
     db_flora_rescue.other_observations = flora_rescue.other_observations,
     db_flora_rescue.specie_bryophyte_id = flora_rescue.specie_bryophyte_id,
     db_flora_rescue.specie_epiphyte_id = flora_rescue.specie_epiphyte_id,
+    db_flora_rescue.rescue_zone_id = flora_rescue.rescue_zone_id,
     db.commit()
     db.refresh(db_flora_rescue)
     return db_flora_rescue

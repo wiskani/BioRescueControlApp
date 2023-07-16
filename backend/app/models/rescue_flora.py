@@ -45,7 +45,7 @@ class FloraRescue(_database.Base):
     rescue_area_longitude: Column[float] = Column(Float, index=True)
     dap_bryophyte: Column[float] = Column(Float, index=True)
     height_bryophyte: Column[float] = Column(Float, index=True)
-    bryophyte_position: Column[float] = Column(Float, index=True)
+    bryophyte_position: Column[int] = Column(Integer, index=True)
     growth_habit: Column[str] = Column(String, index=True)
     epiphyte_phenology: Column[str] = Column(String, index=True)
     health_status_epiphyte: Column[str] = Column(String, index=True)

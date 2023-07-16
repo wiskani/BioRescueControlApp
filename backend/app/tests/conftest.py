@@ -18,6 +18,9 @@ engine: Engine = create_engine(
 )
 TestingSessionLocal: sessionmaker[Session] = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+#Drop all tables and create new ones
+Base.metadata.drop_all(bind=engine)
+
 Base.metadata.create_all(bind=engine)
 
 
