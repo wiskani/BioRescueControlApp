@@ -88,7 +88,7 @@ class PlantNursery(_database.Base):
     flora_rescue_zone = relationship("FloraRescueZone", back_populates="plant_nursery")
 
     #Relationship for flora_rescue
-    rescue_id: Column[int] = Column(Integer, ForeignKey("flora_rescue.id"))
+    flora_rescue_id: Column[int] = Column(Integer, ForeignKey("flora_rescue.id"))
     flora_rescue = relationship("FloraRescue", back_populates="plant_nursery")
 
     #Relationship for species

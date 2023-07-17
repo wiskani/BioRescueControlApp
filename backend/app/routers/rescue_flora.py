@@ -379,6 +379,10 @@ async def delete_a_flora_rescue(
     await delete_flora_rescue(db, flora_rescue_id)
     return {"detail":"Flora rescue deleted"}
 
+"""
+ENDPOINTS FOR PLANT NURSERY
+"""
+
 #Create a plant nursery endpoint
 @router.post(
         path="/api/rescue_flora/plant_nursery",
@@ -403,7 +407,7 @@ async def create_a_new_plant_nursery(
 
 #Get all plant nurseries endpoint
 @router.get(
-        path="/api/rescue_flora/plant_nursery",
+        path="/api/plant_nurseries",
         response_model=List[PlantNurseryResponse],
         status_code=status.HTTP_200_OK,
         tags=["Plant Nursery"],
@@ -412,7 +416,7 @@ async def create_a_new_plant_nursery(
 async def get_all_plant_nurseries_(
         db:Session=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Union[List[PlantNurseryResponse], HTTPException]:
+        )->List[PlantNursery]:
     return await get_all_plant_nurseries(db)
 
 #Get a plant nursery by id endpoint

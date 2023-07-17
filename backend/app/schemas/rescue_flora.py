@@ -64,9 +64,10 @@ class PlantNurseryBase(BaseModel):
     is_phytosanitary_treatment: bool
     substrate: str = Field( max_length=50)
     departure_date: datetime
-    flora_rescue_id: int = Field(...)
+    rescue_zone_id: int
+    flora_rescue_id: int
     specie_id: int
-    relaction_zone_id: int
+    relocation_zone_id: int
 
     class Config:
         orm_mode = True

@@ -141,8 +141,6 @@ async def get_all_flora_rescues(db: Session) -> List[FloraRescue]:
 
 # Create a new flora rescue
 async def create_flora_rescue(db: Session, flora_rescue: FloraRescueBase) -> FloraRescue:
-    print("dato_cretate ", flora_rescue.rescue_date)
-    print("Typo de dato de create: ", type(flora_rescue.rescue_date))
     db_flora_rescue = FloraRescue(
             epiphyte_number = flora_rescue.epiphyte_number,
             rescue_date = flora_rescue.rescue_date,
@@ -197,9 +195,13 @@ async def delete_flora_rescue(db: Session, flora_rescue_id: int) -> FloraRescue:
     db.commit()
     return db_flora_rescue
 
+"""
+PLANT NURSERY CRUD
+"""
+
 #get if plant nursery exists by cod_reg
 async def get_plant_nursery(db: Session, plant_nursery_cod_reg: int) -> Union [PlantNurseryBase, None]:
-    return db.query(PlantNursery).filter(PlantNursery.id == plant_nursery_cod_reg).first()
+    return db.query(PlantNursery).filter(PlantNursery.cod_reg == plant_nursery_cod_reg).first()
 
 # Get plant nursery by id
 async def get_plant_nursery_by_id(db: Session, plant_nursery_id: int) -> Union [PlantNurseryResponse, None]:
@@ -220,9 +222,10 @@ async def create_plant_nursery(db: Session, plant_nursery: PlantNurseryBase) -> 
             is_phytosanitary_treatment = plant_nursery.is_phytosanitary_treatment,
             substrate = plant_nursery.substrate,
             departure_date = plant_nursery.departure_date,
+            rescue_zone_id = plant_nursery.rescue_zone_id,
             flora_rescue_id = plant_nursery.flora_rescue_id,
             specie_id = plant_nursery.specie_id,
-            relaction_zone_id = plant_nursery.relaction_zone_id,
+            relocation_zone_id = plant_nursery.relocation_zone_id,
             )
     db.add(db_plant_nursery)
     db.commit()
@@ -242,9 +245,10 @@ async def update_plant_nursery(db: Session, plant_nursery_id: int, plant_nursery
     db_plant_nursery.is_phytosanitary_treatment = plant_nursery.is_phytosanitary_treatment
     db_plant_nursery.substrate = plant_nursery.substrate
     db_plant_nursery.departure_date = plant_nursery.departure_date
+    db_plant_nursery.rescue_zone_id = plant_nursery.rescue_zone_id
     db_plant_nursery.flora_rescue_id = plant_nursery.flora_rescue_id
     db_plant_nursery.specie_id = plant_nursery.specie_id
-    db_plant_nursery.relaction_zone_id = plant_nursery.relaction_zone_id
+    db_plant_nursery.relocation_zone_id = plant_nursery.relocation_zone_id
     db.commit()
     db.refresh(db_plant_nursery)
     return db_plant_nursery

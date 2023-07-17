@@ -507,7 +507,6 @@ def test_update_flora_rescue() -> None:
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     id = data["id"]
-    print(id)
 
     # update a flora rescue
     response = client.put(
@@ -602,6 +601,156 @@ def test_delete_flora_rescue_not_found() -> None:
     # delete a flora rescue not found
     response = client.delete("/api/rescue_flora/0")
     assert response.status_code == 404, response.text
+
+"""
+TESTS FOR PLANT NURSERY
+"""
+
+#test create a plant nursery
+def test_create_plant_nursery() -> None:
+    #fuction to create a randon numnert int in a range of 111 to 999
+
+    # create plant nursery
+    response = client.post(
+        "/api/rescue_flora/plant_nursery", json={
+            "entry_date": "2021-12-10T00:00:00",
+            "cod_reg": 10,
+            "health_status_epiphyte": "test_health_status_epiphyte10",
+            "flowering_date": "2021-12-10T00:00:00",
+            "treatment_product": "test_treatment_product10",
+            "is_phytosanitary_treatment": False,
+            "substrate": "test_substrate10",
+            "departure_date": "2021-12-10T00:00:00",
+            "rescue_zone_id": 10,
+            "flora_rescue_id": 10,
+            "specie_id": 10,
+            "relocation_zone_id": 10,
+        },
+    )
+    assert response.status_code == 201, response.text
+    data: Dict[str, Any] = response.json()
+    assert "id" in data
+    assert data["entry_date"] == "2021-12-10T00:00:00"
+    assert data["cod_reg"] == 10
+    assert data["health_status_epiphyte"] == "test_health_status_epiphyte10"
+    assert data["flowering_date"] == "2021-12-10T00:00:00"
+    assert data["treatment_product"] == "test_treatment_product10"
+    assert data["is_phytosanitary_treatment"] == False
+    assert data["substrate"] == "test_substrate10"
+    assert data["departure_date"] == "2021-12-10T00:00:00"
+    assert data["rescue_zone_id"] == 10
+    assert data["flora_rescue_id"] == 10
+    assert data["specie_id"] == 10
+    assert data["relocation_zone_id"] == 10
+
+#test create a plant nursery that already exists
+def test_create_plant_nursery_already_exists() -> None:
+    # create plant nursery that already exists
+    response = client.post(
+        "/api/rescue_flora/plant_nursery", json={
+            "entry_date": "2021-12-10T00:00:00",
+            "cod_reg": 10,
+            "health_status_epiphyte": "test_health_status_epiphyte10",
+            "flowering_date": "2021-12-10T00:00:00",
+            "treatment_product": "test_treatment_product10",
+            "is_phytosanitary_treatment": False,
+            "substrate": "test_substrate10",
+            "departure_date": "2021-12-10T00:00:00",
+            "rescue_zone_id": 10,
+            "flora_rescue_id": 10,
+            "specie_id": 10,
+            "relocation_zone_id": 10,
+        },
+    )
+    assert response.status_code == 400, response.text
+
+#test get all plant nursery
+def test_read_all_plant_nursery() -> None:
+    # create two plant nursery
+    response = client.post(
+        "/api/rescue_flora/plant_nursery", json={
+            "entry_date": "2021-12-10T00:00:00",
+            "cod_reg": 11,
+            "health_status_epiphyte": "test_health_status_epiphyte11",
+            "flowering_date": "2021-12-10T00:00:00",
+            "treatment_product": "test_treatment_product11",
+            "is_phytosanitary_treatment": False,
+            "substrate": "test_substrate11",
+            "departure_date": "2021-12-10T00:00:00",
+            "rescue_zone_id": 11,
+            "flora_rescue_id": 11,
+            "specie_id": 11,
+            "relocation_zone_id": 11,
+        },
+    )
+    assert response.status_code == 201, response.text
+    response = client.post(
+        "/api/rescue_flora/plant_nursery", json={
+            "entry_date": "2021-12-10T00:00:00",
+            "cod_reg": 12,
+            "health_status_epiphyte": "test_health_status_epiphyte12",
+            "flowering_date": "2021-12-10T00:00:00",
+            "treatment_product": "test_treatment_product12",
+            "is_phytosanitary_treatment": False,
+            "substrate": "test_substrate12",
+            "departure_date": "2021-12-10T00:00:00",
+            "rescue_zone_id": 12,
+            "flora_rescue_id": 12,
+            "specie_id": 12,
+            "relocation_zone_id": 12,
+        },
+    )
+    assert response.status_code == 201, response.text
+
+    # read all plant nursery
+    response = client.get("/api/plant_nurseries")
+    assert response.status_code == 200, response.text
+    data: List[Dict[str, Any]] = response.json()
+    assert len(data) >= 2
+
+#test get a plant nursery by id
+def test_read_plant_nursery() -> None:
+    # create a plant nursery
+    response = client.post(
+        "/api/rescue_flora/plant_nursery", json={
+            "entry_date": "2021-12-10T00:00:00",
+            "cod_reg": 13,
+            "health_status_epiphyte": "test_health_status_epiphyte13",
+            "flowering_date": "2021-12-10T00:00:00",
+            "treatment_product": "test_treatment_product13",
+            "is_phytosanitary_treatment": False,
+            "substrate": "test_substrate13",
+            "departure_date": "2021-12-10T00:00:00",
+            "rescue_zone_id": 13,
+            "flora_rescue_id": 13,
+            "specie_id": 13,
+            "relocation_zone_id": 13,
+        },
+    )
+    assert response.status_code == 201, response.text
+    data: Dict[str, Any] = response.json()
+    # read a plant nursery by id
+    response = client.get(f"/api/rescue_flora/plant_nursery/{data['id']}")
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["entry_date"] == "2021-12-10T00:00:00"
+    assert data["cod_reg"] == 13
+    assert data["health_status_epiphyte"] == "test_health_status_epiphyte13"
+    assert data["flowering_date"] == "2021-12-10T00:00:00"
+    assert data["treatment_product"] == "test_treatment_product13"
+    assert data["is_phytosanitary_treatment"] == False
+    assert data["substrate"] == "test_substrate13"
+    assert data["departure_date"] == "2021-12-10T00:00:00"
+    assert data["rescue_zone_id"] == 13
+    assert data["flora_rescue_id"] == 13
+    assert data["specie_id"] == 13
+    assert data["relocation_zone_id"] == 13
+
+
+
+
+
+
 
 
 
