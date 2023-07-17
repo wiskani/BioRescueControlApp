@@ -93,10 +93,10 @@ class FloraRelocationBase(BaseModel):
     is_infested_lianas: bool
     relocation_number: int = Field(...)
     other_observations: str = Field(max_length=100)
-    resccue_zone_id: int
+    rescue_zone_id: int
     flora_rescue_id: int
     specie_bryophyte_id: int
-    relaction_zone_id: int
+    relocation_zone_id: int
 
     class Config:
         orm_mode = True

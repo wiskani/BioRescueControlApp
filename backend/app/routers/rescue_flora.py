@@ -483,6 +483,10 @@ async def delete_a_plant_nursery(
     await delete_plant_nursery(db, plant_nursery_id)
     return {"detail":"Plant nursery deleted"}
 
+"""
+ENDPOINTS FOR FLORA RELOCATION
+"""
+
 #Create a new flora relocation endpoint
 @router.post(
         path="/api/rescue_flora/flora_relocation",
@@ -507,7 +511,7 @@ async def create_a_new_flora_relocation(
 
 #Get all flora relocations endpoint
 @router.get(
-        path="/api/rescue_flora/flora_relocation",
+        path="/api/flora_relocations",
         response_model=List[FloraRelocationResponse],
         status_code=status.HTTP_200_OK,
         tags=["Flora Relocation"],

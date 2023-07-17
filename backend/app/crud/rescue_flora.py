@@ -262,6 +262,9 @@ async def delete_plant_nursery(db: Session, plant_nursery_id: int) -> PlantNurse
     db.commit()
     return db_plant_nursery
 
+"""
+FLORA RELOCATION CRUD
+"""
 
 # Get if flora relocation exists
 async def get_flora_relocation(db: Session, flora_relocation_number: int) -> Union [FloraRelocationBase, None]:
@@ -292,9 +295,10 @@ async def create_flora_relocation(db: Session, flora_relocation: FloraRelocation
             is_infested_lianas = flora_relocation.is_infested_lianas,
             relocation_number = flora_relocation.relocation_number,
             other_observations = flora_relocation.other_observations,
+            rescue_zone_id = flora_relocation.rescue_zone_id,
             flora_rescue_id = flora_relocation.flora_rescue_id,
             specie_bryophyte_id = flora_relocation.specie_bryophyte_id,
-            relaction_zone_id = flora_relocation.relaction_zone_id,
+            relocation_zone_id = flora_relocation.relocation_zone_id,
             )
     db.add(db_flora_relocation)
     db.commit()
@@ -321,9 +325,10 @@ async def update_flora_relocation(db: Session, flora_relocation_id: int, flora_r
     db_flora_relocation.is_infested_lianas = flora_relocation.is_infested_lianas
     db_flora_relocation.relocation_number = flora_relocation.relocation_number
     db_flora_relocation.other_observations = flora_relocation.other_observations
+    db_flora_relocation.rescue_zone_id = flora_relocation.rescue_zone_id
     db_flora_relocation.flora_rescue_id = flora_relocation.flora_rescue_id
     db_flora_relocation.specie_bryophyte_id = flora_relocation.specie_bryophyte_id
-    db_flora_relocation.relaction_zone_id = flora_relocation.relaction_zone_id
+    db_flora_relocation.relocation_zone_id = flora_relocation.relocation_zone_id
     db.commit()
     db.refresh(db_flora_relocation)
     return db_flora_relocation

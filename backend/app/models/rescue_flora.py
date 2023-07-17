@@ -131,7 +131,7 @@ class FloraRelocation(_database.Base):
     specie_bryophyte = relationship("Specie", back_populates="flora_relocation_bryophyte")
 
     #Relationship for flora_relocation_zone
-    relaction_zone_id: Column[int] = Column(Integer, ForeignKey("flora_relocation_zone.id"))
+    relocation_zone_id: Column[int] = Column(Integer, ForeignKey("flora_relocation_zone.id"))
     flora_relocation_zone = relationship("FloraRelocationZone", back_populates="flora_relocation")
 
 
