@@ -240,3 +240,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+#ingnore all jpg images
+*.jpg
+```

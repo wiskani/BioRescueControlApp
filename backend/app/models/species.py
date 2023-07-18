@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 
 import app.db.database as _database
+import app.models.images
 
 class Specie(_database.Base):
     __tablename__:str = "species"
@@ -23,6 +24,10 @@ class Specie(_database.Base):
 
     # Relationships with flora_relocation
     flora_relocation_bryophyte = relationship("FloraRelocation", back_populates="specie_bryophyte")
+
+    # Relationships with images
+    images = relationship("Image", back_populates="species")
+
 
 class Genus(_database.Base):
     __tablename__:str = "genus"
