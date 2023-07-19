@@ -13,8 +13,7 @@ const Map = () => {
              >
                 <TileLayer
                 
-                url={`https://api.mapbox.com/styles/v1/wiskani/streets-v11/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoid2lza2FuaSIsImEiOiJjbGs4bG03ZDYwZ3d5M3JucGw5bWNyaTV0In0.-CdLlvt-RDogWVJU21pmew`}
-
+                url={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`}
                 attribution='Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>'
                 />
             <Marker

@@ -14,10 +14,7 @@ export default function HomePage() {
     if (session?.user) {
         return (
             <div>
-                <h1>Home Page</h1>
                 <MyMap/>
-                <p>{process.env.MAPBOX_TOKEN}</p>
-                <p>prueba</p>
             </div>
         )
     }
