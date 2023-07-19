@@ -13,8 +13,10 @@ export default function HomePage() {
     const { data: session } = useSession();
     if (session?.user) {
         return (
-            <div>
-                <MyMap/>
+            <div className="relative w-full h-96">
+                <div className='absolute top-0 left-0 w-full h-full'>
+                    <MyMap/>
+                </div>
             </div>
         )
     }
