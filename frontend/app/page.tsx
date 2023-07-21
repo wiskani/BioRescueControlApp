@@ -13,9 +13,12 @@ export default function HomePage() {
     const { data: session } = useSession();
     if (session?.user) {
         return (
-            <div className="relative w-full h-96">
-                <div className='absolute top-0 left-0 w-full h-full'>
+            <div className="flex flex-col md:flex-row justify-center">
+                <div className="h-[24rem] z-50 md:w-1/2 p-4">
                     <MyMap/>
+                </div>
+                <div className='md:w-1/2 p-4'>
+                    <h1> Hola datos </h1>
                 </div>
             </div>
         )
