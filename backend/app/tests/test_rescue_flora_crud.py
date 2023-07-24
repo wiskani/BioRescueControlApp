@@ -229,7 +229,7 @@ def test_get_all_relocation_zones() -> None:
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
     assert len(data) >= 2
-    
+
 #test get a relocation zone by id
 def test_get_relocation_zone_by_id() -> None:
     # create zone relocation
@@ -315,6 +315,7 @@ def test_create_flora_rescue() -> None:
             "growth_habit": "test_growth_habit",
             "epiphyte_phenology": "test_epiphyte_phenology",
             "health_status_epiphyte": "test_health_status_epiphyte",
+            "microhabitat": "test_microhabitat",
             "other_observations": "test_other_observations",
             "specie_bryophyte_id": 1,
             "specie_epiphyte_id": 1,
@@ -334,6 +335,7 @@ def test_create_flora_rescue() -> None:
     assert data["growth_habit"] == "test_growth_habit"
     assert data["epiphyte_phenology"] == "test_epiphyte_phenology"
     assert data["health_status_epiphyte"] == "test_health_status_epiphyte"
+    assert data["microhabitat"] == "test_microhabitat"
     assert data["other_observations"] == "test_other_observations"
     assert data["specie_bryophyte_id"] == 1
     assert data["specie_epiphyte_id"] == 1
@@ -354,6 +356,7 @@ def test_create_flora_rescue_that_already_exists() -> None:
             "growth_habit": "test_growth_habit2",
             "epiphyte_phenology": "test_epiphyte_phenology2",
             "health_status_epiphyte": "test_health_status_epiphyte2",
+            "microhabitat": "test_microhabitat2",
             "other_observations": "test_other_observations2",
             "specie_bryophyte_id": 2,
             "specie_epiphyte_id": 2,
@@ -375,6 +378,7 @@ def test_create_flora_rescue_that_already_exists() -> None:
             "growth_habit": "test_growth_habit2",
             "epiphyte_phenology": "test_epiphyte_phenology2",
             "health_status_epiphyte": "test_health_status_epiphyte2",
+            "microhabitat": "test_microhabitat2",
             "other_observations": "test_other_observations2",
             "specie_bryophyte_id": 2,
             "specie_epiphyte_id": 2,
@@ -398,6 +402,7 @@ def test_read_all_flora_rescues() -> None:
             "growth_habit": "test_growth_habit3",
             "epiphyte_phenology": "test_epiphyte_phenology3",
             "health_status_epiphyte": "test_health_status_epiphyte3",
+            "microhabitat": "test_microhabitat3",
             "other_observations": "test_other_observations3",
             "specie_bryophyte_id": 3,
             "specie_epiphyte_id": 3,
@@ -419,6 +424,7 @@ def test_read_all_flora_rescues() -> None:
             "growth_habit": "test_growth_habit4",
             "epiphyte_phenology": "test_epiphyte_phenology4",
             "health_status_epiphyte": "test_health_status_epiphyte4",
+            "microhabitat": "test_microhabitat4",
             "other_observations": "test_other_observations4",
             "specie_bryophyte_id": 4,
             "specie_epiphyte_id": 4,
@@ -448,6 +454,7 @@ def test_read_flora_rescue_by_id() -> None:
             "growth_habit": "test_growth_habit5",
             "epiphyte_phenology": "test_epiphyte_phenology5",
             "health_status_epiphyte": "test_health_status_epiphyte5",
+            "microhabitat": "test_microhabitat5",
             "other_observations": "test_other_observations5",
             "specie_bryophyte_id": 5,
             "specie_epiphyte_id": 5,
@@ -472,6 +479,7 @@ def test_read_flora_rescue_by_id() -> None:
     assert data["growth_habit"] == "test_growth_habit5"
     assert data["epiphyte_phenology"] == "test_epiphyte_phenology5"
     assert data["health_status_epiphyte"] == "test_health_status_epiphyte5"
+    assert data["microhabitat"] == "test_microhabitat5"
     assert data["other_observations"] == "test_other_observations5"
     assert data["specie_bryophyte_id"] == 5
     assert data["specie_epiphyte_id"] == 5
@@ -498,6 +506,7 @@ def test_update_flora_rescue() -> None:
             "growth_habit": "test_growth_habit6",
             "epiphyte_phenology": "test_epiphyte_phenology6",
             "health_status_epiphyte": "test_health_status_epiphyte6",
+            "microhabitat": "test_microhabitat6",
             "other_observations": "test_other_observations6",
             "specie_bryophyte_id": 6,
             "specie_epiphyte_id": 6,
@@ -521,6 +530,7 @@ def test_update_flora_rescue() -> None:
             "growth_habit": "test_growth_habit7",
             "epiphyte_phenology": "test_epiphyte_phenology7",
             "health_status_epiphyte": "test_health_status_epiphyte7",
+            "microhabitat": "test_microhabitat7",
             "other_observations": "test_other_observations7",
             "specie_bryophyte_id": 7,
             "specie_epiphyte_id": 7,
@@ -540,6 +550,7 @@ def test_update_flora_rescue() -> None:
     assert data["growth_habit"] == "test_growth_habit7"
     assert data["epiphyte_phenology"] == "test_epiphyte_phenology7"
     assert data["health_status_epiphyte"] == "test_health_status_epiphyte7"
+    assert data["microhabitat"] == "test_microhabitat7"
     assert data["other_observations"] == "test_other_observations7"
     assert data["specie_bryophyte_id"] == 7
     assert data["specie_epiphyte_id"] == 7
@@ -560,6 +571,7 @@ def test_update_flora_rescue_not_found() -> None:
             "growth_habit": "test_growth_habit8",
             "epiphyte_phenology": "test_epiphyte_phenology8",
             "health_status_epiphyte": "test_health_status_epiphyte8",
+            "microhabitat": "test_microhabitat8",
             "other_observations": "test_other_observations8",
             "specie_bryophyte_id": 8,
             "specie_epiphyte_id": 8,
@@ -583,6 +595,7 @@ def test_delete_flora_rescue() -> None:
             "growth_habit": "test_growth_habit9",
             "epiphyte_phenology": "test_epiphyte_phenology9",
             "health_status_epiphyte": "test_health_status_epiphyte9",
+            "microhabitat": "test_microhabitat9",
             "other_observations": "test_other_observations9",
             "specie_bryophyte_id": 9,
             "specie_epiphyte_id": 9,
@@ -614,10 +627,12 @@ def test_create_plant_nursery() -> None:
     response = client.post(
         "/api/rescue_flora/plant_nursery", json={
             "entry_date": "2021-12-10T00:00:00",
-            "cod_reg": 10,
+            "cod_reg": "10",
             "health_status_epiphyte": "test_health_status_epiphyte10",
             "flowering_date": "2021-12-10T00:00:00",
+            "vegetative_state": "test_vegetative_state10",
             "treatment_product": "test_treatment_product10",
+            "is_pruned": False,
             "is_phytosanitary_treatment": False,
             "substrate": "test_substrate10",
             "departure_date": "2021-12-10T00:00:00",
@@ -631,10 +646,12 @@ def test_create_plant_nursery() -> None:
     data: Dict[str, Any] = response.json()
     assert "id" in data
     assert data["entry_date"] == "2021-12-10T00:00:00"
-    assert data["cod_reg"] == 10
+    assert data["cod_reg"] == "10"
     assert data["health_status_epiphyte"] == "test_health_status_epiphyte10"
     assert data["flowering_date"] == "2021-12-10T00:00:00"
+    assert data["vegetative_state"] == "test_vegetative_state10"
     assert data["treatment_product"] == "test_treatment_product10"
+    assert data["is_pruned"] == False
     assert data["is_phytosanitary_treatment"] == False
     assert data["substrate"] == "test_substrate10"
     assert data["departure_date"] == "2021-12-10T00:00:00"
@@ -649,10 +666,12 @@ def test_create_plant_nursery_already_exists() -> None:
     response = client.post(
         "/api/rescue_flora/plant_nursery", json={
             "entry_date": "2021-12-10T00:00:00",
-            "cod_reg": 10,
+            "cod_reg": "10",
             "health_status_epiphyte": "test_health_status_epiphyte10",
             "flowering_date": "2021-12-10T00:00:00",
+            "vegetative_state": "test_vegetative_state10",
             "treatment_product": "test_treatment_product10",
+            "is_pruned": False,
             "is_phytosanitary_treatment": False,
             "substrate": "test_substrate10",
             "departure_date": "2021-12-10T00:00:00",
@@ -670,10 +689,12 @@ def test_read_all_plant_nursery() -> None:
     response = client.post(
         "/api/rescue_flora/plant_nursery", json={
             "entry_date": "2021-12-10T00:00:00",
-            "cod_reg": 11,
+            "cod_reg": "11",
             "health_status_epiphyte": "test_health_status_epiphyte11",
+            "vegetative_state": "test_vegetative_state11",
             "flowering_date": "2021-12-10T00:00:00",
             "treatment_product": "test_treatment_product11",
+            "is_pruned": False,
             "is_phytosanitary_treatment": False,
             "substrate": "test_substrate11",
             "departure_date": "2021-12-10T00:00:00",
@@ -687,10 +708,12 @@ def test_read_all_plant_nursery() -> None:
     response = client.post(
         "/api/rescue_flora/plant_nursery", json={
             "entry_date": "2021-12-10T00:00:00",
-            "cod_reg": 12,
+            "cod_reg": "12",
             "health_status_epiphyte": "test_health_status_epiphyte12",
             "flowering_date": "2021-12-10T00:00:00",
+            "vegetative_state": "test_vegetative_state12",
             "treatment_product": "test_treatment_product12",
+            "is_pruned": False,
             "is_phytosanitary_treatment": False,
             "substrate": "test_substrate12",
             "departure_date": "2021-12-10T00:00:00",
@@ -714,10 +737,12 @@ def test_read_plant_nursery() -> None:
     response = client.post(
         "/api/rescue_flora/plant_nursery", json={
             "entry_date": "2021-12-10T00:00:00",
-            "cod_reg": 13,
+            "cod_reg": "13",
             "health_status_epiphyte": "test_health_status_epiphyte13",
             "flowering_date": "2021-12-10T00:00:00",
+            "vegetative_state": "test_vegetative_state13",
             "treatment_product": "test_treatment_product13",
+            "is_pruned": False,
             "is_phytosanitary_treatment": False,
             "substrate": "test_substrate13",
             "departure_date": "2021-12-10T00:00:00",
@@ -734,9 +759,10 @@ def test_read_plant_nursery() -> None:
     assert response.status_code == 200, response.text
     data = response.json()
     assert data["entry_date"] == "2021-12-10T00:00:00"
-    assert data["cod_reg"] == 13
+    assert data["cod_reg"] == "13"
     assert data["health_status_epiphyte"] == "test_health_status_epiphyte13"
     assert data["flowering_date"] == "2021-12-10T00:00:00"
+    assert data["vegetative_state"] == "test_vegetative_state13"
     assert data["treatment_product"] == "test_treatment_product13"
     assert data["is_phytosanitary_treatment"] == False
     assert data["substrate"] == "test_substrate13"
@@ -747,7 +773,7 @@ def test_read_plant_nursery() -> None:
     assert data["relocation_zone_id"] == 13
 
 """
-TEST FOR RELOCATION FLORA 
+TEST FOR RELOCATION FLORA
 """
 #test create a relocation flora
 def test_create_relocation_flora() -> None:
@@ -765,7 +791,7 @@ def test_create_relocation_flora() -> None:
             "height_bryophyte": 14.0,
             "bryophyte_position": 14,
             "bark_type": "test_bark_type14",
-            "is_infested_lianas": False,
+            "infested_lianas": "Poco",
             "relocation_number": 14,
             "other_observations": "test_other_observations14",
             "rescue_zone_id": 14,
@@ -788,7 +814,7 @@ def test_create_relocation_flora() -> None:
     assert data["height_bryophyte"] == 14.0
     assert data["bryophyte_position"] == 14
     assert data["bark_type"] == "test_bark_type14"
-    assert data["is_infested_lianas"] == False
+    assert data["infested_lianas"] == "Poco"
     assert data["relocation_number"] == 14
     assert data["other_observations"] == "test_other_observations14"
     assert data["rescue_zone_id"] == 14
@@ -812,7 +838,7 @@ def test_create_relocation_flora_already_exists() -> None:
             "height_bryophyte": 14.0,
             "bryophyte_position": 14,
             "bark_type": "test_bark_type14",
-            "is_infested_lianas": False,
+            "infested_lianas": "Poco",
             "relocation_number": 14,
             "other_observations": "test_other_observations14",
             "rescue_zone_id": 14,
@@ -839,7 +865,7 @@ def test_read_all_relocation_flora() -> None:
             "height_bryophyte": 15.0,
             "bryophyte_position": 15,
             "bark_type": "test_bark_type15",
-            "is_infested_lianas": False,
+            "infested_lianas": "Poco",
             "relocation_number": 15,
             "other_observations": "test_other_observations15",
             "rescue_zone_id": 15,
@@ -862,7 +888,7 @@ def test_read_all_relocation_flora() -> None:
             "height_bryophyte": 16.0,
             "bryophyte_position": 16,
             "bark_type": "test_bark_type16",
-            "is_infested_lianas": False,
+            "infested_lianas": "Poco",
             "relocation_number": 16,
             "other_observations": "test_other_observations16",
             "rescue_zone_id": 16,
@@ -894,7 +920,7 @@ def test_read_relocation_flora() -> None:
             "height_bryophyte": 17.0,
             "bryophyte_position": 17,
             "bark_type": "test_bark_type17",
-            "is_infested_lianas": False,
+            "infested_lianas": "Poco",
             "relocation_number": 17,
             "other_observations": "test_other_observations17",
             "rescue_zone_id": 17,
@@ -921,7 +947,7 @@ def test_read_relocation_flora() -> None:
     assert data["height_bryophyte"] == 17.0
     assert data["bryophyte_position"] == 17
     assert data["bark_type"] == "test_bark_type17"
-    assert data["is_infested_lianas"] == False
+    assert data["infested_lianas"] == "Poco"
     assert data["relocation_number"] == 17
     assert data["other_observations"] == "test_other_observations17"
     assert data["rescue_zone_id"] == 17
@@ -945,7 +971,7 @@ def test_update_relocation_flora() -> None:
             "height_bryophyte": 18.0,
             "bryophyte_position": 18,
             "bark_type": "test_bark_type18",
-            "is_infested_lianas": False,
+            "infested_lianas": "Poco",
             "relocation_number": 18,
             "other_observations": "test_other_observations18",
             "rescue_zone_id": 18,
@@ -971,7 +997,7 @@ def test_update_relocation_flora() -> None:
             "height_bryophyte": 19.0,
             "bryophyte_position": 19,
             "bark_type": "test_bark_type19",
-            "is_infested_lianas": False,
+            "infested_lianas": "Poco",
             "relocation_number": 19,
             "other_observations": "test_other_observations19",
             "rescue_zone_id": 19,
@@ -993,7 +1019,7 @@ def test_update_relocation_flora() -> None:
     assert data["height_bryophyte"] == 19.0
     assert data["bryophyte_position"] == 19
     assert data["bark_type"] == "test_bark_type19"
-    assert data["is_infested_lianas"] == False
+    assert data["infested_lianas"] == "Poco"
     assert data["relocation_number"] == 19
     assert data["other_observations"] == "test_other_observations19"
     assert data["rescue_zone_id"] == 19
@@ -1017,7 +1043,7 @@ def test_delete_relocation_flora() -> None:
             "height_bryophyte": 20.0,
             "bryophyte_position": 20,
             "bark_type": "test_bark_type20",
-            "is_infested_lianas": False,
+            "infested_lianas": "Poco",
             "relocation_number": 20,
             "other_observations": "test_other_observations20",
             "rescue_zone_id": 20,
@@ -1032,20 +1058,5 @@ def test_delete_relocation_flora() -> None:
     # delete a relocation flora
     response = client.delete(f"/api/rescue_flora/flora_relocation/{id}")
     assert response.status_code == 200, response.text
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

@@ -8,10 +8,10 @@ const Map = () => {
         const lineOptions = { color: 'red' }
     return(
         <MapContainer
-            center={[-17.655, -65.320]}
-            zoom={13}
+            center={[-17.489, -65.271]}
+            zoom={12}
             scrollWheelZoom={false}
-            style={{height:"100vh",  width:"100%"}}
+            className='h-80 w-full 2xl:h-[40rem] xl:h-[40rem] lg:h-[35rem]'
              >
                 <TileLayer
                 

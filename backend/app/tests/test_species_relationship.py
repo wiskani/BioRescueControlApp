@@ -1,6 +1,4 @@
-from requests import Response
-from typing import Dict, List, Any
-from fastapi.testclient import TestClient
+from typing import Dict, Any
 from sqlalchemy.orm import Session
 
 
@@ -43,7 +41,7 @@ def test_relation_with_genus()-> None:
         },
     )
     assert response.status_code == 201, response.text
-    
+
     #create a species 3
     response = client.post(
         "/api/species/", json={
@@ -54,7 +52,7 @@ def test_relation_with_genus()-> None:
     )
     # Make a query to the database
     species = db.query(Specie).join(Genus, Specie.genus_id == Genus.id).filter(Specie.genus_id == genus).all()
-    
+
     # Create a list of dictionaries with the data
     species_data = [
             {
@@ -64,7 +62,7 @@ def test_relation_with_genus()-> None:
                 }
             for s in species
             ]
-    
+
     # Create a list of dictionaries with the expected data
     expected_data = [
             {
@@ -78,7 +76,7 @@ def test_relation_with_genus()-> None:
                 "genus_id": genus
                 }
             ]
-    
+
     # Compare the data
     assert species_data == expected_data
 

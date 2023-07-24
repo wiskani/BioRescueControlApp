@@ -152,6 +152,7 @@ async def create_flora_rescue(db: Session, flora_rescue: FloraRescueBase) -> Flo
             growth_habit = flora_rescue.growth_habit,
             epiphyte_phenology = flora_rescue.epiphyte_phenology,
             health_status_epiphyte = flora_rescue.health_status_epiphyte,
+            microhabitat = flora_rescue.microhabitat,
             other_observations = flora_rescue.other_observations,
             specie_bryophyte_id = flora_rescue.specie_bryophyte_id,
             specie_epiphyte_id = flora_rescue.specie_epiphyte_id,
@@ -178,6 +179,7 @@ async def update_flora_rescue(db: Session, flora_rescue_id: int, flora_rescue: F
     db_flora_rescue.growth_habit = flora_rescue.growth_habit
     db_flora_rescue.epiphyte_phenology = flora_rescue.epiphyte_phenology
     db_flora_rescue.health_status_epiphyte = flora_rescue.health_status_epiphyte
+    db_flora_rescue.microhabitat = flora_rescue.microhabitat
     db_flora_rescue.other_observations = flora_rescue.other_observations
     db_flora_rescue.specie_bryophyte_id = flora_rescue.specie_bryophyte_id
     db_flora_rescue.specie_epiphyte_id = flora_rescue.specie_epiphyte_id
@@ -217,8 +219,10 @@ async def create_plant_nursery(db: Session, plant_nursery: PlantNurseryBase) -> 
             entry_date = plant_nursery.entry_date,
             cod_reg = plant_nursery.cod_reg,
             health_status_epiphyte = plant_nursery.health_status_epiphyte,
+            vegetative_state = plant_nursery.vegetative_state,
             flowering_date = plant_nursery.flowering_date,
             treatment_product = plant_nursery.treatment_product,
+            is_pruned = plant_nursery.is_pruned,
             is_phytosanitary_treatment = plant_nursery.is_phytosanitary_treatment,
             substrate = plant_nursery.substrate,
             departure_date = plant_nursery.departure_date,
@@ -240,8 +244,10 @@ async def update_plant_nursery(db: Session, plant_nursery_id: int, plant_nursery
     db_plant_nursery.entry_date = plant_nursery.entry_date
     db_plant_nursery.cod_reg = plant_nursery.cod_reg
     db_plant_nursery.health_status_epiphyte = plant_nursery.health_status_epiphyte
+    db_plant_nursery.vegetative_state = plant_nursery.vegetative_state
     db_plant_nursery.flowering_date = plant_nursery.flowering_date
     db_plant_nursery.treatment_product = plant_nursery.treatment_product
+    db_plant_nursery.is_pruned = plant_nursery.is_pruned
     db_plant_nursery.is_phytosanitary_treatment = plant_nursery.is_phytosanitary_treatment
     db_plant_nursery.substrate = plant_nursery.substrate
     db_plant_nursery.departure_date = plant_nursery.departure_date
@@ -292,7 +298,7 @@ async def create_flora_relocation(db: Session, flora_relocation: FloraRelocation
             height_bryophyte = flora_relocation.height_bryophyte,
             bryophyte_position = flora_relocation.bryophyte_position,
             bark_type = flora_relocation.bark_type,
-            is_infested_lianas = flora_relocation.is_infested_lianas,
+            infested_lianas = flora_relocation.infested_lianas,
             relocation_number = flora_relocation.relocation_number,
             other_observations = flora_relocation.other_observations,
             rescue_zone_id = flora_relocation.rescue_zone_id,
@@ -322,7 +328,7 @@ async def update_flora_relocation(db: Session, flora_relocation_id: int, flora_r
     db_flora_relocation.height_bryophyte = flora_relocation.height_bryophyte
     db_flora_relocation.bryophyte_position = flora_relocation.bryophyte_position
     db_flora_relocation.bark_type = flora_relocation.bark_type
-    db_flora_relocation.is_infested_lianas = flora_relocation.is_infested_lianas
+    db_flora_relocation.infested_lianas = flora_relocation.infested_lianas
     db_flora_relocation.relocation_number = flora_relocation.relocation_number
     db_flora_relocation.other_observations = flora_relocation.other_observations
     db_flora_relocation.rescue_zone_id = flora_relocation.rescue_zone_id

@@ -24,7 +24,7 @@ const LoginPage = ({ searchParams }: IProps) => {
   return(
     <div className='bg-gray-50'> 
         <div className='flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0'>
-            <Image src="/images/logo_white.png" alt="logo" width={150} height={80} className='pb-4' />
+            <Image src="/images/logo_blue.png" alt="logo" width={150} height={80} className='pb-4' />
             <p  className='flex items-center mb-6 text-2xl font-semibold text-emerald'>
                 Rescate de Flora y Fauna
             </p>

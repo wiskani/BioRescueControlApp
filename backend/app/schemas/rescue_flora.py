@@ -33,14 +33,15 @@ class FloraRelocationZoneResponse(FloraRelocationZoneBase):
 class FloraRescueBase(BaseModel):
     epiphyte_number: int = Field(...)
     rescue_date: datetime = Field(...)
-    rescue_area_latitude: float
-    rescue_area_longitude: float
+    rescue_area_latitude: float = Field(example= -17.444)
+    rescue_area_longitude: float= Field(example= -66.444)
     dap_bryophyte: float
     height_bryophyte: float
     bryophyte_position: int 
-    growth_habit: str = Field( max_length=50)
-    epiphyte_phenology: str = Field( max_length=50)
-    health_status_epiphyte: str = Field( max_length=50)
+    growth_habit: str = Field( max_length=50, example="Geófito")
+    epiphyte_phenology: str = Field( max_length=50, example="Esteril")
+    health_status_epiphyte: str = Field( max_length=50, example="Bueno")
+    microhabitat: str = Field( max_length=50, example="Bosque de ladera")
     other_observations: str = Field(max_length=100)
     specie_bryophyte_id: int
     specie_epiphyte_id: int
@@ -57,11 +58,13 @@ class FloraRescueResponse(FloraRescueBase):
 
 class PlantNurseryBase(BaseModel):
     entry_date: datetime = Field(...)
-    cod_reg: int
+    cod_reg: str
     health_status_epiphyte: str = Field( max_length=50)
-    flowering_date: datetime 
-    treatment_product: str = Field( max_length=50)
-    is_phytosanitary_treatment: bool
+    vegetative_state: str = Field( max_length=50)
+    flowering_date: datetime
+    treatment_product: str = Field( max_length=50, example="1,2,3")
+    is_pruned: bool
+    is_phytosanitary_treatment:bool
     substrate: str = Field( max_length=50)
     departure_date: datetime
     rescue_zone_id: int
@@ -81,7 +84,7 @@ class PlantNurseryResponse(PlantNurseryBase):
 class FloraRelocationBase(BaseModel):
     relocation_date: datetime = Field(...)
     size: float
-    epiphyte_phenology: str = Field( max_length=50)
+    epiphyte_phenology: str = Field( max_length=50, example="Esteril")
     johanson_zone: str = Field( max_length=50)
     relocation_position_latitude: float
     relocation_position_longitude: float
@@ -90,7 +93,7 @@ class FloraRelocationBase(BaseModel):
     height_bryophyte: float
     bryophyte_position: int
     bark_type: str = Field( max_length=50)
-    is_infested_lianas: bool
+    infested_lianas: str = Field(example="Poco")
     relocation_number: int = Field(...)
     other_observations: str = Field(max_length=100)
     rescue_zone_id: int

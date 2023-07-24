@@ -49,6 +49,7 @@ class FloraRescue(_database.Base):
     growth_habit: Column[str] = Column(String, index=True)
     epiphyte_phenology: Column[str] = Column(String, index=True)
     health_status_epiphyte: Column[str] = Column(String, index=True)
+    microhabitat: Column[str] = Column(String, index=True)
     other_observations: Column[str] = Column(String, index=True)
     created_at: Column[datetime] = Column(DateTime, default=datetime.now())
 
@@ -65,7 +66,7 @@ class FloraRescue(_database.Base):
 
     # Relationships for plant_nursery
     plant_nursery = relationship("PlantNursery", uselist=False, back_populates="flora_rescue")
-    
+
     # Relationships for flora_relocation
     flora_relocation = relationship("FloraRelocation", uselist=False, back_populates="flora_rescue")
 
@@ -74,10 +75,12 @@ class PlantNursery(_database.Base):
     __tablename__ = "plant_nursery"
     id:Column[int]= Column(Integer, primary_key=True, index=True)
     entry_date: Column[datetime] = Column(DateTime)
-    cod_reg: Column[int] = Column(Integer, index=True)
+    cod_reg: Column[str] = Column(String, index=True)
     health_status_epiphyte: Column[str] = Column(String, index=True)
+    vegetative_state: Column[str] = Column(String, index=True)
     flowering_date: Column[datetime] = Column(DateTime)
     treatment_product: Column[str] = Column(String, index=True)
+    is_pruned: Column[bool] = Column(Boolean, default=False)
     is_phytosanitary_treatment: Column[bool] = Column(Boolean, default=False)
     substrate: Column[str] = Column(String, index=True)
     departure_date: Column[datetime] = Column(DateTime)
@@ -113,7 +116,7 @@ class FloraRelocation(_database.Base):
     height_bryophyte: Column[float] = Column(Float, index=True)
     bryophyte_position: Column[int] = Column(Integer, index=True)
     bark_type: Column[str] = Column(String, index=True)
-    is_infested_lianas: Column[bool] = Column(Boolean, default=False)
+    infested_lianas: Column[str] = Column(String, index=True)
     relocation_number: Column[int] = Column(Integer, index=True)
     other_observations: Column[str] = Column(String, index=True)
     created_at: Column[datetime] = Column(DateTime, default=datetime.now())
