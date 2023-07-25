@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 #schema for image
 class ImageBase(BaseModel):
     url: str
+    species_id: int
     class Config:
         orm_mode = True
 

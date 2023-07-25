@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, File, UploadFile, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Union
@@ -51,7 +52,7 @@ async def get_image_by_id_specie(
     image_id: int,
     db: Session = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
-):
+)-> Union[ImageResponse, HTTPException]:
     db_image = get_image_by_id(db, image_id)
     if not db_image:
         raise HTTPException(status_code=404, detail="Image not found")
@@ -101,6 +102,13 @@ async def upload_image(
     db_image = get_image_by_id(db, image_id)
     if not db_image:
         raise HTTPException(status_code=404, detail="Image not found")
+    #check imagen foder
+    images_folder ="static/images/species/"
+
+    #check if folder exit
+    if not os.path.exists(images_folder):
+        os.makedirs(images_folder)
+
     contents = await image.read()
     with open(f"static/images/species/{image.filename}", "wb") as f:
         f.write(contents)

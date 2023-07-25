@@ -15,7 +15,10 @@ def get_image_by_url(db: Session, url: str):
 
 #Create a image
 def create_image(db: Session, image: ImageBase) -> Image:
-    db_image = Image(url=image.url)
+    db_image = Image(
+        url=image.url,
+        species_id=image.species_id
+        )
     db.add(db_image)
     db.commit()
     db.refresh(db_image)
