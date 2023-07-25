@@ -23,7 +23,7 @@ from app.schemas.rescue_flora import (
         #Flora relocation
         FloraRelocationBase,
         FloraRelocationResponse,
-        ) 
+        )
 from app.models.rescue_flora import FloraRescueZone, FloraRelocationZone, FloraRescue, PlantNursery, FloraRelocation
 
 # Purpose: CRUD operations for rescue flora
@@ -146,6 +146,7 @@ async def create_flora_rescue(db: Session, flora_rescue: FloraRescueBase) -> Flo
             rescue_date = flora_rescue.rescue_date,
             rescue_area_latitude = flora_rescue.rescue_area_latitude,
             rescue_area_longitude = flora_rescue.rescue_area_longitude,
+            substrate = flora_rescue.substrate,
             dap_bryophyte = flora_rescue.dap_bryophyte,
             height_bryophyte = flora_rescue.height_bryophyte,
             bryophyte_position = flora_rescue.bryophyte_position,
@@ -173,6 +174,7 @@ async def update_flora_rescue(db: Session, flora_rescue_id: int, flora_rescue: F
     db_flora_rescue.rescue_date = flora_rescue.rescue_date
     db_flora_rescue.rescue_area_latitude = flora_rescue.rescue_area_latitude
     db_flora_rescue.rescue_area_longitude = flora_rescue.rescue_area_longitude
+    db_flora_rescue.substrate = flora_rescue.substrate
     db_flora_rescue.dap_bryophyte = flora_rescue.dap_bryophyte
     db_flora_rescue.height_bryophyte = flora_rescue.height_bryophyte
     db_flora_rescue.bryophyte_position = flora_rescue.bryophyte_position

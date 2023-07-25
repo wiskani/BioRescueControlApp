@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field 
 from typing import Optional, List
 from datetime import datetime
 
@@ -35,15 +35,16 @@ class FloraRescueBase(BaseModel):
     rescue_date: datetime = Field(...)
     rescue_area_latitude: float = Field(example= -17.444)
     rescue_area_longitude: float= Field(example= -66.444)
-    dap_bryophyte: float
-    height_bryophyte: float
-    bryophyte_position: int 
+    substrate: Optional [str] = Field(None, max_lengthi=50, example="Geofita")
+    dap_bryophyte: Optional [float] = Field(None)
+    height_bryophyte: Optional [float] = Field(None)
+    bryophyte_position: Optional [int] = Field(None)
     growth_habit: str = Field( max_length=50, example="Geófito")
     epiphyte_phenology: str = Field( max_length=50, example="Esteril")
     health_status_epiphyte: str = Field( max_length=50, example="Bueno")
     microhabitat: str = Field( max_length=50, example="Bosque de ladera")
     other_observations: str = Field(max_length=100)
-    specie_bryophyte_id: int
+    specie_bryophyte_id: Optional[int]= Field(None)
     specie_epiphyte_id: int
     rescue_zone_id: int
 

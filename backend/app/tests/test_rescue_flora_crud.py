@@ -309,6 +309,7 @@ def test_create_flora_rescue() -> None:
             "rescue_date": "2021-10-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
+            "substrate": "test_substrate",    
             "dap_bryophyte": 1.0,
             "height_bryophyte": 1.0,
             "bryophyte_position": 1,
@@ -329,6 +330,7 @@ def test_create_flora_rescue() -> None:
     assert data["rescue_date"] == "2021-10-10T00:00:00"
     assert data["rescue_area_latitude"] >= -90 and data["rescue_area_latitude"] <= 90
     assert data["rescue_area_longitude"] >= -180 and data["rescue_area_longitude"] <= 180
+    assert data["substrate"] == "test_substrate"
     assert data["dap_bryophyte"] == 1.0
     assert data["height_bryophyte"] == 1.0
     assert data["bryophyte_position"] == 1
@@ -350,6 +352,7 @@ def test_create_flora_rescue_that_already_exists() -> None:
             "rescue_date": "2021-12-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
+            "substrate": "test_substrate2",
             "dap_bryophyte": 2.0,
             "height_bryophyte": 2.0,
             "bryophyte_position": 2,
@@ -372,6 +375,7 @@ def test_create_flora_rescue_that_already_exists() -> None:
             "rescue_date": "2021-12-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
+            "substrate": "test_substrate2",
             "dap_bryophyte": 2.0,
             "height_bryophyte": 2.0,
             "bryophyte_position": 2,
@@ -396,6 +400,7 @@ def test_read_all_flora_rescues() -> None:
             "rescue_date": "2021-12-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
+            "substrate": "test_substrate3",
             "dap_bryophyte": 3.0,
             "height_bryophyte": 3.0,
             "bryophyte_position": 3,
@@ -418,6 +423,7 @@ def test_read_all_flora_rescues() -> None:
             "rescue_date": "2021-12-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
+            "substrate": "test_substrate4",
             "dap_bryophyte": 4.0,
             "height_bryophyte": 4.0,
             "bryophyte_position": 4,
@@ -448,6 +454,7 @@ def test_read_flora_rescue_by_id() -> None:
             "rescue_date": "2021-12-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
+            "substrate": "test_substrate5",
             "dap_bryophyte": 5.0,
             "height_bryophyte": 5.0,
             "bryophyte_position": 5,
@@ -473,6 +480,7 @@ def test_read_flora_rescue_by_id() -> None:
     assert data["rescue_date"] == "2021-12-10T00:00:00"
     assert data["rescue_area_latitude"] >= -90 and data["rescue_area_latitude"] <= 90
     assert data["rescue_area_longitude"] >= -180 and data["rescue_area_longitude"] <= 180
+    assert data["substrate"] == "test_substrate5"
     assert data["dap_bryophyte"] == 5.0
     assert data["height_bryophyte"] == 5.0
     assert data["bryophyte_position"] == 5
@@ -500,6 +508,7 @@ def test_update_flora_rescue() -> None:
             "rescue_date": "2021-12-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
+            "substrate": "test_substrate6",
             "dap_bryophyte": 6.0,
             "height_bryophyte": 6.0,
             "bryophyte_position": 6,
@@ -524,6 +533,7 @@ def test_update_flora_rescue() -> None:
             "rescue_date": "2021-12-11T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
+            "substrate": "test_substrate7",
             "dap_bryophyte": 7.0,
             "height_bryophyte": 7.0,
             "bryophyte_position": 7,
@@ -544,6 +554,7 @@ def test_update_flora_rescue() -> None:
     assert data["rescue_date"] == "2021-12-11T00:00:00"
     assert data["rescue_area_latitude"] >= -90 and data["rescue_area_latitude"] <= 90
     assert data["rescue_area_longitude"] >= -180 and data["rescue_area_longitude"] <= 180
+    assert data["substrate"] == "test_substrate7"
     assert data["dap_bryophyte"] == 7.0
     assert data["height_bryophyte"] == 7.0
     assert data["bryophyte_position"] == 7
@@ -565,6 +576,7 @@ def test_update_flora_rescue_not_found() -> None:
             "rescue_date": "2021-12-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
+            "substrate": "test_substrate8",
             "dap_bryophyte": 8.0,
             "height_bryophyte": 8.0,
             "bryophyte_position": 8,
@@ -589,6 +601,7 @@ def test_delete_flora_rescue() -> None:
             "rescue_date": "2021-12-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
+            "substrate": "test_substrate9",
             "dap_bryophyte": 9.0,
             "height_bryophyte": 9.0,
             "bryophyte_position": 9,

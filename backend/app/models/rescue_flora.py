@@ -43,9 +43,10 @@ class FloraRescue(_database.Base):
     rescue_date: Column[datetime] = Column(DateTime)
     rescue_area_latitude: Column[float] = Column(Float, index=True)
     rescue_area_longitude: Column[float] = Column(Float, index=True)
-    dap_bryophyte: Column[float] = Column(Float, index=True)
-    height_bryophyte: Column[float] = Column(Float, index=True)
-    bryophyte_position: Column[int] = Column(Integer, index=True)
+    substrate: Column[str] = Column(String, index=True, nullable=True)
+    dap_bryophyte: Column[float] = Column(Float, index=True, nullable=True)
+    height_bryophyte: Column[float] = Column(Float, index=True, nullable=True)
+    bryophyte_position: Column[int] = Column(Integer, index=True, nullable=True)
     growth_habit: Column[str] = Column(String, index=True)
     epiphyte_phenology: Column[str] = Column(String, index=True)
     health_status_epiphyte: Column[str] = Column(String, index=True)
@@ -54,7 +55,7 @@ class FloraRescue(_database.Base):
     created_at: Column[datetime] = Column(DateTime, default=datetime.now())
 
     #Relationship for species
-    specie_bryophyte_id: Column[int] = Column(Integer, ForeignKey("species.id"))
+    specie_bryophyte_id: Column[int] = Column(Integer, ForeignKey("species.id"), nullable=True)
     specie_bryophyte = relationship("Specie", back_populates="flora_rescue_bryophyte", foreign_keys=[specie_bryophyte_id])
 
     specie_epiphyte_id: Column[int] = Column(Integer, ForeignKey("species.id"))
