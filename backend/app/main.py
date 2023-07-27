@@ -2,6 +2,7 @@ import getpass
 
 from functools import lru_cache
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from pydantic import EmailStr, ValidationError
 
@@ -24,11 +25,26 @@ _database.Base.metadata.create_all(bind=engine)
 
 app:FastAPI = FastAPI()
 
+#Middleware for CORS
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
+
 #New decorator for cache
 @lru_cache()
 def get_settings():
     return Settings()
 
+#Routes
 app.include_router(_auth.router)
 app.include_router(_users.router)
 app.include_router(_species.router)

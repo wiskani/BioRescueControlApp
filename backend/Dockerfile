@@ -9,11 +9,11 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /code
 
 # Install dependencies
-COPY requirements.txt /code/
+COPY requirements.txt /code
 RUN pip install -r requirements.txt
 
 # Copy project
-COPY . /code/
+COPY . /code
 
-# Expose port 8000
-EXPOSE 8000
+# start the server
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
