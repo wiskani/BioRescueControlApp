@@ -1,9 +1,45 @@
+version: '3.8'
+
 services:
-  code:
+  fastapi:
     build: ./backend
     container_name: simple-python-server
     command: uvicorn app.main:app --host 0.0.0.0 --port 80 --reload
     ports:
       - 8080:80
     volumes:
-      - .:/code
+      - ./backend:/fastapi
+
+  db:
+    container_name: pg_container
+    image: postgres:15-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    env_file:
+      - ./backend/.env
+
+  admin:
+    container_name: pg_admin_container
+    image: dpage/pgadmin4
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    env_file:
+      - ./backend/.env
+
+volumes:
+  db_data:
+
+

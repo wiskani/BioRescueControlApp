@@ -23,6 +23,8 @@ import app.routers.images as _images
 _database.Base.metadata.create_all(bind=engine)
 
 
+
+
 app:FastAPI = FastAPI()
 
 #Middleware for CORS
@@ -53,7 +55,7 @@ app.include_router(_images.router)
 
 #Route is used for import settings
 @app.get("/api/settings")
-async def settings(
+async def _settings(
     settings: Settings = Depends(get_settings)
 ) :
     return {
@@ -67,17 +69,18 @@ async def settings(
 @app.on_event("startup")
 async def startup() -> None:
     db: Session = SessionLocal()
+    settings: Settings  = get_settings()
     if await get_first_user(db) is None:
         id: int = 1
         while True:
             try:
-                email_str: str = input("Enter email: ")
+                email_str: str = settings.FIRST_USER_MAIL
                 email: EmailStr = EmailStr(email_str)
                 break
             except ValidationError:
-                print("El correo es invalido por favor coloque un correo valido")
+                print("email invalid")
         while True:
-            password: str = getpass.getpass("Enter password: ")
+            password: str = settings.FIRST_USER_PASSWORD
             if 7 <= len(password) <= 30:
                 break
             else:

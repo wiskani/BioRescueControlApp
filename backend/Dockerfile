@@ -14,6 +14,7 @@ RUN pip install -r requirements.txt
 
 # Copy project
 COPY . /code
+RUN ls -la /code
 
 # start the server
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
