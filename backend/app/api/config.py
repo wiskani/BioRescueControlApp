@@ -7,6 +7,13 @@ class Settings(BaseSettings):
     APP_MAX: int = 100
     FIRST_USER_MAIL: str
     FIRST_USER_PASSWORD: str
+    POSTGRES_DB: str
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_HOST: str
+    POSTGRES_PORT: str
+    DATABASE_URL: str
+
 
     class Config:
         env_file: str  = ".env" # default .env file

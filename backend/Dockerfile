@@ -6,15 +6,15 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # Set work directory
-WORKDIR /code
+WORKDIR /fastapi
 
 # Install dependencies
-COPY requirements.txt /code
+COPY requirements.txt /fastapi
 RUN pip install -r requirements.txt
 
 # Copy project
-COPY . /code
-RUN ls -la /code
+COPY . /fastapi
+RUN ls -la /fastapi
 
 # start the server
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]

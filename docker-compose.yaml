@@ -22,8 +22,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - db_data:/var/lib/postgresql/data
-    env_file:
-      - ./backend/.env
 
   admin:
     container_name: pg_admin_container
@@ -36,8 +34,6 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-    env_file:
-      - ./backend/.env
 
 volumes:
   db_data:

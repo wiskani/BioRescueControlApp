@@ -3,13 +3,17 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from app.db.database import Base
+from app.db.database import Base, engine
+from app.routers.config import get_settings, Settings
 import app.models.users
 import app.models.species
 import app.models.rescue_flora
 import app.models.images
 
 from alembic import context
+
+settings: Settings = get_settings()
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -44,9 +48,10 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    url = settings.DATABASE_URL
+
     context.configure(
-        url="sqlite:///./sql_app.db",
+        url=url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -63,7 +68,6 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    from app.db.database import engine
     connectable = engine
 
     with connectable.connect() as connection:
