@@ -5,8 +5,6 @@ from datetime import datetime
 class FloraRescueZoneBase(BaseModel):
     name: str = Field(..., max_length=50)
     description: str = Field(..., max_length=100)
-    latitude: float
-    longitude: float
 
     class Config:
         orm_mode = True

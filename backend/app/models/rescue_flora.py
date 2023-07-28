@@ -10,8 +10,6 @@ class FloraRescueZone(_database.Base):
     id:Column[int]= Column(Integer, primary_key=True, index=True)
     name: Column[str] = Column(String, index=True)
     description: Column[str] = Column(String, index=True)
-    latitude: Column[float] = Column(Float, index=True)
-    longitude: Column[float] = Column(Float, index=True)
     created_at: Column[datetime] = Column(DateTime, default=datetime.now())
 
     #Relationship for flora_rescue

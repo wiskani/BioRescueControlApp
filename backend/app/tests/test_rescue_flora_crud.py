@@ -24,8 +24,6 @@ def test_create_rescue_zone() -> None:
         "/api/rescue_flora/rescue_zone/", json={
             "name": "test_rescue_zone",
             "description": "test_description",
-            "longitude": create_longitude(),
-            "latitude": create_latitude(),
         },
     )
     assert response.status_code == 201, response.text
@@ -43,8 +41,6 @@ def test_create_rescue_zone_that_already_exists() -> None:
         "/api/rescue_flora/rescue_zone/", json={
             "name": "test_rescue_zone2",
             "description": "test_description2",
-            "longitude": create_longitude(),
-            "latitude": create_latitude(),
         },
     )
     assert response.status_code == 201, response.text
@@ -54,8 +50,6 @@ def test_create_rescue_zone_that_already_exists() -> None:
         "/api/rescue_flora/rescue_zone/", json={
             "name": "test_rescue_zone2",
             "description": "test_description",
-            "longitude": create_longitude(),
-            "latitude": create_latitude(),
         },
     )
     assert response.status_code == 400, response.text
@@ -67,8 +61,6 @@ def test_get_all_rescue_zones() -> None:
         "/api/rescue_flora/rescue_zone/", json={
             "name": "test_rescue_zone3",
             "description": "test_description3",
-            "longitude": create_longitude(),
-            "latitude": create_latitude(),
         },
     )
     assert response.status_code == 201, response.text
@@ -78,8 +70,6 @@ def test_get_all_rescue_zones() -> None:
         "/api/rescue_flora/rescue_zone/", json={
             "name": "test_rescue_zone4",
             "description": "test_description4",
-            "longitude": create_longitude(),
-            "latitude": create_latitude(),
         },
     )
     assert response.status_code == 201, response.text
@@ -97,8 +87,6 @@ def test_get_rescue_zone_by_id() -> None:
         "/api/rescue_flora/rescue_zone/", json={
             "name": "test_rescue_zone5",
             "description": "test_description5",
-            "longitude": create_longitude(),
-            "latitude": create_latitude(),
         },
     )
     assert response.status_code == 201, response.text
@@ -127,8 +115,6 @@ def test_update_rescue_zone_by_id() -> None:
         "/api/rescue_flora/rescue_zone/", json={
             "name": "test_rescue_zone6",
             "description": "test_description6",
-            "longitude": create_longitude(),
-            "latitude": create_latitude(),
         },
     )
     assert response.status_code == 201, response.text
@@ -140,8 +126,6 @@ def test_update_rescue_zone_by_id() -> None:
         f"/api/rescue_flora/rescue_zone/{rescue_zone_id}", json={
             "name": "test_rescue_zone6",
             "description": "test_description6",
-            "longitude": create_longitude(),
-            "latitude": create_latitude(),
         },
     )
     assert response.status_code == 200, response.text
@@ -158,8 +142,6 @@ def test_delete_rescue_zone_by_id() -> None:
         "/api/rescue_flora/rescue_zone/", json={
             "name": "test_rescue_zone7",
             "description": "test_description7",
-            "longitude": create_longitude(),
-            "latitude": create_latitude(),
         },
     )
     assert response.status_code == 201, response.text

@@ -48,8 +48,6 @@ async def create_flora_rescue_zone(db: Session, flora_rescue_zone: FloraRescueZo
     db_flora_rescue_zone = FloraRescueZone(
             name = flora_rescue_zone.name,
             description = flora_rescue_zone.description,
-            latitude = flora_rescue_zone.latitude,
-            longitude = flora_rescue_zone.longitude,
             )
     db.add(db_flora_rescue_zone)
     db.commit()
@@ -63,8 +61,6 @@ async def update_flora_rescue_zone(db: Session, flora_rescue_zone_id: int, flora
         raise HTTPException(status_code=404, detail="Flora rescue zone not found")
     db_flora_rescue_zone.name = flora_rescue_zone.name
     db_flora_rescue_zone.description = flora_rescue_zone.description
-    db_flora_rescue_zone.latitude = flora_rescue_zone.latitude
-    db_flora_rescue_zone.longitude = flora_rescue_zone.longitude
     db.commit()
     db.refresh(db_flora_rescue_zone)
     return db_flora_rescue_zone
