@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     DATABASE_URL: str
+    DATABASE_URL_TEST: str
 
 
     class Config:

@@ -10,6 +10,7 @@ from app.api.config import Settings
 from app.db.database import engine, SessionLocal
 from app.crud.users import get_first_user, create_user
 from app.schemas.users import UsersCreate
+from app.middlewares.error_handler import ErrorHandler
 
 import app.db.database as _database
 
@@ -23,9 +24,13 @@ import app.routers.images as _images
 _database.Base.metadata.create_all(bind=engine)
 
 
-
-
 app:FastAPI = FastAPI()
+app.title = "Rescue Bio API"
+app.version = "0.0.1"
+
+#Middleware for error handler
+app.add_middleware(ErrorHandler)
+
 
 #Middleware for CORS
 origins = [

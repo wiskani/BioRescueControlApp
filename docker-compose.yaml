@@ -24,6 +24,18 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - db_data:/var/lib/postgresql/data
+  
+  db-test:
+    container_name: pg_container_test
+    image: postgres:15-alpine
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_TEST}
+      POSTGRES_USER: ${POSTGRES_USER_TEST}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_TEST}
+    
 
   admin:
     container_name: pg_admin_container

@@ -4,18 +4,19 @@ from sqlalchemy.orm import Session, sessionmaker
 from typing import Generator
 from pydantic import EmailStr
 
+
 from app.db.database import Base
+from app.routers.config import get_settings, Settings
 from app.api.deps import get_db, get_current_user
 from app.schemas.users import Users
 from app.main import app
 
+settings: Settings = get_settings()
 
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL_TEST
 
-engine: Engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-)
+engine: Engine = create_engine(SQLALCHEMY_DATABASE_URL)
 TestingSessionLocal: sessionmaker[Session] = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 #Drop all tables and create new ones

@@ -3,7 +3,7 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from app.routers.config import get_settings, Settings
 
-settings = get_settings()
+settings: Settings = get_settings()
 
 #DATABASE_URL = "sqlite:///./sql_app.db"
 DATABASE_URL = settings.DATABASE_URL

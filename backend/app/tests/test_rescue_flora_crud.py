@@ -5,6 +5,10 @@ from fastapi.testclient import TestClient
 from app.tests.conftest import *
 from app.tests.utils.users import *
 from app.tests.utils.species_example import *
+from app.tests.test_species_crud import test_create_species
+
+
+specie_id = test_create_species()
 
 #fuctions to create a longitude and latitude
 def create_longitude() -> float:
@@ -19,6 +23,7 @@ TEST FOR RESCUE FLORA ZONE ENDPOINTS
 
 #test create a rescue zone endpoint
 def test_create_rescue_zone() -> None:
+    global rescue_ext_zone_id
     # create zone rescue
     response = client.post(
         "/api/rescue_flora/rescue_zone/", json={
@@ -33,6 +38,7 @@ def test_create_rescue_zone() -> None:
     assert data["description"] == "test_description"
     assert data["longitude"] >= -180 and data["longitude"] <= 180
     assert data["latitude"] >= -90 and data["latitude"] <= 90
+    rescue_ext_zone_id = data["id"]
 
 #test create a rescue zone that already exists
 def test_create_rescue_zone_that_already_exists() -> None:
@@ -91,7 +97,7 @@ def test_get_rescue_zone_by_id() -> None:
     )
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
-    rescue_zone_id: int = data["id"]
+    rescue_zone_id = data["id"]
 
     # get a rescue zone by id
     response = client.get(f"/api/rescue_flora/rescue_zone/{rescue_zone_id}")
@@ -119,7 +125,7 @@ def test_update_rescue_zone_by_id() -> None:
     )
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
-    rescue_zone_id: int = data["id"]
+    rescue_zone_id = data["id"]
 
     # update a rescue zone by id
     response = client.put(
@@ -146,7 +152,7 @@ def test_delete_rescue_zone_by_id() -> None:
     )
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
-    rescue_zone_id: int = data["id"]
+    rescue_zone_id = data["id"]
 
     # delete a rescue zone by id
     response = client.delete(f"/api/rescue_flora/rescue_zone/{rescue_zone_id}")
@@ -162,6 +168,7 @@ TEST FOR RELOCATION ZONE ENDPOINTS
 
 #test create a relocartion  zone 
 def test_create_relocation_zone() -> None:
+    global relocation_zone_ext_id
     # create zone relocation
     response = client.post(
         "/api/rescue_flora/relocation_zone/", json={
@@ -169,6 +176,9 @@ def test_create_relocation_zone() -> None:
         },
     )
     assert response.status_code == 201, response.text
+    data: Dict[str, Any] = response.json()
+    assert data["name"] == "test_relocation_zone"
+    relocation_zone_ext_id = data["id"]
 
 #test create a relocation zone that already exists
 def test_create_relocation_zone_that_already_exists() -> None:
@@ -291,7 +301,7 @@ def test_create_flora_rescue() -> None:
             "rescue_date": "2021-10-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
-            "substrate": "test_substrate",    
+            "substrate": "test_substrate",
             "dap_bryophyte": 1.0,
             "height_bryophyte": 1.0,
             "bryophyte_position": 1,
@@ -300,9 +310,9 @@ def test_create_flora_rescue() -> None:
             "health_status_epiphyte": "test_health_status_epiphyte",
             "microhabitat": "test_microhabitat",
             "other_observations": "test_other_observations",
-            "specie_bryophyte_id": 1,
-            "specie_epiphyte_id": 1,
-            "rescue_zone_id": 1,
+            "specie_bryophyte_id": specie_id,
+            "specie_epiphyte_id": specie_id,
+            "rescue_zone_id": rescue_ext_zone_id,
         },
     )
     assert response.status_code == 201, response.text
@@ -321,9 +331,9 @@ def test_create_flora_rescue() -> None:
     assert data["health_status_epiphyte"] == "test_health_status_epiphyte"
     assert data["microhabitat"] == "test_microhabitat"
     assert data["other_observations"] == "test_other_observations"
-    assert data["specie_bryophyte_id"] == 1
-    assert data["specie_epiphyte_id"] == 1
-    assert data["rescue_zone_id"] == 1
+    assert data["specie_bryophyte_id"] == specie_id
+    assert data["specie_epiphyte_id"] == specie_id
+    assert data["rescue_zone_id"] ==  rescue_ext_zone_id
 
 #test create a flora rescue that already exists
 def test_create_flora_rescue_that_already_exists() -> None:
@@ -343,9 +353,9 @@ def test_create_flora_rescue_that_already_exists() -> None:
             "health_status_epiphyte": "test_health_status_epiphyte2",
             "microhabitat": "test_microhabitat2",
             "other_observations": "test_other_observations2",
-            "specie_bryophyte_id": 2,
-            "specie_epiphyte_id": 2,
-            "rescue_zone_id": 2,
+            "specie_bryophyte_id": specie_id,
+            "specie_epiphyte_id": specie_id,
+            "rescue_zone_id": rescue_ext_zone_id,
         },
     )
     assert response.status_code == 201, response.text
@@ -366,9 +376,9 @@ def test_create_flora_rescue_that_already_exists() -> None:
             "health_status_epiphyte": "test_health_status_epiphyte2",
             "microhabitat": "test_microhabitat2",
             "other_observations": "test_other_observations2",
-            "specie_bryophyte_id": 2,
-            "specie_epiphyte_id": 2,
-            "rescue_zone_id": 2,
+            "specie_bryophyte_id": specie_id,
+            "specie_epiphyte_id": specie_id,
+            "rescue_zone_id": rescue_ext_zone_id,
         },
     )
     assert response.status_code == 400, response.text
@@ -391,9 +401,9 @@ def test_read_all_flora_rescues() -> None:
             "health_status_epiphyte": "test_health_status_epiphyte3",
             "microhabitat": "test_microhabitat3",
             "other_observations": "test_other_observations3",
-            "specie_bryophyte_id": 3,
-            "specie_epiphyte_id": 3,
-            "rescue_zone_id": 3,
+            "specie_bryophyte_id": specie_id,
+            "specie_epiphyte_id": specie_id,
+            "rescue_zone_id": rescue_ext_zone_id,
         },
     )
     assert response.status_code == 201, response.text
@@ -414,9 +424,9 @@ def test_read_all_flora_rescues() -> None:
             "health_status_epiphyte": "test_health_status_epiphyte4",
             "microhabitat": "test_microhabitat4",
             "other_observations": "test_other_observations4",
-            "specie_bryophyte_id": 4,
-            "specie_epiphyte_id": 4,
-            "rescue_zone_id": 4,
+            "specie_bryophyte_id": specie_id,
+            "specie_epiphyte_id": specie_id,
+            "rescue_zone_id": rescue_ext_zone_id,
         },
     )
     assert response.status_code == 201, response.text
@@ -445,9 +455,9 @@ def test_read_flora_rescue_by_id() -> None:
             "health_status_epiphyte": "test_health_status_epiphyte5",
             "microhabitat": "test_microhabitat5",
             "other_observations": "test_other_observations5",
-            "specie_bryophyte_id": 5,
-            "specie_epiphyte_id": 5,
-            "rescue_zone_id": 5,
+            "specie_bryophyte_id": specie_id,
+            "specie_epiphyte_id": specie_id,
+            "rescue_zone_id": rescue_ext_zone_id,
         },
     )
     assert response.status_code == 201, response.text
@@ -471,16 +481,16 @@ def test_read_flora_rescue_by_id() -> None:
     assert data["health_status_epiphyte"] == "test_health_status_epiphyte5"
     assert data["microhabitat"] == "test_microhabitat5"
     assert data["other_observations"] == "test_other_observations5"
-    assert data["specie_bryophyte_id"] == 5
-    assert data["specie_epiphyte_id"] == 5
-    assert data["rescue_zone_id"] == 5
+    assert data["specie_bryophyte_id"] == specie_id
+    assert data["specie_epiphyte_id"] == specie_id
+    assert data["rescue_zone_id"] == rescue_ext_zone_id
 
 #test get a flora rescue by id not found
 def test_read_flora_rescue_by_id_not_found() -> None:
     # get a flora rescue by id not found
     response = client.get("/api/rescue_flora/0")
     assert response.status_code == 404, response.text
-    
+
 #test update a flora rescue
 def test_update_flora_rescue() -> None:
     # create flora rescue
@@ -499,9 +509,9 @@ def test_update_flora_rescue() -> None:
             "health_status_epiphyte": "test_health_status_epiphyte6",
             "microhabitat": "test_microhabitat6",
             "other_observations": "test_other_observations6",
-            "specie_bryophyte_id": 6,
-            "specie_epiphyte_id": 6,
-            "rescue_zone_id": 6,
+            "specie_bryophyte_id": specie_id,
+            "specie_epiphyte_id": specie_id,
+            "rescue_zone_id": rescue_ext_zone_id,
         },
     )
     assert response.status_code == 201, response.text
@@ -524,9 +534,9 @@ def test_update_flora_rescue() -> None:
             "health_status_epiphyte": "test_health_status_epiphyte7",
             "microhabitat": "test_microhabitat7",
             "other_observations": "test_other_observations7",
-            "specie_bryophyte_id": 7,
-            "specie_epiphyte_id": 7,
-            "rescue_zone_id": 7,
+            "specie_bryophyte_id": specie_id,
+            "specie_epiphyte_id": specie_id,
+            "rescue_zone_id": rescue_ext_zone_id,
         },
     )
     assert response.status_code == 200, response.text
@@ -545,9 +555,9 @@ def test_update_flora_rescue() -> None:
     assert data["health_status_epiphyte"] == "test_health_status_epiphyte7"
     assert data["microhabitat"] == "test_microhabitat7"
     assert data["other_observations"] == "test_other_observations7"
-    assert data["specie_bryophyte_id"] == 7
-    assert data["specie_epiphyte_id"] == 7
-    assert data["rescue_zone_id"] == 7
+    assert data["specie_bryophyte_id"] == specie_id
+    assert data["specie_epiphyte_id"] == specie_id
+    assert data["rescue_zone_id"] == rescue_ext_zone_id
 
 #test update a flora rescue not found
 def test_update_flora_rescue_not_found() -> None:
@@ -567,9 +577,9 @@ def test_update_flora_rescue_not_found() -> None:
             "health_status_epiphyte": "test_health_status_epiphyte8",
             "microhabitat": "test_microhabitat8",
             "other_observations": "test_other_observations8",
-            "specie_bryophyte_id": 8,
-            "specie_epiphyte_id": 8,
-            "rescue_zone_id": 8,
+            "specie_bryophyte_id": specie_id,
+            "specie_epiphyte_id": specie_id,
+            "rescue_zone_id": rescue_ext_zone_id,
         },
     )
     assert response.status_code == 404, response.text
@@ -592,9 +602,9 @@ def test_delete_flora_rescue() -> None:
             "health_status_epiphyte": "test_health_status_epiphyte9",
             "microhabitat": "test_microhabitat9",
             "other_observations": "test_other_observations9",
-            "specie_bryophyte_id": 9,
-            "specie_epiphyte_id": 9,
-            "rescue_zone_id": 9,
+            "specie_bryophyte_id": specie_id,
+            "specie_epiphyte_id": specie_id,
+            "rescue_zone_id": rescue_ext_zone_id,
         },
     )
     assert response.status_code == 201, response.text
