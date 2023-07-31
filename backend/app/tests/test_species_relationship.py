@@ -4,18 +4,18 @@ from sqlalchemy.orm import Session
 
 from app.tests.conftest import *
 from app.models.species import Specie, Genus
+from app.tests.utils.species_example import  *
 
+db: Session = next(override_get_db())
 
 #test for relationship between species and genus
 def test_relation_with_genus()-> None:
-
-    db: Session = next(override_get_db())
 
     #create a genus
     response = client.post(
         "/api/genuses/", json={
             "genus_name": "test_genus name",
-            "family_id": 1101,
+            "family_id": create_family_id(),
         },
     )
     assert response.status_code == 201, response.text

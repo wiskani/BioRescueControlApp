@@ -4,9 +4,18 @@ from typing import Dict, Any
 from sqlalchemy.orm import Session
 
 from app.tests.conftest import *
+from app.tests.utils.species_example import *
+from app.tests.utils.flora_rescue_example import *
 from app.models.rescue_flora import FloraRescueZone, FloraRelocationZone, FloraRescue, FloraRelocation, PlantNursery
 
+
 db: Session = next(override_get_db())
+
+SPECIE_ID =  create_specie_id()
+RESCUE_ZONE_ID = create_random_rescue_zone_id()
+RELOCATION_ZONE_ID = create_random_relocation_zone_id()
+FLORA_RESCUE_ID = create_random_flora_rescue_id()
+
 
 
 #test for relationships between flora rescue zone and flora_rescue
@@ -40,8 +49,8 @@ def test_flora_rescue_zone_relationships() -> None:
             "health_status_epiphyte": "test_health_status_epiphyte",
             "microhabitat": "test_microhabitat",
             "other_observations": "test_other_observations",
-            "specie_bryophyte_id": 1,
-            "specie_epiphyte_id": 1,
+            "specie_bryophyte_id": SPECIE_ID,
+            "specie_epiphyte_id": SPECIE_ID,
             "rescue_zone_id": rescue_zone_id,
         },
     )
@@ -63,8 +72,8 @@ def test_flora_rescue_zone_relationships() -> None:
             "health_status_epiphyte": "test_health_status_epiphyte",
             "microhabitat": "test_microhabitat",
             "other_observations": "test_other_observations",
-            "specie_bryophyte_id": 1,
-            "specie_epiphyte_id": 1,
+            "specie_bryophyte_id": SPECIE_ID,
+            "specie_epiphyte_id": SPECIE_ID,
             "rescue_zone_id": rescue_zone_id,
         },
     )
@@ -111,8 +120,8 @@ def test_flora_rescue_zone_relationships() -> None:
             "health_status_epiphyte": "test_health_status_epiphyte",
             "microhabitat": "test_microhabitat",
             "other_observations": "test_other_observations",
-            "specie_bryophyte_id": 1,
-            "specie_epiphyte_id": 1,
+            "specie_bryophyte_id": SPECIE_ID,
+            "specie_epiphyte_id": SPECIE_ID,
             "rescue_zone_id": rescue_zone_id,
         },
         {
@@ -129,8 +138,8 @@ def test_flora_rescue_zone_relationships() -> None:
             "health_status_epiphyte": "test_health_status_epiphyte",
             "microhabitat": "test_microhabitat",
             "other_observations": "test_other_observations",
-            "specie_bryophyte_id": 1,
-            "specie_epiphyte_id": 1,
+            "specie_bryophyte_id": SPECIE_ID,
+            "specie_epiphyte_id": SPECIE_ID,
             "rescue_zone_id": rescue_zone_id,
         },
     ]
@@ -167,9 +176,9 @@ def test_rescue_zone_plant_nursery_relationship():
             "substrate": "test_substrate10",
             "departure_date": "2021-12-10T00:00:00",
             "rescue_zone_id": rescue_zone_id,
-            "flora_rescue_id": 10,
-            "specie_id": 10,
-            "relocation_zone_id": 10,
+            "flora_rescue_id": FLORA_RESCUE_ID,
+            "specie_id": SPECIE_ID,
+            "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
     assert response.status_code == 201, response.text
@@ -188,9 +197,9 @@ def test_rescue_zone_plant_nursery_relationship():
             "substrate": "test_substrate12",
             "departure_date": "2021-12-10T00:00:00",
             "rescue_zone_id": rescue_zone_id,
-            "flora_rescue_id": 12,
-            "specie_id": 12,
-            "relocation_zone_id": 12,
+            "flora_rescue_id": FLORA_RESCUE_ID,
+            "specie_id": SPECIE_ID,
+            "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
     assert response.status_code == 201, response.text
@@ -231,9 +240,9 @@ def test_rescue_zone_plant_nursery_relationship():
             "substrate": "test_substrate10",
             "departure_date": datetime(2021, 12, 10, 0, 0),
             "rescue_zone_id": rescue_zone_id,
-            "flora_rescue_id": 10,
-            "specie_id": 10,
-            "relocation_zone_id": 10,
+            "flora_rescue_id": FLORA_RESCUE_ID,
+            "specie_id": SPECIE_ID,
+            "relocation_zone_id": RELOCATION_ZONE_ID,
         },
         {
             "entry_date": datetime(2021, 12, 10, 0, 0),
@@ -247,9 +256,9 @@ def test_rescue_zone_plant_nursery_relationship():
             "substrate": "test_substrate12",
             "departure_date": datetime(2021, 12, 10, 0, 0),
             "rescue_zone_id": rescue_zone_id,
-            "flora_rescue_id": 12,
-            "specie_id": 12,
-            "relocation_zone_id": 12,
+            "flora_rescue_id": FLORA_RESCUE_ID,
+            "specie_id": SPECIE_ID,
+            "relocation_zone_id": RELOCATION_ZONE_ID,
         }
     ]
 
@@ -289,9 +298,9 @@ def test_rescue_zone_flora_relocation_relationship():
             "relocation_number": 140,
             "other_observations": "test_other_observations140",
             "rescue_zone_id": rescue_zone_id,
-            "flora_rescue_id": 140,
-            "specie_bryophyte_id": 140,
-            "relocation_zone_id": 140,
+            "flora_rescue_id": FLORA_RESCUE_ID,
+            "specie_bryophyte_id": SPECIE_ID,
+            "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
 
@@ -313,9 +322,9 @@ def test_rescue_zone_flora_relocation_relationship():
             "relocation_number": 150,
             "other_observations": "test_other_observations150",
             "rescue_zone_id": rescue_zone_id,
-            "flora_rescue_id": 150,
-            "specie_bryophyte_id": 150,
-            "relocation_zone_id": 150,
+            "flora_rescue_id": FLORA_RESCUE_ID,
+            "specie_bryophyte_id": SPECIE_ID,
+            "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
 
@@ -365,9 +374,9 @@ def test_rescue_zone_flora_relocation_relationship():
             "relocation_number": 140,
             "other_observations": "test_other_observations140",
             "rescue_zone_id": rescue_zone_id,
-            "flora_rescue_id": 140,
-            "specie_bryophyte_id": 140,
-            "relocation_zone_id": 140,
+            "flora_rescue_id": FLORA_RESCUE_ID,
+            "specie_bryophyte_id": SPECIE_ID,
+            "relocation_zone_id": RELOCATION_ZONE_ID,
         },
         {
             "relocation_date": datetime(2021, 12, 10, 0, 0),
@@ -385,9 +394,9 @@ def test_rescue_zone_flora_relocation_relationship():
             "relocation_number": 150,
             "other_observations": "test_other_observations150",
             "rescue_zone_id": rescue_zone_id,
-            "flora_rescue_id": 150,
-            "specie_bryophyte_id": 150,
-            "relocation_zone_id": 150,
+            "flora_rescue_id": FLORA_RESCUE_ID,
+            "specie_bryophyte_id": SPECIE_ID,
+            "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     ]
 
@@ -420,9 +429,9 @@ def test_relationship_flora_rescue_zone_plant_nursery():
             "is_phytosanitary_treatment": False,
             "substrate": "test_substrate12",
             "departure_date": "2021-12-10T00:00:00",
-            "rescue_zone_id": 12,
-            "flora_rescue_id": 12,
-            "specie_id": 12,
+            "rescue_zone_id": RESCUE_ZONE_ID,
+            "flora_rescue_id": FLORA_RESCUE_ID,
+            "specie_id": SPECIE_ID,
             "relocation_zone_id": relocation_zone_id,
         },
     )
@@ -431,9 +440,7 @@ def test_relationship_flora_rescue_zone_plant_nursery():
     #create plant_nursery 2
     response = client.post(
         "/api/rescue_flora/plant_nursery", json={
-            "entry_date": "2021-12-10T00:00:00",
-            "cod_reg": "106",
-            "health_status_epiphyte": "test_health_status_epiphyte20",
+            "entry_date": "2021-12-10T00:00:00", "cod_reg": "106", "health_status_epiphyte": "test_health_status_epiphyte20",
             "flowering_date": "2021-12-10T00:00:00",
             "vegetative_state": "test_vegetative_state20",
             "treatment_product": "test_treatment_product20",
@@ -441,9 +448,9 @@ def test_relationship_flora_rescue_zone_plant_nursery():
             "is_phytosanitary_treatment": False,
             "substrate": "test_substrate22",
             "departure_date": "2021-12-10T00:00:00",
-            "rescue_zone_id": 22,
-            "flora_rescue_id": 22,
-            "specie_id": 22,
+            "rescue_zone_id": RESCUE_ZONE_ID,
+            "flora_rescue_id": FLORA_RESCUE_ID,
+            "specie_id": SPECIE_ID,
             "relocation_zone_id": relocation_zone_id,
         },
     )
@@ -486,9 +493,9 @@ def test_relationship_flora_rescue_zone_plant_nursery():
             "is_phytosanitary_treatment": False,
             "substrate": "test_substrate12",
             "departure_date": datetime(2021, 12, 10, 0, 0),
-            "rescue_zone_id": 12,
-            "flora_rescue_id": 12,
-            "specie_id": 12,
+            "rescue_zone_id": RESCUE_ZONE_ID,
+            "flora_rescue_id": FLORA_RESCUE_ID,
+            "specie_id": SPECIE_ID,
             "relocation_zone_id": relocation_zone_id,
         },
         {
@@ -502,9 +509,9 @@ def test_relationship_flora_rescue_zone_plant_nursery():
             "is_phytosanitary_treatment": False,
             "substrate": "test_substrate22",
             "departure_date": datetime(2021, 12, 10, 0, 0),
-            "rescue_zone_id": 22,
-            "flora_rescue_id": 22,
-            "specie_id": 22,
+            "rescue_zone_id": RESCUE_ZONE_ID,
+            "flora_rescue_id": FLORA_RESCUE_ID,
+            "specie_id": SPECIE_ID,
             "relocation_zone_id": relocation_zone_id,
         },
     ]
