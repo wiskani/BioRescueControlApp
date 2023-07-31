@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 class Species (BaseModel):
     scientific_name: str = Field(..., example="Ailuropoda melanoleuca")
-    common_name: str = Field( example="Giant Panda")
+    specific_epithet: str = Field( example="Panda")
     class Config:
         orm_mode: bool = True
 
@@ -12,7 +12,7 @@ class SpeciesCreate (Species):
     genus_id: int = Field(...)
     class Config:
         orm_mode: bool = True
-    
+
 class SpeciesResponse (Species):
     id: int = Field(...)
     genus_id: int = Field(...)
@@ -21,11 +21,12 @@ class SpeciesResponse (Species):
 
 class Genuses (BaseModel):
     genus_name: str = Field(..., example="Ailuropoda")
+    genus_full_name: str = Field(None, example="Ailuropoda melanoleuca")
     class Config:
         orm_mode: bool = True
 
 class GenusesCreate (Genuses):
-    family_id: int 
+    family_id: int
     class Config:
         orm_mode: bool = True
 
@@ -41,7 +42,7 @@ class Families (BaseModel):
         orm_mode: bool = True
 
 class FamiliesCreate (Families):
-    order_id: int 
+    order_id: int
     class Config:
         orm_mode: bool = True
 
@@ -62,7 +63,7 @@ class OrdersResponse (Orders):
         orm_mode: bool = True
 
 class OrdersCreate (Orders):
-    class__id: int 
+    class__id: int
     class Config:
         orm_mode: bool = True
 

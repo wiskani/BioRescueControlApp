@@ -15,7 +15,7 @@ async def get_specie_by_name(db: Session, scientific_name: str) -> Union[Specie,
 async def create_specie(db: Session, specie: SpeciesCreate) -> Specie:
     db_specie = Specie(
         scientific_name = specie.scientific_name,
-        common_name = specie.common_name,
+        specific_epithet = specie.specific_epithet,
         genus_id = specie.genus_id
     )
     db.add(db_specie)
@@ -37,7 +37,7 @@ async def update_specie(db: Session, specie_id: int, specie: SpeciesCreate) -> S
     if not db_specie:
         raise HTTPException(status_code=404, detail="Specie not found")
     db_specie.scientific_name = specie.scientific_name
-    db_specie.common_name = specie.common_name
+    db_specie.specific_epithet = specie.specific_epithet
     db_specie.genus_id = specie.genus_id
     db.commit()
     db.refresh(db_specie)
@@ -56,6 +56,7 @@ async def delete_specie(db: Session, specie_id: int) -> Specie:
 async def create_genus(db: Session, genus: GenusesCreate) -> Genus:
     db_genus = Genus(
         genus_name = genus.genus_name,
+        genus_full_name = genus.genus_full_name,
         family_id = genus.family_id
     )
     db.add(db_genus)
@@ -81,6 +82,7 @@ async def update_genus(db: Session, genus_id: int, genus: GenusesCreate) -> Genu
     if not db_genus:
         raise HTTPException(status_code=404, detail="Genus not found")
     db_genus.genus_name = genus.genus_name
+    db_genus.genus_full_name = genus.genus_full_name
     db_genus.family_id = genus.family_id
     db.commit()
     db.refresh(db_genus)

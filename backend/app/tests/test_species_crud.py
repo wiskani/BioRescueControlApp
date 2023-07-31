@@ -383,6 +383,7 @@ def test_create_genus() -> None:
     response = client.post(
         "/api/genuses/", json={
             "genus_name": name_genus,
+            "genus_full_name": name_genus,
             "family_id": family_id,
         },
     )
@@ -399,12 +400,14 @@ def test_create_genus_invalid_name() -> None:
     response = client.post(
         "/api/genuses/", json={
             "genus_name": name_genus,
+            "genus_full_name": name_genus,
             "family_id": family_id,
         },
     )
     response = client.post(
         "/api/genuses/", json={
             "genus_name": name_genus,
+            "genus_full_name": name_genus,
             "family_id": family_id,
         },
     )
@@ -417,24 +420,28 @@ def test_update_genus() -> None:
     response = client.post(
         "/api/genuses/", json={
             "genus_name": name_genus,
+            "genus_full_name": name_genus,
             "family_id": family_id,
         },
     )
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     assert data["genus_name"] == name_genus
+    assert data["genus_full_name"] == name_genus
 
     name_genus = random_string()
 
     response = client.put(
         f"/api/genuses/{data['id']}", json={
             "genus_name": name_genus,
+            "genus_full_name": name_genus,
             "family_id": family_id,
         },
     )
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
     assert data["genus_name"] == name_genus
+    assert data["genus_full_name"] == name_genus
 
 #test get all genuses
 def test_get_all_genuses() -> None:
@@ -445,6 +452,7 @@ def test_get_all_genuses() -> None:
     response = client.post(
         "/api/genuses/", json={
             "genus_name": name_genus,
+            "genus_full_name": name_genus,
             "family_id": family_id,
         },
     )
@@ -452,6 +460,7 @@ def test_get_all_genuses() -> None:
     response = client.post(
         "/api/genuses/", json={
             "genus_name": name_genus2,
+            "genus_full_name": name_genus2,
             "family_id": family_id,
         },
     )
@@ -470,6 +479,7 @@ def test_get_genus_by_id() -> None:
     response = client.post(
         "/api/genuses/", json={
             "genus_name": name_genus,
+            "genus_full_name": name_genus,
             "family_id": family_id,
         },
     )
@@ -492,14 +502,14 @@ def test_create_species() -> int :
     response = client.post(
         "/api/species/", json={
             "scientific_name": name_scientific,
-            "common_name": name_common,
+            "specific_epithet": name_common,
             "genus_id": genus_id,
         },
     )
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     assert data["scientific_name"] == name_scientific
-    assert data["common_name"] == name_common
+    assert data["specific_epithet"] == name_common
     assert "id" in data
     return data["id"]
 
@@ -512,14 +522,14 @@ def test_create_species_invalid_name() -> None:
     response = client.post(
         "/api/species/", json={
             "scientific_name": name_scientific,
-            "common_name": name_common,
+            "specific_epithet": name_common,
             "genus_id": genus_id,
         },
     )
     response = client.post(
         "/api/species/", json={
             "scientific_name": name_scientific,
-            "common_name": name_common,
+            "specific_epithet": name_common,
             "genus_id": genus_id,
         },
     )
@@ -533,14 +543,14 @@ def test_update_species() -> None:
     response = client.post(
         "/api/species/", json={
             "scientific_name": name_scientific,
-            "common_name": name_common,
+            "specific_epithet": name_common,
             "genus_id": genus_id,
         },
     )
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     assert data["scientific_name"] == name_scientific
-    assert data["common_name"] == name_common
+    assert data["specific_epithet"] == name_common
 
     name_scientific = random_string()
     name_common = random_string()
@@ -548,14 +558,14 @@ def test_update_species() -> None:
     response = client.put(
         f"/api/species/{data['id']}", json={
             "scientific_name": name_scientific,
-            "common_name": name_common,
+            "specific_epithet": name_common,
             "genus_id": genus_id,
         },
     )
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
     assert data["scientific_name"] == name_scientific
-    assert data["common_name"] == name_common
+    assert data["specific_epithet"] == name_common
 
 #test get all species
 def test_get_all_species() -> None:
@@ -568,7 +578,7 @@ def test_get_all_species() -> None:
     response = client.post(
         "/api/species/", json={
             "scientific_name": name_scientific,
-            "common_name": name_common,
+            "specific_epithet": name_common,
             "genus_id": genus_id,
         },
     )
@@ -576,7 +586,7 @@ def test_get_all_species() -> None:
     response = client.post(
         "/api/species/", json={
             "scientific_name": name_scientific2,
-            "common_name": name_common2,
+            "specific_epithet": name_common2,
             "genus_id": genus_id,
         },
     )
@@ -596,7 +606,7 @@ def test_get_species_by_id() -> None:
     response = client.post(
         "/api/species/", json={
             "scientific_name": name_scientific,
-            "common_name": name_common,
+            "specific_epithet": name_common,
             "genus_id": genus_id,
         },
     )

@@ -58,7 +58,7 @@ def create_specie_id() ->int:
         db_specie = Specie(
             id=specie_id,
             scientific_name = "Panthera leo",
-            common_name = "Lion",
+            specific_epithet = "Leo",
             genus_id = db_genus.id,
         )
         db.add(db_specie)

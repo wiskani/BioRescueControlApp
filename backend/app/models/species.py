@@ -9,7 +9,7 @@ class Specie(_database.Base):
     __tablename__:str = "species"
     id: Column = Column(Integer, primary_key=True, index=True)
     scientific_name: Column = Column(String, unique=True, index=True)
-    common_name: Column = Column(String, index=True)
+    specific_epithet: Column = Column(String, index=True)
     create_at: Column[datetime] = Column(DateTime, default=datetime.utcnow)
     # Relationships
     genus_id: Column = Column(Integer, ForeignKey("genus.id"))
@@ -33,6 +33,7 @@ class Genus(_database.Base):
     __tablename__:str = "genus"
     id: Column = Column(Integer, primary_key=True, index=True)
     genus_name: Column = Column(String, unique=True, index=True)
+    genus_full_name: Column = Column(String, unique=True, index=True, nullable=True)
     create_at: Column[datetime] = Column(DateTime, default=datetime.utcnow)
 
     # Relationships

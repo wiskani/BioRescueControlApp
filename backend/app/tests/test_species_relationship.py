@@ -15,6 +15,7 @@ def test_relation_with_genus()-> None:
     response = client.post(
         "/api/genuses/", json={
             "genus_name": "test_genus name",
+            "genus_full_name": "test_genus common name",
             "family_id": create_family_id(),
         },
     )
@@ -26,7 +27,7 @@ def test_relation_with_genus()-> None:
     response = client.post(
         "/api/species/", json={
             "scientific_name": "test_species name 1",
-            "common_name": "test_species common name 1",
+            "specific_epithet": "test_species common name 1",
             "genus_id": genus,
         },
     )
@@ -36,7 +37,7 @@ def test_relation_with_genus()-> None:
     response = client.post(
         "/api/species/", json={
             "scientific_name": "test_species name 2",
-            "common_name": "test_species common name 2",
+            "specific_epithet": "test_species common name 2",
             "genus_id": genus,
         },
     )
@@ -46,7 +47,7 @@ def test_relation_with_genus()-> None:
     response = client.post(
         "/api/species/", json={
             "scientific_name": "test_species name 3",
-            "common_name": "test_species common name 3",
+            "specific_epithet": "test_species common name 3",
             "genus_id": 10011,
         },
     )
@@ -57,7 +58,7 @@ def test_relation_with_genus()-> None:
     species_data = [
             {
                 "scientific_name": s.scientific_name,
-                "common_name": s.common_name,
+                "specific_epithet": s.specific_epithet,
                 "genus_id": s.genus_id
                 }
             for s in species
@@ -67,12 +68,12 @@ def test_relation_with_genus()-> None:
     expected_data = [
             {
                 "scientific_name": "test_species name 1",
-                "common_name": "test_species common name 1",
+                "specific_epithet": "test_species common name 1",
                 "genus_id": genus
                 },
             {
                 "scientific_name": "test_species name 2",
-                "common_name": "test_species common name 2",
+                "specific_epithet": "test_species common name 2",
                 "genus_id": genus
                 }
             ]
