@@ -43,6 +43,8 @@ class FloraRescueBase(BaseModel):
     microhabitat: str = Field( max_length=50, example="Bosque de ladera")
     other_observations: str = Field(max_length=100)
     specie_bryophyte_id: Optional[int]= Field(None)
+    genus_bryophyte_id: Optional[int]= Field(None)
+    family_bryophyte_id: Optional[int]= Field(None)
     specie_epiphyte_id: int
     rescue_zone_id: int
 

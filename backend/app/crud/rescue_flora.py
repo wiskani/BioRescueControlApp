@@ -152,6 +152,8 @@ async def create_flora_rescue(db: Session, flora_rescue: FloraRescueBase) -> Flo
             microhabitat = flora_rescue.microhabitat,
             other_observations = flora_rescue.other_observations,
             specie_bryophyte_id = flora_rescue.specie_bryophyte_id,
+            genus_bryophyte_id = flora_rescue.genus_bryophyte_id,
+            family_bryophyte_id = flora_rescue.family_bryophyte_id,
             specie_epiphyte_id = flora_rescue.specie_epiphyte_id,
             rescue_zone_id = flora_rescue.rescue_zone_id,
             )
@@ -180,6 +182,8 @@ async def update_flora_rescue(db: Session, flora_rescue_id: int, flora_rescue: F
     db_flora_rescue.microhabitat = flora_rescue.microhabitat
     db_flora_rescue.other_observations = flora_rescue.other_observations
     db_flora_rescue.specie_bryophyte_id = flora_rescue.specie_bryophyte_id
+    db_flora_rescue.genus_bryophyte_id = flora_rescue.genus_bryophyte_id
+    db_flora_rescue.family_bryophyte_id = flora_rescue.family_bryophyte_id
     db_flora_rescue.specie_epiphyte_id = flora_rescue.specie_epiphyte_id
     db_flora_rescue.rescue_zone_id = flora_rescue.rescue_zone_id
     db.commit()

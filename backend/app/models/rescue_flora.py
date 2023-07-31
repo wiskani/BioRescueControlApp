@@ -59,6 +59,14 @@ class FloraRescue(_database.Base):
     specie_epiphyte_id: Column[int] = Column(Integer, ForeignKey("species.id"))
     specie_epiphyte = relationship("Specie", back_populates="flora_rescue_epiphyte", foreign_keys=[specie_epiphyte_id])
 
+    #Relationship for genus
+    genus_bryophyte_id: Column[int] = Column(Integer, ForeignKey("genus.id"), nullable=True)
+    genus_bryophyte = relationship("Genus", back_populates="flora_rescue_bryophyte", foreign_keys=[genus_bryophyte_id])
+
+    #Relationship for family
+    family_bryophyte_id: Column[int] = Column(Integer, ForeignKey("family.id"), nullable=True)
+    family_bryophyte = relationship("Family", back_populates="flora_rescue_bryophyte", foreign_keys=[family_bryophyte_id])
+
     # Relationships for flora_rescue_zone
     rescue_zone_id: Column[int] = Column(Integer, ForeignKey("flora_rescue_zone.id"))
     flora_rescue_zone = relationship("FloraRescueZone", back_populates="flora_rescue")

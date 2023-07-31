@@ -36,10 +36,15 @@ class Genus(_database.Base):
     genus_full_name: Column = Column(String, unique=True, index=True, nullable=True)
     create_at: Column[datetime] = Column(DateTime, default=datetime.utcnow)
 
-    # Relationships
+    # Relationships specie and family
     family_id: Column = Column(Integer, ForeignKey("family.id"))
     family = relationship("Family", back_populates="genus")
     species = relationship("Specie", back_populates="genus")
+
+    # Relationships with flora_rescue
+    flora_rescue_bryophyte = relationship("FloraRescue", back_populates="genus_bryophyte", foreign_keys="FloraRescue.genus_bryophyte_id")
+
+
 
 class Family(_database.Base):
     __tablename__:str = "family"
@@ -47,10 +52,13 @@ class Family(_database.Base):
     family_name: Column = Column(String, unique=True, index=True)
     create_at: Column[datetime] = Column(DateTime, default=datetime.utcnow)
 
-    # Relationships
+    # Relationships order and genus
     order_id: Column = Column(Integer, ForeignKey("order.id"))
     order = relationship("Order", back_populates="family")
     genus = relationship("Genus", back_populates="family")
+
+    # Relationships with flora_rescue
+    flora_rescue_bryophyte = relationship("FloraRescue", back_populates="family_bryophyte", foreign_keys="FloraRescue.family_bryophyte_id")
 
 class Order(_database.Base):
     __tablename__:str = "order"

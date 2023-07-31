@@ -3,7 +3,8 @@ from pydantic import BaseModel, Field
 
 #schema for image
 class ImageBase(BaseModel):
-    url: str
+    url: str = Field(None)
+    atribute: str= Field(None)
     species_id: int
     class Config:
         orm_mode = True

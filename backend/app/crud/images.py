@@ -17,6 +17,7 @@ def get_image_by_url(db: Session, url: str):
 def create_image(db: Session, image: ImageBase) -> Image:
     db_image = Image(
         url=image.url,
+        atribute=image.atribute,
         species_id=image.species_id
         )
     db.add(db_image)
@@ -38,6 +39,7 @@ def update_image_by_id(db: Session, image_id: int, image: ImageBase) -> Image:
     if not db_image:
         raise HTTPException(status_code=404, detail="Image not found")
     db_image.url = image.url
+    db_image.atribute = image.atribute
     db.commit()
     db.refresh(db_image)
     return db_image

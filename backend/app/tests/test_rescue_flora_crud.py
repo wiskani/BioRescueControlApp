@@ -19,6 +19,10 @@ def create_latitude() -> float:
 
 specie_id = create_specie_id()
 
+GENUS_ID = create_genus_id()
+
+FAMILY_ID = create_family_id()
+
 RESCUE_ZONE_ID = create_random_rescue_zone_id()
 
 RELOCATION_ZONE_ID = create_random_relocation_zone_id()
@@ -310,6 +314,8 @@ def test_create_flora_rescue() -> None:
             "microhabitat": "test_microhabitat",
             "other_observations": "test_other_observations",
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
@@ -331,6 +337,8 @@ def test_create_flora_rescue() -> None:
     assert data["microhabitat"] == "test_microhabitat"
     assert data["other_observations"] == "test_other_observations"
     assert data["specie_bryophyte_id"] == specie_id
+    assert data["genus_bryophyte_id"] == GENUS_ID
+    assert data["family_bryophyte_id"] == FAMILY_ID
     assert data["specie_epiphyte_id"] == specie_id
     assert data["rescue_zone_id"] ==  RESCUE_ZONE_ID
 
@@ -355,6 +363,8 @@ def test_create_flora_rescue_that_already_exists() -> None:
             "microhabitat": "test_microhabitat2",
             "other_observations": "test_other_observations2",
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
@@ -378,6 +388,8 @@ def test_create_flora_rescue_that_already_exists() -> None:
             "microhabitat": "test_microhabitat2",
             "other_observations": "test_other_observations2",
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
             "rescue_zone_id": RELOCATION_ZONE_ID,
         },
@@ -403,6 +415,8 @@ def test_read_all_flora_rescues() -> None:
             "microhabitat": "test_microhabitat3",
             "other_observations": "test_other_observations3",
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
@@ -426,6 +440,8 @@ def test_read_all_flora_rescues() -> None:
             "microhabitat": "test_microhabitat4",
             "other_observations": "test_other_observations4",
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
@@ -457,6 +473,8 @@ def test_read_flora_rescue_by_id() -> None:
             "microhabitat": "test_microhabitat5",
             "other_observations": "test_other_observations5",
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
@@ -483,6 +501,8 @@ def test_read_flora_rescue_by_id() -> None:
     assert data["microhabitat"] == "test_microhabitat5"
     assert data["other_observations"] == "test_other_observations5"
     assert data["specie_bryophyte_id"] == specie_id
+    assert data["genus_bryophyte_id"] == GENUS_ID
+    assert data["family_bryophyte_id"] == FAMILY_ID
     assert data["specie_epiphyte_id"] == specie_id
     assert data["rescue_zone_id"] == RESCUE_ZONE_ID
 
@@ -511,6 +531,8 @@ def test_update_flora_rescue() -> None:
             "microhabitat": "test_microhabitat6",
             "other_observations": "test_other_observations6",
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
@@ -536,6 +558,8 @@ def test_update_flora_rescue() -> None:
             "microhabitat": "test_microhabitat7",
             "other_observations": "test_other_observations7",
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
@@ -557,6 +581,8 @@ def test_update_flora_rescue() -> None:
     assert data["microhabitat"] == "test_microhabitat7"
     assert data["other_observations"] == "test_other_observations7"
     assert data["specie_bryophyte_id"] == specie_id
+    assert data["genus_bryophyte_id"] == GENUS_ID
+    assert data["family_bryophyte_id"] == FAMILY_ID
     assert data["specie_epiphyte_id"] == specie_id
     assert data["rescue_zone_id"] == RESCUE_ZONE_ID
 
@@ -579,6 +605,8 @@ def test_update_flora_rescue_not_found() -> None:
             "microhabitat": "test_microhabitat8",
             "other_observations": "test_other_observations8",
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
@@ -604,6 +632,8 @@ def test_delete_flora_rescue() -> None:
             "microhabitat": "test_microhabitat9",
             "other_observations": "test_other_observations9",
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
