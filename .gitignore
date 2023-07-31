@@ -243,4 +243,5 @@ next-env.d.ts
 
 #ingnore all jpg images
 *.jpg
+*.jpeg
 ```
