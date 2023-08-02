@@ -25,6 +25,8 @@ async def upload_plant_nursery(
 ):
     if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
         df = pd.read_excel(file.file)
+        #replace null if cell is empty
+        df = df.fillna('null')
 
         for _, row in df.iterrows():
             try:
