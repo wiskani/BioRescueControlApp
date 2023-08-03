@@ -20,6 +20,7 @@ import app.routers.users as _users
 import app.routers.species as _species
 import app.routers.rescue_flora as _rescue_flora
 import app.routers.images as _images
+import app.routers.files as _files
 
 _database.Base.metadata.create_all(bind=engine)
 
@@ -57,6 +58,7 @@ app.include_router(_users.router)
 app.include_router(_species.router)
 app.include_router(_rescue_flora.router)
 app.include_router(_images.router)
+app.include_router(_files.router)
 
 #Route is used for import settings
 @app.get("/api/settings")
