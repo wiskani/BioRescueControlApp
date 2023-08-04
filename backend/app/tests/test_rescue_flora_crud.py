@@ -1,5 +1,5 @@
 from requests import Response
-from typing import Dict, Any, Union
+from typing import Dict, Any, Union, List
 from fastapi.testclient import TestClient
 
 from app.tests.conftest import *
@@ -672,10 +672,7 @@ def test_create_plant_nursery() -> None:
             "is_phytosanitary_treatment": False,
             "substrate": "test_substrate10",
             "departure_date": "2021-12-10T00:00:00",
-            "rescue_zone_id": RESCUE_ZONE_ID,
             "flora_rescue_id": FLORA_RESCUE_ID,
-            "specie_id": specie_id,
-            "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
     assert response.status_code == 201, response.text
@@ -691,10 +688,7 @@ def test_create_plant_nursery() -> None:
     assert data["is_phytosanitary_treatment"] == False
     assert data["substrate"] == "test_substrate10"
     assert data["departure_date"] == "2021-12-10T00:00:00"
-    assert data["rescue_zone_id"] == RESCUE_ZONE_ID
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
-    assert data["specie_id"] == specie_id
-    assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
 
 #test create a plant nursery that already exists
 def test_create_plant_nursery_already_exists() -> None:
@@ -711,10 +705,7 @@ def test_create_plant_nursery_already_exists() -> None:
             "is_phytosanitary_treatment": False,
             "substrate": "test_substrate10",
             "departure_date": "2021-12-10T00:00:00",
-            "rescue_zone_id": RESCUE_ZONE_ID,
             "flora_rescue_id": FLORA_RESCUE_ID,
-            "specie_id": specie_id,
-            "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
     assert response.status_code == 400, response.text
@@ -734,10 +725,7 @@ def test_read_all_plant_nursery() -> None:
             "is_phytosanitary_treatment": False,
             "substrate": "test_substrate11",
             "departure_date": "2021-12-10T00:00:00",
-            "rescue_zone_id": RESCUE_ZONE_ID,
             "flora_rescue_id": FLORA_RESCUE_ID,
-            "specie_id": specie_id,
-            "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
     assert response.status_code == 201, response.text
@@ -753,10 +741,7 @@ def test_read_all_plant_nursery() -> None:
             "is_phytosanitary_treatment": False,
             "substrate": "test_substrate12",
             "departure_date": "2021-12-10T00:00:00",
-            "rescue_zone_id": RESCUE_ZONE_ID,
             "flora_rescue_id": FLORA_RESCUE_ID,
-            "specie_id": specie_id,
-            "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
     assert response.status_code == 201, response.text
@@ -782,10 +767,7 @@ def test_read_plant_nursery() -> None:
             "is_phytosanitary_treatment": False,
             "substrate": "test_substrate13",
             "departure_date": "2021-12-10T00:00:00",
-            "rescue_zone_id": RESCUE_ZONE_ID,
             "flora_rescue_id": FLORA_RESCUE_ID,
-            "specie_id": specie_id,
-            "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
     assert response.status_code == 201, response.text
@@ -803,10 +785,7 @@ def test_read_plant_nursery() -> None:
     assert data["is_phytosanitary_treatment"] == False
     assert data["substrate"] == "test_substrate13"
     assert data["departure_date"] == "2021-12-10T00:00:00"
-    assert data["rescue_zone_id"] == RESCUE_ZONE_ID
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
-    assert data["specie_id"] == specie_id
-    assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
 
 """
 TEST FOR RELOCATION FLORA
@@ -830,7 +809,6 @@ def test_create_relocation_flora() -> None:
             "infested_lianas": "Poco",
             "relocation_number": 14,
             "other_observations": "test_other_observations14",
-            "rescue_zone_id": RESCUE_ZONE_ID,
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
             "relocation_zone_id": RELOCATION_ZONE_ID,
@@ -853,7 +831,6 @@ def test_create_relocation_flora() -> None:
     assert data["infested_lianas"] == "Poco"
     assert data["relocation_number"] == 14
     assert data["other_observations"] == "test_other_observations14"
-    assert data["rescue_zone_id"] == RESCUE_ZONE_ID
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
     assert data["specie_bryophyte_id"] == specie_id
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
@@ -877,7 +854,6 @@ def test_create_relocation_flora_already_exists() -> None:
             "infested_lianas": "Poco",
             "relocation_number": 14,
             "other_observations": "test_other_observations14",
-            "rescue_zone_id": RESCUE_ZONE_ID,
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
             "relocation_zone_id": RELOCATION_ZONE_ID,
@@ -904,7 +880,6 @@ def test_read_all_relocation_flora() -> None:
             "infested_lianas": "Poco",
             "relocation_number": 15,
             "other_observations": "test_other_observations15",
-            "rescue_zone_id": RESCUE_ZONE_ID,
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
             "relocation_zone_id": RELOCATION_ZONE_ID,
@@ -927,7 +902,6 @@ def test_read_all_relocation_flora() -> None:
             "infested_lianas": "Poco",
             "relocation_number": 16,
             "other_observations": "test_other_observations16",
-            "rescue_zone_id": RESCUE_ZONE_ID,
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
             "relocation_zone_id": RELOCATION_ZONE_ID,
@@ -959,7 +933,6 @@ def test_read_relocation_flora() -> None:
             "infested_lianas": "Poco",
             "relocation_number": 17,
             "other_observations": "test_other_observations17",
-            "rescue_zone_id": RESCUE_ZONE_ID,
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
             "relocation_zone_id": RELOCATION_ZONE_ID,
@@ -986,7 +959,6 @@ def test_read_relocation_flora() -> None:
     assert data["infested_lianas"] == "Poco"
     assert data["relocation_number"] == 17
     assert data["other_observations"] == "test_other_observations17"
-    assert data["rescue_zone_id"] == RESCUE_ZONE_ID
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
     assert data["specie_bryophyte_id"] == specie_id
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
@@ -1010,7 +982,6 @@ def test_update_relocation_flora() -> None:
             "infested_lianas": "Poco",
             "relocation_number": 18,
             "other_observations": "test_other_observations18",
-            "rescue_zone_id": RESCUE_ZONE_ID,
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
             "relocation_zone_id": RELOCATION_ZONE_ID,
@@ -1036,7 +1007,6 @@ def test_update_relocation_flora() -> None:
             "infested_lianas": "Poco",
             "relocation_number": 19,
             "other_observations": "test_other_observations19",
-            "rescue_zone_id": RESCUE_ZONE_ID,
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
             "relocation_zone_id": RELOCATION_ZONE_ID,
@@ -1058,7 +1028,6 @@ def test_update_relocation_flora() -> None:
     assert data["infested_lianas"] == "Poco"
     assert data["relocation_number"] == 19
     assert data["other_observations"] == "test_other_observations19"
-    assert data["rescue_zone_id"] == RESCUE_ZONE_ID
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
     assert data["specie_bryophyte_id"] == specie_id
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
@@ -1082,7 +1051,6 @@ def test_delete_relocation_flora() -> None:
             "infested_lianas": "Poco",
             "relocation_number": 20,
             "other_observations": "test_other_observations20",
-            "rescue_zone_id": RESCUE_ZONE_ID,
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
             "relocation_zone_id": RELOCATION_ZONE_ID,

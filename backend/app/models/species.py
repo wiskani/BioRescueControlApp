@@ -19,9 +19,6 @@ class Specie(_database.Base):
     flora_rescue_bryophyte = relationship("FloraRescue", back_populates="specie_bryophyte", foreign_keys="FloraRescue.specie_bryophyte_id")
     flora_rescue_epiphyte = relationship("FloraRescue", back_populates="specie_epiphyte", foreign_keys="FloraRescue.specie_epiphyte_id")
 
-    # Relationships with plant_nursery
-    plant_nursery = relationship("PlantNursery", back_populates="specie")
-
     # Relationships with flora_relocation
     flora_relocation_bryophyte = relationship("FloraRelocation", back_populates="specie_bryophyte")
 

@@ -68,10 +68,7 @@ class PlantNurseryBase(BaseModel):
     is_phytosanitary_treatment:bool
     substrate: str = Field( max_length=50)
     departure_date: datetime
-    rescue_zone_id: int
     flora_rescue_id: int
-    specie_id: int
-    relocation_zone_id: int
 
     class Config:
         orm_mode = True
@@ -97,7 +94,6 @@ class FloraRelocationBase(BaseModel):
     infested_lianas: str = Field(example="Poco")
     relocation_number: int = Field(...)
     other_observations: str = Field(max_length=100)
-    rescue_zone_id: int
     flora_rescue_id: int
     specie_bryophyte_id: int
     relocation_zone_id: int

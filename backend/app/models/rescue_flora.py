@@ -15,11 +15,6 @@ class FloraRescueZone(_database.Base):
     #Relationship for flora_rescue
     flora_rescue = relationship("FloraRescue", back_populates="flora_rescue_zone")
 
-    #Relationship for plant_nursery
-    plant_nursery = relationship("PlantNursery", back_populates="flora_rescue_zone")
-
-    #Relationship for flora_relocation
-    flora_relocation = relationship("FloraRelocation", back_populates="flora_rescue_zone")
 
 class FloraRelocationZone(_database.Base):
     __tablename__ = "flora_relocation_zone"
@@ -27,11 +22,9 @@ class FloraRelocationZone(_database.Base):
     name: Column[str] = Column(String, index=True)
     created_at: Column[datetime] = Column(DateTime, default=datetime.now())
 
-    #Relationship for plant_nursery
-    plant_nursery = relationship("PlantNursery", back_populates="flora_relocation_zone")
-
     #Relationship for flora_relocation
     flora_relocation = relationship("FloraRelocation", back_populates="flora_relocation_zone")
+
 
 
 class FloraRescue(_database.Base):
@@ -93,21 +86,10 @@ class PlantNursery(_database.Base):
     departure_date: Column[datetime] = Column(DateTime)
     created_at: Column[datetime] = Column(DateTime, default=datetime.now())
 
-    #Relationship for flora_rescue_zone
-    rescue_zone_id: Column[int] = Column(Integer, ForeignKey("flora_rescue_zone.id"))
-    flora_rescue_zone = relationship("FloraRescueZone", back_populates="plant_nursery")
-
     #Relationship for flora_rescue
     flora_rescue_id: Column[int] = Column(Integer, ForeignKey("flora_rescue.id"))
     flora_rescue = relationship("FloraRescue", back_populates="plant_nursery")
 
-    #Relationship for species
-    specie_id: Column[int] = Column(Integer, ForeignKey("species.id"))
-    specie = relationship("Specie", back_populates="plant_nursery")
-
-    #Relationship for flora_relocation_zone
-    relocation_zone_id: Column[int] = Column(Integer, ForeignKey("flora_relocation_zone.id"))
-    flora_relocation_zone = relationship("FloraRelocationZone", back_populates="plant_nursery")
 
 class FloraRelocation(_database.Base):
     __tablename__ = "flora_relocation"
@@ -127,10 +109,6 @@ class FloraRelocation(_database.Base):
     relocation_number: Column[int] = Column(Integer, index=True)
     other_observations: Column[str] = Column(String, index=True)
     created_at: Column[datetime] = Column(DateTime, default=datetime.now())
-
-    #Relationship for rescue_zone 
-    rescue_zone_id: Column[int] = Column(Integer, ForeignKey("flora_rescue_zone.id"))
-    flora_rescue_zone = relationship("FloraRescueZone", back_populates="flora_relocation")
 
     #Relationship for flora rescue
     flora_rescue_id: Column[int] = Column(Integer, ForeignKey("flora_rescue.id"))

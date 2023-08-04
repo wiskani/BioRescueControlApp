@@ -44,10 +44,7 @@ async def upload_plant_nursery(
                     is_phytosanitary_treatment=row['is_phytosanitary_treatment'],
                     substrate=row['substrate'],
                     departure_date=row['departure_date'],
-                    rescue_zone_id=row['rescue_zone_id'],
                     flora_rescue_id=row['flora_rescue_id'],
-                    specie_id=row['specie_id'],
-                    relocation_zone_id=row['relocation_zone_id'],
                 )
                 await create_plant_nursery(db, new_plant_nursery)
         except Exception as e:
@@ -104,7 +101,6 @@ async def upload_flora_relocation(
                     infested_lianas=row['infested_lianas'],
                     relocation_number=row['relocation_number'],
                     other_observations=row['other_observations'],
-                    rescue_zone_id=row['rescue_zone_id'],
                     flora_rescue_id=row['flora_rescue_id'],
                     specie_bryophyte_id=row['specie_bryophyte_id'],
                     relocation_zone_id=row['relocation_zone_id'],
