@@ -97,26 +97,34 @@ class FloraRelocation(_database.Base):
     relocation_date: Column[datetime] = Column(DateTime)
     size: Column[float] = Column(Float, index=True)
     epiphyte_phenology: Column[str] = Column(String, index=True)
-    johanson_zone: Column[str] = Column(String, index=True)
+    johanson_zone: Column[str] = Column(String, index=True, nullable=True)
     relocation_position_latitude: Column[float] = Column(Float, index=True)
     relocation_position_longitude: Column[float] = Column(Float, index=True)
     bryophyte_number: Column[int] = Column(Integer, index=True)
-    dap_bryophyte: Column[float] = Column(Float, index=True)
-    height_bryophyte: Column[float] = Column(Float, index=True)
-    bryophyte_position: Column[int] = Column(Integer, index=True)
-    bark_type: Column[str] = Column(String, index=True)
-    infested_lianas: Column[str] = Column(String, index=True)
-    relocation_number: Column[int] = Column(Integer, index=True)
-    other_observations: Column[str] = Column(String, index=True)
+    dap_bryophyte: Column[float] = Column(Float, index=True, nullable=True)
+    height_bryophyte: Column[float] = Column(Float, index=True, nullable=True)
+    bark_type: Column[str] = Column(String, index=True, nullable=True)
+    infested_lianas: Column[str] = Column(String, index=True, nullable=True)
+    relocation_number: Column[int] = Column(Integer, index=True, nullable=True)
+    other_observations: Column[str] = Column(String, index=True, nullable=True)
     created_at: Column[datetime] = Column(DateTime, default=datetime.now())
 
     #Relationship for flora rescue
     flora_rescue_id: Column[int] = Column(Integer, ForeignKey("flora_rescue.id"))
     flora_rescue = relationship("FloraRescue", back_populates="flora_relocation")
 
-    #Relationship for species
-    specie_bryophyte_id: Column[int] = Column(Integer, ForeignKey("species.id"))
+    #Relationship for species bryophyte
+    specie_bryophyte_id: Column[int] = Column(Integer, ForeignKey("species.id"), nullable=True)
     specie_bryophyte = relationship("Specie", back_populates="flora_relocation_bryophyte")
+
+    #Relationship for genus bryophyte
+    genus_bryophyte_id: Column[int] = Column(Integer, ForeignKey("genus.id"), nullable=True)
+    genus_bryophyte = relationship("Genus", back_populates="flora_relocation_bryophyte")
+
+    #Relationship for family bryophyte
+    family_bryophyte_id: Column[int] = Column(Integer, ForeignKey("family.id"), nullable=True)
+    family_bryophyte = relationship("Family", back_populates="flora_relocation_bryophyte")
+
 
     #Relationship for flora_relocation_zone
     relocation_zone_id: Column[int] = Column(Integer, ForeignKey("flora_relocation_zone.id"))

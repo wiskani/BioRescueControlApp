@@ -292,13 +292,14 @@ async def create_flora_relocation(db: Session, flora_relocation: FloraRelocation
             bryophyte_number = flora_relocation.bryophyte_number,
             dap_bryophyte = flora_relocation.dap_bryophyte,
             height_bryophyte = flora_relocation.height_bryophyte,
-            bryophyte_position = flora_relocation.bryophyte_position,
             bark_type = flora_relocation.bark_type,
             infested_lianas = flora_relocation.infested_lianas,
             relocation_number = flora_relocation.relocation_number,
             other_observations = flora_relocation.other_observations,
             flora_rescue_id = flora_relocation.flora_rescue_id,
             specie_bryophyte_id = flora_relocation.specie_bryophyte_id,
+            genus_bryophyte_id = flora_relocation.genus_bryophyte_id,
+            family_bryophyte_id = flora_relocation.family_bryophyte_id,
             relocation_zone_id = flora_relocation.relocation_zone_id,
             )
     db.add(db_flora_relocation)
@@ -321,13 +322,14 @@ async def update_flora_relocation(db: Session, flora_relocation_id: int, flora_r
     db_flora_relocation.bryophyte_number = flora_relocation.bryophyte_number
     db_flora_relocation.dap_bryophyte = flora_relocation.dap_bryophyte
     db_flora_relocation.height_bryophyte = flora_relocation.height_bryophyte
-    db_flora_relocation.bryophyte_position = flora_relocation.bryophyte_position
     db_flora_relocation.bark_type = flora_relocation.bark_type
     db_flora_relocation.infested_lianas = flora_relocation.infested_lianas
     db_flora_relocation.relocation_number = flora_relocation.relocation_number
     db_flora_relocation.other_observations = flora_relocation.other_observations
     db_flora_relocation.flora_rescue_id = flora_relocation.flora_rescue_id
     db_flora_relocation.specie_bryophyte_id = flora_relocation.specie_bryophyte_id
+    db_flora_relocation.genus_bryophyte_id = flora_relocation.genus_bryophyte_id
+    db_flora_relocation.family_bryophyte_id = flora_relocation.family_bryophyte_id
     db_flora_relocation.relocation_zone_id = flora_relocation.relocation_zone_id
     db.commit()
     db.refresh(db_flora_relocation)

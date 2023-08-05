@@ -804,13 +804,14 @@ def test_create_relocation_flora() -> None:
             "bryophyte_number": 14,
             "dap_bryophyte": 14.0,
             "height_bryophyte": 14.0,
-            "bryophyte_position": 14,
             "bark_type": "test_bark_type14",
             "infested_lianas": "Poco",
             "relocation_number": 14,
             "other_observations": "test_other_observations14",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
@@ -826,13 +827,14 @@ def test_create_relocation_flora() -> None:
     assert data["bryophyte_number"] == 14
     assert data["dap_bryophyte"] == 14.0
     assert data["height_bryophyte"] == 14.0
-    assert data["bryophyte_position"] == 14
     assert data["bark_type"] == "test_bark_type14"
     assert data["infested_lianas"] == "Poco"
     assert data["relocation_number"] == 14
     assert data["other_observations"] == "test_other_observations14"
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
     assert data["specie_bryophyte_id"] == specie_id
+    assert data["genus_bryophyte_id"] == GENUS_ID
+    assert data["family_bryophyte_id"] == FAMILY_ID
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
 
 #test create a relocation flora that already exists
@@ -849,13 +851,14 @@ def test_create_relocation_flora_already_exists() -> None:
             "bryophyte_number": 14,
             "dap_bryophyte": 14.0,
             "height_bryophyte": 14.0,
-            "bryophyte_position": 14,
             "bark_type": "test_bark_type14",
             "infested_lianas": "Poco",
             "relocation_number": 14,
             "other_observations": "test_other_observations14",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
@@ -875,13 +878,14 @@ def test_read_all_relocation_flora() -> None:
             "bryophyte_number": 15,
             "dap_bryophyte": 15.0,
             "height_bryophyte": 15.0,
-            "bryophyte_position": 15,
             "bark_type": "test_bark_type15",
             "infested_lianas": "Poco",
             "relocation_number": 15,
             "other_observations": "test_other_observations15",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
@@ -897,13 +901,14 @@ def test_read_all_relocation_flora() -> None:
             "bryophyte_number": 16,
             "dap_bryophyte": 16.0,
             "height_bryophyte": 16.0,
-            "bryophyte_position": 16,
             "bark_type": "test_bark_type16",
             "infested_lianas": "Poco",
             "relocation_number": 16,
             "other_observations": "test_other_observations16",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
@@ -928,13 +933,14 @@ def test_read_relocation_flora() -> None:
             "bryophyte_number": 17,
             "dap_bryophyte": 17.0,
             "height_bryophyte": 17.0,
-            "bryophyte_position": 17,
             "bark_type": "test_bark_type17",
             "infested_lianas": "Poco",
             "relocation_number": 17,
             "other_observations": "test_other_observations17",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
@@ -954,13 +960,14 @@ def test_read_relocation_flora() -> None:
     assert data["bryophyte_number"] == 17
     assert data["dap_bryophyte"] == 17.0
     assert data["height_bryophyte"] == 17.0
-    assert data["bryophyte_position"] == 17
     assert data["bark_type"] == "test_bark_type17"
     assert data["infested_lianas"] == "Poco"
     assert data["relocation_number"] == 17
     assert data["other_observations"] == "test_other_observations17"
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
     assert data["specie_bryophyte_id"] == specie_id
+    assert data["genus_bryophyte_id"] == GENUS_ID
+    assert data["family_bryophyte_id"] == FAMILY_ID
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
 
 #test update a relocation flora
@@ -977,13 +984,14 @@ def test_update_relocation_flora() -> None:
             "bryophyte_number": 18,
             "dap_bryophyte": 18.0,
             "height_bryophyte": 18.0,
-            "bryophyte_position": 18,
             "bark_type": "test_bark_type18",
             "infested_lianas": "Poco",
             "relocation_number": 18,
             "other_observations": "test_other_observations18",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
@@ -1002,13 +1010,14 @@ def test_update_relocation_flora() -> None:
             "bryophyte_number": 19,
             "dap_bryophyte": 19.0,
             "height_bryophyte": 19.0,
-            "bryophyte_position": 19,
             "bark_type": "test_bark_type19",
             "infested_lianas": "Poco",
             "relocation_number": 19,
             "other_observations": "test_other_observations19",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
@@ -1023,13 +1032,14 @@ def test_update_relocation_flora() -> None:
     assert data["bryophyte_number"] == 19
     assert data["dap_bryophyte"] == 19.0
     assert data["height_bryophyte"] == 19.0
-    assert data["bryophyte_position"] == 19
     assert data["bark_type"] == "test_bark_type19"
     assert data["infested_lianas"] == "Poco"
     assert data["relocation_number"] == 19
     assert data["other_observations"] == "test_other_observations19"
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
     assert data["specie_bryophyte_id"] == specie_id
+    assert data["genus_bryophyte_id"] == GENUS_ID
+    assert data["family_bryophyte_id"] == FAMILY_ID
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
 
 #test delete a relocation flora
@@ -1046,13 +1056,14 @@ def test_delete_relocation_flora() -> None:
             "bryophyte_number": 20,
             "dap_bryophyte": 20.0,
             "height_bryophyte": 20.0,
-            "bryophyte_position": 20,
             "bark_type": "test_bark_type20",
             "infested_lianas": "Poco",
             "relocation_number": 20,
             "other_observations": "test_other_observations20",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
             "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )

@@ -10,6 +10,7 @@ from app.schemas.rescue_flora import PlantNurseryBase, FloraRelocationBase
 
 router = APIRouter()
 
+# Upload plant nursery excel file
 @router.post(
     path="/upload/plant_nursery",
     summary="Upload plant nursery excel file",
@@ -63,6 +64,7 @@ async def upload_plant_nursery(
             detail="File must be an excel file",
         )
 
+# Upload flora relocation excel file
 @router.post(
     path="/upload/flora_relocation",
     summary="Upload flora relocation excel file",
@@ -77,7 +79,21 @@ async def upload_flora_relocation(
         df = pd.read_excel(file.file)
 
         # Replace NaN with None
-        df = df.where(pd.notna(df), None)
+        df = df.fillna('None')
+        
+        # chek if NaN is in df 
+        if df.isnull().values.any():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="File must not contain NaN",
+            )
+
+        #fuction to return None value if value is 'None'
+        def none_value(value):
+            if value == 'None':
+                return None
+            else:
+                return value
 
         # Convert date columns to datetime objects
         date_columns = ['relocation_date' ]
@@ -96,13 +112,14 @@ async def upload_flora_relocation(
                     bryophyte_number=row['bryophyte_number'],
                     dap_bryophyte=row['dap_bryophyte'],
                     height_bryophyte=row['height_bryophyte'],
-                    bryophyte_position=row['bryophyte_position'],
                     bark_type=row['bark_type'],
                     infested_lianas=row['infested_lianas'],
                     relocation_number=row['relocation_number'],
-                    other_observations=row['other_observations'],
+                    other_observations=none_value(row['other_observations']),
                     flora_rescue_id=row['flora_rescue_id'],
-                    specie_bryophyte_id=row['specie_bryophyte_id'],
+                    specie_bryophyte_id=none_value(row['specie_bryophyte_id']),
+                    genus_bryophyte_id=none_value(row['genus_bryophyte_id']),
+                    family_bryophyte_id=none_value(row['family_bryophyte_id']),
                     relocation_zone_id=row['relocation_zone_id'],
                 )
                 await create_flora_relocation(db, new_flora_relocation)

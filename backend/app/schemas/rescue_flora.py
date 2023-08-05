@@ -83,20 +83,21 @@ class FloraRelocationBase(BaseModel):
     relocation_date: datetime = Field(...)
     size: float
     epiphyte_phenology: str = Field( max_length=50, example="Esteril")
-    johanson_zone: str = Field( max_length=50)
+    johanson_zone: Optional [ str ] = Field(None, max_length=50)
     relocation_position_latitude: float
     relocation_position_longitude: float
     bryophyte_number: int = Field(...)
-    dap_bryophyte: float
-    height_bryophyte: float
-    bryophyte_position: int
-    bark_type: str = Field( max_length=50)
-    infested_lianas: str = Field(example="Poco")
+    dap_bryophyte: Optional [ float ]= Field(None)
+    height_bryophyte:Optional [ float ] = Field(None)
+    bark_type: Optional [ str ] = Field(None, max_length=50)
+    infested_lianas: Optional [ str ] = Field(None, example="Poco")
     relocation_number: int = Field(...)
-    other_observations: str = Field(max_length=100)
+    other_observations: Optional [ str ] = Field(None, max_length=100)
     flora_rescue_id: int
-    specie_bryophyte_id: int
-    relocation_zone_id: int
+    specie_bryophyte_id: Optional[int] = Field(default=None)
+    genus_bryophyte_id: Optional[int] = Field(default=None)
+    family_bryophyte_id:Optional [ int ] = Field(None)
+    relocation_zone_id:  int
 
     class Config:
         orm_mode = True
