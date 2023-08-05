@@ -1,6 +1,18 @@
 version: '3.8'
 
 services:
+  nextjs:
+    build: ./frontend
+    container_name: next-server
+    depends_on:
+      - fastapi
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/nextjs
+      - /app/node_nodules
+    environment:
+
   fastapi:
     build: ./backend
     container_name: simple-python-server
