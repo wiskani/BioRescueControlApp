@@ -17,7 +17,7 @@ const handler = NextAuth({
                     body: JSON.stringify(
                         `grant_type=&username=${credentials?.username}&password=${credentials?.password}&scope=&client_id=&client_secret=`
                 )}
-                const res = await fetch("http://127.0.0.1:8000/api/token", requestOptions)
+                const res = await fetch("http://fastapi:80/api/token", requestOptions)
                 const data = await res.json()
                 const token=data.access_token
                 const requestOptions2 = {
@@ -27,7 +27,7 @@ const handler = NextAuth({
                         Authorization: "Bearer " + token
                     },
                 };
-                const res2 = await fetch("http://127.0.0.1:8000/api/users/me", requestOptions2)
+                const res2 = await fetch("http://fastapi:80/api/users/me", requestOptions2)
                 const data_user = await res2.json()
                 if (token && data_user) {
                     const user = {

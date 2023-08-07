@@ -11,7 +11,6 @@ services:
     volumes:
       - ./frontend:/nextjs
       - /app/node_nodules
-    environment:
 
   fastapi:
     build: ./backend
