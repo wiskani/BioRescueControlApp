@@ -14,7 +14,6 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Provider>
-          <Header />
            {children}
         </Provider>
       </body>
