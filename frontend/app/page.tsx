@@ -27,29 +27,31 @@ export default function HomePage({ searchParams }: IProps) {
         redirect('/dashboard')
     }
     return(
-      <section className='bg-gray-50 min-h-screen flex items-center justify-center'> 
+      <section className='bg-emerald-950 min-h-screen flex items-center justify-center'> 
           {/*login container*/}
-          <div className='bg-gray-100 flex rounded-2xl shadow-lg max-w-3xl p-5 items-center'>
+          <div className='bg-gray-50 flex rounded-2xl shadow-lg max-w-3xl p-5 w-full items-center'>
               {/*form*/}
               <div className="md:w-1/2 px-8 md:px-16">
-                <Image src="/images/logo_blue.png" alt="logo" width={150} height={80} className='pb-4' />
-                <p  className='flex items-center mb-6 text-2xl font-semibold text-emerald'>
-                    Rescate de Flora y Fauna
+                <div className="flex justify-center items-center">
+                  <Image src="/images/logo_blue.png" alt="logo" width={150} height={80} className='pb-4' />
+                </div>
+                <p  className='text-center font-bolt  mb-6 text-xl text-emerald-600'>
+                    PLANES DE RESCATE DE FLORA Y FAUNA
                 </p>
-                <h1 className='text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl'>
+                <h1 className='text-center text-lg mb-3 leading-tight tracking-tight text-gray-600 md:text-base'>
                     Iniciar Sesión
                 </h1>
                 <form className='flex flex-col gap-4'>
                     <div >
-                        <label className='block mb-2 text-sm font-medium text-gray-900' >Correo electronico</label>
+                        <label className='block mb-2 text-sm font-medium text-gray-600' >Correo electronico</label>
                         <input 
                             onChange={(e) => (userName.current = e.target.value)}
                             type='email'
-                            className='bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5'
+                            className='bg-border border-emerald-800 text-emerald-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5'
                         />
                     </div>
                     <div>
-                        <label className='block mb-2 text-sm font-medium text-gray-900' >Contraseña</label>
+                        <label className='block mb-2 text-sm font-medium text-gray-600' >Contraseña</label>
                         <input 
                             onChange={(e) => (pass.current = e.target.value)}
                             type='password'
@@ -57,7 +59,7 @@ export default function HomePage({ searchParams }: IProps) {
                          />
                     </div>
                     <div className='flex items-center justify-between' >
-                        <a className='text-sm font-medium text-primary-600 hover:underline'>Olvide mi contraseña</a>
+                        <a className='text-sm font-medium text-gray-600 hover:underline'>Olvide mi contraseña</a>
                     </div>
                     <button
                         onClick={onSubmit}
@@ -72,7 +74,7 @@ export default function HomePage({ searchParams }: IProps) {
               <div className="md:block hidden w-1/2">
                   <Image
                      alt=" "
-                     className="rounded-2xl"
+                     className="rounded-2xl object-cover w-full h-full"
                     width={150}
                       height={225}
                      src="/images/portada.png"/>
