@@ -27,7 +27,7 @@ export default function HomePage({ searchParams }: IProps) {
         redirect('/dashboard')
     }
     return(
-      <section className='bg-emerald-950 min-h-screen flex items-center justify-center'> 
+      <section className='bg-emerald-900 min-h-screen flex items-center justify-center'> 
           {/*login container*/}
           <div className='bg-gray-50 flex rounded-2xl shadow-lg max-w-3xl p-5 w-full items-center'>
               {/*form*/}
