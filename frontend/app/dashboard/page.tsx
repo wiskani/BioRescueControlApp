@@ -4,11 +4,22 @@ import { useSession  } from 'next-auth/react'
 import React,{useEffect}  from 'react';
 import { redirect } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import { ApiRescueFlora } from "../api/rescue_flora/route";
 
 const MyMap =  dynamic(() => import('../components/Map/Map'), {ssr: false});
 
 export default function Dashboard() {
     const { data: session } = useSession();
+    const user = session?.user;
+    const rescueDataFlora =async ()=>{
+      if (user){
+       const data= await ApiRescueFlora({token: user?.token})
+       return data.map((item:FloraRescueData)=>[item.rescue_area_latitude, item.rescue_area_longitude] )
+      }
+      else{
+        return []
+      }
+    }
     useEffect(() => {
         if (!session?.user) {
             redirect('/')

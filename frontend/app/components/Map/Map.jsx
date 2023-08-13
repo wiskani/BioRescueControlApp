@@ -3,11 +3,8 @@ import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
 import "leaflet-defaulticon-compatibility"
 import { LineProyect } from './lineProyect'
-import { ApiFlora } from '../services/api_flora'
 
 const Map = () => {
-    const { data } = ApiFlora()
-    console.log(data)
     const lineOptions = { color: 'red' }
     return(
         <MapContainer

@@ -2,19 +2,17 @@
 
 import { signIn } from "next-auth/react";
 import { useSession  } from 'next-auth/react'
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import Image from 'next/image'
 import { redirect } from 'next/navigation';
 
-interface IProps {
-  searchParams?: { [key: string]: string | string[] | undefined };
-}
-
-export default function HomePage({ searchParams }: IProps) {
+export default function HomePage() {
     const userName = useRef("");
     const pass = useRef("");
-    const { data: session } = useSession();
 
+    const { data: session } = useSession();
+    
+    
     const onSubmit = async () => {
       const result = await signIn("credentials", {
         username: userName.current,
