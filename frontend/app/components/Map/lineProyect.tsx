@@ -1,5 +1,6 @@
+import {LatLngExpression} from "leaflet";
 
-export const LineProyect : number[][]= [
+export const LineProyect : LatLngExpression []= [
         [-17.9031652227,-65.3781224873],
         [-17.9025033682,-65.3779530977],
         [-17.8996966518,-65.3775565252],

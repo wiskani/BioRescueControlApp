@@ -1,10 +1,15 @@
-import { MapContainer, TileLayer,Marker,Popup, Polyline } from 'react-leaflet'
+import { MapContainer, TileLayer,Circle, Polyline } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
 import "leaflet-defaulticon-compatibility"
 import { LineProyect } from './lineProyect'
+import {LatLngExpression} from "leaflet";
 
-const Map = () => {
+interface MapProps {
+    centers: LatLngExpression;
+}
+
+const Map:  React.FC<MapProps>= ({centers})  => {
     const lineOptions = { color: 'red' }
     return(
         <MapContainer
@@ -19,6 +24,7 @@ const Map = () => {
                 attribution='Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>'
                 />
                 <Polyline pathOptions={lineOptions} positions={LineProyect} />
+            <Circle center={centers} radius={2} />
             </MapContainer>
     )
 }
