@@ -6,7 +6,7 @@ import { LineProyect } from './lineProyect'
 import {LatLngExpression} from "leaflet";
 
 interface MapProps {
-    centers: LatLngExpression;
+    centers: LatLngExpression[];
 }
 
 const Map:  React.FC<MapProps>= ({centers})  => {
@@ -24,7 +24,10 @@ const Map:  React.FC<MapProps>= ({centers})  => {
                 attribution='Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>'
                 />
                 <Polyline pathOptions={lineOptions} positions={LineProyect} />
-            <Circle center={centers} radius={2} />
+                {centers.map((center, index) => (
+                    <Circle key={index} center={center} pathOptions={{color: 'blue'}} radius={10} />
+                ))}
+
             </MapContainer>
     )
 }

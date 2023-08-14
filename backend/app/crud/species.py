@@ -1,8 +1,20 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from typing import List, Union
 from fastapi import HTTPException
 
-from app.schemas.species import Species, SpeciesCreate, Genuses, GenusesCreate, Families, FamiliesCreate, Orders, OrdersCreate, Classes, ClassesCreate
+from app.schemas.species import (
+    Species,
+    SpeciesCreate,
+    Genuses,
+    GenusesCreate,
+    Families,
+    FamiliesCreate,
+    Orders,
+    OrdersCreate,
+    Classes,
+    ClassesCreate,
+    SpeciesJoin
+)
 from app.models.species import Specie, Genus, Family, Order, Class_
 
 #Purpose: CRUD operations for Species
@@ -62,7 +74,7 @@ async def create_genus(db: Session, genus: GenusesCreate) -> Genus:
     db.add(db_genus)
     db.commit()
     db.refresh(db_genus)
-    return db_genus 
+    return db_genus
 
 #Get all genuses
 async def get_all_genuses(db: Session) -> List[Genus]:
@@ -106,7 +118,7 @@ async def create_family(db: Session, family: FamiliesCreate) -> Family:
     db.add(db_family)
     db.commit()
     db.refresh(db_family)
-    return db_family    
+    return db_family
 
 #Get all families
 async def get_all_families(db: Session) -> List[Family]:
@@ -223,6 +235,27 @@ async def delete_class(db: Session, class_id: int) -> Class_:
     db.delete(db_class)
     db.commit()
     return db_class
+
+#Make a join species and all other tables
+async def get_all_species_join_(db: Session) -> List[SpeciesJoin]:
+    species= db.query(Specie).options(
+        joinedload(Specie.genus).joinedload(Genus.family).joinedload(Family.order).joinedload(Order.class_).joinedload(Specie.images)
+    ).all()
+
+    result = []
+    for specie in species:
+        images_data = [{"atribute": image.atribute, "url": image.url} for image in specie.images]
+        result.append({
+            "scientific_name": specie.scientific_name,
+            "genus": specie.genus.genus_name,
+            "family": specie.genus.family.family_name,
+            "order": specie.genus.family.order.order_name,
+            "class": specie.genus.family.order.class_.class_name,
+            "images": images_data
+        })
+    return result
+
+
 
 
 

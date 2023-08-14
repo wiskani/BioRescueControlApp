@@ -2,7 +2,26 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Union
 
-from app.schemas.species import Species, SpeciesCreate, Genuses, GenusesCreate, Families, FamiliesCreate, Orders, OrdersCreate, Classes, ClassesCreate, SpeciesResponse, GenusesResponse, FamiliesResponse, OrdersResponse, ClassesResponse
+from app.schemas.species import(
+    Species,
+    SpeciesCreate,
+    Genuses,
+    GenusesCreate,
+    Families,
+    FamiliesCreate,
+    Orders,
+    OrdersCreate,
+    Classes,
+    ClassesCreate,
+    SpeciesResponse,
+    GenusesResponse,
+    FamiliesResponse,
+    OrdersResponse,
+    ClassesResponse,
+
+    #jois
+    SpeciesJoin,
+)
 from app.models.species import Specie, Genus, Family, Order, Class_
 from app.crud.species import (
     # Species
@@ -44,6 +63,9 @@ from app.crud.species import (
     get_all_classes,
     update_class,
     delete_class,
+
+    # Joins
+    get_all_species_join_,
 )
 from app.api.deps import PermissonsChecker, get_db
 
@@ -546,7 +568,19 @@ async def delete_a_class(
         )
     return await delete_class(db, class_id)
 
-
+# Endpoint for species join endpoint
+@router.get(
+    path="/api/species/join",
+    response_model=List[SpeciesJoin],
+    status_code=status.HTTP_200_OK,
+    tags=["Species"],
+    summary="Get all species with all their information",
+)
+async def get_all_species_join(
+    db: Session = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"]))
+) -> List[SpeciesJoin]:
+    return await get_all_species_join_(db)
 
 
 

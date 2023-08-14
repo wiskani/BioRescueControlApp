@@ -1,6 +1,8 @@
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
+from app.schemas.images import ImageBase
+
 
 class Species (BaseModel):
     scientific_name: str = Field(..., example="Ailuropoda melanoleuca")
@@ -81,5 +83,14 @@ class ClassesResponse (Classes):
     id: int = Field(...)
     class Config:
         orm_mode: bool = True
+
+# model for global join species, genus, family, order, class and images
+class SpeciesJoin (BaseModel):
+    scientific_name: str = Field(..., example="Ailuropoda melanoleuca")
+    genus_full_name: str = Field(..., example="Ailuropoda melanoleuca")
+    family_name: str = Field(..., example="Ursidae")
+    order_name: str = Field(..., example="Carnivora")
+    class_name: str = Field(..., example="Mammalia")
+    images: List[ImageBase] 
 
 
