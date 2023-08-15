@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session, joinedload
-from typing import List, Union
+from sqlalchemy import func
+from typing import List, Union, Optional
 from fastapi import HTTPException
 
 from app.schemas.species import (
@@ -16,6 +17,7 @@ from app.schemas.species import (
     SpeciesJoin
 )
 from app.models.species import Specie, Genus, Family, Order, Class_
+from app.models.rescue_flora import FloraRescue
 
 #Purpose: CRUD operations for Species
 
@@ -238,22 +240,47 @@ async def delete_class(db: Session, class_id: int) -> Class_:
 
 #Make a join species and all other tables
 async def get_all_species_join_(db: Session) -> List[SpeciesJoin]:
+
     species= db.query(Specie).options(
-        joinedload(Specie.genus).joinedload(Genus.family).joinedload(Family.order).joinedload(Order.class_).joinedload(Specie.images)
+        joinedload(Specie.genus)
+        .joinedload(Genus.family)
+        .joinedload(Family.order)
+        .joinedload(Order.class_),
+        joinedload(Specie.images)
     ).all()
 
     result = []
     for specie in species:
-        images_data = [{"atribute": image.atribute, "url": image.url} for image in specie.images]
+        total_rescues = await count_flora_rescue_by_specie(db, specie.id)
+        images_data = [
+            {
+                "atribute": image.atribute,
+                "url": image.url,
+                "species_id": specie.id
+            }
+            for image in specie.images
+        ]
         result.append({
             "scientific_name": specie.scientific_name,
-            "genus": specie.genus.genus_name,
-            "family": specie.genus.family.family_name,
-            "order": specie.genus.family.order.order_name,
-            "class": specie.genus.family.order.class_.class_name,
-            "images": images_data
+            "genus_full_name": specie.genus.genus_full_name,
+            "family_name": specie.genus.family.family_name,
+            "order_name": specie.genus.family.order.order_name,
+            "class_name": specie.genus.family.order.class_.class_name,
+            "images": images_data,
+            "total_rescues": total_rescues
         })
     return result
+
+#Count flora_rescue by specie
+async def count_flora_rescue_by_specie(db: Session, specie_id:int) -> int :
+    if not specie_id:
+        return 0
+    total=(
+        db.query(func.count(FloraRescue.id))
+        .filter(FloraRescue.specie_epiphyte_id == specie_id)
+        .scalar()
+    )
+    return total
 
 
 

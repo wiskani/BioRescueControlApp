@@ -570,7 +570,7 @@ async def delete_a_class(
 
 # Endpoint for species join endpoint
 @router.get(
-    path="/api/species/join",
+    path="/api/join/species",
     response_model=List[SpeciesJoin],
     status_code=status.HTTP_200_OK,
     tags=["Species"],

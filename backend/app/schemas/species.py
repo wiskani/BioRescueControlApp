@@ -92,5 +92,8 @@ class SpeciesJoin (BaseModel):
     order_name: str = Field(..., example="Carnivora")
     class_name: str = Field(..., example="Mammalia")
     images: List[ImageBase] 
+    total_rescues: int = Field(example=1)
+    class Config:
+        orm_mode: bool = True
 
 
