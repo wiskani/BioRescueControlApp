@@ -22,6 +22,20 @@ declare global {
         rescue_zone_id: number;
         id: number;
     }
+    interface ImageSpecieData {
+        url: string;
+        atribute: string;
+        specie_id: number;
+    }
+    interface SpecieItemData{
+        scientific_name: string;
+        genus_full_name: string;
+        family_name: string;
+        order_name: string;
+        class_name: string;
+        images: ImageSpecieData[];
+        total_rescues:number;
+    }
     interface Token {
         token: string;
     }
