@@ -5,13 +5,15 @@ import React,{useEffect, useState}  from 'react';
 import { redirect } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { ApiRescueFlora } from "../api/rescue_flora/route";
-import SpecieItem from '../components/Species/SpecieItem';
+import { SpeciesItem } from '../api/species/route';
+import SpecieList from '../components/Species/SpecieList';
 
 const MyMap =  dynamic(() => import('../components/Map/Map'), {ssr: false});
 
 export default function Dashboard() {
     const { data: session } = useSession();
     const [centers, setCenters] = useState([])
+    const [specieData, setSpecieData] = useState([])
     const user = session?.user;
     const rescueDataFlora =async ()=>{
       if (user){
@@ -22,6 +24,16 @@ export default function Dashboard() {
         return []
       }
     }
+    const speciesData = async ()=>{
+        if (user){
+            const data= await SpeciesItem({token: user?.token})
+            return data
+        }
+        else{
+            return []
+        }
+    }
+
     useEffect(() => {
         if (!session?.user) {
             redirect('/')
@@ -30,8 +42,12 @@ export default function Dashboard() {
             rescueDataFlora().then((data)=>{
                 setCenters(data)
             })
+            speciesData().then((data)=>{
+                setSpecieData(data)
+            })
 
         }
+
     }, [session])
         return (
             <div>
@@ -43,7 +59,7 @@ export default function Dashboard() {
                         <h1> Hola datos </h1>
                     </div>
                 </div>
-                    <SpecieItem />
+                    <SpecieList species={specieData}  />
 
             </div>
         )

@@ -3,6 +3,7 @@ import getpass
 from functools import lru_cache
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from pydantic import EmailStr, ValidationError
 
@@ -28,6 +29,9 @@ _database.Base.metadata.create_all(bind=engine)
 app:FastAPI = FastAPI()
 app.title = "Rescue Bio API"
 app.version = "0.0.1"
+
+# make a static files path
+app.mount("/static", StaticFiles(directory="/fastapi/static") , name="static")
 
 #Middleware for error handler
 app.add_middleware(ErrorHandler)
