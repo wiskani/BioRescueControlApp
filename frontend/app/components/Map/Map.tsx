@@ -2,8 +2,10 @@ import { MapContainer, TileLayer,Circle, Polyline } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
 import "leaflet-defaulticon-compatibility"
-import { LineProyect } from './lineProyect'
+import { LineProyect } from './lineProyect';
 import {LatLngExpression} from "leaflet";
+
+import Legend from './Legend';
 
 interface MapProps {
     centers: LatLngExpression[];
@@ -11,6 +13,9 @@ interface MapProps {
 
 const Map:  React.FC<MapProps>= ({centers})  => {
     const lineOptions = { color: 'red' }
+
+    const legedColors = [ 'blue', 'red']
+    const legendLabels = ['Rescates de Flora', 'Proyecto 230 kV Mizque - Sehuencas']
     return(
         <MapContainer
             center={[-17.489, -65.271]}
@@ -27,6 +32,8 @@ const Map:  React.FC<MapProps>= ({centers})  => {
                 {centers.map((center, index) => (
                     <Circle key={index} center={center} pathOptions={{color: 'blue'}} radius={10} />
                 ))}
+
+            <Legend colors={legedColors} labels={legendLabels} />
 
             </MapContainer>
     )
