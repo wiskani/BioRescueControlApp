@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Union, Dict
+from pydantic import parse_obj_as
 
 from app.schemas.towers import (
     TowerBase,
@@ -44,6 +45,8 @@ from app.crud.tower import (
     delete_clear_mammal
 )
 
+from app.models.towers import Tower
+
 from app.api.deps import PermissonsChecker, get_db
 
 router:APIRouter = APIRouter()
@@ -82,7 +85,8 @@ async def get_towers_api(
     db: Session = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> List[TowerResponse]:
-    return await get_towers(db)
+    towers: List[Tower]= await get_towers(db)
+    return parse_obj_as(List[TowerResponse], towers)
 
 # Get tower by number
 @router.get(
@@ -124,11 +128,10 @@ async def delete_tower_api(
     tower_id: int,
     db: Session = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> TowerResponse:
-    return await delete_tower(db, tower_id)
+) -> Dict:
+     await delete_tower(db, tower_id)
+     return {"message": "Tower deleted successfully"}
 
 
 
 
-
-)

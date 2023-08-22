@@ -13,13 +13,13 @@ class Tower(_database.Base):
     created_at: Column[datetime] = Column(DateTime, default=datetime.utcnow)
 
     #relationship with clear_flora
-    clear_flora = relationship("clear_flora", back_populates="tower")
+    clear_flora = relationship("Clear_flora", back_populates="tower")
 
     #relationship with clear_herpetofauna
-    clear_herpetofauna = relationship("clear_herpetofauna", back_populates="tower")
+    clear_herpetofauna = relationship("Clear_herpetofauna", back_populates="tower")
 
     #relationship with clear_mammals
-    clear_mammals = relationship("clear_mammals", back_populates="tower")
+    clear_mammals = relationship("Clear_mammals", back_populates="tower")
 
 class Clear_flora(_database.Base):
     __tablename__:str = "clear_flora"

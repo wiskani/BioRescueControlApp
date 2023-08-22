@@ -27,11 +27,11 @@ CRUD FOR  TOWERS
 """
 
 # Get if tower exists by number
-async def get_tower_by_number(db: Session, number: int) -> Union[TowerBase, None]:
+async def get_tower_by_number(db: Session, number: int) -> Union[TowerResponse, None]:
     return db.query(Tower).filter(Tower.number == number).first()
 
 # Get all towers
-async def get_towers(db: Session) -> List[TowerResponse]:
+async def get_towers(db: Session) -> List[Tower]:
     return db.query(Tower).all()
 
 # Create tower
@@ -59,7 +59,7 @@ async def update_tower(db: Session, tower_id: int, tower: TowerBase) -> Tower:
     return db_tower
 
 # Delete tower
-def delete_tower(db: Session, tower_id: int) -> Tower:
+async def delete_tower(db: Session, tower_id: int) -> Tower :
     db_tower = db.query(Tower).filter(Tower.id == tower_id ).first()
     if not db_tower:
         raise HTTPException(status_code=404, detail="Tower not found")
