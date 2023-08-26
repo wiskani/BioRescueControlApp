@@ -20,7 +20,7 @@ router: APIRouter = APIRouter()
 async def create_new_user(
     new_user: UsersCreate,
     db: Session = Depends(get_db),
-    autorized: bool = Depends(PermissonsChecker(required_permissions=["admin"])), # Check if user is authorized
+    autorized: bool = Depends(PermissonsChecker(["admin"])), # Check if user is authorized
 ) -> Union[Users, HTTPException]:
     db_user: Union[User, None]  = await get_user_by_email(db=db, email=new_user.email)
     if db_user:
@@ -40,7 +40,7 @@ async def update_user_by_id(
     user_id: int,
     user: UsersCreate,
     db: Session = Depends(get_db),
-    autorized: bool = Depends(PermissonsChecker(required_permissions=["admin"])), # Check if user is authorized
+    autorized: bool = Depends(PermissonsChecker(["admin"])), # Check if user is authorized
 ) -> Union[Users, HTTPException]:
     db_user: Union[User, None] = await get_user_by_id(db=db, user_id=user_id)
     if db_user:
@@ -59,7 +59,7 @@ async def update_user_by_id(
 async def delete_user_by_id(
     user_id: int,
     db: Session = Depends(get_db),
-    autorized: bool = Depends(PermissonsChecker(required_permissions=["admin"])), # Check if user is authorized
+    autorized: bool = Depends(PermissonsChecker(["admin"])), # Check if user is authorized
 ) -> Union[Users, HTTPException]:
     db_user: Union[User, None] = await get_user_by_id(db=db, user_id=user_id)
     if db_user:

@@ -1,10 +1,10 @@
-#Pydantic
 from pydantic import BaseModel, EmailStr, Field
+from typing import List
 
 class Users(BaseModel):
     id: int
     email: EmailStr = Field(... )
-    permissions: str = Field(...)
+    permissions: List[str] = Field(...)
     name: str = Field(...)
     last_name: str 
     class Config:

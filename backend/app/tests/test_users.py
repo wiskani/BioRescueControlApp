@@ -21,7 +21,7 @@ def test_create_user() -> None:
             "email": mail,
             "name": name,
             "last_name": last_name,
-            "permissions":"admin",
+            "permissions":["admin"],
             "hashed_password": password,
         },
     )
@@ -48,7 +48,7 @@ def test_create_user_invalid_email() -> None:
             "email": mail,
             "name": name,
             "last_name": last_name,
-            "permissions":"admin",
+            "permissions":["admin"],
             "hashed_password": password,
         },
     )
@@ -58,7 +58,7 @@ def test_create_user_invalid_email() -> None:
             "email": mail,
             "name": name,
             "last_name": last_name,
-            "permissions":"admin",
+            "permissions":["admin"],
             "hashed_password": password,
         },
     )
@@ -80,7 +80,7 @@ def test_update_user() -> None:
             "email": mail,
             "name": name,
             "last_name": last_name,
-            "permissions":"admin",
+            "permissions":["admin"],
             "hashed_password": password,
         },
     )
@@ -97,7 +97,7 @@ def test_update_user() -> None:
             "email": mail2,
             "name": name,
             "last_name": last_name,
-            "permissions":"user-write",
+            "permissions":["user-write"],
             "hashed_password": password2,
         },
     )
@@ -106,8 +106,8 @@ def test_update_user() -> None:
     assert data["email"] == mail2
     assert "id" in data
     user_id: Union[int, str] = data["id"]
-    assert user_id is not None      
-    assert data["permissions"] == "user-write"
+    assert user_id is not None
+    assert data["permissions"] == "{user-write}"
 
     # test for update user with invalid id 
 def test_update_user_invalid_email() -> None:
@@ -123,7 +123,7 @@ def test_update_user_invalid_email() -> None:
             "email": mail,
             "name": name,
             "last_name": last_name,
-            "permissions":"admin",
+            "permissions":["admin"],
             "hashed_password": password,
         },
     )
@@ -138,7 +138,7 @@ def test_update_user_invalid_email() -> None:
             "email": mail,
             "name": name,
             "last_name": last_name,
-            "permissions":"user-write",
+            "permissions":["user-write"],
             "hashed_password": password,
         },
     )
@@ -160,7 +160,7 @@ def test_delete_user() -> None:
             "email": mail,
             "name": name,
             "last_name": last_name,
-            "permissions":"admin",
+            "permissions":["admin"],
             "hashed_password": password,
         },
     )
@@ -185,7 +185,7 @@ def test_delete_user_invalid_email() -> None:
             "email": mail,
             "name": name,
             "last_name": last_name,
-            "permissions":"admin",
+            "permissions":["admin"],
             "hashed_password": password,
         },
     )

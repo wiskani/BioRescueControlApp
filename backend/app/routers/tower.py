@@ -83,7 +83,7 @@ async def create_tower_api(
 )
 async def get_towers_api(
     db: Session = Depends(get_db),
-    autorized: bool = Depends(PermissonsChecker(["admin", "user"])),
+    autorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> List[TowerResponse]:
     towers: List[Tower]= await get_towers(db)
     return parse_obj_as(List[TowerResponse], towers)
