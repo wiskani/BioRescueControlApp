@@ -4,7 +4,7 @@ from typing import Dict, Any, Union
 from fastapi.testclient import TestClient
 
 from app.tests.conftest import *
-from app.tests.utils.users import *
+from app.tests.utils.towers_example import *
 
 
 """
@@ -99,14 +99,34 @@ def test_get_all_towers() -> None :
             "longitude": 1.1,
         },
     )
-    
+
     assert response.status_code == 201, response.text
 
     response = client.get(
         "/api/towers",
     )
-    
+
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
     assert len(data) >= 1
+
+"""
+TEST FOR CRUD CLEAR FLORA
+"""
+
+#test for create a clear flora
+def test_create_clear_flora() -> None :
+    response = client.post(
+        "/api/towers/clear_flora", json={
+            "is_clear": True,
+            "name": "test",
+            "description": "test",
+        },
+    )
+
+    assert response.status_code == 201, response.text
+    data: Dict[str, Any] = response.json()
+    assert data["name"] == "test"
+    assert data["description"] == "test"
+
 

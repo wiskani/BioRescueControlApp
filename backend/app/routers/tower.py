@@ -45,7 +45,7 @@ from app.crud.tower import (
     delete_clear_mammal
 )
 
-from app.models.towers import Tower
+from app.models.towers import Tower, Clear_flora, Clear_herpetofauna, Clear_mammals
 
 from app.api.deps import PermissonsChecker, get_db
 
@@ -132,6 +132,71 @@ async def delete_tower_api(
      await delete_tower(db, tower_id)
      return {"message": "Tower deleted successfully"}
 
+"""
+CRUD FOR CLEAR FLORA
+"""
+
+# Create clear flora
+@router.post(
+    path="/api/towers/clear_flora",
+    response_model=ClearFloraResponse,
+    status_code=status.HTTP_201_CREATED,
+    tags=["clear_flora"],
+    summary="Create clear flora",
+)
+async def create_clear_flora_api(
+    tower_number: int,
+    clear_flora: ClearFloraBase,
+    db: Session = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> ClearFloraResponse:
+    return await create_clear_flora(db, clear_flora)
+
+# Get all clear flora
+@router.get(
+    path="/api/towers/clear_flora",
+    response_model=List[ClearFloraResponse],
+    tags=["clear_flora"],
+    summary="Get all clear flora",
+)
+async def get_clear_flora_api(
+    tower_number: int,
+    db: Session = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> List[ClearFloraResponse]:
+    clear_flora: List[Clear_flora]= await get_clear_flora(db)
+    return parse_obj_as(List[ClearFloraResponse], clear_flora)
+
+# Get clear flora by id
+@router.get(
+    path="/api/towers/clear_flora/{clear_flora_id}",
+    response_model=ClearFloraResponse,
+    tags=["clear_flora"],
+    summary="Get clear flora by id",
+)
+async def get_clear_flora_by_id_api(
+    tower_number: int,
+    clear_flora_id: int,
+    db: Session = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin", "user"])),
+) -> Union[ClearFloraResponse, None]:
+    return await get_clear_flora_by_tower_number(db, clear_flora_id)
+
+# Update clear flora
+@router.put(
+    path="/api/towers/clear_flora/{clear_flora_id}",
+    response_model=ClearFloraResponse,
+    tags=["clear_flora"],
+    summary="Update clear flora",
+)
+async def update_clear_flora_api(
+    tower_number: int,
+    clear_flora_id: int,
+    clear_flora: ClearFloraBase,
+    db: Session = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> ClearFloraResponse:
+    return await update_clear_flora(db, clear_flora_id, clear_flora)
 
 
 
