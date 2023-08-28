@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, ARRAY
 from passlib.hash import bcrypt
 from datetime import datetime
 
@@ -10,7 +10,7 @@ class User(_database.Base):
     email: Column[str] = Column(String, unique=True, index=True)
     name: Column[str] = Column(String, index=True)
     last_name: Column [str] = Column(String, index=True)
-    permissions:Column[str] = Column(String)
+    permissions:Column[str] = Column(ARRAY(String))
     created_at: Column[datetime] = Column(DateTime, default=datetime.now())
     hashed_password: Column[str] = Column(String)
 
