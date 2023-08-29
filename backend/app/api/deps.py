@@ -1,3 +1,4 @@
+import json
 from pydantic import EmailStr
 from typing import Generator, Union
 from fastapi import Depends, HTTPException, status
@@ -45,6 +46,7 @@ async def get_current_user(db: Session=Depends(get_db), token: str = Depends(oau
     try:
         payload: dict[str, str] = decode(token, JWT_SECRET, algorithms=["HS256"])
         user  = db.query(User).get(payload["id"])
+        user.permissions = json.loads(user.permissions)
     except:
         raise HTTPException(
             status_code= 401,
@@ -68,6 +70,8 @@ class PermissonsChecker:
         self.required_permissions = required_permissions
 
     def __call__(self, user: Users = Depends(get_current_user)) -> bool:
+        print("User permissions:", user.permissions)
+        print("Required permissions:", self.required_permissions)
         for permission in self.required_permissions:
             if permission not in user.permissions:
                 raise HTTPException(

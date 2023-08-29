@@ -1,3 +1,4 @@
+import json
 from sqlalchemy.orm import Session
 from typing import Union
 from passlib.hash import bcrypt
@@ -14,7 +15,10 @@ async def get_first_user(db: Session) -> Union[User , None]:
 
 # Get a user by email
 async def get_user_by_email(db: Session, email: EmailStr) -> Union[User, None]:
-    return db.query(User).filter(User.email == email).first()
+    db_user = db.query(User).filter(User.email == email).first()
+    if db_user:
+        db_user.permissions = json.loads(db_user.permissions)
+    return db_user
 
 # Get a user by id
 async def get_user_by_id(db: Session, user_id: int) -> Union[User, None]:
