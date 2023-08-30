@@ -69,16 +69,16 @@ class PermissonsChecker:
     def __init__(self, required_permissions: list[str]) -> None:
         self.required_permissions = required_permissions
 
-    def __call__(self, user: Users = Depends(get_current_user)) -> bool:
+    def __call__(self, user: Users = Depends(get_current_user)) -> bool | HTTPException:
         print("User permissions:", user.permissions)
         print("Required permissions:", self.required_permissions)
         for permission in self.required_permissions:
-            if permission not in user.permissions:
-                raise HTTPException(
+            if permission in user.permissions:
+                return True
+        raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="No tienes permisos suficientes"
                 )
-        return  True
 
 
 
