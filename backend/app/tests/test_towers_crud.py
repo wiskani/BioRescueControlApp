@@ -6,6 +6,8 @@ from fastapi.testclient import TestClient
 from app.tests.conftest import *
 from app.tests.utils.towers_example import *
 
+TOWER = create_random_tower()
+TOWER_NUMBER = TOWER.number
 
 """
 TEST FOR TOWERS CRUD
@@ -117,16 +119,15 @@ TEST FOR CRUD CLEAR FLORA
 #test for create a clear flora
 def test_create_clear_flora() -> None :
     response = client.post(
-        "/api/towers/clear_flora", json={
+        f"/api/clear_flora/{TOWER_NUMBER}", json={
             "is_clear": True,
-            "name": "test",
-            "description": "test",
+            "clear_at": "2021-01-01T00:00:00",
         },
     )
 
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
-    assert data["name"] == "test"
-    assert data["description"] == "test"
+    assert data["is_clear"] == True
+    assert data["clear_at"] == "2021-01-01T00:00:00"
 
 

@@ -138,7 +138,7 @@ CRUD FOR CLEAR FLORA
 
 # Create clear flora
 @router.post(
-    path="/api/towers/clear_flora",
+    path="/api/clear_flora/{tower_number}",
     response_model=ClearFloraResponse,
     status_code=status.HTTP_201_CREATED,
     tags=["clear_flora"],
@@ -149,18 +149,17 @@ async def create_clear_flora_api(
     clear_flora: ClearFloraBase,
     db: Session = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> ClearFloraResponse:
-    return await create_clear_flora(db, clear_flora)
+) -> ClearFloraResponse | HTTPException:
+    return await create_clear_flora(db, clear_flora, tower_number)
 
 # Get all clear flora
 @router.get(
-    path="/api/towers/clear_flora",
+    path="/api/clear_flora",
     response_model=List[ClearFloraResponse],
     tags=["clear_flora"],
     summary="Get all clear flora",
 )
 async def get_clear_flora_api(
-    tower_number: int,
     db: Session = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> List[ClearFloraResponse]:
@@ -169,7 +168,7 @@ async def get_clear_flora_api(
 
 # Get clear flora by id
 @router.get(
-    path="/api/towers/clear_flora/{clear_flora_id}",
+    path="/api/clear_flora/{clear_flora_id}",
     response_model=ClearFloraResponse,
     tags=["clear_flora"],
     summary="Get clear flora by id",
@@ -184,13 +183,12 @@ async def get_clear_flora_by_id_api(
 
 # Update clear flora
 @router.put(
-    path="/api/towers/clear_flora/{clear_flora_id}",
+    path="/api/clear_flora/{clear_flora_id}",
     response_model=ClearFloraResponse,
     tags=["clear_flora"],
     summary="Update clear flora",
 )
 async def update_clear_flora_api(
-    tower_number: int,
     clear_flora_id: int,
     clear_flora: ClearFloraBase,
     db: Session = Depends(get_db),

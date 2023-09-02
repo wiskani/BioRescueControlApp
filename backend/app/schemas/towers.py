@@ -14,38 +14,38 @@ class TowerResponse(TowerBase):
         orm_mode = True
 
 class ClearFloraBase(BaseModel):
-    is_clear: bool = Field(..., example=True)
-    tower_id: int = Field(..., example=1)
+    is_clear: bool = Field(..., example=False)
     clear_at: datetime = Field(..., example=datetime.utcnow())
     class Config:
         orm_mode = True
 
 class ClearFloraResponse(ClearFloraBase):
     id: int = Field(..., example=1)
+    tower_id: int = Field(..., example=1)
     class Config:
         orm_mode = True
 
 class ClearHerpetoFaunaBase(BaseModel):
-    is_clear: bool = Field(..., example=True)
-    tower_id: int = Field(..., example=1)
+    is_clear: bool = Field(..., example=False)
     clear_at: datetime = Field(..., example=datetime.utcnow())
     class Config:
         orm_mode = True
 
 class ClearHerpetoFaunaResponse(ClearHerpetoFaunaBase):
     id: int = Field(..., example=1)
+    tower_id: int = Field(..., example=1)
     class Config:
         orm_mode = True
 
 class ClearMammalBase(BaseModel):
-    is_clear: bool = Field(..., example=True)
-    tower_id: int = Field(..., example=1)
+    is_clear: bool = Field(..., example=False)
     clear_at: datetime = Field(..., example=datetime.utcnow())
     class Config:
         orm_mode = True
 
 class ClearMammalResponse(ClearMammalBase):
     id: int = Field(..., example=1)
+    tower_id: int = Field(..., example=1)
     class Config:
         orm_mode = True
 

@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from typing import List, Union
+from typing import List, Union, Optional
 from fastapi import HTTPException
 
 from app.schemas.towers import (
@@ -25,6 +25,14 @@ from app.models.towers import (
 """
 CRUD FOR  TOWERS
 """
+
+#Get tower id by number
+async def get_tower_id_by_number(db: Session, number: int) ->Optional[ int]:
+    tower_db=db.query(Tower).filter(Tower.number == number).first()
+    if tower_db is not None:
+        return tower_db.id
+    else:
+        return None
 
 # Get if tower exists by number
 async def get_tower_by_number(db: Session, number: int) -> Union[TowerResponse, None]:
@@ -79,16 +87,20 @@ async def get_clear_flora(db: Session) -> List[Clear_flora]:
     return db.query(Clear_flora).all()
 
 # Create clear flora
-async def create_clear_flora(db: Session, clear_flora: ClearFloraBase) -> Clear_flora:
-    db_clear_flora = Clear_flora(
-        is_clear=clear_flora.is_clear,
-        tower_id=clear_flora.tower_id,
-        clear_at=clear_flora.clear_at,
-    )
-    db.add(db_clear_flora)
-    db.commit()
-    db.refresh(db_clear_flora)
-    return db_clear_flora
+async def create_clear_flora(db: Session, clear_flora: ClearFloraBase, tower_number:int) -> Clear_flora:
+    towerid = await get_tower_id_by_number(db, tower_number)
+    if towerid is None:
+        raise HTTPException(status_code=404, detail="Tower not found")
+    else:
+        db_clear_flora = Clear_flora(
+            is_clear=clear_flora.is_clear,
+            tower_id= towerid,
+            clear_at=clear_flora.clear_at,
+        )
+        db.add(db_clear_flora)
+        db.commit()
+        db.refresh(db_clear_flora)
+        return db_clear_flora
 
 # Update clear flora
 async def update_clear_flora(db: Session, clear_flora_id: int, clear_flora: ClearFloraBase) -> Clear_flora:
