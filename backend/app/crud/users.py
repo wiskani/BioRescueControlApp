@@ -14,11 +14,16 @@ async def get_first_user(db: Session) -> Union[User , None]:
     return db.query(User).first()
 
 # Get a user by email
-async def get_user_by_email(db: Session, email: EmailStr) -> Union[User, None]:
+async def get_user_by_email(db: Session, email: EmailStr) -> User | None:
     db_user = db.query(User).filter(User.email == email).first()
     if db_user:
-        db_user.permissions = json.loads(db_user.permissions)
-    return db_user
+        try:
+            db_user.permissions = json.loads(db_user.permissions)
+            return db_user
+        except Exception as e:
+            print("Error parsing permissions", e)
+        return db_user
+    return None
 
 # Get a user by id
 async def get_user_by_id(db: Session, user_id: int) -> Union[User, None]:

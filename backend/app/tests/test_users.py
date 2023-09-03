@@ -52,6 +52,7 @@ def test_create_user_invalid_email() -> None:
             "hashed_password": password,
         },
     )
+    assert response.status_code == 201, response.text
     response: Response = client.post(
         "/api/users/", json={
             "id": id_number_2,
@@ -107,7 +108,7 @@ def test_update_user() -> None:
     assert "id" in data
     user_id: Union[int, str] = data["id"]
     assert user_id is not None
-    assert data["permissions"] == "{user-write}"
+    assert data["permissions"] == ["user-write"]
 
     # test for update user with invalid id 
 def test_update_user_invalid_email() -> None:
