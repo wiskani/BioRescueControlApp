@@ -166,35 +166,100 @@ async def get_clear_flora_api(
     clear_flora: List[Clear_flora]= await get_clear_flora(db)
     return parse_obj_as(List[ClearFloraResponse], clear_flora)
 
-# Get clear flora by id
+# Get clear flora by tower number
 @router.get(
-    path="/api/clear_flora/{clear_flora_id}",
+    path="/api/clear_flora/{tower_number}",
     response_model=ClearFloraResponse,
     tags=["clear_flora"],
     summary="Get clear flora by id",
 )
-async def get_clear_flora_by_id_api(
+async def get_clear_flora_by_tower_number_api(
     tower_number: int,
-    clear_flora_id: int,
     db: Session = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> Union[ClearFloraResponse, None]:
-    return await get_clear_flora_by_tower_number(db, clear_flora_id)
+    return await get_clear_flora_by_tower_number(db, tower_number)
 
 # Update clear flora
 @router.put(
-    path="/api/clear_flora/{clear_flora_id}",
+    path="/api/clear_flora/{tower_number}",
     response_model=ClearFloraResponse,
     tags=["clear_flora"],
     summary="Update clear flora",
 )
 async def update_clear_flora_api(
-    clear_flora_id: int,
+    tower_number: int,
     clear_flora: ClearFloraBase,
     db: Session = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> ClearFloraResponse:
-    return await update_clear_flora(db, clear_flora_id, clear_flora)
+    return await update_clear_flora(db, clear_flora,  tower_number )
+
+# Delete clear flora
+@router.delete(
+    path="/api/clear_flora/{tower_number}",
+    tags=["clear_flora"],
+    summary="Delete clear flora",
+)
+async def delete_clear_flora_api(
+    tower_number: int,
+    db: Session = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> Dict:
+    try:
+        await delete_clear_flora(db, tower_number)
+        return {"message": "Clear flora deleted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+"""
+CRUD FOR CLEAR HERPETOFAUNA
+"""
+
+# Create clear herpetofauna
+@router.post(
+    path="/api/clear_herpetofauna/{tower_number}",
+    response_model=ClearHerpetoFaunaResponse,
+    status_code=status.HTTP_201_CREATED,
+    tags=["clear_herpetofauna"],
+    summary="Create clear herpetofauna",
+)
+async def create_clear_herpetofauna_api(
+    tower_number: int,
+    clear_herpetofauna: ClearHerpetoFaunaBase,
+    db: Session = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> ClearHerpetoFaunaResponse | HTTPException:
+    return await create_clear_herpetofauna(db, clear_herpetofauna, tower_number)
+
+# Get all clear herpetofauna
+@router.get(
+    path="/api/clear_herpetofauna",
+    response_model=List[ClearHerpetoFaunaResponse],
+    tags=["clear_herpetofauna"],
+    summary="Get all clear herpetofauna",
+)
+async def get_clear_herpetofauna_api(
+    db: Session = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> List[ClearHerpetoFaunaResponse]:
+    clear_herpetofauna: List[Clear_herpetofauna]= await get_clear_herpetofauna(db)
+    return parse_obj_as(List[ClearHerpetoFaunaResponse], clear_herpetofauna)
+
+# Get clear herpetofauna by tower number
+@router.get(
+    path="/api/clear_herpetofauna/{tower_number}",
+    response_model=ClearHerpetoFaunaResponse,
+    tags=["clear_herpetofauna"],
+    summary="Get clear herpetofauna by id",
+)
+async def get_clear_herpetofauna_by_tower_number_api(
+    tower_number: int,
+    db: Session = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin", "user"])),
+) -> Union[ClearHerpetoFaunaResponse, None]:
+    return await get_clear_herpetofauna_by_tower_number(db, tower_number)
+
 
 
 
