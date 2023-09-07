@@ -260,6 +260,118 @@ async def get_clear_herpetofauna_by_tower_number_api(
 ) -> Union[ClearHerpetoFaunaResponse, None]:
     return await get_clear_herpetofauna_by_tower_number(db, tower_number)
 
+# Update clear herpetofauna
+@router.put(
+    path="/api/clear_herpetofauna/{tower_number}",
+    response_model=ClearHerpetoFaunaResponse,
+    tags=["clear_herpetofauna"],
+    summary="Update clear herpetofauna",
+)
+async def update_clear_herpetofauna_api(
+    tower_number: int,
+    clear_herpetofauna: ClearHerpetoFaunaBase,
+    db: Session = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> ClearHerpetoFaunaResponse:
+    return await update_clear_herpetofauna(db, clear_herpetofauna,  tower_number )
+
+# Delete clear herpetofauna
+@router.delete(
+    path="/api/clear_herpetofauna/{tower_number}",
+    tags=["clear_herpetofauna"],
+    summary="Delete clear herpetofauna",
+)
+async def delete_clear_herpetofauna_api(
+    tower_number: int,
+    db: Session = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> Dict:
+    try:
+        await delete_clear_herpetofauna(db, tower_number)
+        return {"message": "Clear herpetofauna deleted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+"""
+CRUD FOR CLEAR MAMMAL
+"""
+
+# Create clear mammal
+@router.post(
+    path="/api/clear_mammal/{tower_number}",
+    response_model=ClearMammalResponse,
+    status_code=status.HTTP_201_CREATED,
+    tags=["clear_mammal"],
+    summary="Create clear mammal",
+)
+async def create_clear_mammal_api(
+    tower_number: int,
+    clear_mammal: ClearMammalBase,
+    db: Session = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> ClearMammalResponse | HTTPException:
+    return await create_clear_mammal(db, clear_mammal, tower_number)
+
+# Get all clear mammal
+@router.get(
+    path="/api/clear_mammal",
+    response_model=List[ClearMammalResponse],
+    tags=["clear_mammal"],
+    summary="Get all clear mammal",
+)
+async def get_clear_mammal_api(
+    db: Session = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> List[ClearMammalResponse]:
+    clear_mammal: List[Clear_mammal]= await get_clear_mammal(db)
+    return parse_obj_as(List[ClearMammalResponse], clear_mammal)
+
+# Get clear mammal by tower number
+@router.get(
+    path="/api/clear_mammal/{tower_number}",
+    response_model=ClearMammalResponse,
+    tags=["clear_mammal"],
+    summary="Get clear mammal by id",
+)
+async def get_clear_mammal_by_tower_number_api(
+    tower_number: int,
+    db: Session = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin", "user"])),
+) -> Union[ClearMammalResponse, None]:
+    return await get_clear_mammal_by_tower_number(db, tower_number)
+
+# Update clear mammal
+@router.put(
+    path="/api/clear_mammal/{tower_number}",
+    response_model=ClearMammalResponse,
+    tags=["clear_mammal"],
+    summary="Update clear mammal",
+)
+async def update_clear_mammal_api(
+    tower_number: int,
+    clear_mammal: ClearMammalBase,
+    db: Session = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> ClearMammalResponse:
+    return await update_clear_mammal(db, clear_mammal,  tower_number )
+
+# Delete clear mammal
+@router.delete(
+    path="/api/clear_mammal/{tower_number}",
+    tags=["clear_mammal"],
+    summary="Delete clear mammal",
+)
+async def delete_clear_mammal_api(
+    tower_number: int,
+    db: Session = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> Dict:
+    try:
+        await delete_clear_mammal(db, tower_number)
+        return {"message": "Clear mammal deleted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
 
 
 

@@ -229,5 +229,115 @@ def test_get_all_herpetofauna() -> None :
     data: Dict[str, Any] = response.json()
     assert len(data) >= 1
 
+#test for get a herpetofauna by tower number
+def test_get_herpetofauna_by_tower_number() -> None :
+    #get herpetofauna by tower number
+    response = client.get(
+        f"/api/clear_herpetofauna/{TOWER_NUMBER}",
+    )
+
+    assert response.status_code == 200, response.text
+
+#test for update a herpetofauna
+def test_update_herpetofauna() -> None :
+    #get herpetofauna id
+    response = client.put(
+        f"/api/clear_herpetofauna/{TOWER_NUMBER}", json={
+            "is_clear": False,
+            "clear_at": "2021-01-01T00:00:00",
+        },
+    )
+
+    assert response.status_code == 200, response.text
+    data: Dict[str, Any] = response.json()
+    assert data["is_clear"] == False
+    assert data["clear_at"] == "2021-01-01T00:00:00"
+
+#test for delete a herpetofauna
+def test_delete_herpetofauna() -> None :
+    #delete herpetofauna
+    response = client.delete(
+        f"/api/clear_herpetofauna/{TOWER_NUMBER}",
+    )
+    #assert response message must say: Herpetofauna deleted successfully
+    assert response.text == '{"message":"Clear herpetofauna deleted successfully"}'
+
+"""
+TEST FOR CRUD MAMMAL
+"""
+
+#test for create a mammalia
+def test_create_mammalia() -> None :
+    response = client.post(
+        f"/api/clear_mammal/{TOWER_NUMBER}", json={
+            "is_clear": True,
+            "clear_at": "2021-01-01T00:00:00",
+        },
+    )
+
+    assert response.status_code == 201, response.text
+    data: Dict[str, Any] = response.json()
+    assert data["is_clear"] == True
+    assert data["clear_at"] == "2021-01-01T00:00:00"
+
+#test for create a mammalia with invalid tower number
+def test_create_mammalia_invalid_tower_number() -> None :
+    #ceate a mammalia
+    response = client.post(
+        f"/api/clear_mammal/{TOWER_NUMBER}", json={
+            "is_clear": True,
+            "clear_at": "2021-01-01T00:00:00",
+        },
+    )
+    assert response.status_code == 404, response.text
+
+#test for get all mammalia
+def test_get_all_mammalia() -> None :
+    #get all mammalia
+    response = client.get(
+        "/api/clear_mammal",
+    )
+
+    assert response.status_code == 200, response.text
+    data: Dict[str, Any] = response.json()
+    assert len(data) >= 1
+
+#test for get a mammalia by tower number
+def test_get_mammalia_by_tower_number() -> None :
+    #get mammalia by tower number
+    response = client.get(
+        f"/api/clear_mammal/{TOWER_NUMBER}",
+    )
+
+    assert response.status_code == 200, response.text
+
+#test for update a mammalia
+def test_update_mammalia() -> None :
+    #get mammalia id
+    response = client.put(
+        f"/api/clear_mammal/{TOWER_NUMBER}", json={
+            "is_clear": False,
+            "clear_at": "2021-01-01T00:00:00",
+        },
+    )
+
+    assert response.status_code == 200, response.text
+    data: Dict[str, Any] = response.json()
+    assert data["is_clear"] == False
+    assert data["clear_at"] == "2021-01-01T00:00:00"
+
+#test for delete a mammalia
+def test_delete_mammalia() -> None :
+    #delete mammalia
+    response = client.delete(
+        f"/api/clear_mammal/{TOWER_NUMBER}",
+    )
+    #assert response message must say: Mammalia deleted successfully
+    assert response.text == '{"message":"Clear mammal deleted successfully"}'
+
+
+
+
+
 
 
