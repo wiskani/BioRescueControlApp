@@ -1,12 +1,12 @@
 from typing import List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from app.schemas.images import ImageBase
 
 
 class Species (BaseModel):
-    scientific_name: str = Field(..., example="Ailuropoda melanoleuca")
-    specific_epithet: str = Field( example="Panda")
+    scientific_name: str = Field(..., examples=["Ailuropoda melanoleuca"])
+    specific_epithet: str = Field( examples=["Panda"])
     class Config:
         orm_mode: bool = True
 
@@ -22,8 +22,8 @@ class SpeciesResponse (Species):
         orm_mode: bool = True
 
 class Genuses (BaseModel):
-    genus_name: str = Field(..., example="Ailuropoda")
-    genus_full_name: str = Field(None, example="Ailuropoda melanoleuca")
+    genus_name: str = Field(..., examples=[ "Ailuropoda" ])
+    genus_full_name: str | None = Field(examples=[ " Ailuropoda melanoleuca"])
     class Config:
         orm_mode: bool = True
 
@@ -39,7 +39,7 @@ class GenusesResponse (Genuses):
         orm_mode: bool = True
 
 class Families (BaseModel):
-    family_name: str = Field(..., example="Ursidae")
+    family_name: str = Field(..., examples=[ " Ursidae"])
     class Config:
         orm_mode: bool = True
 
@@ -55,7 +55,7 @@ class FamiliesResponse (Families):
         orm_mode: bool = True
 
 class Orders (BaseModel):
-    order_name: str = Field(..., example="Carnivora")
+    order_name: str = Field(..., examples=["Carnivora"])
     class Config:
         orm_mode: bool = True
 
@@ -70,7 +70,7 @@ class OrdersCreate (Orders):
         orm_mode: bool = True
 
 class Classes (BaseModel):
-    class_name: str = Field(..., example="Mammalia")
+    class_name: str = Field(..., examples=["Mammalia"])
     class Config:
         orm_mode: bool = True
 
@@ -86,13 +86,13 @@ class ClassesResponse (Classes):
 
 # model for global join species, genus, family, order, class and images
 class SpeciesJoin (BaseModel):
-    scientific_name: str = Field(..., example="Ailuropoda melanoleuca")
-    genus_full_name: str = Field(..., example="Ailuropoda melanoleuca")
-    family_name: str = Field(..., example="Ursidae")
-    order_name: str = Field(..., example="Carnivora")
-    class_name: str = Field(..., example="Mammalia")
-    images: List[ImageBase] 
-    total_rescues: int = Field(example=1)
+    scientific_name: str = Field(..., examples=["Ailuropoda melanoleuca"])
+    genus_full_name: str = Field(..., examples=["Ailuropoda melanoleuca"])
+    family_name: str = Field(..., examples=["Ursidae"])
+    order_name: str = Field(..., examples=["Carnivora"])
+    class_name: str = Field(..., examples=["Mammalia"])
+    images: List[ImageBase]
+    total_rescues: int = Field(examples=[1])
     class Config:
         orm_mode: bool = True
 

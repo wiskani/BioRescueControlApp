@@ -1,8 +1,8 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    DEFAULT_VAR="some default string value" # default value if env variable does not exist
+    DEFAULT_VAR: str ="some default string value" # default value if env variable does not exist
     SECRET_KEY: str
     APP_MAX: int = 100
     FIRST_USER_MAIL: str

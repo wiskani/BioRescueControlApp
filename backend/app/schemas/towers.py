@@ -2,50 +2,50 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 class TowerBase(BaseModel):
-    number: int = Field(..., example=1)
-    latitude: float = Field(..., example=1.0)
-    longitude: float = Field(..., example=1.0)
+    number: int = Field(..., examples=[1])
+    latitude: float = Field(..., examples=[1.0])
+    longitude: float = Field(..., examples=[1.0])
     class Config:
         orm_mode = True
 
 class TowerResponse(TowerBase):
-    id: int = Field(..., example=1)
+    id: int = Field(..., examples=[1])
     class Config:
         orm_mode = True
 
 class ClearFloraBase(BaseModel):
-    is_clear: bool = Field(..., example=False)
-    clear_at: datetime = Field(..., example=datetime.utcnow())
+    is_clear: bool = Field(..., examples=[False])
+    clear_at: datetime = Field(..., examples=[datetime.utcnow()])
     class Config:
         orm_mode = True
 
 class ClearFloraResponse(ClearFloraBase):
-    id: int = Field(..., example=1)
-    tower_id: int = Field(..., example=1)
+    id: int = Field(..., examples=[1])
+    tower_id: int = Field(..., examples=[1])
     class Config:
         orm_mode = True
 
 class ClearHerpetoFaunaBase(BaseModel):
-    is_clear: bool = Field(..., example=False)
-    clear_at: datetime = Field(..., example=datetime.utcnow())
+    is_clear: bool = Field(..., examples=[False])
+    clear_at: datetime = Field(..., examples=[datetime.utcnow()])
     class Config:
         orm_mode = True
 
 class ClearHerpetoFaunaResponse(ClearHerpetoFaunaBase):
-    id: int = Field(..., example=1)
-    tower_id: int = Field(..., example=1)
+    id: int = Field(..., examples=[1])
+    tower_id: int = Field(..., examples=[1])
     class Config:
         orm_mode = True
 
 class ClearMammalBase(BaseModel):
-    is_clear: bool = Field(..., example=False)
-    clear_at: datetime = Field(..., example=datetime.utcnow())
+    is_clear: bool = Field(..., examples=[False])
+    clear_at: datetime = Field(..., examples=[datetime.utcnow()])
     class Config:
         orm_mode = True
 
 class ClearMammalResponse(ClearMammalBase):
-    id: int = Field(..., example=1)
-    tower_id: int = Field(..., example=1)
+    id: int = Field(..., examples=[1])
+    tower_id: int = Field(..., examples=[1])
     class Config:
         orm_mode = True
 

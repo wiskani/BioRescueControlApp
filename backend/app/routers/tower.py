@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Union, Dict
-from pydantic import parse_obj_as
+from pydantic import TypeAdapter
 
 from app.schemas.towers import (
     TowerBase,
@@ -86,8 +86,9 @@ async def get_towers_api(
     autorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> List[TowerResponse]:
     towers: List[Tower]= await get_towers(db)
-    return parse_obj_as(List[TowerResponse], towers)
-
+    towers_data= TypeAdapter(List[TowerResponse]).validate_python(towers)
+    return towers_data
+ 
 # Get tower by number
 @router.get(
     path="/api/towers/{number}",

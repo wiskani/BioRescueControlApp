@@ -36,7 +36,7 @@ def override_get_db() -> Generator [Session, None, None]:
 app.dependency_overrides[get_db] = override_get_db
 
 def override_get_currrent_user() -> Users :
-    email: EmailStr = EmailStr("dummy@dummy.com")
+    email: EmailStr = "dummy@dummy.com"
     user: Users = Users(id=5, email= email, name="dummy", last_name="dummy", permissions=["admin", ])
     return user
 

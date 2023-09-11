@@ -1,5 +1,6 @@
 alembic==1.11.1
-anyio==3.7.0
+annotated-types==0.5.0
+anyio==3.7.1
 certifi==2023.5.7
 cffi==1.15.1
 charset-normalizer==3.1.0
@@ -8,7 +9,7 @@ cryptography==41.0.1
 dnspython==2.3.0
 email-validator==2.0.0.post2
 et-xmlfile==1.1.0
-fastapi==0.97.0
+fastapi==0.103.1
 greenlet==2.0.2
 h11==0.14.0
 httpcore==0.17.2
@@ -25,7 +26,9 @@ passlib==1.7.4
 pluggy==1.2.0
 psycopg2==2.9.6
 pycparser==2.21
-pydantic==1.10.9
+pydantic==2.3.0
+pydantic-settings==2.0.3
+pydantic_core==2.6.3
 PyJWT==2.7.0
 pyproj==3.6.0
 pytest==7.4.0
