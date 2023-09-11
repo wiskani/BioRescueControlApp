@@ -1,8 +1,10 @@
 import json
 from pydantic import EmailStr
-from typing import Generator, Union
+from typing import Generator, Union, AsyncGenerator
 from fastapi import Depends, HTTPException, status
+from sqlalchemy import select
 from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordBearer
 from jwt import encode, decode
 
@@ -23,12 +25,16 @@ if JWT_SECRET is None:
 
 
 #Dependency
-def get_db()-> Generator[Session, None, None]:
-    db: Session = SessionLocal()
+async def get_db()-> AsyncGenerator[AsyncSession, None]:
+    session: AsyncSession = SessionLocal()
     try:
-        yield db
+        yield session
+        await session.commit()
+    except:
+        await session.rollback()
+        raise
     finally:
-        db.close()
+        await session.close()
 
 async def create_token(user: User) -> dict[str, str]:
     user_obj:Users= Users.from_orm(user)
@@ -37,7 +43,7 @@ async def create_token(user: User) -> dict[str, str]:
     return dict(access_token=token, token_type="bearer")
 
 #Get current user
-async def get_current_user(db: Session=Depends(get_db), token: str = Depends(oauth2scheme)) -> Users:
+async def get_current_user(db:AsyncSession =Depends(get_db), token: str = Depends(oauth2scheme)) -> Users:
     if token is None:
         raise HTTPException(
             status_code=401,
@@ -45,7 +51,7 @@ async def get_current_user(db: Session=Depends(get_db), token: str = Depends(oau
         )
     try:
         payload: dict[str, str] = decode(token, JWT_SECRET, algorithms=["HS256"])
-        user  = db.query(User).get(payload["id"])
+        user  = await db.execute(select(User).filter_by(id=payload["id"]))
         user.permissions = json.loads(user.permissions)
     except:
         raise HTTPException(
@@ -55,7 +61,7 @@ async def get_current_user(db: Session=Depends(get_db), token: str = Depends(oau
     return Users.from_orm(user)
 
 #Authentication for login
-async def authenticate_user(email: EmailStr, password: str, db: Session) -> Union[Users, bool]:
+async def authenticate_user(email: EmailStr, password: str, db: AsyncSession) -> Union[Users, bool]:
     user: Union[User, None] = await get_user_by_email(db=db, email=email)
     if not user:
         return False

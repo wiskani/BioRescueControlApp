@@ -1,5 +1,7 @@
 import json
+from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Union
 from passlib.hash import bcrypt
 from pydantic import EmailStr
@@ -10,12 +12,15 @@ from app.schemas.users import UsersCreate, Users
 # Purpose: CRUD operations for users
 
 #Get if user exists
-async def get_first_user(db: Session) -> Union[User , None]:
-    return db.query(User).first()
+async def get_first_user(db: AsyncSession) -> User | None:
+    result = await db.execute(select(User).limit(1))
+    return result.scalars().first()
 
 # Get a user by email
-async def get_user_by_email(db: Session, email: EmailStr) -> User | None:
-    db_user = db.query(User).filter(User.email == email).first()
+async def get_user_by_email(db: AsyncSession, email: EmailStr) -> User | None:
+    result = await db.execute(select(User).filter(User.email == email))
+    db_user = result.scalars().first()
+
     if db_user:
         try:
             db_user.permissions = json.loads(db_user.permissions)
@@ -26,23 +31,24 @@ async def get_user_by_email(db: Session, email: EmailStr) -> User | None:
     return None
 
 # Get a user by id
-async def get_user_by_id(db: Session, user_id: int) -> Union[User, None]:
-    return db.query(User).filter(User.id == user_id).first()
+async def get_user_by_id(db: AsyncSession, user_id: int) -> User| None:
+    result = await db.execute(select(User).filter(User.id == user_id))
+    return result.scalars().first()
 
 #Create a user
-async def create_user(db: Session, user: UsersCreate) -> Union[User, HTTPException]:
+async def create_user(db: AsyncSession, user: UsersCreate) -> User | HTTPException:
     db_user = await get_user_by_email(db, user.email)
     if db_user:
         return HTTPException(status_code=400, detail="Email already registered")
     else:
         db_user: User = User(email=user.email, name=user.name, last_name=user.last_name, permissions=user.permissions, hashed_password=bcrypt.hash(user.hashed_password))
         db.add(db_user)
-        db.commit()
-        db.refresh(db_user)
+        await db.commit()
+        await db.refresh(db_user)
         return db_user
 
 #Update a user by id
-async def update_user(db: Session, user_id: int, user: Users) -> Union[User, HTTPException]:
+async def update_user(db: AsyncSession , user_id: int, user: Users) -> Union[User, HTTPException]:
     db_user = await get_user_by_id(db, user_id)
     if db_user:
         db_user.email = user.email
@@ -50,18 +56,18 @@ async def update_user(db: Session, user_id: int, user: Users) -> Union[User, HTT
         db_user.last_name = user.last_name
         db_user.permissions = user.permissions
         db_user.hashed_password = bcrypt.hash(user.hashed_password)
-        db.commit()
-        db.refresh(db_user)
+        await db.commit()
+        await db.refresh(db_user)
         return db_user
     else:
         return HTTPException(status_code=400, detail="User does not exist")
 
 #Delete a user by id
-async def delete_user(db: Session, user_id: int) -> Union[User, HTTPException]:
+async def delete_user(db:AsyncSession , user_id: int) -> Union[User, HTTPException]:
     try:
         db_user = await get_user_by_id(db, user_id)
-        db.delete(db_user)
-        db.commit()
+        await db.execute(delete(User).where(User.id == user_id))
+        await db.commit()
         return db_user
     except:
         return HTTPException(status_code=400, detail="User does not exist")
