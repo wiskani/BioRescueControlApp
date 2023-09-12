@@ -9,7 +9,7 @@ from typing import List
 from pydantic import EmailStr, ValidationError
 
 from app.api.config import Settings
-from app.db.database import engine, SessionLocal
+from app.db.database import engine, SessionLocal, init_tables
 from app.crud.users import get_first_user, create_user
 from app.schemas.users import UsersCreate
 from app.middlewares.error_handler import ErrorHandler
@@ -24,8 +24,6 @@ import app.routers.rescue_flora as _rescue_flora
 import app.routers.images as _images
 import app.routers.files as _files
 import app.routers.tower as _tower
-
-_database.Base.metadata.create_all(bind=engine)
 
 
 app:FastAPI = FastAPI()
@@ -82,7 +80,9 @@ async def _settings(
 # Create first user
 @app.on_event("startup")
 async def startup() -> None:
-    db: Session = SessionLocal()
+    await init_tables()
+
+    db = SessionLocal()
     settings: Settings  = get_settings()
     if await get_first_user(db) is None:
         id: int = 1
@@ -105,3 +105,4 @@ async def startup() -> None:
         user: UsersCreate = UsersCreate(id=id, email=email, name=name, last_name=last_name, permissions=permissions, hashed_password=password)
         await create_user(db, user)
         print("User created")
+    await db.close()

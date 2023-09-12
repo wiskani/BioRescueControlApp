@@ -1,15 +1,14 @@
 import json
 from pydantic import EmailStr
-from typing import Generator, Union, AsyncGenerator
+from typing import Union, AsyncGenerator
 from fastapi import Depends, HTTPException, status
 from sqlalchemy import select
-from sqlalchemy.orm import Session
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession 
 from fastapi.security import OAuth2PasswordBearer
 from jwt import encode, decode
 
 from app.routers.config import get_settings, Settings
-from app.db.database import SessionLocal
+from app.db.database import get_db
 from app.models.users import User
 from app.schemas.users import Users, UsersCreate
 from app.crud.users import get_user_by_email
@@ -24,18 +23,7 @@ if JWT_SECRET is None:
     raise ValueError("JWT_SECRET no esta definido")
 
 
-#Dependency
-async def get_db()-> AsyncGenerator[AsyncSession, None]:
-    session: AsyncSession = SessionLocal()
-    try:
-        yield session
-        await session.commit()
-    except:
-        await session.rollback()
-        raise
-    finally:
-        await session.close()
-
+#Create token
 async def create_token(user: User) -> dict[str, str]:
     user_obj:Users= Users.from_orm(user)
 

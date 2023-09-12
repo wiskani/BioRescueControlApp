@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import Integer, String, DateTime, ForeignKey
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from datetime import datetime
 
 import app.db.database as _database
@@ -7,12 +7,12 @@ import app.models.images
 
 class Specie(_database.Base):
     __tablename__:str = "species"
-    id: Column = Column(Integer, primary_key=True, index=True)
-    scientific_name: Column = Column(String, unique=True, index=True)
-    specific_epithet: Column = Column(String, index=True)
-    create_at: Column[datetime] = Column(DateTime, default=datetime.utcnow)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    scientific_name: Mapped[str] = mapped_column(String, unique=True, index=True)
+    specific_epithet: Mapped[str] = mapped_column(String, index=True)
+    create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     # Relationships
-    genus_id: Column = Column(Integer, ForeignKey("genus.id"))
+    genus_id: Mapped[int] = mapped_column(Integer, ForeignKey("genus.id"))
     genus = relationship("Genus", back_populates="species")
 
     # Relationships with flora_rescue
@@ -28,13 +28,13 @@ class Specie(_database.Base):
 
 class Genus(_database.Base):
     __tablename__:str = "genus"
-    id: Column = Column(Integer, primary_key=True, index=True)
-    genus_name: Column = Column(String, unique=True, index=True)
-    genus_full_name: Column = Column(String, unique=True, index=True, nullable=True)
-    create_at: Column[datetime] = Column(DateTime, default=datetime.utcnow)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    genus_name: Mapped[str] = mapped_column(String, unique=True, index=True)
+    genus_full_name: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=True)
+    create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     # Relationships specie and family
-    family_id: Column = Column(Integer, ForeignKey("family.id"))
+    family_id: Mapped[int] = mapped_column(Integer, ForeignKey("family.id"))
     family = relationship("Family", back_populates="genus")
     species = relationship("Specie", back_populates="genus")
 
@@ -48,12 +48,12 @@ class Genus(_database.Base):
 
 class Family(_database.Base):
     __tablename__:str = "family"
-    id: Column = Column(Integer, primary_key=True, index=True)
-    family_name: Column = Column(String, unique=True, index=True)
-    create_at: Column[datetime] = Column(DateTime, default=datetime.utcnow)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    family_name: Mapped[str] = mapped_column(String, unique=True, index=True)
+    create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     # Relationships order and genus
-    order_id: Column = Column(Integer, ForeignKey("order.id"))
+    order_id: Mapped[int] = mapped_column(Integer, ForeignKey("order.id"))
     order = relationship("Order", back_populates="family")
     genus = relationship("Genus", back_populates="family")
 
@@ -65,21 +65,21 @@ class Family(_database.Base):
 
 class Order(_database.Base):
     __tablename__:str = "order"
-    id: Column = Column(Integer, primary_key=True, index=True)
-    order_name: Column = Column(String, unique=True, index=True)
-    create_at: Column[datetime] = Column(DateTime, default=datetime.utcnow)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    order_name: Mapped[str] = mapped_column(String, unique=True, index=True)
+    create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     # Relationships
-    class__id: Column = Column(Integer, ForeignKey("class_.id"))
+    class__id: Mapped[int] = mapped_column(Integer, ForeignKey("class_.id"))
     class_ = relationship("Class_", back_populates="order")
     family = relationship("Family", back_populates="order")
 
 
 class Class_(_database.Base):
     __tablename__:str = "class_"
-    id: Column = Column(Integer, primary_key=True, index=True)
-    class_name: Column = Column(String, unique=True, index=True)
-    create_at: Column[datetime] = Column(DateTime, default=datetime.utcnow)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    class_name: Mapped[str] = mapped_column(String, unique=True, index=True)
+    create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     # Relationships
     order = relationship("Order", back_populates="class_")

@@ -1,18 +1,17 @@
-from typing import List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 #schema for image
 class ImageBase(BaseModel):
-    url: str = Field(None)
-    atribute: str= Field(None)
+    url: str | None
+    atribute: str | None
     species_id: int
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 #schema for image response
 class ImageResponse(ImageBase):
     id: int
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 

@@ -6,18 +6,18 @@ class Users(BaseModel):
     email: EmailStr = Field(... )
     permissions: List[str] = Field(...)
     name: str = Field(...)
-    last_name: str 
+    last_name: str
     class Config:
-        orm_mode: bool  = True
+        from_attributes: bool  = True
 
 class UsersCreate(Users):
     hashed_password: str = Field(..., min_length=7, max_length=30)
     class Config:
-        orm_mode: bool  = True
+        from_attributes: bool  = True
 
 class UsersResponse(BaseModel):
     id: int
     email: EmailStr = Field(...)
     class Config:
-        orm_mode: bool  = True
-    
+        from_attributes: bool  = True
+
