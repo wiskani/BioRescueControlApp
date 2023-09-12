@@ -1,5 +1,7 @@
+import asyncio
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, Engine
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import Session, sessionmaker
 from typing import Generator
 from pydantic import EmailStr
@@ -16,21 +18,25 @@ settings: Settings = get_settings()
 
 SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL_TEST
 
-engine: Engine = create_engine(SQLALCHEMY_DATABASE_URL)
-TestingSessionLocal: sessionmaker[Session] = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine  = create_async_engine(SQLALCHEMY_DATABASE_URL)
+TestingSessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 #Drop all tables and create new ones
-Base.metadata.drop_all(bind=engine)
+async def drop_and_create_tables() -> None:
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
 
-Base.metadata.create_all(bind=engine)
+loop = asyncio.get_event_loop()
+loop.run_until_complete(drop_and_create_tables())
 
 
-def override_get_db() -> Generator [Session, None, None]:
+async def override_get_db() :
     try:
-        db: Session = TestingSessionLocal()
+        db: AsyncSession = TestingSessionLocal()
         yield db
     finally:
-        db.close()
+        await db.close()
 
 
 app.dependency_overrides[get_db] = override_get_db

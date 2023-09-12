@@ -39,7 +39,8 @@ async def get_current_user(db:AsyncSession =Depends(get_db), token: str = Depend
         )
     try:
         payload: dict[str, str] = decode(token, JWT_SECRET, algorithms=["HS256"])
-        user  = await db.execute(select(User).filter_by(id=payload["id"]))
+        result   = await db.execute(select(User).filter_by(id=payload["id"]))
+        user: User | None = result.scalars().first()
         user.permissions = json.loads(user.permissions)
     except:
         raise HTTPException(
@@ -49,8 +50,8 @@ async def get_current_user(db:AsyncSession =Depends(get_db), token: str = Depend
     return Users.from_orm(user)
 
 #Authentication for login
-async def authenticate_user(email: EmailStr, password: str, db: AsyncSession) -> Union[Users, bool]:
-    user: Union[User, None] = await get_user_by_email(db=db, email=email)
+async def authenticate_user(email: EmailStr, password: str, db: AsyncSession) -> User | bool:
+    user: User | None = await get_user_by_email(db=db, email=email)
     if not user:
         return False
     if not user.verify_password(password):

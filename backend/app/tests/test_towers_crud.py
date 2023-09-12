@@ -1,16 +1,18 @@
-from pydantic import EmailStr
-from requests import Response
-from typing import Dict, Any, Union
-from fastapi.testclient import TestClient
+from typing import Dict, Any
 
 from app.tests.conftest import *
 from app.tests.utils.towers_example import *
-from app.crud.tower import get_clear_flora_id_by_tower_number
 
-TOWER = create_random_tower()
+async def get_random_tower() -> Tower:
+    tower= await create_random_tower()
+    if tower is None:
+        raise ValueError("tower is None")
+    else:
+        return tower
+
+TOWER = loop.run_until_complete(get_random_tower())
+
 TOWER_NUMBER = TOWER.number
-
-db: Session = next(override_get_db())
 
 
 """

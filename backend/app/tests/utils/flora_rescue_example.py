@@ -4,11 +4,20 @@ from app.tests.conftest import *
 from app.tests.utils.species_example import *
 from app.models.rescue_flora import *
 
-db: Session = next(override_get_db())
+async  def get_test_db_session():
+    async for session in override_get_db():
+        return session
+
+db= loop.run_until_complete(get_test_db_session())
+
+SPECIE_ID = loop.run_until_complete(create_specie_id())
 
 # Create a radom rescue_zone
-def create_random_rescue_zone_id()-> int:
-    db_rescue_zone = db.query(FloraRescueZone).first()
+async def create_random_rescue_zone_id()-> int:
+    if db is None:
+        raise ValueError("db is None")
+    result = await db.execute(select(FloraRescueZone))
+    db_rescue_zone = result.scalars().first()
     if db_rescue_zone is not None:
         flora_recue_zone_id = db_rescue_zone.id
         return flora_recue_zone_id
@@ -20,12 +29,15 @@ def create_random_rescue_zone_id()-> int:
             description="".join(random.choices(string.ascii_uppercase, k=10)),
         )
         db.add(db_rescue_zone)
-        db.commit()
-        db.refresh(db_rescue_zone)
+        await db.commit()
+        await db.refresh(db_rescue_zone)
         return flora_recue_zone_id
 
-def create_random_relocation_zone_id()-> int:
-    db_relocation_zone = db.query(FloraRelocationZone).first()
+async def create_random_relocation_zone_id()-> int:
+    if db is None:
+        raise ValueError("db is None")
+    result = await db.execute(select(FloraRelocationZone))
+    db_relocation_zone = result.scalars().first()
     if db_relocation_zone is not None:
         flora_relocation_zone_id = db_relocation_zone.id
         return flora_relocation_zone_id
@@ -36,12 +48,16 @@ def create_random_relocation_zone_id()-> int:
             name="".join(random.choices(string.ascii_uppercase, k=10)),
         )
         db.add(db_relocation_zone)
-        db.commit()
-        db.refresh(db_relocation_zone)
+        await db.commit()
+        await db.refresh(db_relocation_zone)
         return flora_relocation_zone_id
 
-def create_random_flora_rescue_id() -> int:
-    db_flora_rescue = db.query(FloraRescue).first()
+
+async def create_random_flora_rescue_id() -> int:
+    if db is None:
+        raise ValueError("db is None")
+    result = await db.execute(select(FloraRescue))
+    db_flora_rescue = result.scalars().first()
     if db_flora_rescue is not None:
         flora_rescue_id = db_flora_rescue.id
         return flora_rescue_id
@@ -62,11 +78,11 @@ def create_random_flora_rescue_id() -> int:
             health_status_epiphyte = "health_status_epiphyte_test",
             microhabitat = "microhabitat_test",
             other_observations = "other_observations_test",
-            specie_bryophyte_id = create_specie_id(),
-            specie_epiphyte_id = create_specie_id(),
-            rescue_zone_id = create_random_rescue_zone_id(),
+            specie_bryophyte_id = SPECIE_ID,
+            specie_epiphyte_id = SPECIE_ID,
+            rescue_zone_id = await create_random_rescue_zone_id(),
         )
         db.add(db_flora_rescue)
-        db.commit()
-        db.refresh(db_flora_rescue)
+        await db.commit()
+        await db.refresh(db_flora_rescue)
         return flora_rescue_id

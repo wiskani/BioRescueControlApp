@@ -1,14 +1,22 @@
 import random
 import string
+from sqlalchemy import select
 from app.tests.conftest import *
 from app.models.species import Specie, Genus, Family, Order, Class_
 
+async  def get_test_db_session():
+    async for session in override_get_db():
+        return session
 
-db: Session = next(override_get_db())
+db= loop.run_until_complete(get_test_db_session())
 
-def create_specie_id() ->int:
+
+async def create_specie_id() ->int:
+    if db is None:
+        raise ValueError("db is None")
     #query to get first Specie
-    specie = db.query(Specie).first()
+    result = await db.execute(select(Specie))
+    specie = result.scalars().first()
     # get id of the first specie
     if specie is not None:
         specie_id = specie.id
@@ -21,8 +29,8 @@ def create_specie_id() ->int:
             class_name = "Mammalia",
         )
         db.add(db_class)
-        db.commit()
-        db.refresh(db_class)
+        await db.commit()
+        await db.refresh(db_class)
 
         # Create an order
         db_order = Order(
@@ -31,8 +39,8 @@ def create_specie_id() ->int:
             class__id = db_class.id,
         )
         db.add(db_order)
-        db.commit()
-        db.refresh(db_order)
+        await db.commit()
+        await db.refresh(db_order)
 
         # Create a family
         db_family = Family(
@@ -41,8 +49,8 @@ def create_specie_id() ->int:
             order_id = db_order.id,
         )
         db.add(db_family)
-        db.commit()
-        db.refresh(db_family)
+        await db.commit()
+        await db.refresh(db_family)
 
         # Create a genus
         db_genus = Genus(
@@ -51,8 +59,8 @@ def create_specie_id() ->int:
             family_id = db_family.id,
         )
         db.add(db_genus)
-        db.commit()
-        db.refresh(db_genus)
+        await db.commit()
+        await db.refresh(db_genus)
 
         # Create a specie
         db_specie = Specie(
@@ -62,14 +70,17 @@ def create_specie_id() ->int:
             genus_id = db_genus.id,
         )
         db.add(db_specie)
-        db.commit()
-        db.refresh(db_specie)
+        await db.commit()
+        await db.refresh(db_specie)
 
         return specie_id
 
-def create_genus_id() ->int:
+async def create_genus_id() ->int:
+    if db is None:
+        raise ValueError("db is None")
     #query to get first Genus
-    genus = db.query(Genus).first()
+    result = await db.execute(select(Genus))
+    genus = result.scalars().first()
     # get id of the first genus
     if genus is not None:
         genus_id = genus.id
@@ -82,8 +93,8 @@ def create_genus_id() ->int:
             class_name = "Mammalia2",
         )
         db.add(db_class)
-        db.commit()
-        db.refresh(db_class)
+        await db.commit()
+        await db.refresh(db_class)
 
         # Create an order
         db_order = Order(
@@ -92,8 +103,8 @@ def create_genus_id() ->int:
             class__id = db_class.id,
         )
         db.add(db_order)
-        db.commit()
-        db.refresh(db_order)
+        await db.commit()
+        await db.refresh(db_order)
 
         # Create a family
         db_family = Family(
@@ -102,8 +113,8 @@ def create_genus_id() ->int:
             order_id = db_order.id,
         )
         db.add(db_family)
-        db.commit()
-        db.refresh(db_family)
+        await db.commit()
+        await db.refresh(db_family)
 
         # Create a genus
         db_genus = Genus(
@@ -112,14 +123,17 @@ def create_genus_id() ->int:
             family_id = db_family.id,
         )
         db.add(db_genus)
-        db.commit()
-        db.refresh(db_genus)
+        await db.commit()
+        await db.refresh(db_genus)
 
         return genus_id
 
-def create_family_id() ->int:
+async def create_family_id() ->int:
+    if db is None:
+        raise ValueError("db is None")
     #query to get first Family
-    family = db.query(Family).first()
+    result = await db.execute(select(Family))
+    family = result.scalars().first()
     # get id of the first family
     if family is not None:
         family_id = family.id
@@ -132,8 +146,8 @@ def create_family_id() ->int:
             class_name = "Mammalia3",
         )
         db.add(db_class)
-        db.commit()
-        db.refresh(db_class)
+        await db.commit()
+        await db.refresh(db_class)
 
         # Create an order
         db_order = Order(
@@ -142,8 +156,8 @@ def create_family_id() ->int:
             class__id = db_class.id,
         )
         db.add(db_order)
-        db.commit()
-        db.refresh(db_order)
+        await db.commit()
+        await db.refresh(db_order)
 
         # Create a family
         db_family = Family(
@@ -152,8 +166,8 @@ def create_family_id() ->int:
             order_id = db_order.id,
         )
         db.add(db_family)
-        db.commit()
-        db.refresh(db_family)
+        await db.commit()
+        await db.refresh(db_family)
 
         return family_id
 
