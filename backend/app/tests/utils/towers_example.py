@@ -1,16 +1,11 @@
 import random
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.tests.conftest import *
 from app.models.towers import Tower
 
-async  def get_test_db_session():
-    async for session in override_get_db():
-        return session
-
-db= loop.run_until_complete(get_test_db_session())
-
 #Create a tower
-async def create_random_tower() -> Tower:
+async def create_random_tower(db:AsyncSession) -> Tower:
     if db is None:
         raise ValueError("db is None")
 

@@ -1,17 +1,11 @@
 import random
 import string
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.tests.conftest import *
 from app.models.species import Specie, Genus, Family, Order, Class_
 
-async  def get_test_db_session():
-    async for session in override_get_db():
-        return session
-
-db= loop.run_until_complete(get_test_db_session())
-
-
-async def create_specie_id() ->int:
+async def create_specie_id(db:AsyncSession) ->int:
     if db is None:
         raise ValueError("db is None")
     #query to get first Specie
@@ -75,7 +69,7 @@ async def create_specie_id() ->int:
 
         return specie_id
 
-async def create_genus_id() ->int:
+async def create_genus_id(db:AsyncSession) ->int:
     if db is None:
         raise ValueError("db is None")
     #query to get first Genus
@@ -128,7 +122,7 @@ async def create_genus_id() ->int:
 
         return genus_id
 
-async def create_family_id() ->int:
+async def create_family_id(db:AsyncSession) ->int:
     if db is None:
         raise ValueError("db is None")
     #query to get first Family

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Union, Dict
 
 from app.schemas.rescue_flora import (
@@ -80,7 +80,7 @@ ENDPOINTS FOR RESCUE ZONE
 )
 async def create_a_new_rescue_zone(
         rescue_zone:FloraRescueZoneBase,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[FloraRescueZoneResponse, HTTPException]:
 
@@ -101,7 +101,7 @@ async def create_a_new_rescue_zone(
         summary="Get all rescue zones",
 )
 async def get_all_rescue_zones_(
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[List[FloraRescueZoneResponse], HTTPException]:
     return await get_all_flora_rescue_zones(db)
@@ -116,7 +116,7 @@ async def get_all_rescue_zones_(
 )
 async def get_a_rescue_zone_by_id(
         rescue_zone_id:int,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[FloraRescueZoneResponse, HTTPException]:
     db_rescue_zone = await get_flora_rescue_zone_by_id(db, rescue_zone_id)
@@ -138,7 +138,7 @@ async def get_a_rescue_zone_by_id(
 async def update_a_rescue_zone(
         rescue_zone_id:int,
         rescue_zone:FloraRescueZoneBase,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[FloraRescueZoneResponse, HTTPException]:
     db_rescue_zone = await get_flora_rescue_zone_by_id(db, rescue_zone_id)
@@ -158,7 +158,7 @@ async def update_a_rescue_zone(
 )
 async def delete_a_rescue_zone(
         rescue_zone_id:int,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Dict:
     db_rescue_zone = await get_flora_rescue_zone_by_id(db, rescue_zone_id)
@@ -184,7 +184,7 @@ ENDPOINTS FOR RELOCATION ZONE
 )
 async def create_a_new_relocation_zone(
         relocation_zone:FloraRelocationZoneBase,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[FloraRelocationZoneResponse, HTTPException]:
 
@@ -205,7 +205,7 @@ async def create_a_new_relocation_zone(
         summary="Get all relocation zones",
 )
 async def get_all_relocation_zones_(
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[List[FloraRelocationZoneResponse], HTTPException]:
     return await get_all_flora_relocation_zones(db)
@@ -220,7 +220,7 @@ async def get_all_relocation_zones_(
 )
 async def get_a_relocation_zone_by_id(
         relocation_zone_id:int,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[FloraRelocationZoneResponse, HTTPException]:
     db_relocation_zone = await get_flora_relocation_zone_by_id(db, relocation_zone_id)
@@ -242,7 +242,7 @@ async def get_a_relocation_zone_by_id(
 async def update_a_relocation_zone(
         relocation_zone_id:int,
         relocation_zone:FloraRelocationZoneBase,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[FloraRelocationZoneResponse, HTTPException]:
     db_relocation_zone = await get_flora_relocation_zone_by_id(db, relocation_zone_id)
@@ -262,7 +262,7 @@ async def update_a_relocation_zone(
 )
 async def delete_a_relocation_zone(
         relocation_zone_id:int,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Dict:
     db_relocation_zone = await get_flora_relocation_zone_by_id(db, relocation_zone_id)
@@ -289,7 +289,7 @@ ENDPOINTS FOR FLORA RESCUE
 )
 async def create_a_new_flora_rescue(
         flora_rescue:FloraRescueBase,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[FloraRescueResponse, HTTPException]:
 
@@ -310,7 +310,7 @@ async def create_a_new_flora_rescue(
         summary="Get all flora rescues",
 )
 async def get_all_flora_rescues_(
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[List[FloraRescueResponse], HTTPException]:
     return await get_all_flora_rescues(db)
@@ -325,7 +325,7 @@ async def get_all_flora_rescues_(
 )
 async def get_a_flora_rescue_by_id(
         flora_rescue_id:int,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[FloraRescueResponse, HTTPException]:
     db_flora_rescue = await get_flora_rescue_by_id(db, flora_rescue_id)
@@ -347,7 +347,7 @@ async def get_a_flora_rescue_by_id(
 async def update_a_flora_rescue(
         flora_rescue_id:int,
         flora_rescue:FloraRescueBase,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[FloraRescueResponse, HTTPException]:
     db_flora_rescue = await get_flora_rescue_by_id(db, flora_rescue_id)
@@ -367,7 +367,7 @@ async def update_a_flora_rescue(
 )
 async def delete_a_flora_rescue(
         flora_rescue_id:int,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Dict:
     db_flora_rescue = await get_flora_rescue_by_id(db, flora_rescue_id)
@@ -393,7 +393,7 @@ ENDPOINTS FOR PLANT NURSERY
 )
 async def create_a_new_plant_nursery(
         plant_nursery:PlantNurseryBase,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[PlantNurseryResponse, HTTPException]:
 
@@ -414,7 +414,7 @@ async def create_a_new_plant_nursery(
         summary="Get all plant nurseries",
 )
 async def get_all_plant_nurseries_(
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->List[PlantNursery]:
     return await get_all_plant_nurseries(db)
@@ -429,7 +429,7 @@ async def get_all_plant_nurseries_(
 )
 async def get_a_plant_nursery_by_id(
         plant_nursery_id:int,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[PlantNurseryResponse, HTTPException]:
     db_plant_nursery = await get_plant_nursery_by_id(db, plant_nursery_id)
@@ -451,7 +451,7 @@ async def get_a_plant_nursery_by_id(
 async def update_a_plant_nursery(
         plant_nursery_id:int,
         plant_nursery:PlantNurseryBase,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[PlantNurseryResponse, HTTPException]:
     db_plant_nursery = await get_plant_nursery_by_id(db, plant_nursery_id)
@@ -471,7 +471,7 @@ async def update_a_plant_nursery(
 )
 async def delete_a_plant_nursery(
         plant_nursery_id:int,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Dict:
     db_plant_nursery = await get_plant_nursery_by_id(db, plant_nursery_id)
@@ -497,7 +497,7 @@ ENDPOINTS FOR FLORA RELOCATION
 )
 async def create_a_new_flora_relocation(
         flora_relocation:FloraRelocationBase,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[FloraRelocationResponse, HTTPException]:
 
@@ -518,7 +518,7 @@ async def create_a_new_flora_relocation(
         summary="Get all flora relocations",
 )
 async def get_all_flora_relocations_(
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[List[FloraRelocationResponse], HTTPException]:
     return await get_all_flora_relocations(db)
@@ -533,7 +533,7 @@ async def get_all_flora_relocations_(
 )
 async def get_a_flora_relocation_by_id(
         flora_relocation_id:int,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[FloraRelocationResponse, HTTPException]:
     db_flora_relocation = await get_flora_relocation_by_id(db, flora_relocation_id)
@@ -555,7 +555,7 @@ async def get_a_flora_relocation_by_id(
 async def update_a_flora_relocation(
         flora_relocation_id:int,
         flora_relocation:FloraRelocationBase,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Union[FloraRelocationResponse, HTTPException]:
     db_flora_relocation = await get_flora_relocation_by_id(db, flora_relocation_id)
@@ -575,7 +575,7 @@ async def update_a_flora_relocation(
 )
 async def delete_a_flora_relocation(
         flora_relocation_id:int,
-        db:Session=Depends(get_db),
+        db:AsyncSession=Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         )->Dict:
     db_flora_relocation = await get_flora_relocation_by_id(db, flora_relocation_id)

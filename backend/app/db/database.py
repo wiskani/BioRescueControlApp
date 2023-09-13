@@ -15,9 +15,12 @@ engine = create_async_engine(
 
 #Session
 SessionLocal = async_sessionmaker(
+    autocommit=False,
+    autoflush=False,
     bind=engine,
     expire_on_commit=False,
-    class_=AsyncSession
+    class_=AsyncSession,
+
 )
 
 #Base
@@ -31,10 +34,13 @@ async def init_tables():
 
 #Dependency
 async def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        await db.close()
+    async with SessionLocal.begin() as db:
+        try:
+            yield db
+        except:
+            await db.rollback()
+            raise
+        finally:
+            await db.close()
 
 

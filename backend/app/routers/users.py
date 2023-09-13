@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Union
 
 from app.schemas.users import UsersCreate,  Users, UsersResponse
@@ -19,7 +19,7 @@ router: APIRouter = APIRouter()
 )
 async def create_new_user(
     new_user: UsersCreate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])), # Check if user is authorized
 ) -> Union[Users, HTTPException]:
     db_user: Union[User, None]  = await get_user_by_email(db=db, email=new_user.email)
@@ -39,7 +39,7 @@ async def create_new_user(
 async def update_user_by_id(
     user_id: int,
     user: UsersCreate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])), # Check if user is authorized
 ) -> Union[Users, HTTPException]:
     db_user: Union[User, None] = await get_user_by_id(db=db, user_id=user_id)
@@ -58,7 +58,7 @@ async def update_user_by_id(
 )
 async def delete_user_by_id(
     user_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])), # Check if user is authorized
 ) -> Union[Users, HTTPException]:
     db_user: Union[User, None] = await get_user_by_id(db=db, user_id=user_id)

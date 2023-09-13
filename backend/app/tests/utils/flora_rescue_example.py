@@ -1,19 +1,13 @@
 import random
 import string
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.tests.conftest import *
 from app.tests.utils.species_example import *
 from app.models.rescue_flora import *
 
-async  def get_test_db_session():
-    async for session in override_get_db():
-        return session
-
-db= loop.run_until_complete(get_test_db_session())
-
-SPECIE_ID = loop.run_until_complete(create_specie_id())
 
 # Create a radom rescue_zone
-async def create_random_rescue_zone_id()-> int:
+async def create_random_rescue_zone_id(db: AsyncSession)-> int:
     if db is None:
         raise ValueError("db is None")
     result = await db.execute(select(FloraRescueZone))
@@ -33,7 +27,7 @@ async def create_random_rescue_zone_id()-> int:
         await db.refresh(db_rescue_zone)
         return flora_recue_zone_id
 
-async def create_random_relocation_zone_id()-> int:
+async def create_random_relocation_zone_id(db:AsyncSession)-> int:
     if db is None:
         raise ValueError("db is None")
     result = await db.execute(select(FloraRelocationZone))
@@ -53,7 +47,8 @@ async def create_random_relocation_zone_id()-> int:
         return flora_relocation_zone_id
 
 
-async def create_random_flora_rescue_id() -> int:
+async def create_random_flora_rescue_id(db:AsyncSession) -> int:
+    SPECIE_ID = loop.run_until_complete(create_specie_id(db))
     if db is None:
         raise ValueError("db is None")
     result = await db.execute(select(FloraRescue))
@@ -80,7 +75,7 @@ async def create_random_flora_rescue_id() -> int:
             other_observations = "other_observations_test",
             specie_bryophyte_id = SPECIE_ID,
             specie_epiphyte_id = SPECIE_ID,
-            rescue_zone_id = await create_random_rescue_zone_id(),
+            rescue_zone_id = await create_random_rescue_zone_id(db),
         )
         db.add(db_flora_rescue)
         await db.commit()

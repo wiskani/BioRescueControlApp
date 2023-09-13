@@ -3,14 +3,12 @@ from typing import Dict, Any
 from app.tests.conftest import *
 from app.tests.utils.towers_example import *
 
-async def get_random_tower() -> Tower:
-    tower= await create_random_tower()
-    if tower is None:
-        raise ValueError("tower is None")
-    else:
-        return tower
+db_gen = override_get_db()
+db = next(db_gen)
 
-TOWER = loop.run_until_complete(get_random_tower())
+TOWER = loop.run_until_complete(create_random_tower(db))
+
+loop.run_until_complete(db_gen.aclose())
 
 TOWER_NUMBER = TOWER.number
 

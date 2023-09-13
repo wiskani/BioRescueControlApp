@@ -8,6 +8,7 @@ from app.tests.utils.flora_rescue_example import *
 from app.tests.utils.species_example import *
 
 
+db = override_get_db()
 
 #fuctions to create a longitude and latitude
 def create_longitude() -> float:
@@ -16,21 +17,17 @@ def create_longitude() -> float:
 def create_latitude() -> float:
     return random.uniform(-90, 90)
 
-async def get_specie_id() -> int:
-    specie_id = await create_specie_id()
-    return specie_id
+specie_id =  loop.run_until_complete(create_specie_id(db))
 
-specie_id =  loop.run_until_complete(get_specie_id())
+GENUS_ID= loop.run_until_complete(create_genus_id(db))
 
-GENUS_ID= loop.run_until_complete(create_genus_id())
+FAMILY_ID = loop.run_until_complete(create_family_id(db))
 
-FAMILY_ID = loop.run_until_complete(create_family_id())
+RESCUE_ZONE_ID = loop.run_until_complete(create_random_relocation_zone_id(db))
 
-RESCUE_ZONE_ID = loop.run_until_complete(create_random_relocation_zone_id())
+RELOCATION_ZONE_ID = loop.run_until_complete(create_random_relocation_zone_id(db))
 
-RELOCATION_ZONE_ID = loop.run_until_complete(create_random_relocation_zone_id())
-
-FLORA_RESCUE_ID = loop.run_until_complete(create_random_flora_rescue_id())
+FLORA_RESCUE_ID = loop.run_until_complete(create_random_flora_rescue_id(db))
 
 
 """

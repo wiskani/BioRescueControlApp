@@ -1,8 +1,7 @@
 import asyncio
-from fastapi.testclient import TestClient
-from sqlalchemy import create_engine, Engine
+import pytest
+from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from sqlalchemy.orm import Session, sessionmaker
 from typing import Generator
 from pydantic import EmailStr
 
@@ -18,34 +17,46 @@ settings: Settings = get_settings()
 
 SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL_TEST
 
-engine  = create_async_engine(SQLALCHEMY_DATABASE_URL)
-TestingSessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine  = create_async_engine(
+    SQLALCHEMY_DATABASE_URL,
+    echo=True,
+)
+TestingSessionLocal = async_sessionmaker(
+    bind=engine,
+    expire_on_commit=False,
+    class_=AsyncSession,
+)
 
-#Drop all tables and create new ones
-async def drop_and_create_tables() -> None:
+@pytest.fixture(scope="session")
+async def init_test_db() :
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
+    yield
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(drop_and_create_tables())
-
-
+@pytest.fixture
 async def override_get_db() :
+    db: AsyncSession = TestingSessionLocal()
     try:
-        db: AsyncSession = TestingSessionLocal()
         yield db
     finally:
         await db.close()
 
 
-app.dependency_overrides[get_db] = override_get_db
 
-def override_get_currrent_user() -> Users :
+#app.dependency_overrides[get_db] = override_get_db
+
+def override_get_current_user() -> Users :
     email: EmailStr = "dummy@dummy.com"
     user: Users = Users(id=5, email= email, name="dummy", last_name="dummy", permissions=["admin", ])
     return user
 
-app.dependency_overrides[get_current_user]= override_get_currrent_user
+app.dependency_overrides[get_current_user]= override_get_current_user
 
-client: TestClient = TestClient(app)
+@pytest.fixture(scope="session")
+async def async_client():
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        yield ac
+
