@@ -12,10 +12,7 @@ from app.tests.conftest import async_client
 @pytest.mark.asyncio
 async def test_create_user(
     async_client: AsyncClient,
-    async_session: AsyncSession,
 ) -> None:
-    await async_session.execute(statement=statement)
-    await async_session.commit()
     mail: Union [EmailStr , str] = random_email_user()
     name: str = random_name_user()
     last_name: str = radom_last_name()

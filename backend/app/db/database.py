@@ -1,3 +1,5 @@
+from sys import modules
+
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from app.routers.config import get_settings, Settings
@@ -5,6 +7,8 @@ from app.routers.config import get_settings, Settings
 settings: Settings = get_settings()
 
 DATABASE_URL = settings.DATABASE_URL
+if "pytest" in modules:
+    DATABASE_URL = settings.DATABASE_URL_TEST
 
 
 #Engine

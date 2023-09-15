@@ -1,5 +1,6 @@
 import asyncio
 import pytest
+import pytest_asyncio
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from typing import Generator
@@ -61,8 +62,8 @@ def override_get_current_user() -> Users :
 
 app.dependency_overrides[get_current_user]= override_get_current_user
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def async_client():
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(app=app, base_url="http://localhost") as ac:
         yield ac
 
