@@ -28,6 +28,12 @@ TestingSessionLocal = async_sessionmaker(
 )
 
 @pytest.fixture(scope="session")
+def event_loop(request) -> Generator:  # noqa: indirect usage
+   loop = asyncio.get_event_loop_policy().new_event_loop()
+   yield loop
+   loop.close()
+
+@pytest.fixture(scope="session")
 async def init_test_db() :
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
@@ -55,7 +61,7 @@ def override_get_current_user() -> Users :
 
 app.dependency_overrides[get_current_user]= override_get_current_user
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 async def async_client():
     async with AsyncClient(app=app, base_url="http://test") as ac:
         yield ac
