@@ -38,13 +38,10 @@ async def init_tables():
 
 #Dependency
 async def get_db():
-    async with SessionLocal.begin() as db:
-        try:
-            yield db
-        except:
-            await db.rollback()
-            raise
-        finally:
-            await db.close()
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        await db.close()
 
 

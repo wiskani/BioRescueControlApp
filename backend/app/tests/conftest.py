@@ -64,6 +64,6 @@ app.dependency_overrides[get_current_user]= override_get_current_user
 
 @pytest_asyncio.fixture
 async def async_client():
-    async with AsyncClient(app=app, base_url="http://localhost") as ac:
+    async with AsyncClient(app=app, base_url="http://localhost:8080") as ac:
         yield ac
 

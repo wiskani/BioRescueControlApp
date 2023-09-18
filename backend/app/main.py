@@ -88,8 +88,7 @@ async def startup() -> None:
         id: int = 1
         while True:
             try:
-                email_str: str = settings.FIRST_USER_MAIL
-                email: EmailStr = EmailStr(email_str)
+                email:EmailStr| str = settings.FIRST_USER_MAIL
                 break
             except ValidationError:
                 print("email invalid")

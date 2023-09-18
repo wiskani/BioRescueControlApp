@@ -38,10 +38,16 @@ async def get_user_by_id(db: AsyncSession, user_id: int) -> User| None:
 #Create a user
 async def create_user(db: AsyncSession, user: UsersCreate) -> User | HTTPException:
     db_user = await get_user_by_email(db, user.email)
-    if db_user:
+    if db_user is not None:
         return HTTPException(status_code=400, detail="Email already registered")
     else:
-        db_user: User = User(email=user.email, name=user.name, last_name=user.last_name, permissions=user.permissions, hashed_password=bcrypt.hash(user.hashed_password))
+        db_user = User(
+            email=user.email,
+            name=user.name,
+            last_name=user.last_name,
+            permissions=user.permissions,
+            hashed_password=bcrypt.hash(user.hashed_password)
+        )
         db.add(db_user)
         await db.commit()
         await db.refresh(db_user)
@@ -72,8 +78,4 @@ async def delete_user(db:AsyncSession , user_id: int) -> Union[User, HTTPExcepti
     except:
         return HTTPException(status_code=400, detail="User does not exist")
 
-
-
-
- 
 

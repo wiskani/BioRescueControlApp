@@ -1,5 +1,5 @@
+from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
 from typing import List, Union
 
 from app.schemas.species import(
@@ -81,7 +81,7 @@ router: APIRouter = APIRouter()
 )
 async def create_a_new_specie(
     new_specie: SpeciesCreate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Species, HTTPException]:
     db_specie = await get_specie_by_name(db, new_specie.scientific_name)
@@ -101,7 +101,7 @@ async def create_a_new_specie(
     summary="Get all species",
 )
 async def get_all_species_(
-    db: Session = Depends(get_db),
+    db: AsyncSession  = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin", "read"]))
 ) -> Union[List[Species], HTTPException]:
     return await get_all_species(db)
@@ -116,7 +116,7 @@ async def get_all_species_(
 )
 async def get_a_specie_by_id(
     specie_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Species, HTTPException]:
     db_specie = await get_specie_by_id(db, specie_id)
@@ -138,7 +138,7 @@ async def get_a_specie_by_id(
 async def update_a_specie(
     specie_id: int,
     specie: SpeciesCreate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Species, HTTPException]:
     db_specie = await get_specie_by_id(db, specie_id)
@@ -159,7 +159,7 @@ async def update_a_specie(
 )
 async def delete_a_specie(
     specie_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Species, HTTPException]:
     db_specie = await get_specie_by_id(db, specie_id)
@@ -181,7 +181,7 @@ async def delete_a_specie(
 )
 async def create_a_new_genus(
     new_genus: GenusesCreate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Genuses, HTTPException]:
     db_genus = await get_genus_by_name(db, new_genus.genus_name)
@@ -201,7 +201,7 @@ async def create_a_new_genus(
     summary="Get all genuses",
 )
 async def get_all_genuses_(
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> List[Genuses]:
     return await get_all_genuses(db)
@@ -216,7 +216,7 @@ async def get_all_genuses_(
 )
 async def get_a_genus_by_id(
     genus_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Genuses, HTTPException]:
     db_genus = await get_genus_by_id(db, genus_id)
@@ -238,7 +238,7 @@ async def get_a_genus_by_id(
 async def update_a_genus(
     genus_id: int,
     genus: GenusesCreate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Genuses, HTTPException]:
     db_genus = await get_genus_by_id(db, genus_id)
@@ -260,7 +260,7 @@ async def update_a_genus(
 )
 async def delete_a_genus(
     genus_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Genuses, HTTPException]:
     db_genus = await get_genus_by_id(db, genus_id)
@@ -281,7 +281,7 @@ async def delete_a_genus(
 )
 async def create_a_new_family(
     new_family: FamiliesCreate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Families, HTTPException]:
     db_family = await get_family_by_name(db, new_family.family_name)
@@ -301,7 +301,7 @@ async def create_a_new_family(
     summary="Get all families",
 )
 async def get_all_families_(
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> List[Families]:
     return await get_all_families(db)
@@ -316,7 +316,7 @@ async def get_all_families_(
 )
 async def get_a_family_by_id(
     family_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Families, HTTPException]:
     db_family = await get_family_by_id(db, family_id)
@@ -338,7 +338,7 @@ async def get_a_family_by_id(
 async def update_a_family(
     family_id: int,
     family: FamiliesCreate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Families, HTTPException]:
     db_family = await get_family_by_id(db, family_id)
@@ -359,7 +359,7 @@ async def update_a_family(
 )
 async def delete_a_family(
     family_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Families, HTTPException]:
     db_family = await get_family_by_id(db, family_id)
@@ -380,7 +380,7 @@ async def delete_a_family(
 )
 async def create_a_new_order(
     new_order: OrdersCreate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Orders, HTTPException]:
     db_order = await get_order_by_name(db, new_order.order_name)
@@ -400,9 +400,9 @@ async def create_a_new_order(
     summary="Get all orders",
 )
 async def get_all_orders_(
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
-) -> List[Orders]:
+) -> List[Order]:
     return await get_all_orders(db)
 
 #Get order by id
@@ -415,7 +415,7 @@ async def get_all_orders_(
 )
 async def get_a_order_by_id(
     order_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Orders, HTTPException]:
     db_order = await get_order_by_id(db, order_id)
@@ -437,7 +437,7 @@ async def get_a_order_by_id(
 async def update_a_order(
     order_id: int,
     order: OrdersCreate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Orders, HTTPException]:
     db_order = await get_order_by_id(db, order_id)
@@ -458,7 +458,7 @@ async def update_a_order(
 )
 async def delete_a_order(
     order_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Orders, HTTPException]:
     db_order = await get_order_by_id(db, order_id)
@@ -479,7 +479,7 @@ async def delete_a_order(
 )
 async def create_a_new_class(
     new_class: ClassesCreate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Classes, HTTPException]:
     db_class = await get_class_by_name(db, new_class.class_name)
@@ -499,7 +499,7 @@ async def create_a_new_class(
     summary="Get all classes",
 )
 async def get_all_classes_(
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> List[Classes]:
     return await get_all_classes(db)
@@ -514,7 +514,7 @@ async def get_all_classes_(
 )
 async def get_a_class_by_id(
     class_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Classes, HTTPException]:
     db_class = await get_class_by_id(db, class_id)
@@ -536,7 +536,7 @@ async def get_a_class_by_id(
 async def update_a_class(
     class_id: int,
     class_: ClassesCreate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Classes, HTTPException]:
     db_class = await get_class_by_id(db, class_id)
@@ -557,7 +557,7 @@ async def update_a_class(
 )
 async def delete_a_class(
     class_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> Union[Classes, HTTPException]:
     db_class = await get_class_by_id(db, class_id)
@@ -577,7 +577,7 @@ async def delete_a_class(
     summary="Get all species with all their information",
 )
 async def get_all_species_join(
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> List[SpeciesJoin]:
     return await get_all_species_join_(db)
