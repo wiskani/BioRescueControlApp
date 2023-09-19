@@ -126,7 +126,7 @@ async def create_family(db: AsyncSession, family: FamiliesCreate) -> Family:
     )
     db.add(db_family)
     await db.commit()
-    await b.refresh(db_family)
+    await db.refresh(db_family)
     return db_family
 
 #Get all families
@@ -172,7 +172,7 @@ async def create_order(db: AsyncSession, order: OrdersCreate) -> Order:
     )
     db.add(db_order)
     await db.commit()
-    await b.refresh(db_order)
+    await db.refresh(db_order)
     return db_order
 
 #Get all orders

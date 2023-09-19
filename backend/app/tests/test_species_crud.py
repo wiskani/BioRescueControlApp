@@ -7,22 +7,6 @@ from app.tests.utils.users import *
 from app.tests.utils.species_example import *
 from app.tests.conftest import async_client
 
-#Create a class
-@pytest.fixture
-async def create_class(
-    async_client: AsyncClient,
-) -> int:
-    name_class = random_string()
-
-    response: Response = await async_client.post(
-        "/api/classes", json={
-            "class_name": name_class,
-        },
-    )
-    data: Dict[str, Any] = response.json()
-    class_id = data["id"]
-    return class_id
-
 
 """TESTS FOR CLASSES"""
 #test create class
@@ -160,14 +144,13 @@ async def test_delete_class(
 @pytest.mark.asyncio
 async def test_create_order(
     async_client: AsyncClient,
-    create_class: int,
 ) -> None:
     name_order = random_string()
-
+    class_id = await  create_class(async_client)
     response: Response = await async_client.post(
         "/api/orders", json={
             "order_name": name_order,
-            "class__id": create_class ,
+            "class__id": class_id ,
         },
     )
     assert response.status_code == 201, response.text
@@ -181,6 +164,7 @@ async def test_create_order_invalid_name(
     async_client: AsyncClient,
 ) -> None:
     name_order = random_string()
+    class_id = await  create_class(async_client)
 
     response: Response = await async_client.post(
         "/api/orders", json={
@@ -202,6 +186,7 @@ async def test_update_order(
     async_client: AsyncClient,
 ) -> None:
     name_order = random_string()
+    class_id = await  create_class(async_client)
 
     response: Response = await async_client.post(
         "/api/orders", json={
@@ -232,6 +217,8 @@ async def test_get_all_orders(
 
     name_order2 = random_string()
 
+    class_id = await  create_class(async_client)
+
     response: Response = await async_client.post(
         "/api/orders", json={
             "order_name": name_order,
@@ -260,6 +247,8 @@ async def test_get_order_by_id(
 ) -> None:
     name_order = random_string()
 
+    class_id = await  create_class(async_client)
+
     response: Response = await async_client.post(
         "/api/orders", json={
             "order_name": name_order,
@@ -281,6 +270,8 @@ async def test_delete_order(
     async_client: AsyncClient,
 ) -> None:
     name_order = random_string()
+
+    class_id = await  create_class(async_client)
 
     response: Response = await async_client.post(
         "/api/orders", json={
@@ -304,7 +295,7 @@ async def test_create_family(
     async_client: AsyncClient,
 ) -> None:
     name_family = random_string()
-    global family_id
+    order_id = await  create_order(async_client)
 
     response: Response = await async_client.post(
         "/api/families", json={
@@ -316,7 +307,6 @@ async def test_create_family(
     data: Dict[str, Any] = response.json()
     assert data["family_name"] == name_family
     assert "id" in data
-    family_id = data["id"]
 
 #test create family with invalid name
 @pytest.mark.asyncio
@@ -324,6 +314,7 @@ async def test_create_family_invalid_name(
     async_client: AsyncClient,
 ) -> None:
     name_family = random_string()
+    order_id = await  create_order(async_client)
 
     response: Response = await async_client.post(
         "/api/families", json={
@@ -345,6 +336,7 @@ async def test_update_family(
     async_client: AsyncClient,
 ) -> None:
     name_family = random_string()
+    order_id = await  create_order(async_client)
 
     response: Response = await async_client.post(
         "/api/families", json={
@@ -377,6 +369,8 @@ async def test_get_all_families(
 
     name_family2 = random_string()
 
+    order_id = await  create_order(async_client)
+
     response: Response = await async_client.post(
         "/api/families", json={
             "family_name": name_family,
@@ -404,6 +398,7 @@ async def test_get_family_by_id(
     async_client: AsyncClient,
 ) -> None:
     name_family = random_string()
+    order_id = await  create_order(async_client)
 
     response: Response = await async_client.post(
         "/api/families", json={
@@ -426,6 +421,7 @@ async def test_delete_family(
     async_client: AsyncClient,
 ) -> None:
     name_family = random_string()
+    order_id = await  create_order(async_client)
 
     response: Response = await async_client.post(
         "/api/families", json={
@@ -449,7 +445,7 @@ async def test_create_genus(
     async_client: AsyncClient,
 ) -> None:
     name_genus = random_string()
-    global genus_id
+    family_id = await  create_family(async_client)
 
     response: Response = await async_client.post(
         "/api/genuses", json={
@@ -462,7 +458,6 @@ async def test_create_genus(
     data: Dict[str, Any] = response.json()
     assert data["genus_name"] == name_genus
     assert "id" in data
-    genus_id = data["id"]
 
 #test create genus with invalid name
 @pytest.mark.asyncio
@@ -470,6 +465,7 @@ async def test_create_genus_invalid_name(
     async_client: AsyncClient,
 ) -> None:
     name_genus = random_string()
+    family_id = await  create_family(async_client)
 
     response: Response = await async_client.post(
         "/api/genuses", json={
@@ -493,6 +489,7 @@ async def test_update_genus(
     async_client: AsyncClient,
 ) -> None:
     name_genus = random_string()
+    family_id = await  create_family(async_client)
 
     response: Response = await async_client.post(
         "/api/genuses", json={
@@ -529,6 +526,8 @@ async def test_get_all_genuses(
 
     name_genus2 = random_string()
 
+    family_id = await  create_family(async_client)
+
     response: Response = await async_client.post(
         "/api/genuses", json={
             "genus_name": name_genus,
@@ -559,6 +558,8 @@ async def test_get_genus_by_id(
 ) -> None:
     name_genus = random_string()
 
+    family_id = await  create_family(async_client)
+
     response: Response = await async_client.post(
         "/api/genuses", json={
             "genus_name": name_genus,
@@ -584,6 +585,7 @@ async def test_create_species(
 ) -> int :
     name_scientific = random_string()
     name_common = random_string()
+    genus_id = await  create_genus(async_client)
 
     response: Response = await async_client.post(
         "/api/species", json={
@@ -607,6 +609,7 @@ async def test_create_species_invalid_name(
 ) -> None:
     name_scientific = random_string()
     name_common = random_string()
+    genus_id = await  create_genus(async_client)
 
     response: Response  = await async_client.post(
         "/api/species", json={
@@ -616,7 +619,7 @@ async def test_create_species_invalid_name(
         },
     )
     response: Response = await async_client.post(
-        "/api/species/", json={
+        "/api/species", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
             "genus_id": genus_id,
@@ -631,6 +634,7 @@ async def test_update_species(
 ) -> None:
     name_scientific = random_string()
     name_common = random_string()
+    genus_id = await  create_genus(async_client)
 
     response: Response = await async_client.post(
         "/api/species", json={
@@ -669,6 +673,7 @@ async def test_get_all_species(
 
     name_scientific2 = random_string()
     name_common2 = random_string()
+    genus_id = await  create_genus(async_client)
 
     response: Response = await async_client.post(
         "/api/species", json={
@@ -698,22 +703,9 @@ async def test_get_all_species(
 async def test_get_species_by_id(
     async_client: AsyncClient,
 ) -> None:
-    name_scientific = random_string()
-    name_common = random_string()
-
-    response: Response = await async_client.post(
-        "/api/species", json={
-            "scientific_name": name_scientific,
-            "specific_epithet": name_common,
-            "genus_id": genus_id,
-        },
-    )
-
-    data = response.json()
-    id = data["id"]
-
+    species_id = await  create_specie(async_client)
     response: Response = await async_client.get(
-        f"/api/species/{id}",
+        f"/api/species/{species_id}",
     )
     assert response.status_code == 200, response.text
 
