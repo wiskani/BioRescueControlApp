@@ -1,20 +1,39 @@
-from requests import Response
+from httpx import Response, AsyncClient
 from typing import Dict, Any, Union
-from fastapi.testclient import TestClient
+import pytest
 
 from app.tests.conftest import *
 from app.tests.utils.users import *
 from app.tests.utils.species_example import *
+from app.tests.conftest import async_client
+
+#Create a class
+@pytest.fixture
+async def create_class(
+    async_client: AsyncClient,
+) -> int:
+    name_class = random_string()
+
+    response: Response = await async_client.post(
+        "/api/classes", json={
+            "class_name": name_class,
+        },
+    )
+    data: Dict[str, Any] = response.json()
+    class_id = data["id"]
+    return class_id
 
 
 """TESTS FOR CLASSES"""
 #test create class
-def test_create_class() -> None:
+@pytest.mark.asyncio
+async def test_create_class(
+    async_client: AsyncClient,
+) -> None:
     name_class = random_string()
-    global class_id
 
-    response = client.post(
-        "/api/classes/", json={
+    response: Response = await async_client.post(
+        "/api/classes", json={
             "class_name": name_class,
         },
     )
@@ -22,30 +41,35 @@ def test_create_class() -> None:
     data: Dict[str, Any] = response.json()
     assert data["class_name"] == name_class
     assert "id" in data
-    class_id = data["id"]
 
 #test create class with invalid name
-def test_create_class_invalid_name() -> None:
+@pytest.mark.asyncio
+async def test_create_class_invalid_name(
+    async_client: AsyncClient,
+) -> None:
     name_class = random_string()
 
-    response = client.post(
-        "/api/classes/", json={
+    response = await async_client.post(
+        "/api/classes", json={
             "class_name": name_class,
         },
     )
-    response = client.post(
-        "/api/classes/", json={
+    response = await async_client.post(
+        "/api/classes", json={
             "class_name": name_class,
         },
     )
     assert response.status_code == 409, response.text
 
 #test update class
-def test_update_class() -> None:
+@pytest.mark.asyncio
+async def test_update_class(
+    async_client: AsyncClient,
+) -> None:
     name_class = random_string()
 
-    response = client.post(
-        "/api/classes/", json={
+    response: Response = await async_client.post(
+        "/api/classes", json={
             "class_name": name_class,
         },
     )
@@ -55,7 +79,7 @@ def test_update_class() -> None:
 
     name_class = random_string()
 
-    response = client.put(
+    response = await async_client.put(
         f"/api/classes/{id}", json={
             "class_name": name_class,
         },
@@ -63,35 +87,41 @@ def test_update_class() -> None:
     assert response.status_code == 200, response.text
 
 #test get all classes
-def test_get_all_classes() -> None:
+@pytest.mark.asyncio
+async def test_get_all_classes(
+    async_client: AsyncClient,
+) -> None:
     name_class = random_string()
     name_class2 = random_string()
 
-    response = client.post(
-        "/api/classes/", json={
+    response: Response = await async_client.post(
+        "/api/classes", json={
             "class_name": name_class,
         },
     )
 
-    response = client.post(
-        "/api/classes/", json={
+    response: Response = await async_client.post(
+        "/api/classes", json={
             "class_name": name_class2,
         },
     )
 
-    response = client.get(
-        "/api/classes/",
+    response: Response = await async_client.get(
+        "/api/classes",
     )
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
     assert len(data) > 2
 
 #test get class by id
-def test_get_class_by_id() -> None:
+@pytest.mark.asyncio
+async def test_get_class_by_id(
+    async_client: AsyncClient,
+) -> None:
     name_class = random_string()
 
-    response = client.post(
-        "/api/classes/", json={
+    response: Response = await async_client.post(
+        "/api/classes", json={
             "class_name": name_class,
         },
     )
@@ -99,17 +129,20 @@ def test_get_class_by_id() -> None:
     data = response.json()
     id = data["id"]
 
-    response = client.get(
+    response = await async_client.get(
         f"/api/classes/{id}",
     )
     assert response.status_code == 200, response.text
 
 #test delete class
-def test_delete_class() -> None:
+@pytest.mark.asyncio
+async def test_delete_class(
+    async_client: AsyncClient,
+) -> None:
     name_class = random_string()
 
-    response = client.post(
-        "/api/classes/", json={
+    response: Response = await async_client.post(
+        "/api/classes", json={
             "class_name": name_class,
         },
     )
@@ -117,41 +150,46 @@ def test_delete_class() -> None:
     data = response.json()
     id = data["id"]
 
-    response = client.delete(
+    response = await async_client.delete(
         f"/api/classes/{id}",
     )
     assert response.status_code == 200, response.text
 
 """Test for orders"""
 #test create order
-def test_create_order() -> None:
+@pytest.mark.asyncio
+async def test_create_order(
+    async_client: AsyncClient,
+    create_class: int,
+) -> None:
     name_order = random_string()
-    global order_id
 
-    response = client.post(
-        "/api/orders/", json={
+    response: Response = await async_client.post(
+        "/api/orders", json={
             "order_name": name_order,
-            "class__id": class_id,
+            "class__id": create_class ,
         },
     )
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     assert data["order_name"] == name_order
     assert "id" in data
-    order_id = data["id"]
 
 #test create order with invalid name
-def test_create_order_invalid_name() -> None:
+@pytest.mark.asyncio
+async def test_create_order_invalid_name(
+    async_client: AsyncClient,
+) -> None:
     name_order = random_string()
 
-    response = client.post(
-        "/api/orders/", json={
+    response: Response = await async_client.post(
+        "/api/orders", json={
             "order_name": name_order,
             "class__id": class_id,
         },
     )
-    response = client.post(
-        "/api/orders/", json={
+    response: Response = await async_client.post(
+        "/api/orders", json={
             "order_name": name_order,
             "class__id": class_id,
         },
@@ -159,11 +197,14 @@ def test_create_order_invalid_name() -> None:
     assert response.status_code == 409, response.text
 
 #test update order
-def test_update_order() -> None:
+@pytest.mark.asyncio
+async def test_update_order(
+    async_client: AsyncClient,
+) -> None:
     name_order = random_string()
 
-    response = client.post(
-        "/api/orders/", json={
+    response: Response = await async_client.post(
+        "/api/orders", json={
             "order_name": name_order,
             "class__id": class_id,
         },
@@ -174,7 +215,7 @@ def test_update_order() -> None:
 
     name_order = random_string()
 
-    response = client.put(
+    response: Response = await async_client.put(
         f"/api/orders/{id}", json={
             "order_name": name_order,
             "class__id": class_id,
@@ -183,38 +224,44 @@ def test_update_order() -> None:
     assert response.status_code == 200, response.text
 
 #test get all orders
-def test_get_all_orders() -> None:
+@pytest.mark.asyncio
+async def test_get_all_orders(
+    async_client: AsyncClient,
+) -> None:
     name_order = random_string()
 
     name_order2 = random_string()
 
-    response = client.post(
-        "/api/orders/", json={
+    response: Response = await async_client.post(
+        "/api/orders", json={
             "order_name": name_order,
             "class__id": class_id,
         },
     )
 
-    response = client.post(
-        "/api/orders/", json={
+    response: Response = await async_client.post(
+        "/api/orders", json={
             "order_name": name_order2,
             "class__id": class_id,
         },
     )
 
-    response = client.get(
-        "/api/orders/",
+    response: Response = await async_client.get(
+        "/api/orders",
     )
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
     assert len(data) > 2
 
 #test get order by id
-def test_get_order_by_id() -> None:
+@pytest.mark.asyncio
+async def test_get_order_by_id(
+    async_client: AsyncClient,
+) -> None:
     name_order = random_string()
 
-    response = client.post(
-        "/api/orders/", json={
+    response: Response = await async_client.post(
+        "/api/orders", json={
             "order_name": name_order,
             "class__id": class_id,
         },
@@ -223,17 +270,20 @@ def test_get_order_by_id() -> None:
     data = response.json()
     id = data["id"]
 
-    response = client.get(
+    response: Response = await async_client.get(
         f"/api/orders/{id}",
     )
     assert response.status_code == 200, response.text
 
 #test delete order
-def test_delete_order() -> None:
+@pytest.mark.asyncio
+async def test_delete_order(
+    async_client: AsyncClient,
+) -> None:
     name_order = random_string()
 
-    response = client.post(
-        "/api/orders/", json={
+    response: Response = await async_client.post(
+        "/api/orders", json={
             "order_name": name_order,
             "class__id": class_id,
         },
@@ -242,19 +292,22 @@ def test_delete_order() -> None:
     data = response.json()
     id = data["id"]
 
-    response = client.delete(
+    response = await async_client.delete(
         f"/api/orders/{id}",
     )
     assert response.status_code == 200, response.text
 
 """TESTS FOR FAMILY"""""
 #test create family
-def test_create_family() -> None:
+@pytest.mark.asyncio
+async def test_create_family(
+    async_client: AsyncClient,
+) -> None:
     name_family = random_string()
     global family_id
 
-    response = client.post(
-        "/api/families/", json={
+    response: Response = await async_client.post(
+        "/api/families", json={
             "family_name": name_family,
             "order_id": order_id,
         },
@@ -266,17 +319,20 @@ def test_create_family() -> None:
     family_id = data["id"]
 
 #test create family with invalid name
-def test_create_family_invalid_name() -> None:
+@pytest.mark.asyncio
+async def test_create_family_invalid_name(
+    async_client: AsyncClient,
+) -> None:
     name_family = random_string()
 
-    response = client.post(
-        "/api/families/", json={
+    response: Response = await async_client.post(
+        "/api/families", json={
             "family_name": name_family,
             "order_id": order_id,
         },
     )
-    response = client.post(
-        "/api/families/", json={
+    response: Response = await async_client.post(
+        "/api/families", json={
             "family_name": name_family,
             "order_id": order_id,
         },
@@ -284,11 +340,14 @@ def test_create_family_invalid_name() -> None:
     assert response.status_code == 409, response.text
 
 #test update family
-def test_update_family() -> None:
+@pytest.mark.asyncio
+async def test_update_family(
+    async_client: AsyncClient,
+) -> None:
     name_family = random_string()
 
-    response = client.post(
-        "/api/families/", json={
+    response: Response = await async_client.post(
+        "/api/families", json={
             "family_name": name_family,
             "order_id": order_id,
         },
@@ -299,7 +358,7 @@ def test_update_family() -> None:
 
     name_family = random_string()
 
-    response = client.put(
+    response: Response = await async_client.put(
         f"/api/families/{data['id']}", json={
             "family_name": name_family,
             "order_id": order_id,
@@ -310,38 +369,44 @@ def test_update_family() -> None:
     assert data["family_name"] == name_family
 
 #test get all families
-def test_get_all_families() -> None:
+@pytest.mark.asyncio
+async def test_get_all_families(
+    async_client: AsyncClient,
+) -> None:
     name_family = random_string()
 
     name_family2 = random_string()
 
-    response = client.post(
-        "/api/families/", json={
+    response: Response = await async_client.post(
+        "/api/families", json={
             "family_name": name_family,
             "order_id": order_id,
         },
     )
 
-    response = client.post(
-        "/api/families/", json={
+    response: Response = await async_client.post(
+        "/api/families", json={
             "family_name": name_family2,
             "order_id": order_id,
         },
     )
 
-    response = client.get(
-        "/api/families/",
+    response: Response = await async_client.get(
+        "/api/families",
     )
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
     assert len(data) > 2
 
 #test get family by id
-def test_get_family_by_id() -> None:
+@pytest.mark.asyncio
+async def test_get_family_by_id(
+    async_client: AsyncClient,
+) -> None:
     name_family = random_string()
 
-    response = client.post(
-        "/api/families/", json={
+    response: Response = await async_client.post(
+        "/api/families", json={
             "family_name": name_family,
             "order_id": order_id,
         },
@@ -350,17 +415,20 @@ def test_get_family_by_id() -> None:
     data = response.json()
     id = data["id"]
 
-    response = client.get(
+    response = await async_client.get(
         f"/api/families/{id}",
     )
     assert response.status_code == 200, response.text
 
-    #test delete family
-def test_delete_family() -> None:
+#test delete family
+@pytest.mark.asyncio
+async def test_delete_family(
+    async_client: AsyncClient,
+) -> None:
     name_family = random_string()
 
-    response = client.post(
-        "/api/families/", json={
+    response: Response = await async_client.post(
+        "/api/families", json={
             "family_name": name_family,
             "order_id": order_id,
         },
@@ -369,19 +437,22 @@ def test_delete_family() -> None:
     data = response.json()
     id = data["id"]
 
-    response = client.delete(
+    response: Response = await async_client.delete(
         f"/api/families/{id}",
     )
     assert response.status_code == 200, response.text
 
 """TESTS FOR GENUS"""
 #test create genus
-def test_create_genus() -> None:
+@pytest.mark.asyncio
+async def test_create_genus(
+    async_client: AsyncClient,
+) -> None:
     name_genus = random_string()
     global genus_id
 
-    response = client.post(
-        "/api/genuses/", json={
+    response: Response = await async_client.post(
+        "/api/genuses", json={
             "genus_name": name_genus,
             "genus_full_name": name_genus,
             "family_id": family_id,
@@ -394,18 +465,21 @@ def test_create_genus() -> None:
     genus_id = data["id"]
 
 #test create genus with invalid name
-def test_create_genus_invalid_name() -> None:
+@pytest.mark.asyncio
+async def test_create_genus_invalid_name(
+    async_client: AsyncClient,
+) -> None:
     name_genus = random_string()
 
-    response = client.post(
-        "/api/genuses/", json={
+    response: Response = await async_client.post(
+        "/api/genuses", json={
             "genus_name": name_genus,
             "genus_full_name": name_genus,
             "family_id": family_id,
         },
     )
-    response = client.post(
-        "/api/genuses/", json={
+    response: Response = await async_client.post(
+        "/api/genuses", json={
             "genus_name": name_genus,
             "genus_full_name": name_genus,
             "family_id": family_id,
@@ -414,11 +488,14 @@ def test_create_genus_invalid_name() -> None:
     assert response.status_code == 409, response.text
 
 #test update genus
-def test_update_genus() -> None:
+@pytest.mark.asyncio
+async def test_update_genus(
+    async_client: AsyncClient,
+) -> None:
     name_genus = random_string()
 
-    response = client.post(
-        "/api/genuses/", json={
+    response: Response = await async_client.post(
+        "/api/genuses", json={
             "genus_name": name_genus,
             "genus_full_name": name_genus,
             "family_id": family_id,
@@ -431,7 +508,7 @@ def test_update_genus() -> None:
 
     name_genus = random_string()
 
-    response = client.put(
+    response: Response = await async_client.put(
         f"/api/genuses/{data['id']}", json={
             "genus_name": name_genus,
             "genus_full_name": name_genus,
@@ -444,40 +521,46 @@ def test_update_genus() -> None:
     assert data["genus_full_name"] == name_genus
 
 #test get all genuses
-def test_get_all_genuses() -> None:
+@pytest.mark.asyncio
+async def test_get_all_genuses(
+    async_client: AsyncClient,
+) -> None:
     name_genus = random_string()
 
     name_genus2 = random_string()
 
-    response = client.post(
-        "/api/genuses/", json={
+    response: Response = await async_client.post(
+        "/api/genuses", json={
             "genus_name": name_genus,
             "genus_full_name": name_genus,
             "family_id": family_id,
         },
     )
 
-    response = client.post(
-        "/api/genuses/", json={
+    response: Response = await async_client.post(
+        "/api/genuses", json={
             "genus_name": name_genus2,
             "genus_full_name": name_genus2,
             "family_id": family_id,
         },
     )
 
-    response = client.get(
-        "/api/genuses/",
+    response: Response = await async_client.get(
+        "/api/genuses",
     )
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
     assert len(data) > 2
 
 #test get genus by id
-def test_get_genus_by_id() -> None:
+@pytest.mark.asyncio
+async def test_get_genus_by_id(
+    async_client: AsyncClient,
+) -> None:
     name_genus = random_string()
 
-    response = client.post(
-        "/api/genuses/", json={
+    response: Response = await async_client.post(
+        "/api/genuses", json={
             "genus_name": name_genus,
             "genus_full_name": name_genus,
             "family_id": family_id,
@@ -487,7 +570,7 @@ def test_get_genus_by_id() -> None:
     data = response.json()
     id = data["id"]
 
-    response = client.get(
+    response = await async_client.get(
         f"/api/genuses/{id}",
     )
     assert response.status_code == 200, response.text
@@ -495,12 +578,15 @@ def test_get_genus_by_id() -> None:
 
 """TESTS FOR SPECIES"""""
 #test species creation
-def test_create_species() -> int :
+@pytest.mark.asyncio
+async def test_create_species(
+    async_client: AsyncClient,
+) -> int :
     name_scientific = random_string()
     name_common = random_string()
 
-    response = client.post(
-        "/api/species/", json={
+    response: Response = await async_client.post(
+        "/api/species", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
             "genus_id": genus_id,
@@ -515,18 +601,21 @@ def test_create_species() -> int :
 
 
 #test species creation with invalid name
-def test_create_species_invalid_name() -> None:
+@pytest.mark.asyncio
+async def test_create_species_invalid_name(
+    async_client: AsyncClient,
+) -> None:
     name_scientific = random_string()
     name_common = random_string()
 
-    response = client.post(
-        "/api/species/", json={
+    response: Response  = await async_client.post(
+        "/api/species", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
             "genus_id": genus_id,
         },
     )
-    response = client.post(
+    response: Response = await async_client.post(
         "/api/species/", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
@@ -536,12 +625,15 @@ def test_create_species_invalid_name() -> None:
     assert response.status_code == 409, response.text
 
 #test update species
-def test_update_species() -> None:
+@pytest.mark.asyncio
+async def test_update_species(
+    async_client: AsyncClient,
+) -> None:
     name_scientific = random_string()
     name_common = random_string()
 
-    response = client.post(
-        "/api/species/", json={
+    response: Response = await async_client.post(
+        "/api/species", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
             "genus_id": genus_id,
@@ -555,7 +647,7 @@ def test_update_species() -> None:
     name_scientific = random_string()
     name_common = random_string()
 
-    response = client.put(
+    response: Response = await async_client.put(
         f"/api/species/{data['id']}", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
@@ -568,43 +660,49 @@ def test_update_species() -> None:
     assert data["specific_epithet"] == name_common
 
 #test get all species
-def test_get_all_species() -> None:
+@pytest.mark.asyncio
+async def test_get_all_species(
+    async_client: AsyncClient,
+) -> None:
     name_scientific = random_string()
     name_common = random_string()
 
     name_scientific2 = random_string()
     name_common2 = random_string()
 
-    response = client.post(
-        "/api/species/", json={
+    response: Response = await async_client.post(
+        "/api/species", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
             "genus_id": genus_id,
         },
     )
 
-    response = client.post(
-        "/api/species/", json={
+    response: Response = await async_client.post(
+        "/api/species", json={
             "scientific_name": name_scientific2,
             "specific_epithet": name_common2,
             "genus_id": genus_id,
         },
     )
 
-    response = client.get(
-        "/api/species/",
+    response: Response = await async_client.get(
+        "/api/species",
     )
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
     assert len(data) > 2
 
 #test get species by id
-def test_get_species_by_id() -> None:
+@pytest.mark.asyncio
+async def test_get_species_by_id(
+    async_client: AsyncClient,
+) -> None:
     name_scientific = random_string()
     name_common = random_string()
 
-    response = client.post(
-        "/api/species/", json={
+    response: Response = await async_client.post(
+        "/api/species", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
             "genus_id": genus_id,
@@ -614,7 +712,7 @@ def test_get_species_by_id() -> None:
     data = response.json()
     id = data["id"]
 
-    response = client.get(
+    response: Response = await async_client.get(
         f"/api/species/{id}",
     )
     assert response.status_code == 200, response.text
