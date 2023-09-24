@@ -1,8 +1,8 @@
-"""frist migration
+"""probando
 
-Revision ID: 2dca595e4de9
-Revises: 
-Create Date: 2023-07-28 00:47:26.402242
+Revision ID: 4046bec0b456
+Revises: 9aea218c7bb6
+Create Date: 2023-09-24 02:03:51.586162
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2dca595e4de9'
-down_revision = None
+revision = '4046bec0b456'
+down_revision = '9aea218c7bb6'
 branch_labels = None
 depends_on = None
 
