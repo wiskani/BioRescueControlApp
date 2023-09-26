@@ -37,10 +37,12 @@ def event_loop(request) -> Generator:  # noqa: indirect usage
 @pytest.fixture(scope="session")
 async def init_test_db() :
     async with engine.begin() as conn:
+        print("Iniciando base de datos de prueba...")
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
     yield
     async with engine.begin() as conn:
+        print("Limpiando base de datos de prueba...")
         await conn.run_sync(Base.metadata.drop_all)
 
 @pytest.fixture
