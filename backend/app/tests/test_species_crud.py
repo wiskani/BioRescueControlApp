@@ -13,6 +13,7 @@ from app.tests.conftest import async_client
 @pytest.mark.asyncio
 async def test_create_class(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_class = random_string()
 
@@ -30,6 +31,7 @@ async def test_create_class(
 @pytest.mark.asyncio
 async def test_create_class_invalid_name(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_class = random_string()
 
@@ -49,6 +51,7 @@ async def test_create_class_invalid_name(
 @pytest.mark.asyncio
 async def test_update_class(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_class = random_string()
 
@@ -74,6 +77,7 @@ async def test_update_class(
 @pytest.mark.asyncio
 async def test_get_all_classes(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_class = random_string()
     name_class2 = random_string()
@@ -95,12 +99,13 @@ async def test_get_all_classes(
     )
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
-    assert len(data) > 2
+    assert len(data) >= 2
 
 #test get class by id
 @pytest.mark.asyncio
 async def test_get_class_by_id(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_class = random_string()
 
@@ -122,6 +127,7 @@ async def test_get_class_by_id(
 @pytest.mark.asyncio
 async def test_delete_class(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_class = random_string()
 
@@ -144,6 +150,7 @@ async def test_delete_class(
 @pytest.mark.asyncio
 async def test_create_order(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_order = random_string()
     class_id = await  create_class(async_client)
@@ -162,6 +169,7 @@ async def test_create_order(
 @pytest.mark.asyncio
 async def test_create_order_invalid_name(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_order = random_string()
     class_id = await  create_class(async_client)
@@ -184,6 +192,7 @@ async def test_create_order_invalid_name(
 @pytest.mark.asyncio
 async def test_update_order(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_order = random_string()
     class_id = await  create_class(async_client)
@@ -212,6 +221,7 @@ async def test_update_order(
 @pytest.mark.asyncio
 async def test_get_all_orders(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_order = random_string()
 
@@ -238,12 +248,13 @@ async def test_get_all_orders(
     )
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
-    assert len(data) > 2
+    assert len(data) >= 2
 
 #test get order by id
 @pytest.mark.asyncio
 async def test_get_order_by_id(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_order = random_string()
 
@@ -268,6 +279,7 @@ async def test_get_order_by_id(
 @pytest.mark.asyncio
 async def test_delete_order(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_order = random_string()
 
@@ -293,6 +305,7 @@ async def test_delete_order(
 @pytest.mark.asyncio
 async def test_create_family(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_family = random_string()
     order_id = await  create_order(async_client)
@@ -312,6 +325,7 @@ async def test_create_family(
 @pytest.mark.asyncio
 async def test_create_family_invalid_name(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_family = random_string()
     order_id = await  create_order(async_client)
@@ -334,6 +348,7 @@ async def test_create_family_invalid_name(
 @pytest.mark.asyncio
 async def test_update_family(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_family = random_string()
     order_id = await  create_order(async_client)
@@ -364,6 +379,7 @@ async def test_update_family(
 @pytest.mark.asyncio
 async def test_get_all_families(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_family = random_string()
 
@@ -390,12 +406,13 @@ async def test_get_all_families(
     )
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
-    assert len(data) > 2
+    assert len(data) >= 2
 
 #test get family by id
 @pytest.mark.asyncio
 async def test_get_family_by_id(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_family = random_string()
     order_id = await  create_order(async_client)
@@ -419,6 +436,7 @@ async def test_get_family_by_id(
 @pytest.mark.asyncio
 async def test_delete_family(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_family = random_string()
     order_id = await  create_order(async_client)
@@ -443,6 +461,7 @@ async def test_delete_family(
 @pytest.mark.asyncio
 async def test_create_genus(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_genus = random_string()
     family_id = await  create_family(async_client)
@@ -463,6 +482,7 @@ async def test_create_genus(
 @pytest.mark.asyncio
 async def test_create_genus_invalid_name(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_genus = random_string()
     family_id = await  create_family(async_client)
@@ -487,6 +507,7 @@ async def test_create_genus_invalid_name(
 @pytest.mark.asyncio
 async def test_update_genus(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_genus = random_string()
     family_id = await  create_family(async_client)
@@ -521,6 +542,7 @@ async def test_update_genus(
 @pytest.mark.asyncio
 async def test_get_all_genuses(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_genus = random_string()
 
@@ -549,12 +571,13 @@ async def test_get_all_genuses(
     )
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
-    assert len(data) > 2
+    assert len(data) >= 2
 
 #test get genus by id
 @pytest.mark.asyncio
 async def test_get_genus_by_id(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_genus = random_string()
 
@@ -582,6 +605,7 @@ async def test_get_genus_by_id(
 @pytest.mark.asyncio
 async def test_create_species(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> int :
     name_scientific = random_string()
     name_common = random_string()
@@ -606,6 +630,7 @@ async def test_create_species(
 @pytest.mark.asyncio
 async def test_create_species_invalid_name(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_scientific = random_string()
     name_common = random_string()
@@ -631,6 +656,7 @@ async def test_create_species_invalid_name(
 @pytest.mark.asyncio
 async def test_update_species(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_scientific = random_string()
     name_common = random_string()
@@ -667,6 +693,7 @@ async def test_update_species(
 @pytest.mark.asyncio
 async def test_get_all_species(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     name_scientific = random_string()
     name_common = random_string()
@@ -696,12 +723,13 @@ async def test_get_all_species(
     )
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
-    assert len(data) > 2
+    assert len(data) >= 2
 
 #test get species by id
 @pytest.mark.asyncio
 async def test_get_species_by_id(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     species_id = await  create_specie(async_client)
     response: Response = await async_client.get(

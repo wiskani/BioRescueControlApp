@@ -12,6 +12,7 @@ from app.tests.conftest import async_client
 @pytest.mark.asyncio
 async def test_create_user(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     mail: Union [EmailStr , str] = random_email_user()
     name: str = random_name_user()
@@ -41,6 +42,7 @@ async def test_create_user(
 @pytest.mark.asyncio
 async def test_create_user_invalid_email(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     mail = random_email_user()
     name: str = random_name_user()
@@ -78,6 +80,7 @@ async def test_create_user_invalid_email(
 @pytest.mark.asyncio
 async def test_update_user(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     mail: EmailStr | str = random_email_user()
     name: str = random_name_user()
@@ -123,7 +126,8 @@ async def test_update_user(
     # test for update user with invalid id 
 @pytest.mark.asyncio
 async def test_update_user_invalid_email(
-    async_client: AsyncClient,  
+    async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     mail: EmailStr|str = random_email_user()
     name: str = random_name_user()
@@ -164,6 +168,7 @@ async def test_update_user_invalid_email(
 @pytest.mark.asyncio
 async def test_delete_user(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     mail: EmailStr|str = random_email_user()
     name: str = random_name_user()
@@ -192,6 +197,7 @@ async def test_delete_user(
 @pytest.mark.asyncio
 async def test_delete_user_invalid_email(
     async_client: AsyncClient,
+    async_session: AsyncSession,
 ) -> None:
     mail: EmailStr|str = random_email_user()
     name: str = random_name_user()

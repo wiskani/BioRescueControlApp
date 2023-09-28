@@ -3,6 +3,7 @@ import pytest
 import pytest_asyncio
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.orm import sessionmaker
 from typing import Generator
 from pydantic import EmailStr
 
@@ -34,28 +35,24 @@ def event_loop(request) -> Generator:  # noqa: indirect usage
    yield loop
    loop.close()
 
-@pytest.fixture(scope="session")
-async def init_test_db() :
+@pytest_asyncio.fixture(scope="function")
+async def async_session() :
+    session = async_sessionmaker(
+        engine, class_=AsyncSession, expire_on_commit=False
+    )
+
+    async with session() as s:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+
+        yield s
+
     async with engine.begin() as conn:
-        print("Iniciando base de datos de prueba...")
-        await conn.run_sync(Base.metadata.drop_all)
-        await conn.run_sync(Base.metadata.create_all)
-    yield
-    async with engine.begin() as conn:
-        print("Limpiando base de datos de prueba...")
         await conn.run_sync(Base.metadata.drop_all)
 
-@pytest.fixture
-async def override_get_db() :
-    db: AsyncSession = TestingSessionLocal()
-    try:
-        yield db
-    finally:
-        await db.close()
+    await engine.dispose()
 
 
-
-#app.dependency_overrides[get_db] = override_get_db
 
 def override_get_current_user() -> Users :
     email: EmailStr = "dummy@dummy.com"
