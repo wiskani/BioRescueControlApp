@@ -3,10 +3,16 @@ from pydantic import BaseModel, Field, model_validator
 
 from app.schemas.images import ImageBase
 
+class StatusBase (BaseModel):
+    status_name: str = Field(..., examples=["Rescue"])
+    class Config:
+        orm_mode: bool = True
+
 
 class Species (BaseModel):
     scientific_name: str = Field(..., examples=["Ailuropoda melanoleuca"])
     specific_epithet: str = Field( examples=["Panda"])
+    status_id: int | None = Field(examples=[1])
     class Config:
         orm_mode: bool = True
 

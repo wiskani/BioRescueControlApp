@@ -5,13 +5,28 @@ from datetime import datetime
 import app.db.database as _database
 import app.models.images
 
+class Status(_database.Base):
+    __tablename__:str = "status"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    status_name: Mapped[str] = mapped_column(String, unique=True, index=True)
+    create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    # Relationships with specie
+    species = relationship("Specie", back_populates="status")
+
+
 class Specie(_database.Base):
     __tablename__:str = "species"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     scientific_name: Mapped[str] = mapped_column(String, unique=True, index=True)
     specific_epithet: Mapped[str] = mapped_column(String, index=True)
     create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    # Relationships
+
+    # Relationships with status
+    status_id: Mapped[int] = mapped_column(Integer, ForeignKey("status.id"), nullable=True)
+    status = relationship("Status", back_populates="species")
+
+    # Relationships with genus
     genus_id: Mapped[int] = mapped_column(Integer, ForeignKey("genus.id"))
     genus = relationship("Genus", back_populates="species")
 
