@@ -18,11 +18,13 @@ from app.schemas.species import(
     FamiliesResponse,
     OrdersResponse,
     ClassesResponse,
+    StatusBase,
+    StatusResponse,
 
     #jois
     SpeciesJoin,
 )
-from app.models.species import Specie, Genus, Family, Order, Class_
+from app.models.species import Specie, Genus, Family, Order, Class_, Status
 from app.crud.species import (
     # Species
     get_specie_by_name,
@@ -66,6 +68,14 @@ from app.crud.species import (
 
     # Joins
     get_all_species_join_,
+
+    # Status
+    get_status_by_name,
+    get_status_by_id,
+    create_status,
+    get_all_status,
+    update_status,
+    delete_status,
 )
 from app.api.deps import PermissonsChecker, get_db
 
@@ -582,7 +592,104 @@ async def get_all_species_join(
 ) -> List[SpeciesJoin]:
     return await get_all_species_join_(db)
 
+#Create Status
+@router.post(
+    path="/api/specie/status",
+    response_model=StatusResponse,
+    status_code=status.HTTP_201_CREATED,
+    tags=["Status"],
+    summary="Create a status",
+)
+async def create_a_new_status(
+    new_status: StatusBase,
+    db: AsyncSession = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"]))
+) -> Union[Status, HTTPException]:
+    db_status = await get_status_by_name(db, new_status.status_name)
+    if db_status:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Status already exists",
+        )
+    return await create_status(db, new_status)
 
+#Get all status
+@router.get(
+    path="/api/specie/status",
+    response_model=List[StatusResponse],
+    status_code=status.HTTP_200_OK,
+    tags=["Status"],
+    summary="Get all status",
+)
+async def get_all_status_(
+    db: AsyncSession = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"]))
+) -> List[Status]:
+    return await get_all_status(db)
+
+#Get status by id
+@router.get(
+    path="/api/specie/status/{status_id}",
+    response_model=StatusResponse,
+    status_code=status.HTTP_200_OK,
+    tags=["Status"],
+    summary="Get a status by id",
+)
+async def get_a_status_by_id(
+    status_id: int,
+    db: AsyncSession = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"]))
+) -> Union[Status, HTTPException]:
+    db_status = await get_status_by_id(db, status_id)
+    if not db_status:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Status not found",
+        )
+    return db_status
+
+#Update status
+@router.put(
+    path="/api/specie/status/{status_id}",
+    response_model=StatusResponse,
+    status_code=status.HTTP_200_OK,
+    tags=["Status"],
+    summary="Update a status",
+)
+async def update_a_status(
+    status_id: int,
+    status_: StatusBase,
+    db: AsyncSession = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"]))
+) -> Union[Status, HTTPException]:
+    db_status = await get_status_by_id(db, status_id)
+    if not db_status:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Status not found",
+        )
+    return await update_status(db, status_id, status_)
+
+#Delete status
+@router.delete(
+    path="/api/specie/status/{status_id}",
+    response_model=StatusResponse,
+    status_code=status.HTTP_200_OK,
+    tags=["Status"],
+    summary="Delete a status",
+)
+async def delete_a_status(
+    status_id: int,
+    db: AsyncSession = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"]))
+) -> Union[Status, HTTPException]:
+    db_status = await get_status_by_id(db, status_id)
+    if not db_status:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Status not found",
+        )
+    return await delete_status(db, status_id)
 
 
 

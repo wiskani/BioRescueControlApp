@@ -8,6 +8,11 @@ class StatusBase (BaseModel):
     class Config:
         orm_mode: bool = True
 
+class StatusResponse (StatusBase):
+    id: int = Field(...)
+    class Config:
+        orm_mode: bool = True
+
 
 class Species (BaseModel):
     scientific_name: str = Field(..., examples=["Ailuropoda melanoleuca"])

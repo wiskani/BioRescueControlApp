@@ -610,11 +610,13 @@ async def test_create_species(
     name_scientific = random_string()
     name_common = random_string()
     genus_id = await  create_genus(async_client)
+    status_id = await  create_status_specie(async_client)
 
     response: Response = await async_client.post(
         "/api/species", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
+            "status_id": status_id,
             "genus_id": genus_id,
         },
     )
@@ -622,6 +624,7 @@ async def test_create_species(
     data: Dict[str, Any] = response.json()
     assert data["scientific_name"] == name_scientific
     assert data["specific_epithet"] == name_common
+    assert data["status_id"] == status_id
     assert "id" in data
     return data["id"]
 
@@ -635,11 +638,13 @@ async def test_create_species_invalid_name(
     name_scientific = random_string()
     name_common = random_string()
     genus_id = await  create_genus(async_client)
+    status_id = await  create_status_specie(async_client)
 
     response: Response  = await async_client.post(
         "/api/species", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
+            "status_id": status_id,
             "genus_id": genus_id,
         },
     )
@@ -647,6 +652,7 @@ async def test_create_species_invalid_name(
         "/api/species", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
+            "status_id": status_id,
             "genus_id": genus_id,
         },
     )
@@ -661,11 +667,13 @@ async def test_update_species(
     name_scientific = random_string()
     name_common = random_string()
     genus_id = await  create_genus(async_client)
+    status_id = await  create_status_specie(async_client)
 
     response: Response = await async_client.post(
         "/api/species", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
+            "status_id": status_id,
             "genus_id": genus_id,
         },
     )
@@ -681,6 +689,7 @@ async def test_update_species(
         f"/api/species/{data['id']}", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
+            "status_id": status_id,
             "genus_id": genus_id,
         },
     )
@@ -697,6 +706,7 @@ async def test_get_all_species(
 ) -> None:
     name_scientific = random_string()
     name_common = random_string()
+    status_id = await  create_status_specie(async_client)
 
     name_scientific2 = random_string()
     name_common2 = random_string()
@@ -706,6 +716,7 @@ async def test_get_all_species(
         "/api/species", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
+            "status_id": status_id,
             "genus_id": genus_id,
         },
     )
@@ -714,6 +725,7 @@ async def test_get_all_species(
         "/api/species", json={
             "scientific_name": name_scientific2,
             "specific_epithet": name_common2,
+            "status_id": status_id,
             "genus_id": genus_id,
         },
     )

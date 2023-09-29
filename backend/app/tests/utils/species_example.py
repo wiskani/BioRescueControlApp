@@ -93,14 +93,33 @@ async def create_specie(
 ) -> int:
     name_specie = random_string()
 
+
     response: Response = await async_client.post(
         "/api/species", json={
             "scientific_name": name_specie,
             "specific_epithet": name_specie,
+            "status_id": await create_status_specie(async_client),
             "genus_id": await create_genus(async_client),
         },
     )
     data: Dict[str, Any] = response.json()
     specie_id = data["id"]
     return specie_id
+
+#Create status specie
+@pytest.mark.asyncio
+async def create_status_specie(
+    async_client: AsyncClient,
+) -> int:
+    name_status_specie = random_string()
+
+    response: Response = await async_client.post(
+        "/api/specie/status", json={
+            "status_name": name_status_specie,
+        },
+    )
+    data: Dict[str, Any] = response.json()
+    status_specie_id = data["id"]
+    return status_specie_id
+
 

@@ -15,9 +15,11 @@ from app.schemas.species import (
     OrdersCreate,
     Classes,
     ClassesCreate,
-    SpeciesJoin
+    SpeciesJoin,
+    StatusBase,
+    StatusResponse,
 )
-from app.models.species import Specie, Genus, Family, Order, Class_
+from app.models.species import Specie, Genus, Family, Order, Class_, Status
 from app.models.rescue_flora import FloraRescue
 
 #Purpose: CRUD operations for Species
@@ -32,7 +34,9 @@ async def create_specie(db: AsyncSession, specie: SpeciesCreate) -> Specie:
     db_specie = Specie(
         scientific_name = specie.scientific_name,
         specific_epithet = specie.specific_epithet,
+        status_id = specie.status_id,
         genus_id = specie.genus_id
+
     )
     db.add(db_specie)
     await db.commit()
@@ -56,6 +60,7 @@ async def update_specie(db: AsyncSession, specie_id: int, specie: SpeciesCreate)
         raise HTTPException(status_code=404, detail="Specie not found")
     db_specie.scientific_name = specie.scientific_name
     db_specie.specific_epithet = specie.specific_epithet
+    db_specie.status_id = specie.status_id
     db_specie.genus_id = specie.genus_id
     await db.commit()
     await db.refresh(db_specie)
@@ -253,6 +258,51 @@ async def delete_class(db: AsyncSession, class_id: int) -> Class_:
     await db.execute(delete(Class_).where(Class_.id == class_id))
     await db.commit()
     return db_class
+
+#Get if status exists
+async def get_status_by_name(db: AsyncSession, status_name: str) -> Union[Status, None]:
+    status_db = await db.execute(select(Status).filter(Status.status_name == status_name))
+    return status_db.scalars().first()
+
+#Create a status
+async def create_status(db: AsyncSession, status: StatusBase) -> Status:
+    db_status = Status(
+        status_name = status.status_name,
+    )
+    db.add(db_status)
+    await db.commit()
+    await db.refresh(db_status)
+    return db_status
+
+#Get all status
+async def get_all_status(db: AsyncSession) -> List[Status]:
+    status_db = await db.execute(select(Status))
+    return list(status_db.scalars().all())
+
+#Get status by id
+async def get_status_by_id(db: AsyncSession, status_id: int) -> Union[Status, None]:
+    status_db = await db.execute(select(Status).filter(Status.id == status_id))
+    return status_db.scalars().first()
+
+#Update status
+async def update_status(db: AsyncSession, status_id: int, status: StatusBase) -> Status:
+    db_status = await get_status_by_id(db, status_id)
+    if not db_status:
+        raise HTTPException(status_code=404, detail="Status not found")
+    db_status.status_name = status.status_name
+    await db.commit()
+    await db.refresh(db_status)
+    return db_status
+
+#Delete status
+async def delete_status(db: AsyncSession, status_id: int) -> Status:
+    db_status = await get_status_by_id(db, status_id)
+    if not db_status:
+        raise HTTPException(status_code=404, detail="Status not found")
+    await db.execute(delete(Status).where(Status.id == status_id))
+    await db.commit()
+    return db_status
+
 
 #Make a join species and all other tables
 async def get_all_species_join_(db: AsyncSession) -> List[SpeciesJoin]:
