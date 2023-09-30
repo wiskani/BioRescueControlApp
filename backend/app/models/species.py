@@ -4,6 +4,7 @@ from datetime import datetime
 
 import app.db.database as _database
 import app.models.images
+import app.models.rescue_herpetofauna
 
 class Status(_database.Base):
     __tablename__:str = "status"
@@ -39,6 +40,9 @@ class Specie(_database.Base):
 
     # Relationships with images
     images = relationship("Image", back_populates="species")
+
+    #Relationships with rescue herpetofauna
+    rescue_herpetofauna = relationship("RescueHerpetofauna", back_populates="species")
 
 
 class Genus(_database.Base):
