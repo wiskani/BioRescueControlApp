@@ -28,6 +28,7 @@ async def create_class(
     response: Response = await async_client.post(
         "/api/classes", json={
             "class_name": name_class,
+            "key_gbif": random_int(),
         },
     )
     data: Dict[str, Any] = response.json()
@@ -44,6 +45,7 @@ async def create_order(
     response: Response = await async_client.post(
         "/api/orders", json={
             "order_name": name_order,
+            "key_gbif": random_int(),
             "class__id": await create_class(async_client),
         },
     )
@@ -61,6 +63,7 @@ async def create_family(
     response: Response = await async_client.post(
         "/api/families", json={
             "family_name": name_family,
+            "key_gbif": random_int(),
             "order_id": await create_order(async_client),
         },
     )
@@ -79,6 +82,7 @@ async def create_genus(
         "/api/genuses", json={
             "genus_name": name_genus,
             "genus_full_name": name_genus,
+            "key_gbif": random_int(),
             "family_id": await create_family(async_client),
         },
     )
@@ -98,6 +102,7 @@ async def create_specie(
         "/api/species", json={
             "scientific_name": name_specie,
             "specific_epithet": name_specie,
+            "key_gbif": random_int(),
             "status_id": await create_status_specie(async_client),
             "genus_id": await create_genus(async_client),
         },

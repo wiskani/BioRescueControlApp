@@ -34,6 +34,7 @@ async def create_specie(db: AsyncSession, specie: SpeciesCreate) -> Specie:
     db_specie = Specie(
         scientific_name = specie.scientific_name,
         specific_epithet = specie.specific_epithet,
+        key_gbif = specie.key_gbif,
         status_id = specie.status_id,
         genus_id = specie.genus_id
 
@@ -60,6 +61,7 @@ async def update_specie(db: AsyncSession, specie_id: int, specie: SpeciesCreate)
         raise HTTPException(status_code=404, detail="Specie not found")
     db_specie.scientific_name = specie.scientific_name
     db_specie.specific_epithet = specie.specific_epithet
+    db_specie.key_gbif = specie.key_gbif
     db_specie.status_id = specie.status_id
     db_specie.genus_id = specie.genus_id
     await db.commit()
@@ -80,6 +82,7 @@ async def create_genus(db: AsyncSession, genus: GenusesCreate) -> Genus:
     db_genus = Genus(
         genus_name = genus.genus_name,
         genus_full_name = genus.genus_full_name,
+        key_gbif = genus.key_gbif,
         family_id = genus.family_id
     )
     db.add(db_genus)
@@ -109,6 +112,7 @@ async def update_genus(db: AsyncSession, genus_id: int, genus: GenusesCreate) ->
         raise HTTPException(status_code=404, detail="Genus not found")
     db_genus.genus_name = genus.genus_name
     db_genus.genus_full_name = genus.genus_full_name
+    db_genus.key_gbif = genus.key_gbif
     db_genus.family_id = genus.family_id
     await db.commit()
     await db.refresh(db_genus)
@@ -127,6 +131,7 @@ async def delete_genus(db: AsyncSession, genus_id: int) -> Genus:
 async def create_family(db: AsyncSession, family: FamiliesCreate) -> Family:
     db_family = Family(
         family_name = family.family_name,
+        key_gbif = family.key_gbif,
         order_id = family.order_id
     )
     db.add(db_family)
@@ -155,6 +160,7 @@ async def update_family(db: AsyncSession, family_id: int, family: FamiliesCreate
     if not db_family:
         raise HTTPException(status_code=404, detail="Family not found")
     db_family.family_name = family.family_name
+    db_family.key_gbif = family.key_gbif
     db_family.order_id = family.order_id
     await db.commit()
     await db.refresh(db_family)
@@ -173,6 +179,7 @@ async def delete_family(db: AsyncSession, family_id: int) -> Family:
 async def create_order(db: AsyncSession, order: OrdersCreate) -> Order:
     db_order = Order(
         order_name = order.order_name,
+        key_gbif = order.key_gbif,
         class__id = order.class__id
     )
     db.add(db_order)
@@ -201,6 +208,7 @@ async def update_order(db: AsyncSession, order_id: int, order: OrdersCreate) -> 
     if not db_order:
         raise HTTPException(status_code=404, detail="Order not found")
     db_order.order_name = order.order_name
+    db_order.key_gbif = order.key_gbif
     db_order.class__id = order.class__id
     await db.commit()
     await db.refresh(db_order)
@@ -219,6 +227,7 @@ async def delete_order(db: AsyncSession, order_id: int) -> Order:
 async def create_class(db: AsyncSession, class_: ClassesCreate) -> Class_:
     db_class = Class_(
         class_name = class_.class_name,
+        key_gbif = class_.key_gbif,
     )
     db.add(db_class)
     await db.commit()
@@ -246,6 +255,7 @@ async def update_class(db: AsyncSession, class_id: int, class_: ClassesCreate) -
     if not db_class:
         raise HTTPException(status_code=404, detail="Class not found")
     db_class.class_name = class_.class_name
+    db_class.key_gbif = class_.key_gbif
     await db.commit()
     await db.refresh(db_class)
     return db_class

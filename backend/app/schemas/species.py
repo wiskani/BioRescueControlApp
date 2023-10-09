@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 from pydantic import BaseModel, Field, model_validator
 
 from app.schemas.images import ImageBase
@@ -17,6 +17,7 @@ class StatusResponse (StatusBase):
 class Species (BaseModel):
     scientific_name: str = Field(..., examples=["Ailuropoda melanoleuca"])
     specific_epithet: str = Field( examples=["Panda"])
+    key_gbif: int | None = Field(examples=[123456789])
     status_id: int | None = Field(examples=[1])
     class Config:
         orm_mode: bool = True
@@ -35,6 +36,7 @@ class SpeciesResponse (Species):
 class Genuses (BaseModel):
     genus_name: str = Field(..., examples=[ "Ailuropoda" ])
     genus_full_name: str | None = Field(examples=[ " Ailuropoda melanoleuca"])
+    key_gbif: int | None = Field(examples=[123456789])
     class Config:
         orm_mode: bool = True
 
@@ -51,6 +53,7 @@ class GenusesResponse (Genuses):
 
 class Families (BaseModel):
     family_name: str = Field(..., examples=[ " Ursidae"])
+    key_gbif: int | None = Field(examples=[123456789])
     class Config:
         orm_mode: bool = True
 
@@ -67,6 +70,7 @@ class FamiliesResponse (Families):
 
 class Orders (BaseModel):
     order_name: str = Field(..., examples=["Carnivora"])
+    key_gbif: int | None = Field(examples=[123456789])
     class Config:
         orm_mode: bool = True
 
@@ -82,6 +86,7 @@ class OrdersCreate (Orders):
 
 class Classes (BaseModel):
     class_name: str = Field(..., examples=["Mammalia"])
+    key_gbif: Union[int, None] = Field(examples=[123456789])
     class Config:
         orm_mode: bool = True
 

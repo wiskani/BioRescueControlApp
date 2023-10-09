@@ -20,11 +20,13 @@ async def test_create_class(
     response: Response = await async_client.post(
         "/api/classes", json={
             "class_name": name_class,
+            "key_gbif": 10,
         },
     )
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     assert data["class_name"] == name_class
+    assert data["key_gbif"] == 10
     assert "id" in data
 
 #test create class with invalid name
@@ -38,11 +40,13 @@ async def test_create_class_invalid_name(
     response = await async_client.post(
         "/api/classes", json={
             "class_name": name_class,
+            "key_gbif": 10,
         },
     )
     response = await async_client.post(
         "/api/classes", json={
             "class_name": name_class,
+            "key_gbif": 10,
         },
     )
     assert response.status_code == 409, response.text
@@ -58,6 +62,7 @@ async def test_update_class(
     response: Response = await async_client.post(
         "/api/classes", json={
             "class_name": name_class,
+            "key_gbif": 10,
         },
     )
 
@@ -69,6 +74,7 @@ async def test_update_class(
     response = await async_client.put(
         f"/api/classes/{id}", json={
             "class_name": name_class,
+            "key_gbif": 10,
         },
     )
     assert response.status_code == 200, response.text
@@ -85,12 +91,14 @@ async def test_get_all_classes(
     response: Response = await async_client.post(
         "/api/classes", json={
             "class_name": name_class,
+            "key_gbif": 10,
         },
     )
 
     response: Response = await async_client.post(
         "/api/classes", json={
             "class_name": name_class2,
+            "key_gbif": 11,
         },
     )
 
@@ -112,6 +120,7 @@ async def test_get_class_by_id(
     response: Response = await async_client.post(
         "/api/classes", json={
             "class_name": name_class,
+            "key_gbif": 10,
         },
     )
 
@@ -134,6 +143,7 @@ async def test_delete_class(
     response: Response = await async_client.post(
         "/api/classes", json={
             "class_name": name_class,
+            "key_gbif": 10,
         },
     )
 
@@ -157,12 +167,14 @@ async def test_create_order(
     response: Response = await async_client.post(
         "/api/orders", json={
             "order_name": name_order,
+            "key_gbif": 10,
             "class__id": class_id ,
         },
     )
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     assert data["order_name"] == name_order
+    assert data["key_gbif"] == 10
     assert "id" in data
 
 #test create order with invalid name
@@ -177,12 +189,14 @@ async def test_create_order_invalid_name(
     response: Response = await async_client.post(
         "/api/orders", json={
             "order_name": name_order,
+            "key_gbif": 10,
             "class__id": class_id,
         },
     )
     response: Response = await async_client.post(
         "/api/orders", json={
             "order_name": name_order,
+            "key_gbif": 10,
             "class__id": class_id,
         },
     )
@@ -200,6 +214,7 @@ async def test_update_order(
     response: Response = await async_client.post(
         "/api/orders", json={
             "order_name": name_order,
+            "key_gbif": 10,
             "class__id": class_id,
         },
     )
@@ -212,6 +227,7 @@ async def test_update_order(
     response: Response = await async_client.put(
         f"/api/orders/{id}", json={
             "order_name": name_order,
+            "key_gbif": 10,
             "class__id": class_id,
         },
     )
@@ -232,6 +248,7 @@ async def test_get_all_orders(
     response: Response = await async_client.post(
         "/api/orders", json={
             "order_name": name_order,
+            "key_gbif": 10,
             "class__id": class_id,
         },
     )
@@ -239,6 +256,7 @@ async def test_get_all_orders(
     response: Response = await async_client.post(
         "/api/orders", json={
             "order_name": name_order2,
+            "key_gbif": 12,
             "class__id": class_id,
         },
     )
@@ -263,6 +281,7 @@ async def test_get_order_by_id(
     response: Response = await async_client.post(
         "/api/orders", json={
             "order_name": name_order,
+            "key_gbif": 10,
             "class__id": class_id,
         },
     )
@@ -288,6 +307,7 @@ async def test_delete_order(
     response: Response = await async_client.post(
         "/api/orders", json={
             "order_name": name_order,
+            "key_gbif": 10,
             "class__id": class_id,
         },
     )
@@ -313,12 +333,14 @@ async def test_create_family(
     response: Response = await async_client.post(
         "/api/families", json={
             "family_name": name_family,
+            "key_gbif": 10,
             "order_id": order_id,
         },
     )
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     assert data["family_name"] == name_family
+    assert data["key_gbif"] == 10
     assert "id" in data
 
 #test create family with invalid name
@@ -333,12 +355,14 @@ async def test_create_family_invalid_name(
     response: Response = await async_client.post(
         "/api/families", json={
             "family_name": name_family,
+            "key_gbif": 10,
             "order_id": order_id,
         },
     )
     response: Response = await async_client.post(
         "/api/families", json={
             "family_name": name_family,
+            "key_gbif": 11,
             "order_id": order_id,
         },
     )
@@ -356,24 +380,28 @@ async def test_update_family(
     response: Response = await async_client.post(
         "/api/families", json={
             "family_name": name_family,
+            "key_gbif": 10,
             "order_id": order_id,
         },
     )
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     assert data["family_name"] == name_family
+    assert data["key_gbif"] == 10
 
     name_family = random_string()
 
     response: Response = await async_client.put(
         f"/api/families/{data['id']}", json={
             "family_name": name_family,
+            "key_gbif": 10,
             "order_id": order_id,
         },
     )
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
     assert data["family_name"] == name_family
+    assert data["key_gbif"] == 10
 
 #test get all families
 @pytest.mark.asyncio
@@ -390,6 +418,7 @@ async def test_get_all_families(
     response: Response = await async_client.post(
         "/api/families", json={
             "family_name": name_family,
+            "key_gbif": 10,
             "order_id": order_id,
         },
     )
@@ -397,6 +426,7 @@ async def test_get_all_families(
     response: Response = await async_client.post(
         "/api/families", json={
             "family_name": name_family2,
+            "key_gbif": 11,
             "order_id": order_id,
         },
     )
@@ -420,6 +450,7 @@ async def test_get_family_by_id(
     response: Response = await async_client.post(
         "/api/families", json={
             "family_name": name_family,
+            "key_gbif": 10,
             "order_id": order_id,
         },
     )
@@ -444,6 +475,7 @@ async def test_delete_family(
     response: Response = await async_client.post(
         "/api/families", json={
             "family_name": name_family,
+            "key_gbif": 10,
             "order_id": order_id,
         },
     )
@@ -470,12 +502,14 @@ async def test_create_genus(
         "/api/genuses", json={
             "genus_name": name_genus,
             "genus_full_name": name_genus,
+            "key_gbif": 10,
             "family_id": family_id,
         },
     )
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     assert data["genus_name"] == name_genus
+    assert data["key_gbif"] == 10
     assert "id" in data
 
 #test create genus with invalid name
@@ -491,6 +525,7 @@ async def test_create_genus_invalid_name(
         "/api/genuses", json={
             "genus_name": name_genus,
             "genus_full_name": name_genus,
+            "key_gbif": 10,
             "family_id": family_id,
         },
     )
@@ -498,6 +533,7 @@ async def test_create_genus_invalid_name(
         "/api/genuses", json={
             "genus_name": name_genus,
             "genus_full_name": name_genus,
+            "key_gbif": 11,
             "family_id": family_id,
         },
     )
@@ -516,6 +552,7 @@ async def test_update_genus(
         "/api/genuses", json={
             "genus_name": name_genus,
             "genus_full_name": name_genus,
+            "key_gbif": 10,
             "family_id": family_id,
         },
     )
@@ -530,6 +567,7 @@ async def test_update_genus(
         f"/api/genuses/{data['id']}", json={
             "genus_name": name_genus,
             "genus_full_name": name_genus,
+            "key_gbif": 10,
             "family_id": family_id,
         },
     )
@@ -537,6 +575,7 @@ async def test_update_genus(
     data: Dict[str, Any] = response.json()
     assert data["genus_name"] == name_genus
     assert data["genus_full_name"] == name_genus
+    assert data["key_gbif"] == 10
 
 #test get all genuses
 @pytest.mark.asyncio
@@ -554,6 +593,7 @@ async def test_get_all_genuses(
         "/api/genuses", json={
             "genus_name": name_genus,
             "genus_full_name": name_genus,
+            "key_gbif": 10,
             "family_id": family_id,
         },
     )
@@ -562,6 +602,7 @@ async def test_get_all_genuses(
         "/api/genuses", json={
             "genus_name": name_genus2,
             "genus_full_name": name_genus2,
+            "key_gbif": 11,
             "family_id": family_id,
         },
     )
@@ -587,6 +628,7 @@ async def test_get_genus_by_id(
         "/api/genuses", json={
             "genus_name": name_genus,
             "genus_full_name": name_genus,
+            "key_gbif": 10,
             "family_id": family_id,
         },
     )
@@ -616,6 +658,7 @@ async def test_create_species(
         "/api/species", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
+            "key_gbif": 10,
             "status_id": status_id,
             "genus_id": genus_id,
         },
@@ -625,6 +668,8 @@ async def test_create_species(
     assert data["scientific_name"] == name_scientific
     assert data["specific_epithet"] == name_common
     assert data["status_id"] == status_id
+    assert data["genus_id"] == genus_id
+    assert data["key_gbif"] == 10
     assert "id" in data
     return data["id"]
 
@@ -644,6 +689,7 @@ async def test_create_species_invalid_name(
         "/api/species", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
+            "key_gbif": 10,
             "status_id": status_id,
             "genus_id": genus_id,
         },
@@ -652,6 +698,7 @@ async def test_create_species_invalid_name(
         "/api/species", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
+            "key_gbif": 11,
             "status_id": status_id,
             "genus_id": genus_id,
         },
@@ -673,6 +720,7 @@ async def test_update_species(
         "/api/species", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
+            "key_gbif": 10,
             "status_id": status_id,
             "genus_id": genus_id,
         },
@@ -689,6 +737,7 @@ async def test_update_species(
         f"/api/species/{data['id']}", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
+            "key_gbif": 11,
             "status_id": status_id,
             "genus_id": genus_id,
         },
@@ -697,6 +746,7 @@ async def test_update_species(
     data: Dict[str, Any] = response.json()
     assert data["scientific_name"] == name_scientific
     assert data["specific_epithet"] == name_common
+    assert data["key_gbif"] == 11
 
 #test get all species
 @pytest.mark.asyncio
@@ -716,6 +766,7 @@ async def test_get_all_species(
         "/api/species", json={
             "scientific_name": name_scientific,
             "specific_epithet": name_common,
+            "key_gbif": 10,
             "status_id": status_id,
             "genus_id": genus_id,
         },
@@ -725,6 +776,7 @@ async def test_get_all_species(
         "/api/species", json={
             "scientific_name": name_scientific2,
             "specific_epithet": name_common2,
+            "key_gbif": 11,
             "status_id": status_id,
             "genus_id": genus_id,
         },

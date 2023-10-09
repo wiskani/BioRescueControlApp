@@ -21,6 +21,7 @@ class Specie(_database.Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     scientific_name: Mapped[str] = mapped_column(String, unique=True, index=True)
     specific_epithet: Mapped[str] = mapped_column(String, index=True)
+    key_gbif: Mapped[int] = mapped_column(Integer, unique=True, nullable=True)
     create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     # Relationships with status
@@ -50,6 +51,7 @@ class Genus(_database.Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     genus_name: Mapped[str] = mapped_column(String, unique=True, index=True)
     genus_full_name: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=True)
+    key_gbif: Mapped[int] = mapped_column(Integer, unique=True, nullable=True)
     create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     # Relationships specie and family
@@ -69,6 +71,7 @@ class Family(_database.Base):
     __tablename__:str = "family"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     family_name: Mapped[str] = mapped_column(String, unique=True, index=True)
+    key_gbif: Mapped[int] = mapped_column(Integer, unique=True, nullable=True)
     create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     # Relationships order and genus
@@ -86,6 +89,7 @@ class Order(_database.Base):
     __tablename__:str = "order"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     order_name: Mapped[str] = mapped_column(String, unique=True, index=True)
+    key_gbif: Mapped[int] = mapped_column(Integer, unique=True, nullable=True)
     create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     # Relationships
@@ -98,6 +102,7 @@ class Class_(_database.Base):
     __tablename__:str = "class_"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     class_name: Mapped[str] = mapped_column(String, unique=True, index=True)
+    key_gbif: Mapped[int] = mapped_column(Integer, unique=True, nullable=True)
     create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     # Relationships
