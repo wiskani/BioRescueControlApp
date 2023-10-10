@@ -19,23 +19,20 @@ class Species (BaseModel):
     specific_epithet: str = Field( examples=["Panda"])
     key_gbif: int | None = Field(examples=[123456789])
     status_id: int | None = Field(examples=[1])
+    genus_id: int = Field(...)
     class Config:
         orm_mode: bool = True
 
 class SpeciesCreate (Species):
-    genus_id: int = Field(...)
-    class Config:
-        orm_mode: bool = True
+    pass
 
 class SpeciesResponse (Species):
     id: int = Field(...)
-    genus_id: int = Field(...)
     class Config:
         orm_mode: bool = True
 
 class Genuses (BaseModel):
     genus_name: str = Field(..., examples=[ "Ailuropoda" ])
-    genus_full_name: str | None = Field(examples=[ " Ailuropoda melanoleuca"])
     key_gbif: int | None = Field(examples=[123456789])
     class Config:
         orm_mode: bool = True

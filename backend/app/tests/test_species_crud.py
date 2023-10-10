@@ -501,7 +501,6 @@ async def test_create_genus(
     response: Response = await async_client.post(
         "/api/genuses", json={
             "genus_name": name_genus,
-            "genus_full_name": name_genus,
             "key_gbif": 10,
             "family_id": family_id,
         },
@@ -524,7 +523,6 @@ async def test_create_genus_invalid_name(
     response: Response = await async_client.post(
         "/api/genuses", json={
             "genus_name": name_genus,
-            "genus_full_name": name_genus,
             "key_gbif": 10,
             "family_id": family_id,
         },
@@ -532,7 +530,6 @@ async def test_create_genus_invalid_name(
     response: Response = await async_client.post(
         "/api/genuses", json={
             "genus_name": name_genus,
-            "genus_full_name": name_genus,
             "key_gbif": 11,
             "family_id": family_id,
         },
@@ -551,7 +548,6 @@ async def test_update_genus(
     response: Response = await async_client.post(
         "/api/genuses", json={
             "genus_name": name_genus,
-            "genus_full_name": name_genus,
             "key_gbif": 10,
             "family_id": family_id,
         },
@@ -559,14 +555,12 @@ async def test_update_genus(
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     assert data["genus_name"] == name_genus
-    assert data["genus_full_name"] == name_genus
 
     name_genus = random_string()
 
     response: Response = await async_client.put(
         f"/api/genuses/{data['id']}", json={
             "genus_name": name_genus,
-            "genus_full_name": name_genus,
             "key_gbif": 10,
             "family_id": family_id,
         },
@@ -574,7 +568,6 @@ async def test_update_genus(
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
     assert data["genus_name"] == name_genus
-    assert data["genus_full_name"] == name_genus
     assert data["key_gbif"] == 10
 
 #test get all genuses
@@ -592,7 +585,6 @@ async def test_get_all_genuses(
     response: Response = await async_client.post(
         "/api/genuses", json={
             "genus_name": name_genus,
-            "genus_full_name": name_genus,
             "key_gbif": 10,
             "family_id": family_id,
         },
@@ -601,7 +593,6 @@ async def test_get_all_genuses(
     response: Response = await async_client.post(
         "/api/genuses", json={
             "genus_name": name_genus2,
-            "genus_full_name": name_genus2,
             "key_gbif": 11,
             "family_id": family_id,
         },
@@ -627,7 +618,6 @@ async def test_get_genus_by_id(
     response: Response = await async_client.post(
         "/api/genuses", json={
             "genus_name": name_genus,
-            "genus_full_name": name_genus,
             "key_gbif": 10,
             "family_id": family_id,
         },

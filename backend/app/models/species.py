@@ -50,7 +50,6 @@ class Genus(_database.Base):
     __tablename__:str = "genus"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     genus_name: Mapped[str] = mapped_column(String, unique=True, index=True)
-    genus_full_name: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=True)
     key_gbif: Mapped[int] = mapped_column(Integer, unique=True, nullable=True)
     create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 

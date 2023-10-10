@@ -2,19 +2,42 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Union, Dict, Optional
 
-from app.services.gbif.api_gbif import get_species_suggestions, get_species_details
+from app.services.gbif.api_gbif import get_species_suggestions, get_species_details, get_species_details_test
+
 from app.api.deps import PermissonsChecker, get_db
 
 from app.crud.species import (
     create_class,
+    get_class_by_name,
     create_order,
+    get_order_by_name,
     create_family,
+    get_family_by_name,
     create_genus,
-    create_specie
+    get_genus_by_name,
+    create_specie,
+    get_specie_by_name,
 )
 
-from app.schemas.species import SpeciesResponse
+from app.schemas.species import (
+    SpeciesResponse,
+    SpeciesCreate,
 
+    Genuses,
+    GenusesCreate,
+
+    Families,
+    FamiliesCreate,
+
+    Orders,
+    OrdersCreate,
+
+    Classes,
+    ClassesCreate,
+)
+from app.schemas.services import SpecieGbif
+
+from app.models.species import Specie
 
 router:APIRouter = APIRouter()
 
@@ -41,6 +64,22 @@ async def get_species_suggestions_endpoint(
 
 # Get species details
 @router.get(
+    path="/species_gbif/details_test",
+    tags=["GBIF"],
+    response_model=Dict,
+    status_code=status.HTTP_200_OK
+)
+async def get_species_details_endpoint_test(
+    key: str,
+    autorized: bool = Depends(PermissonsChecker(["admin"])),
+)-> Dict:
+    """
+    Get species details from GBIF API
+    """
+    return get_species_details_test(key)
+
+# Get species details
+@router.get(
     path="/species_gbif/details",
     tags=["GBIF"],
     response_model=Dict,
@@ -49,7 +88,7 @@ async def get_species_suggestions_endpoint(
 async def get_species_details_endpoint(
     key: str,
     autorized: bool = Depends(PermissonsChecker(["admin"])),
-)->Dict:
+)-> SpecieGbif|HTTPException:
     """
     Get species details from GBIF API
     """
@@ -66,12 +105,46 @@ async def create_specie_by_key(
     key: str,
     db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
-)->SpeciesResponse:
+)->Specie:
     """
     Create a new specie by key of gbif
     """
-    data : Dict = get_species_details(key)
+    data  = get_species_details(key)
+    if data is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Specie not found")
 
+    #check if class exists
+    db_class = await get_class_by_name(db, data.class_)
+    if db_class is None:
+        new_class = ClassesCreate(class_name=data.class_, key_gbif=data.classKey)
+        db_class = await create_class(db, new_class)
 
+    #check if order exists
+    db_order = await get_order_by_name(db, data.order)
+    if db_order is None:
+        new_order = OrdersCreate(order_name=data.order, key_gbif=data.orderKey, class__id=db_class.id)
+        db_order = await create_order(db, new_order)
+
+    #check if family exists
+    db_family = await get_family_by_name(db, data.family)
+    if db_family is None:
+        new_family = FamiliesCreate(family_name=data.family, key_gbif=data.familyKey, order_id=db_order.id)
+        db_family = await create_family(db, new_family)
+
+    #check if genus exists
+    db_genus = await get_genus_by_name(db, data.genus)
+    if db_genus is None:
+        new_genus = GenusesCreate(genus_name=data.genus, key_gbif=data.genusKey, family_id=db_family.id)
+        db_genus = await create_genus(db, new_genus)
+
+    #check if specie exists
+    db_specie = await get_specie_by_name(db, data.scientificName)
+    print (db_specie)
+    if db_specie is None:
+        new_specie = SpeciesCreate(scientific_name=data.scientificName, specific_epithet=data.canonicalName, status_id=None, key_gbif=data.speciesKey, genus_id=db_genus.id)
+        db_specie = await create_specie(db, new_specie)
+        return db_specie
+
+    return HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Specie already exists")
 
 

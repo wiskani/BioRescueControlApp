@@ -81,7 +81,6 @@ async def delete_specie(db: AsyncSession, specie_id: int) -> Specie:
 async def create_genus(db: AsyncSession, genus: GenusesCreate) -> Genus:
     db_genus = Genus(
         genus_name = genus.genus_name,
-        genus_full_name = genus.genus_full_name,
         key_gbif = genus.key_gbif,
         family_id = genus.family_id
     )
@@ -111,7 +110,6 @@ async def update_genus(db: AsyncSession, genus_id: int, genus: GenusesCreate) ->
     if not db_genus:
         raise HTTPException(status_code=404, detail="Genus not found")
     db_genus.genus_name = genus.genus_name
-    db_genus.genus_full_name = genus.genus_full_name
     db_genus.key_gbif = genus.key_gbif
     db_genus.family_id = genus.family_id
     await db.commit()

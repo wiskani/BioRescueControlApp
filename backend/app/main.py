@@ -82,7 +82,8 @@ async def _settings(
 # Create first user
 @app.on_event("startup")
 async def startup() -> None:
-    await init_tables()
+    #comment this line if you want to create a new database and tables with alembic
+    #await init_tables()
 
     db = SessionLocal()
     settings: Settings  = get_settings()

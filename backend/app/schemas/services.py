@@ -24,3 +24,22 @@ class UTMData(BaseModel):
             raise ValueError("Zone letter must be between C and X")
         return v
 
+
+class SpecieGbif(BaseModel):
+    key: int = Field(...)
+    kingdom: str = Field(...)
+    phylum: str = Field(...)
+    order: str = Field(...)
+    family: str = Field(...)
+    genus: str = Field(...)
+    species: str = Field(...)
+    kingdomKey: int = Field(...)
+    phylumKey: int = Field(...)
+    orderKey: int = Field(...)
+    familyKey: int = Field(...)
+    genusKey: int = Field(...)
+    speciesKey: int = Field(...)
+    scientificName: str = Field(...)
+    canonicalName: str = Field(...)
+    class_: str = Field(..., alias="class")
+    classKey: int = Field(...)

@@ -1,5 +1,8 @@
 from pygbif import species
-from typing import Optional
+from typing import Optional, Dict
+from fastapi import HTTPException
+
+from app.schemas.services import SpecieGbif
 
 # Get species suggestions
 def get_species_suggestions(query:str, r:Optional[str])->dict:
@@ -9,5 +12,17 @@ def get_species_suggestions(query:str, r:Optional[str])->dict:
         return species.name_suggest(q=query, rank=r)
 
 # Get species details
-def get_species_details(key:str)->dict:
-    return species.name_usage(key=key, data='all')
+def get_species_details(key:str)-> SpecieGbif| HTTPException:
+    data = species.name_usage(key=key, data='all')
+    # check if data is SpecieGbif
+    try :
+        data = SpecieGbif(**data)
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=e)
+
+
+# Get species details
+def get_species_details_test(key:str)-> Dict:
+    data = species.name_usage(key=key, data='all')
+    return data
