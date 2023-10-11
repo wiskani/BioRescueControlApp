@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Union, Dict, Optional
 
-from app.services.gbif.api_gbif import get_species_suggestions, get_species_details, get_species_details_test
+from app.services.gbif.api_gbif import get_species_suggestions, get_species_details
 
 from app.api.deps import PermissonsChecker, get_db
 
@@ -61,22 +61,6 @@ async def get_species_suggestions_endpoint(
     Get species suggestions from GBIF API
     """
     return get_species_suggestions(q, r)
-
-# Get species details
-@router.get(
-    path="/species_gbif/details_test",
-    tags=["GBIF"],
-    response_model=Dict,
-    status_code=status.HTTP_200_OK
-)
-async def get_species_details_endpoint_test(
-    key: str,
-    autorized: bool = Depends(PermissonsChecker(["admin"])),
-)-> Dict:
-    """
-    Get species details from GBIF API
-    """
-    return get_species_details_test(key)
 
 # Get species details
 @router.get(

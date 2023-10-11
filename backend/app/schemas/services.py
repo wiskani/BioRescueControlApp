@@ -25,6 +25,7 @@ class UTMData(BaseModel):
         return v
 
 
+# This model is for a specie from GBIF API, for recieve data for a specie from GBIF API
 class SpecieGbif(BaseModel):
     key: int = Field(...)
     kingdom: str = Field(...)

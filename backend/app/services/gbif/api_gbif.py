@@ -21,8 +21,3 @@ def get_species_details(key:str)-> SpecieGbif| HTTPException:
     except Exception as e:
         raise HTTPException(status_code=404, detail=e)
 
-
-# Get species details
-def get_species_details_test(key:str)-> Dict:
-    data = species.name_usage(key=key, data='all')
-    return data
