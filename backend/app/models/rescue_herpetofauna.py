@@ -15,24 +15,17 @@ class AgeGroup (_database.Base):
     rescue_herpetofauna = relationship('RescueHerpetofauna', back_populates='age_group')
 
 
-class RescueHerpetofauna (_database.Base):
+class TransectHerpetofauna (_database.Base):
     __tablename__ = 'rescue_herpetofauna'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     number: Mapped[int] = mapped_column(Integer, nullable=False)
-    rescue_date_in: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    rescue_date_out: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    latitude: Mapped[float] = mapped_column(Float, nullable=False)
-    longitude: Mapped[float] = mapped_column(Float, nullable=False)
-    altitude: Mapped[int] = mapped_column(Integer, nullable=False)
-    individual_count: Mapped[int] = mapped_column(Integer, nullable=True)
-    gender: Mapped[bool] = mapped_column(Boolean, nullable=True)
-
-    #relationship with age group
-    age_group_id: Mapped[int] = mapped_column(Integer, ForeignKey('age_group.id'), nullable=True)
-    age_group = relationship('AgeGroup', back_populates='rescue_herpetofauna')
-
-    #relationship with species
-    specie_id: Mapped[int] = mapped_column(Integer, ForeignKey('species.id'), nullable=True)
-    species = relationship('Specie', back_populates='rescue_herpetofauna')
+    date_in: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    date_out: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    latitude_in: Mapped[float] = mapped_column(Float, nullable=False)
+    longitude_in: Mapped[float] = mapped_column(Float, nullable=False)
+    altitude_in: Mapped[int] = mapped_column(Integer, nullable=False)
+    latitude_out: Mapped[float] = mapped_column(Float, nullable=False)
+    longitude_out: Mapped[float] = mapped_column(Float, nullable=False)
+    altitude_out: Mapped[int] = mapped_column(Integer, nullable=False)
 
 
