@@ -25,6 +25,7 @@ import app.routers.images as _images
 import app.routers.files as _files
 import app.routers.tower as _tower
 import app.routers.services.api_gdif as _api_gdif
+import app.routers.rescue_herpetofauna as _rescue_herpetofauna
 
 
 app:FastAPI = FastAPI()
@@ -66,6 +67,7 @@ app.include_router(_images.router)
 app.include_router(_files.router)
 app.include_router(_tower.router)
 app.include_router(_api_gdif.router)
+app.include_router(_rescue_herpetofauna.router)
 
 #Route is used for import settings
 @app.get("/api/settings")

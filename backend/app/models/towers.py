@@ -22,8 +22,12 @@ class Tower(_database.Base):
     #relationship with clear_mammals
     clear_mammals = relationship("Clear_mammals", back_populates="tower")
 
-    #relationship with rescue_herpetofauna
-    rescue_herpetofauna = relationship("Rescue_herpetofauna", back_populates="tower")
+    #relationship with transect_herpetofauna
+    transect_herpetofauna = relationship("TransectHerpetofauna", back_populates="tower")
+
+    #relationship with mark_herpetofauna
+    mark_herpetofauna = relationship("MarkHerpetofauna", back_populates="tower")
+
 
 class Clear_flora(_database.Base):
     __tablename__:str = "clear_flora"
