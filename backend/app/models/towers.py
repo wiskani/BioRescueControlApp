@@ -22,6 +22,9 @@ class Tower(_database.Base):
     #relationship with clear_mammals
     clear_mammals = relationship("Clear_mammals", back_populates="tower")
 
+    #relationship with rescue_herpetofauna
+    rescue_herpetofauna = relationship("Rescue_herpetofauna", back_populates="tower")
+
 class Clear_flora(_database.Base):
     __tablename__:str = "clear_flora"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
