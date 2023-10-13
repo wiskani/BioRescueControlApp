@@ -5,6 +5,8 @@ import pytest
 from app.tests.conftest import *
 from app.tests.utils.users import *
 from app.tests.utils.species_example import *
+from app.tests.utils.towers_example import *
+from app.tests.utils.rescue_herpetofauna import *
 from app.tests.conftest import async_client
 
 """
@@ -199,6 +201,9 @@ async def test_create_mark_herpetofauna(
     async_session: AsyncSession,
 ) -> None:
     number_mark = random_string()
+    tower_id =  await create_random_tower(async_client)
+    species_id = await create_specie(async_client)
+    age_group_id = await create_age_group(async_client)
 
     response = await async_client.post(
         "/api/mark_herpetofauna", json={
@@ -210,8 +215,9 @@ async def test_create_mark_herpetofauna(
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-
-
+            "tower_id": tower_id
+            "specie_id": species_id
+            "age_group_id": age_group_id
         },
     )
     assert response.status_code == 201

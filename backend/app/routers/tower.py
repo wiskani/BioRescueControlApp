@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Union, Dict
 from pydantic import TypeAdapter
 
@@ -66,9 +66,9 @@ CRUD FOR  TOWERS
 )
 async def create_tower_api(
     tower: TowerBase,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> TowerResponse:
+) -> Tower:
     db_tower = await get_tower_by_number(db, tower.number)
     if db_tower:
         raise HTTPException(status_code=400, detail="Tower already registered")
@@ -82,7 +82,7 @@ async def create_tower_api(
     summary="Get all towers",
 )
 async def get_towers_api(
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> List[TowerResponse]:
     towers: List[Tower]= await get_towers(db)
@@ -98,9 +98,9 @@ async def get_towers_api(
 )
 async def get_tower_by_number_api(
     number: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin", "user"])),
-) -> Union[TowerResponse, None]:
+) -> Tower| None:
     return await get_tower_by_number(db, number)
 
 # Update tower
@@ -113,9 +113,9 @@ async def get_tower_by_number_api(
 async def update_tower_api(
     tower_id: int,
     tower: TowerBase,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> TowerResponse:
+) -> Tower:
     return await update_tower(db, tower_id, tower)
 
 # Delete tower
@@ -127,7 +127,7 @@ async def update_tower_api(
 )
 async def delete_tower_api(
     tower_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> Dict:
      await delete_tower(db, tower_id)
@@ -148,7 +148,7 @@ CRUD FOR CLEAR FLORA
 async def create_clear_flora_api(
     tower_number: int,
     clear_flora: ClearFloraBase,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> ClearFloraResponse | HTTPException:
     return await create_clear_flora(db, clear_flora, tower_number)
@@ -161,11 +161,11 @@ async def create_clear_flora_api(
     summary="Get all clear flora",
 )
 async def get_clear_flora_api(
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> List[ClearFloraResponse]:
+) -> List[Clear_flora]:
     clear_flora: List[Clear_flora]= await get_clear_flora(db)
-    return parse_obj_as(List[ClearFloraResponse], clear_flora)
+    return clear_flora
 
 # Get clear flora by tower number
 @router.get(
@@ -176,9 +176,9 @@ async def get_clear_flora_api(
 )
 async def get_clear_flora_by_tower_number_api(
     tower_number: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin", "user"])),
-) -> Union[ClearFloraResponse, None]:
+) -> Clear_flora | None:
     return await get_clear_flora_by_tower_number(db, tower_number)
 
 # Update clear flora
@@ -191,7 +191,7 @@ async def get_clear_flora_by_tower_number_api(
 async def update_clear_flora_api(
     tower_number: int,
     clear_flora: ClearFloraBase,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> ClearFloraResponse:
     return await update_clear_flora(db, clear_flora,  tower_number )
@@ -204,7 +204,7 @@ async def update_clear_flora_api(
 )
 async def delete_clear_flora_api(
     tower_number: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> Dict:
     try:
@@ -228,7 +228,7 @@ CRUD FOR CLEAR HERPETOFAUNA
 async def create_clear_herpetofauna_api(
     tower_number: int,
     clear_herpetofauna: ClearHerpetoFaunaBase,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> ClearHerpetoFaunaResponse | HTTPException:
     return await create_clear_herpetofauna(db, clear_herpetofauna, tower_number)
@@ -241,7 +241,7 @@ async def create_clear_herpetofauna_api(
     summary="Get all clear herpetofauna",
 )
 async def get_clear_herpetofauna_api(
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> List[ClearHerpetoFaunaResponse]:
     clear_herpetofauna: List[Clear_herpetofauna]= await get_clear_herpetofauna(db)
@@ -256,7 +256,7 @@ async def get_clear_herpetofauna_api(
 )
 async def get_clear_herpetofauna_by_tower_number_api(
     tower_number: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> Union[ClearHerpetoFaunaResponse, None]:
     return await get_clear_herpetofauna_by_tower_number(db, tower_number)
@@ -271,7 +271,7 @@ async def get_clear_herpetofauna_by_tower_number_api(
 async def update_clear_herpetofauna_api(
     tower_number: int,
     clear_herpetofauna: ClearHerpetoFaunaBase,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> ClearHerpetoFaunaResponse:
     return await update_clear_herpetofauna(db, clear_herpetofauna,  tower_number )
@@ -284,7 +284,7 @@ async def update_clear_herpetofauna_api(
 )
 async def delete_clear_herpetofauna_api(
     tower_number: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> Dict:
     try:
@@ -308,7 +308,7 @@ CRUD FOR CLEAR MAMMAL
 async def create_clear_mammal_api(
     tower_number: int,
     clear_mammal: ClearMammalBase,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> ClearMammalResponse | HTTPException:
     return await create_clear_mammal(db, clear_mammal, tower_number)
@@ -321,11 +321,11 @@ async def create_clear_mammal_api(
     summary="Get all clear mammal",
 )
 async def get_clear_mammal_api(
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> List[ClearMammalResponse]:
-    clear_mammal: List[Clear_mammal]= await get_clear_mammal(db)
-    return parse_obj_as(List[ClearMammalResponse], clear_mammal)
+) -> List[Clear_mammals]:
+    clear_mammal: List[Clear_mammals]= await get_clear_mammal(db)
+    return clear_mammal
 
 # Get clear mammal by tower number
 @router.get(
@@ -336,9 +336,9 @@ async def get_clear_mammal_api(
 )
 async def get_clear_mammal_by_tower_number_api(
     tower_number: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin", "user"])),
-) -> Union[ClearMammalResponse, None]:
+) -> Clear_mammals | None:
     return await get_clear_mammal_by_tower_number(db, tower_number)
 
 # Update clear mammal
@@ -351,7 +351,7 @@ async def get_clear_mammal_by_tower_number_api(
 async def update_clear_mammal_api(
     tower_number: int,
     clear_mammal: ClearMammalBase,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> ClearMammalResponse:
     return await update_clear_mammal(db, clear_mammal,  tower_number )
@@ -364,7 +364,7 @@ async def update_clear_mammal_api(
 )
 async def delete_clear_mammal_api(
     tower_number: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> Dict:
     try:

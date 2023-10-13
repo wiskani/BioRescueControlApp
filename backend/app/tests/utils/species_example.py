@@ -2,11 +2,8 @@ import random
 import string
 import pytest
 from httpx import Response, AsyncClient
-from typing import Dict, Any, Union
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Dict, Any
 from app.tests.conftest import *
-from app.models.species import Specie, Genus, Family, Order, Class_
 
 #make a fuction that return a random string of 10 characters
 def random_string() -> str:
