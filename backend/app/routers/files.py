@@ -1,5 +1,5 @@
 from fastapi import APIRouter, File, UploadFile, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Union
 from fastapi.responses import JSONResponse
 import pandas as pd
@@ -18,7 +18,7 @@ router = APIRouter()
 )
 async def upload_plant_nursery(
     file: UploadFile=File(...),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
 ):
     if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
@@ -72,7 +72,7 @@ async def upload_plant_nursery(
 )
 async def upload_flora_relocation(
     file: UploadFile=File(...),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
 ):
     if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
@@ -80,7 +80,7 @@ async def upload_flora_relocation(
 
         # Replace NaN with None
         df = df.fillna('None')
-        
+
         # chek if NaN is in df 
         if df.isnull().values.any():
             raise HTTPException(
@@ -138,8 +138,81 @@ async def upload_flora_relocation(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="File must be an excel file",
         )
-    
 
+# Upload transect herpetofauna excel file
+@router.post(
+    path="/upload/transect_herpetofauna",
+    summary="Upload transect herpetofauna excel file",
+    tags=["Upload"],
+)
+async def upload_transect_herpetofauna(
+    file: UploadFile=File(...),
+    db: AsyncSession = Depends(get_db),
+    permissions: str = Depends(PermissonsChecker(["admin"])),
+) -> JSONResponse | HTTPException:
+    if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
+        df = pd.read_excel(file.file)
+
+        # Replace NaN with None
+        df = df.fillna('None')
+
+        # chek if NaN is in df 
+        if df.isnull().values.any():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="File must not contain NaN",
+            )
+
+        #fuction to return None value if value is 'None'
+        def none_value(value):
+            if value == 'None':
+                return None
+            else:
+                return value
+
+        # Convert date columns to datetime objects
+        date_columns = ['relocation_date' ]
+        for col in date_columns:
+            df[col] = pd.to_datetime(df[col])
+
+        try:
+            for _, row in df.iterrows():
+                new_flora_relocation = FloraRelocationBase(
+                    relocation_date=row['relocation_date'],
+                    size=row['size'],
+                    epiphyte_phenology=row['epiphyte_phenology'],
+                    johanson_zone=row['johanson_zone'],
+                    relocation_position_latitude=row['relocation_position_latitude'],
+                    relocation_position_longitude=row['relocation_position_longitude'],
+                    bryophyte_number=row['bryophyte_number'],
+                    dap_bryophyte=row['dap_bryophyte'],
+                    height_bryophyte=row['height_bryophyte'],
+                    bark_type=row['bark_type'],
+                    infested_lianas=row['infested_lianas'],
+                    relocation_number=row['relocation_number'],
+                    other_observations=none_value(row['other_observations']),
+                    flora_rescue_id=row['flora_rescue_id'],
+                    specie_bryophyte_id=none_value(row['specie_bryophyte_id']),
+                    genus_bryophyte_id=none_value(row['genus_bryophyte_id']),
+                    family_bryophyte_id=none_value(row['family_bryophyte_id']),
+                    relocation_zone_id=row['relocation_zone_id'],
+                )
+                await create_flora_relocation(db, new_flora_relocation)
+        except Exception as e:
+            # Rollback the transaction in case of an error
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Error: {e}",
+            )
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={"message": "Flora relocation excel file uploaded successfully"},
+        )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File must be an excel file",
+        )
 
 
 
