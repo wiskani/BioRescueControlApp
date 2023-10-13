@@ -19,7 +19,7 @@ from app.schemas.rescue_herpetofauna import (
     MarkHerpetofaunaResponse,
 )
 
-from app.models.rescue_herpetofauna import AgeGroup
+from app.models.rescue_herpetofauna import AgeGroup, MarkHerpetofauna, TransectHerpetofauna
 
 from app.crud.rescue_herpetofauna import (
     # AgeGroup
@@ -129,4 +129,88 @@ async def delete_age_group_api(
     await delete_age_group(db, age_group_id)
     return {"detail": "Age group deleted successfully"}
 
+#Create mark herpetofauna
+@router.post(
+    path="/api/mark_herpetofauna",
+    response_model=MarkHerpetofaunaResponse,
+    status_code=status.HTTP_201_CREATED,
+    tags=["Mark Herpetofauna"],
+    summary="Create mark herpetofauna",
+)
+async def create_mark_herpetofauna_api(
+    new_mark_herpetofauna: MarkHerpetofaunaCreate,
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> MarkHerpetofauna|HTTPException:
+    mark_herpetofauna_db = await get_mark_herpetofauna_by_number(db, new_mark_herpetofauna.number)
+    if mark_herpetofauna_db:
+        raise HTTPException(status_code=400, detail="Mark herpetofauna number already exists")
+    return await create_mark_herpetofauna(db, new_mark_herpetofauna)
+
+#Get all mark herpetofauna
+@router.get(
+    path="/api/mark_herpetofauna",
+    response_model=List[MarkHerpetofaunaResponse],
+    status_code=status.HTTP_200_OK,
+    tags=["Mark Herpetofauna"],
+    summary="Get all mark herpetofauna",
+)
+async def get_all_mark_herpetofauna_api(
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> List[MarkHerpetofauna]:
+    return await get_all_mark_herpetofauna(db)
+
+#Get mark herpetofauna by id
+@router.get(
+    path="/api/mark_herpetofauna/{mark_herpetofauna_id}",
+    response_model=MarkHerpetofaunaResponse,
+    status_code=status.HTTP_200_OK,
+    tags=["Mark Herpetofauna"],
+    summary="Get mark herpetofauna by id",
+)
+async def get_mark_herpetofauna_by_id_api(
+    mark_herpetofauna_id: int,
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> MarkHerpetofauna|HTTPException:
+    mark_herpetofauna_db = await get_mark_herpetofauna_by_id(db, mark_herpetofauna_id)
+    if not mark_herpetofauna_db:
+        raise HTTPException(status_code=404, detail="Mark herpetofauna not found")
+    return mark_herpetofauna_db
+
+#Update mark herpetofauna
+@router.put(
+    path="/api/mark_herpetofauna/{mark_herpetofauna_id}",
+    response_model=MarkHerpetofaunaResponse,
+    status_code=status.HTTP_200_OK,
+    tags=["Mark Herpetofauna"],
+    summary="Update mark herpetofauna",
+)
+async def update_mark_herpetofauna_api(
+    mark_herpetofauna_id: int,
+    mark_herpetofauna_update: MarkHerpetofaunaBase,
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> MarkHerpetofauna|HTTPException:
+    return await update_mark_herpetofauna(db, mark_herpetofauna_id, mark_herpetofauna_update)
+
+#Delete mark herpetofauna
+@router.delete(
+    path="/api/mark_herpetofauna/{mark_herpetofauna_id}",
+    response_model=None,
+    status_code=status.HTTP_200_OK,
+    tags=["Mark Herpetofauna"],
+    summary="Delete mark herpetofauna",
+)
+async def delete_mark_herpetofauna_api(
+    mark_herpetofauna_id: int,
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> Dict|HTTPException:
+    db_mark_herpetofauna = await get_mark_herpetofauna_by_id(db, mark_herpetofauna_id)
+    if not db_mark_herpetofauna:
+        raise HTTPException(status_code=404, detail="Mark herpetofauna not found")
+    await delete_mark_herpetofauna(db, mark_herpetofauna_id)
+    return {"detail": "Mark herpetofauna deleted successfully"}
 

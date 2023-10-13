@@ -188,6 +188,36 @@ async def test_delete_age_group_by_id(
     data = response.json()
     assert data["detail"] == "Age group deleted successfully"
 
+"""
+TEST CRUD FOR MARK HERPETOFAUNA
+"""
+
+#test create mark herpetofauna
+@pytest.mark.asyncio
+async def test_create_mark_herpetofauna(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    number_mark = random_string()
+
+    response = await async_client.post(
+        "/api/mark_herpetofauna", json={
+            "date": "2021-10-10",
+            "number": number_mark,
+            "code": "123456789",
+            "gender": True,
+            "LHC": 1.5,
+            "weight": 1.5,
+            "is_photo_mark": True,
+            "is_elastomer_mark": True,
+
+
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert data["number"] == number_mark
+    assert "id" in data
 
 
 

@@ -116,7 +116,32 @@ async def update_mark_herpetofauna(db: AsyncSession, mark_herpetofauna_id: int ,
    mark_herpetofauna_db.date = mark_herpetofauna_update.date
    mark_herpetofauna_db.number = mark_herpetofauna_update.number
    mark_herpetofauna_db.code = mark_herpetofauna_update.code
-   mark_herpetofauna_db.gender = ma
+   mark_herpetofauna_db.gender = mark_herpetofauna_update.gender
+   mark_herpetofauna_db.LHC = mark_herpetofauna_update.LHC
+   mark_herpetofauna_db.weight = mark_herpetofauna_update.weight
+   mark_herpetofauna_db.is_photo_mark = mark_herpetofauna_update.is_photo_mark
+   mark_herpetofauna_db.is_elastomer_mark = mark_herpetofauna_update.is_elastomer_mark
+   mark_herpetofauna_db.tower_id = mark_herpetofauna_update.tower_id
+   mark_herpetofauna_db.species_id = mark_herpetofauna_update.species_id
+   mark_herpetofauna_db.age_group_id = mark_herpetofauna_update.age_group_id
+   await db.commit()
+   await db.refresh(mark_herpetofauna_db)
+   return mark_herpetofauna_db
+
+#Delete mark herpetofauna
+async def delete_mark_herpetofauna(db: AsyncSession, mark_herpetofauna_id: int) -> MarkHerpetofauna:
+    result = await db.execute(select(MarkHerpetofauna).where(MarkHerpetofauna.id == mark_herpetofauna_id))
+    mark_herpetofauna_db = result.scalars().first()
+    if not mark_herpetofauna_db:
+        raise HTTPException(status_code=404, detail="Mark herpetofauna not found")
+    await db.execute(delete(MarkHerpetofauna).where(MarkHerpetofauna.id == mark_herpetofauna_id))
+    await db.commit()
+    return mark_herpetofauna_db
+
+
+
+
+
 
     
 
