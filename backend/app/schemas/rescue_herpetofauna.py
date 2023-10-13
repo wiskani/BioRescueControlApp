@@ -20,7 +20,7 @@ class TransectHerpetofaunaBase(BaseModel):
     date_in: datetime = Field(..., examples=[ datetime.now() ])
     date_out: datetime = Field(..., examples=[ datetime.now()])
     latitude_in: float = Field(..., examples=[ 1.0])
-    longitude_in: float = Field(..., example=[1.0])
+    longitude_in: float = Field(..., examples=[1.0])
     altitude_in: int = Field(..., examples=[ 1 ])
     latitude_out: float = Field(..., examples=[1.0])
     longitude_out: float = Field(..., examples=[1.0])

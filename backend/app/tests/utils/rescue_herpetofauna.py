@@ -19,5 +19,6 @@ async def create_age_group(
             "name": name
         },
     )
+    assert response.status_code == 201
     data = response.json()
     return data["id"]

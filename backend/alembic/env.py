@@ -14,6 +14,9 @@ import app.models.users
 import app.models.species
 import app.models.rescue_flora
 import app.models.images
+import app.models.towers
+import app.models.rescue_herpetofauna
+
 
 settings: Settings = get_settings()
 

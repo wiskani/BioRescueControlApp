@@ -30,6 +30,13 @@ from app.crud.rescue_herpetofauna import (
     update_age_group,
     delete_age_group,
 
+    # TransectHerpetofauna
+    get_transect_herpetofauna_by_number,
+    get_transect_herpetofauna_by_id,
+    get_all_transect_herpetofauna,
+    create_transect_herpetofauna,
+    update_transect_herpetofauna,
+    delete_transect_herpetofauna,
 
     # MarkHerpetofauna
     get_mark_herpetofauna_by_number,
@@ -128,6 +135,92 @@ async def delete_age_group_api(
         raise HTTPException(status_code=404, detail="Age group not found")
     await delete_age_group(db, age_group_id)
     return {"detail": "Age group deleted successfully"}
+
+#Create transect herpetofauna
+@router.post(
+    path="/api/transect_herpetofauna",
+    response_model=TransectHerpetofaunaResponse,
+    status_code=status.HTTP_201_CREATED,
+    tags=["Transect Herpetofauna"],
+    summary="Create transect herpetofauna",
+)
+async def create_transect_herpetofauna_api(
+    new_transect_herpetofauna: TransectHerpetofaunaCreate,
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> TransectHerpetofauna|HTTPException:
+    transect_herpetofauna_db = await get_transect_herpetofauna_by_number(db, new_transect_herpetofauna.number)
+    if transect_herpetofauna_db:
+        raise HTTPException(status_code=400, detail="Transect herpetofauna number already exists")
+    return await create_transect_herpetofauna(db, new_transect_herpetofauna)
+
+#Get all transect herpetofauna
+@router.get(
+    path="/api/transect_herpetofauna",
+    response_model=List[TransectHerpetofaunaResponse],
+    status_code=status.HTTP_200_OK,
+    tags=["Transect Herpetofauna"],
+    summary="Get all transect herpetofauna",
+)
+async def get_all_transect_herpetofauna_api(
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> List[TransectHerpetofauna]:
+    return await get_all_transect_herpetofauna(db)
+
+#Get transect herpetofauna by id
+@router.get(
+    path="/api/transect_herpetofauna/{transect_herpetofauna_id}",
+    response_model=TransectHerpetofaunaResponse,
+    status_code=status.HTTP_200_OK,
+    tags=["Transect Herpetofauna"],
+    summary="Get transect herpetofauna by id",
+)
+async def get_transect_herpetofauna_by_id_api(
+    transect_herpetofauna_id: int,
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> TransectHerpetofauna|HTTPException:
+    transect_herpetofauna_db = await get_transect_herpetofauna_by_id(db, transect_herpetofauna_id)
+    if not transect_herpetofauna_db:
+        raise HTTPException(status_code=404, detail="Transect herpetofauna not found")
+    return transect_herpetofauna_db
+
+#Update transect herpetofauna
+@router.put(
+    path="/api/transect_herpetofauna/{transect_herpetofauna_id}",
+    response_model=TransectHerpetofaunaResponse,
+    status_code=status.HTTP_200_OK,
+    tags=["Transect Herpetofauna"],
+    summary="Update transect herpetofauna",
+)
+async def update_transect_herpetofauna_api(
+    transect_herpetofauna_id: int,
+    transect_herpetofauna_update: TransectHerpetofaunaBase,
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> TransectHerpetofauna|HTTPException:
+    return await update_transect_herpetofauna(db, transect_herpetofauna_id, transect_herpetofauna_update)
+
+#Delete transect herpetofauna
+@router.delete(
+    path="/api/transect_herpetofauna/{transect_herpetofauna_id}",
+    response_model=None,
+    status_code=status.HTTP_200_OK,
+    tags=["Transect Herpetofauna"],
+    summary="Delete transect herpetofauna",
+)
+async def delete_transect_herpetofauna_api(
+    transect_herpetofauna_id: int,
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> Dict|HTTPException:
+    db_transect_herpetofauna = await get_transect_herpetofauna_by_id(db, transect_herpetofauna_id)
+    if not db_transect_herpetofauna:
+        raise HTTPException(status_code=404, detail="Transect herpetofauna not found")
+    await delete_transect_herpetofauna(db, transect_herpetofauna_id)
+    return {"detail": "Transect herpetofauna deleted successfully"}
+
 
 #Create mark herpetofauna
 @router.post(

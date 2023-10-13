@@ -104,6 +104,7 @@ async def create_specie(
             "genus_id": await create_genus(async_client),
         },
     )
+    assert response.status_code == 201
     data: Dict[str, Any] = response.json()
     specie_id = data["id"]
     return specie_id

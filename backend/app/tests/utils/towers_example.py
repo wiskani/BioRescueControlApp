@@ -20,6 +20,7 @@ async def create_random_tower(
             "longitude": random.uniform(-180, 180),
         },
     )
+    assert response.status_code == 201
     data: Dict[str, Any] = response.json()
     tower_id = data["id"]
     return tower_id

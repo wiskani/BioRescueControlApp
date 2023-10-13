@@ -70,10 +70,78 @@ async def delete_age_group(db: AsyncSession, age_group_id: int) -> AgeGroup:
     return age_group_db
 
 """
+CRUD FOR TRANSECT HERPETOFAUNA
+"""
+#Get if transect herpetofauna exists by number
+async def get_transect_herpetofauna_by_number(db: AsyncSession, number:int ) -> TransectHerpetofauna | None:
+    result = await db.execute(select(TransectHerpetofauna).where(TransectHerpetofauna.number == number))
+    return result.scalars().first()
+
+#Get transect herpetofauna by id
+async def get_transect_herpetofauna_by_id(db: AsyncSession, id: int) -> TransectHerpetofauna | None:
+    result = await db.execute(select(TransectHerpetofauna).where(TransectHerpetofauna.id == id))
+    return result.scalars().first()
+
+#Get all transect herpetofauna
+async def get_all_transect_herpetofauna(db: AsyncSession) -> List[TransectHerpetofauna]:
+    transect_herpetofauna_db = await db.execute(select(TransectHerpetofauna))
+    return list(transect_herpetofauna_db.scalars().all())
+
+#Create transect herpetofauna
+async def create_transect_herpetofauna(db: AsyncSession, transect_herpetofauna: TransectHerpetofaunaCreate) -> TransectHerpetofauna:
+    transect_herpetofauna_db = TransectHerpetofauna(
+        number=transect_herpetofauna.number,
+        date_in = transect_herpetofauna.date_in,
+        date_out = transect_herpetofauna.date_out,
+        latitude_in = transect_herpetofauna.latitude_in,
+        longitude_in = transect_herpetofauna.longitude_in,
+        altitude_in = transect_herpetofauna.altitude_in,
+        latitude_out = transect_herpetofauna.latitude_out,
+        longitude_out = transect_herpetofauna.longitude_out,
+        altitude_out = transect_herpetofauna.altitude_out,
+        tower_id = transect_herpetofauna.tower_id,
+    )
+    db.add(transect_herpetofauna_db)
+    await db.commit()
+    await db.refresh(transect_herpetofauna_db)
+    return transect_herpetofauna_db
+
+#Update transect herpetofauna
+async def update_transect_herpetofauna(db: AsyncSession, transect_herpetofauna_id: int , transect_herpetofauna_update: TransectHerpetofaunaBase) -> TransectHerpetofauna:
+    result = await db.execute(select(TransectHerpetofauna).where(TransectHerpetofauna.id == transect_herpetofauna_id))
+    transect_herpetofauna_db = result.scalars().first()
+    if not transect_herpetofauna_db:
+        raise HTTPException(status_code=404, detail="Transect herpetofauna not found")
+    transect_herpetofauna_db.number = transect_herpetofauna_update.number
+    transect_herpetofauna_db.date_in = transect_herpetofauna_update.date_in
+    transect_herpetofauna_db.date_out = transect_herpetofauna_update.date_out
+    transect_herpetofauna_db.latitude_in = transect_herpetofauna_update.latitude_in
+    transect_herpetofauna_db.longitude_in = transect_herpetofauna_update.longitude_in
+    transect_herpetofauna_db.altitude_in = transect_herpetofauna_update.altitude_in
+    transect_herpetofauna_db.latitude_out = transect_herpetofauna_update.latitude_out
+    transect_herpetofauna_db.longitude_out = transect_herpetofauna_update.longitude_out
+    transect_herpetofauna_db.altitude_out = transect_herpetofauna_update.altitude_out
+    transect_herpetofauna_db.tower_id = transect_herpetofauna_update.tower_id
+    await db.commit()
+    await db.refresh(transect_herpetofauna_db)
+    return transect_herpetofauna_db
+
+#Delete transect herpetofauna
+async def delete_transect_herpetofauna(db: AsyncSession, transect_herpetofauna_id: int) -> TransectHerpetofauna:
+    result = await db.execute(select(TransectHerpetofauna).where(TransectHerpetofauna.id == transect_herpetofauna_id))
+    transect_herpetofauna_db = result.scalars().first()
+    if not transect_herpetofauna_db:
+        raise HTTPException(status_code=404, detail="Transect herpetofauna not found")
+    await db.execute(delete(TransectHerpetofauna).where(TransectHerpetofauna.id == transect_herpetofauna_id))
+    await db.commit()
+    return transect_herpetofauna_db
+
+
+"""
 CRUD FOR MARK HERPETOFAUNA
 """
 #Get if mark herpetofauna exists by number
-async def get_mark_herpetofauna_by_number(db: AsyncSession, number: str) -> MarkHerpetofauna | None:
+async def get_mark_herpetofauna_by_number(db: AsyncSession, number:int ) -> MarkHerpetofauna | None:
     result = await db.execute(select(MarkHerpetofauna).where(MarkHerpetofauna.number == number))
     return result.scalars().first()
 
