@@ -46,9 +46,7 @@ class MarkHerpetofaunaBase(BaseModel):
     weight: float|None = Field(examples=[1.0])
     is_photo_mark: bool = Field(default=False)
     is_elastomer_mark: bool = Field(default=False)
-    tower_id: int = Field(..., examples=[ 1 ])
-    species_id: int = Field(..., examples=[ 1 ])
-    age_group_id: int = Field(..., examples=[ 1 ])
+    age_group_id: int|None = Field(examples=[ 1 ])
 
 class MarkHerpetofaunaCreate(MarkHerpetofaunaBase):
     pass
@@ -57,6 +55,15 @@ class MarkHerpetofaunaResponse(MarkHerpetofaunaBase):
     id: int
     class Config:
         orm_mode: bool = True
+
+class RescueHerpetofaunaBase(BaseModel):
+    number: int = Field(..., examples=[ 1 ])
+    specie_id: int = Field(..., examples=[ 1 ])
+    mark_herpetofauna_id: int|None = Field(examples=[ 1 ])
+    transect_herpetofauna_id: int = Field(..., examples=[ 1 ])
+    class Config:
+        orm_mode: bool = True
+
 
 
 

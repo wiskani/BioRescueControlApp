@@ -166,8 +166,6 @@ async def create_mark_herpetofauna(db: AsyncSession, mark_herpetofauna: MarkHerp
         weight=mark_herpetofauna.weight,
         is_photo_mark = mark_herpetofauna.is_photo_mark,
         is_elastomer_mark = mark_herpetofauna.is_elastomer_mark,
-        tower_id=mark_herpetofauna.tower_id,
-        species_id=mark_herpetofauna.species_id,
         age_group_id=mark_herpetofauna.age_group_id,
     )
     db.add(mark_herpetofauna_db)
@@ -189,8 +187,6 @@ async def update_mark_herpetofauna(db: AsyncSession, mark_herpetofauna_id: int ,
    mark_herpetofauna_db.weight = mark_herpetofauna_update.weight
    mark_herpetofauna_db.is_photo_mark = mark_herpetofauna_update.is_photo_mark
    mark_herpetofauna_db.is_elastomer_mark = mark_herpetofauna_update.is_elastomer_mark
-   mark_herpetofauna_db.tower_id = mark_herpetofauna_update.tower_id
-   mark_herpetofauna_db.species_id = mark_herpetofauna_update.species_id
    mark_herpetofauna_db.age_group_id = mark_herpetofauna_update.age_group_id
    await db.commit()
    await db.refresh(mark_herpetofauna_db)

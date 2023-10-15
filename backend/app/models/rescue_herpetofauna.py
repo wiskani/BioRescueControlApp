@@ -12,8 +12,8 @@ class AgeGroup (_database.Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.utcnow)
 
-    #relationship with mark_herpetofauna
-    mark_herpetofauna = relationship('MarkHerpetofauna', back_populates='age_group')
+    #relationship with rescue_herpetofauna
+    rescue_herpetofauna = relationship('RescueHerpetofauna', back_populates='age_group')
 
 
 class TransectHerpetofauna (_database.Base):
@@ -32,6 +32,10 @@ class TransectHerpetofauna (_database.Base):
     #relationship with tower
     tower_id: Mapped[int] = mapped_column(Integer, ForeignKey('towers.id'))
     tower = relationship('Tower', back_populates='transect_herpetofauna')
+    
+    #relationship with mark_herpetofauna
+    mark_herpetofauna = relationship('MarkHerpetofauna', back_populates='transect_herpetofauna')
+
 
 class MarkHerpetofauna (_database.Base):
     __tablename__ = 'mark_herpetofauna'
@@ -45,15 +49,26 @@ class MarkHerpetofauna (_database.Base):
     is_photo_mark: Mapped[bool] = mapped_column(Boolean, default=False)
     is_elastomer_mark: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    #relationship with tower
-    tower_id: Mapped[int] = mapped_column(Integer, ForeignKey('towers.id'))
-    tower = relationship('Tower', back_populates='mark_herpetofauna')
-
-    #relationship with species
-    species_id: Mapped[int] = mapped_column(Integer, ForeignKey('species.id'))
-    species = relationship('Specie', back_populates='mark_herpetofauna')
-
-    #relationship with age_group
+    #realtionship with age_group
     age_group_id: Mapped[int] = mapped_column(Integer, ForeignKey('age_group.id'))
     age_group = relationship('AgeGroup', back_populates='mark_herpetofauna')
 
+    #relationship with rescue_herpetofauna
+    rescue_herpetofauna = relationship('RescueHerpetofauna', back_populates='mark_herpetofauna')
+
+class RescueHerpetofauna (_database.Base):
+    __tablename__ = 'rescue_herpetofauna'
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    number: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    #relationship with specie
+    specie_id: Mapped[int] = mapped_column(Integer, ForeignKey('species.id'))
+    specie = relationship('Specie', back_populates='rescue_herpetofauna')
+
+    #relationship with mark_herpetofauna
+    mark_herpetofauna_id = mapped_column(Integer, ForeignKey('mark_herpetofauna.id'), nullable=True)
+    mark_herpetofauna = relationship('MarkHerpetofauna', back_populates='rescue_herpetofauna')
+
+    #relationship with transect_herpetofauna
+    transect_herpetofauna_id = mapped_column(Integer, ForeignKey('transect_herpetofauna.id'))
+    transect_herpetofauna = relationship('TransectHerpetofauna', back_populates='rescue_herpetofauna')
