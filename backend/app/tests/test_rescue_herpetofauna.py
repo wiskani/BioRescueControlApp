@@ -747,9 +747,201 @@ async def test_delete_mark_herpetofauna(
     data = response.json()
     assert data["detail"] == "Mark herpetofauna deleted successfully"
 
+"""
+TEST FOR CRUD RESCUE HERPETOFAUNA
+"""
+
+#test create rescue herpetofauna
+@pytest.mark.asyncio
+async def test_create_rescue_herpetofauna(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    number_rescue: int = random.randint(1, 100)
+    specie_id:int = await create_specie(async_client)
+    mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
+    transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
+
+    response: Response = await async_client.post(
+        "/api/rescue_herpetofauna", json={
+            "number": number_rescue,
+            "specie_id": specie_id,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
+            "transect_herpetofauna_id": transect_herpetofauna_id,
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert data["number"] == number_rescue
+    assert data["specie_id"] == specie_id
+    assert data["mark_herpetofauna_id"] == mark_herpetofauna_id
+    assert data["transect_herpetofauna_id"] == transect_herpetofauna_id
+
+#test get rescue herpetofauna by id
+@pytest.mark.asyncio
+async def test_get_rescue_herpetofauna_by_id(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    number_rescue: int = random.randint(1, 100)
+    specie_id:int = await create_specie(async_client)
+    mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
+    transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
+
+    response: Response = await async_client.post(
+        "/api/rescue_herpetofauna", json={
+            "number": number_rescue,
+            "specie_id": specie_id,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
+            "transect_herpetofauna_id": transect_herpetofauna_id,
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    rescue_herpetofauna_id = data["id"]
+
+    response: Response = await async_client.get(
+        f"/api/rescue_herpetofauna/{rescue_herpetofauna_id}",
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["number"] == number_rescue
+    assert data["specie_id"] == specie_id
+    assert data["mark_herpetofauna_id"] == mark_herpetofauna_id
+    assert data["transect_herpetofauna_id"] == transect_herpetofauna_id
+
+#test for create rescue herpetofauna with wrong number
+@pytest.mark.asyncio
+async def test_create_rescue_herpetofauna_with_wrong_number(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    number_rescue: int = random.randint(1, 100)
+    specie_id:int = await create_specie(async_client)
+    mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
+    transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
+
+    response: Response = await async_client.post(
+        "/api/rescue_herpetofauna", json={
+            "number": number_rescue,
+            "specie_id": specie_id,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
+            "transect_herpetofauna_id": transect_herpetofauna_id,
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+
+    response: Response = await async_client.post(
+        "/api/rescue_herpetofauna", json={
+            "number": number_rescue,
+            "specie_id": specie_id,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
+            "transect_herpetofauna_id": transect_herpetofauna_id,
+        },
+    )
+    assert response.status_code == 400
+    data = response.json()
+    assert data["detail"] == "Rescue herpetofauna number already exists"
+
+#test for get all rescue herpetofauna
+@pytest.mark.asyncio
+async def test_get_all_rescue_herpetofauna(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    number_rescue: int = random.randint(1, 100)
+    specie_id:int = await create_specie(async_client)
+    mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
+    transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
+
+    response: Response = await async_client.post(
+        "/api/rescue_herpetofauna", json={
+            "number": number_rescue,
+            "specie_id": specie_id,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
+            "transect_herpetofauna_id": transect_herpetofauna_id,
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+
+    response: Response = await async_client.get(
+        "/api/rescue_herpetofauna",
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) > 0
+
+#test for update rescue herpetofauna
+@pytest.mark.asyncio
+async def test_update_rescue_herpetofauna(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    number_rescue: int = random.randint(1, 100)
+    specie_id:int = await create_specie(async_client)
+    mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
+    transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
+
+    number_rescue_update: int = random.randint(1, 100)
+    specie_id_update:int = await create_specie(async_client)
 
 
+    response: Response = await async_client.post(
+        "/api/rescue_herpetofauna", json={
+            "number": number_rescue,
+            "specie_id": specie_id,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
+            "transect_herpetofauna_id": transect_herpetofauna_id,
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    rescue_herpetofauna_id = data["id"]
 
+    response: Response = await async_client.put(
+        f"/api/rescue_herpetofauna/{rescue_herpetofauna_id}", json={
+            "number": number_rescue_update,
+            "specie_id": specie_id_update,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
+            "transect_herpetofauna_id": transect_herpetofauna_id,
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["number"] == number_rescue_update
+    assert data["specie_id"] == specie_id_update
+    assert data["mark_herpetofauna_id"] == mark_herpetofauna_id
+    assert data["transect_herpetofauna_id"] == transect_herpetofauna_id
 
+#test for delete rescue herpetofauna
+@pytest.mark.asyncio
+async def test_delete_rescue_herpetofauna(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    number_rescue: int = random.randint(1, 100)
+    specie_id:int = await create_specie(async_client)
+    mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
+    transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
 
+    response: Response = await async_client.post(
+        "/api/rescue_herpetofauna", json={
+            "number": number_rescue,
+            "specie_id": specie_id,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
+            "transect_herpetofauna_id": transect_herpetofauna_id,
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    rescue_herpetofauna_id = data["id"]
+
+    response: Response = await async_client.delete(
+        f"/api/rescue_herpetofauna/{rescue_herpetofauna_id}",
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["detail"] == "Rescue herpetofauna deleted successfully"
 
