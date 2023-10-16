@@ -13,6 +13,7 @@ router = APIRouter()
 # Upload plant nursery excel file
 @router.post(
     path="/upload/plant_nursery",
+    response_model= None,
     summary="Upload plant nursery excel file",
     tags=["Upload"],
 )
@@ -67,6 +68,7 @@ async def upload_plant_nursery(
 # Upload flora relocation excel file
 @router.post(
     path="/upload/flora_relocation",
+    response_model= None,
     summary="Upload flora relocation excel file",
     tags=["Upload"],
 )
@@ -143,6 +145,7 @@ async def upload_flora_relocation(
 @router.post(
     path="/upload/transect_herpetofauna",
     summary="Upload transect herpetofauna excel file",
+    response_model= None,
     tags=["Upload"],
 )
 async def upload_transect_herpetofauna(

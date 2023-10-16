@@ -16,9 +16,18 @@ from app.schemas.rescue_herpetofauna import (
     # MarkHerpetofauna
     MarkHerpetofaunaBase,
     MarkHerpetofaunaCreate,
+
+    # RescueHerpetofauna
+    RescueHerpetofaunaBase,
+    RescueHerpetofaunaCreate,
 )
 
-from app.models.rescue_herpetofauna import AgeGroup, MarkHerpetofauna, TransectHerpetofauna
+from app.models.rescue_herpetofauna import (
+    AgeGroup,
+    MarkHerpetofauna,
+    TransectHerpetofauna,
+    RescueHerpetofauna
+)
 
 # Purpose: CRUD operations for RescueHerpetofauna
 """
@@ -201,6 +210,63 @@ async def delete_mark_herpetofauna(db: AsyncSession, mark_herpetofauna_id: int) 
     await db.execute(delete(MarkHerpetofauna).where(MarkHerpetofauna.id == mark_herpetofauna_id))
     await db.commit()
     return mark_herpetofauna_db
+
+"""
+CRUD FOR RESCUE HERPETOFAUNA
+"""
+
+#Get if rescue herpetofauna exists by number
+async def get_rescue_herpetofauna_by_number(db: AsyncSession, number:int ) -> RescueHerpetofauna | None:
+    result = await db.execute(select(RescueHerpetofauna).where(RescueHerpetofauna.number == number))
+    return result.scalars().first()
+
+#Get rescue herpetofauna by id
+async def get_rescue_herpetofauna_by_id(db: AsyncSession, id: int) -> RescueHerpetofauna | None:
+    result = await db.execute(select(RescueHerpetofauna).where(RescueHerpetofauna.id == id))
+    return result.scalars().first()
+
+#Get all rescue herpetofauna
+async def get_all_rescue_herpetofauna(db: AsyncSession) -> List[RescueHerpetofauna]:
+    rescue_herpetofauna_db = await db.execute(select(RescueHerpetofauna))
+    return list(rescue_herpetofauna_db.scalars().all())
+
+#Create rescue herpetofauna
+async def create_rescue_herpetofauna(db: AsyncSession, rescue_herpetofauna: RescueHerpetofaunaCreate) -> RescueHerpetofauna:
+    rescue_herpetofauna_db = RescueHerpetofauna(
+        number=rescue_herpetofauna.number,
+        specie_id=rescue_herpetofauna.specie_id,
+        mark_herpetofauna_id=rescue_herpetofauna.mark_herpetofauna_id,
+        transect_herpetofauna_id=rescue_herpetofauna.transect_herpetofauna_id,
+    )
+    db.add(rescue_herpetofauna_db)
+    await db.commit()
+    await db.refresh(rescue_herpetofauna_db)
+    return rescue_herpetofauna_db
+
+#Update rescue herpetofauna
+async def update_rescue_herpetofauna(db: AsyncSession, rescue_herpetofauna_id: int , rescue_herpetofauna_update: RescueHerpetofaunaBase) -> RescueHerpetofauna:
+    result = await db.execute(select(RescueHerpetofauna).where(RescueHerpetofauna.id == rescue_herpetofauna_id))
+    rescue_herpetofauna_db = result.scalars().first()
+    if not rescue_herpetofauna_db:
+        raise HTTPException(status_code=404, detail="Rescue herpetofauna not found")
+    rescue_herpetofauna_db.number = rescue_herpetofauna_update.number
+    rescue_herpetofauna_db.specie_id = rescue_herpetofauna_update.specie_id
+    rescue_herpetofauna_db.mark_herpetofauna_id = rescue_herpetofauna_update.mark_herpetofauna_id
+    rescue_herpetofauna_db.transect_herpetofauna_id = rescue_herpetofauna_update.transect_herpetofauna_id
+    await db.commit()
+    await db.refresh(rescue_herpetofauna_db)
+    return rescue_herpetofauna_db
+
+#Delete rescue herpetofauna
+async def delete_rescue_herpetofauna(db: AsyncSession, rescue_herpetofauna_id: int) -> RescueHerpetofauna:
+    result = await db.execute(select(RescueHerpetofauna).where(RescueHerpetofauna.id == rescue_herpetofauna_id))
+    rescue_herpetofauna_db = result.scalars().first()
+    if not rescue_herpetofauna_db:
+        raise HTTPException(status_code=404, detail="Rescue herpetofauna not found")
+    await db.execute(delete(RescueHerpetofauna).where(RescueHerpetofauna.id == rescue_herpetofauna_id))
+    await db.commit()
+    return rescue_herpetofauna_db
+
 
 
 

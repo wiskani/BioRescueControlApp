@@ -64,6 +64,15 @@ class RescueHerpetofaunaBase(BaseModel):
     class Config:
         orm_mode: bool = True
 
+class RescueHerpetofaunaCreate(RescueHerpetofaunaBase):
+    pass
+
+class RescueHerpetofaunaResponse(RescueHerpetofaunaBase):
+    id: int
+    class Config:
+        orm_mode: bool = True
+
+
 
 
 

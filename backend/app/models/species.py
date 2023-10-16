@@ -43,7 +43,7 @@ class Specie(_database.Base):
     images = relationship("Image", back_populates="species")
 
     # Relationships with rescue_herpetofauna
-    rescue_herpetofauna = relationship("RescueHerpetofauna", back_populates="species")
+    rescue_herpetofauna = relationship("RescueHerpetofauna", back_populates="specie")
 
 
 

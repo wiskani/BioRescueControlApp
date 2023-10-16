@@ -508,8 +508,6 @@ async def test_create_mark_herpetofauna(
     async_session: AsyncSession,
 ) -> None:
     number_mark: int = random.randint(1, 100)
-    tower_id: int =  await create_random_tower(async_client)
-    species_id: int = await create_specie(async_client)
     age_group_id:int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
@@ -522,8 +520,6 @@ async def test_create_mark_herpetofauna(
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "tower_id": tower_id,
-            "species_id": species_id,
             "age_group_id": age_group_id,
         },
     )
@@ -539,8 +535,6 @@ async def test_create_mark_herpetofauna_with_tower_not_found(
     async_session: AsyncSession,
 ) -> None:
     number_mark: int = random.randint(1, 100)
-    tower_id: int = await create_random_tower(async_client)
-    species_id: int = await create_specie(async_client)
     age_group_id:int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
@@ -553,8 +547,6 @@ async def test_create_mark_herpetofauna_with_tower_not_found(
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "tower_id": tower_id,
-            "species_id": species_id,
             "age_group_id": age_group_id,
         },
     )
@@ -573,8 +565,6 @@ async def test_create_mark_herpetofauna_with_tower_not_found(
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "tower_id": tower_id,
-            "species_id": species_id,
             "age_group_id": age_group_id,
         },
     )
@@ -589,13 +579,9 @@ async def test_get_all_mark_herpetofauna(
     async_session: AsyncSession,
 ) -> None:
     number_mark: int = random.randint(1, 100)
-    tower_id: int = await create_random_tower(async_client)
-    species_id: int = await create_specie(async_client)
     age_group_id:int = await create_age_group(async_client)
 
     number_mark_2: int = random.randint(1, 100)
-    tower_id_2: int = await create_random_tower(async_client)
-    species_id_2: int = await create_specie(async_client)
     age_group_id_2:int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
@@ -608,8 +594,6 @@ async def test_get_all_mark_herpetofauna(
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "tower_id": tower_id,
-            "species_id": species_id,
             "age_group_id": age_group_id,
         },
     )
@@ -625,8 +609,6 @@ async def test_get_all_mark_herpetofauna(
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "tower_id": tower_id_2,
-            "species_id": species_id_2,
             "age_group_id": age_group_id_2,
         },
     )
@@ -646,8 +628,6 @@ async def test_get_mark_herpetofauna_by_id(
     async_session: AsyncSession,
 ) -> None:
     number_mark: int = random.randint(1, 100)
-    tower_id: int = await create_random_tower(async_client)
-    species_id: int = await create_specie(async_client)
     age_group_id:int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
@@ -660,8 +640,6 @@ async def test_get_mark_herpetofauna_by_id(
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "tower_id": tower_id,
-            "species_id": species_id,
             "age_group_id": age_group_id,
         },
     )
@@ -696,13 +674,9 @@ async def test_update_mark_herpetofauna(
     async_session: AsyncSession,
 ) -> None:
     number_mark: int = random.randint(1, 100)
-    tower_id: int = await create_random_tower(async_client)
-    species_id: int = await create_specie(async_client)
     age_group_id:int = await create_age_group(async_client)
 
     number_mark_2: int = random.randint(1, 100)
-    tower_id_2: int = await create_random_tower(async_client)
-    species_id_2: int = await create_specie(async_client)
     age_group_id_2:int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
@@ -715,8 +689,6 @@ async def test_update_mark_herpetofauna(
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "tower_id": tower_id,
-            "species_id": species_id,
             "age_group_id": age_group_id,
         },
     )
@@ -734,16 +706,12 @@ async def test_update_mark_herpetofauna(
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "tower_id": tower_id_2,
-            "species_id": species_id_2,
             "age_group_id": age_group_id_2,
         },
     )
     assert response.status_code == 200
     data = response.json()
     assert data["number"] == number_mark_2
-    assert data["tower_id"] == tower_id_2
-    assert data["species_id"] == species_id_2
     assert data["age_group_id"] == age_group_id_2
 
 #test for delete mark herpetofauna
@@ -753,8 +721,6 @@ async def test_delete_mark_herpetofauna(
     async_session: AsyncSession,
 ) -> None:
     number_mark: int = random.randint(1, 100)
-    tower_id: int = await create_random_tower(async_client)
-    species_id: int = await create_specie(async_client)
     age_group_id:int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
@@ -767,8 +733,6 @@ async def test_delete_mark_herpetofauna(
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "tower_id": tower_id,
-            "species_id": species_id,
             "age_group_id": age_group_id,
         },
     )

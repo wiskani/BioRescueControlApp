@@ -17,9 +17,19 @@ from app.schemas.rescue_herpetofauna import (
     MarkHerpetofaunaBase,
     MarkHerpetofaunaCreate,
     MarkHerpetofaunaResponse,
+
+    # RescueHerpetofauna
+    RescueHerpetofaunaBase,
+    RescueHerpetofaunaCreate,
+    RescueHerpetofaunaResponse,
 )
 
-from app.models.rescue_herpetofauna import AgeGroup, MarkHerpetofauna, TransectHerpetofauna
+from app.models.rescue_herpetofauna import (
+    AgeGroup,
+    MarkHerpetofauna,
+    TransectHerpetofauna,
+    RescueHerpetofauna,
+)
 
 from app.crud.rescue_herpetofauna import (
     # AgeGroup
@@ -45,6 +55,14 @@ from app.crud.rescue_herpetofauna import (
     create_mark_herpetofauna,
     update_mark_herpetofauna,
     delete_mark_herpetofauna,
+
+    # RescueHerpetofauna
+    get_rescue_herpetofauna_by_number,
+    get_rescue_herpetofauna_by_id,
+    get_all_rescue_herpetofauna,
+    create_rescue_herpetofauna,
+    update_rescue_herpetofauna,
+    delete_rescue_herpetofauna,
 )
 
 from app.api.deps import PermissonsChecker, get_db
@@ -306,4 +324,89 @@ async def delete_mark_herpetofauna_api(
         raise HTTPException(status_code=404, detail="Mark herpetofauna not found")
     await delete_mark_herpetofauna(db, mark_herpetofauna_id)
     return {"detail": "Mark herpetofauna deleted successfully"}
+
+#Create rescue herpetofauna
+@router.post(
+    path="/api/rescue_herpetofauna",
+    response_model=RescueHerpetofaunaResponse,
+    status_code=status.HTTP_201_CREATED,
+    tags=["Rescue Herpetofauna"],
+    summary="Create rescue herpetofauna",
+)
+async def create_rescue_herpetofauna_api(
+    new_rescue_herpetofauna: RescueHerpetofaunaCreate,
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> RescueHerpetofauna|HTTPException:
+    rescue_herpetofauna_db = await get_rescue_herpetofauna_by_number(db, new_rescue_herpetofauna.number)
+    if rescue_herpetofauna_db:
+        raise HTTPException(status_code=400, detail="Rescue herpetofauna number already exists")
+    return await create_rescue_herpetofauna(db, new_rescue_herpetofauna)
+
+#Get all rescue herpetofauna
+@router.get(
+    path="/api/rescue_herpetofauna",
+    response_model=List[RescueHerpetofaunaResponse],
+    status_code=status.HTTP_200_OK,
+    tags=["Rescue Herpetofauna"],
+    summary="Get all rescue herpetofauna",
+)
+async def get_all_rescue_herpetofauna_api(
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> List[RescueHerpetofauna]:
+    return await get_all_rescue_herpetofauna(db)
+
+#Get rescue herpetofauna by id
+@router.get(
+    path="/api/rescue_herpetofauna/{rescue_herpetofauna_id}",
+    response_model=RescueHerpetofaunaResponse,
+    status_code=status.HTTP_200_OK,
+    tags=["Rescue Herpetofauna"],
+    summary="Get rescue herpetofauna by id",
+)
+async def get_rescue_herpetofauna_by_id_api(
+    rescue_herpetofauna_id: int,
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> RescueHerpetofauna|HTTPException:
+    rescue_herpetofauna_db = await get_rescue_herpetofauna_by_id(db, rescue_herpetofauna_id)
+    if not rescue_herpetofauna_db:
+        raise HTTPException(status_code=404, detail="Rescue herpetofauna not found")
+    return rescue_herpetofauna_db
+
+#Update rescue herpetofauna
+@router.put(
+    path="/api/rescue_herpetofauna/{rescue_herpetofauna_id}",
+    response_model=RescueHerpetofaunaResponse,
+    status_code=status.HTTP_200_OK,
+    tags=["Rescue Herpetofauna"],
+    summary="Update rescue herpetofauna",
+)
+async def update_rescue_herpetofauna_api(
+    rescue_herpetofauna_id: int,
+    rescue_herpetofauna_update: RescueHerpetofaunaBase,
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> RescueHerpetofauna|HTTPException:
+    return await update_rescue_herpetofauna(db, rescue_herpetofauna_id, rescue_herpetofauna_update)
+
+#Delete rescue herpetofauna
+@router.delete(
+    path="/api/rescue_herpetofauna/{rescue_herpetofauna_id}",
+    response_model=None,
+    status_code=status.HTTP_200_OK,
+    tags=["Rescue Herpetofauna"],
+    summary="Delete rescue herpetofauna",
+)
+async def delete_rescue_herpetofauna_api(
+    rescue_herpetofauna_id: int,
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> Dict|HTTPException:
+    db_rescue_herpetofauna = await get_rescue_herpetofauna_by_id(db, rescue_herpetofauna_id)
+    if not db_rescue_herpetofauna:
+        raise HTTPException(status_code=404, detail="Rescue herpetofauna not found")
+    await delete_rescue_herpetofauna(db, rescue_herpetofauna_id)
+    return {"detail": "Rescue herpetofauna deleted successfully"}
 
