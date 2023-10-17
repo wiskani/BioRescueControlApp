@@ -7,6 +7,8 @@ import pandas as pd
 from app.api.deps import PermissonsChecker, get_db
 from app.crud.rescue_flora import create_plant_nursery, create_flora_relocation
 from app.schemas.rescue_flora import PlantNurseryBase, FloraRelocationBase
+from app.schemas.rescue_herpetofauna import TransectHerpetofaunaCreate
+from app.services.files import convert_to_datetime
 
 router = APIRouter()
 
@@ -30,8 +32,7 @@ async def upload_plant_nursery(
 
         # Convert date columns to datetime objects
         date_columns = ['entry_date', 'flowering_date', 'departure_date']
-        for col in date_columns:
-            df[col] = pd.to_datetime(df[col])
+        df = convert_to_datetime(df, date_columns)
 
         try:
             for _, row in df.iterrows():
@@ -99,8 +100,7 @@ async def upload_flora_relocation(
 
         # Convert date columns to datetime objects
         date_columns = ['relocation_date' ]
-        for col in date_columns:
-            df[col] = pd.to_datetime(df[col])
+        df = convert_to_datetime(df, date_columns)
 
         try:
             for _, row in df.iterrows():
@@ -174,13 +174,15 @@ async def upload_transect_herpetofauna(
                 return value
 
         # Convert date columns to datetime objects
-        date_columns = ['relocation_date' ]
-        for col in date_columns:
-            df[col] = pd.to_datetime(df[col])
+        date_columns = [
+            'date_in',
+            'date_out',
+        ]
+        df = convert_to_datetime(df, date_columns)
 
         try:
             for _, row in df.iterrows():
-                new_flora_relocation = FloraRelocationBase(
+                new_transect_herpetofauna = TransectHerpetofaunaCreate(
                     relocation_date=row['relocation_date'],
                     size=row['size'],
                     epiphyte_phenology=row['epiphyte_phenology'],
