@@ -5,6 +5,7 @@ from typing import List, Any
 from app.services.system_coordinate import utm_to_latlong
 from app.schemas.services import  UTMData
 
+
 def convert_to_datetime(df:pd.DataFrame, cols:List[str]) -> pd.DataFrame:
     """
     Converts a column in a dataframe to datetime format
@@ -66,27 +67,60 @@ def none_value(value) -> Any | None:
     else:
         return value
 
-def convert_utm_to_latlong(df:pd.DataFrame, cols:List[str]) -> pd.DataFrame:
+def generateUTMData(df:pd.DataFrame, cols:dict) -> list[UTMData]:
     """
-    Converts UTM coordinates to latlong
+    Generates a list of UTMData objects
 
     Parameters
     ----------
     df : pandas dataframe
-    cols : list of columns to convert to latlong
+    cols : dict of columns with UTM coordinates
 
     Returns
     -------
-    df : pandas dataframe with latlong columns
+    utmData : list of UTMData objects
     """
-    for col in cols:
-        try:
-            df[col] = df.apply(lambda row: utm_to_latlong(row[col]), axis=1)
-        except:
-            raise Exception(f"Error converting column {col} to latlong")
+    utmData = []
+    for _, row in df.iterrows():
+        for utm_key in df.columns:
+            try:
+                utmData.append(UTMData(
+                    easting=row[utm_key][cols["easting"]],
+                    northing=row[utm_key][cols["northing"]],
+                    zone_number=row[utm_key][cols["zone_number"]],
+                    zone_letter=row[utm_key][cols["zone_letter"]]
+                ))
+            except:
+                raise Exception(f"Error converting column {utm_key} to UTM")
+    return utmData
+
+
+def insertGEOData(
+    df:pd.DataFrame,
+    utmData: list[UTMData],
+    nameLatitude:str,
+    nameLongitude:str
+) -> pd.DataFrame:
+    """
+    Inserts GEO data into a dataframe that
+    revice a list of UTMData objects and
+    convert to latitude and longitude
+
+    Parameters
+    ----------
+    df : pandas dataframe
+    utmData : list of UTMData objects
+    nameLatitude : str
+    nameLongitude : str
+
+    Returns
+    -------
+    df : pandas dataframe with latitude and longitude columns
+    """
+    geoData = []
+    for utm in utmData:
+        geoData.append(utm_to_latlong(utm))
+    df[nameLongitude] = geoData[0]
+    df[nameLatitude] = geoData[1]
     return df
-
-
-
-
 
