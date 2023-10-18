@@ -8,7 +8,7 @@ from app.api.deps import PermissonsChecker, get_db
 from app.crud.rescue_flora import create_plant_nursery, create_flora_relocation
 from app.schemas.rescue_flora import PlantNurseryBase, FloraRelocationBase
 from app.schemas.rescue_herpetofauna import TransectHerpetofaunaCreate
-from app.services.files import convert_to_datetime
+from app.services.files import convert_to_datetime, remplace_nan_with_none, none_value
 
 router = APIRouter()
 
@@ -157,21 +157,7 @@ async def upload_transect_herpetofauna(
         df = pd.read_excel(file.file)
 
         # Replace NaN with None
-        df = df.fillna('None')
-
-        # chek if NaN is in df 
-        if df.isnull().values.any():
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="File must not contain NaN",
-            )
-
-        #fuction to return None value if value is 'None'
-        def none_value(value):
-            if value == 'None':
-                return None
-            else:
-                return value
+        df = remplace_nan_with_none(df)
 
         # Convert date columns to datetime objects
         date_columns = [
@@ -183,9 +169,9 @@ async def upload_transect_herpetofauna(
         try:
             for _, row in df.iterrows():
                 new_transect_herpetofauna = TransectHerpetofaunaCreate(
-                    relocation_date=row['relocation_date'],
-                    size=row['size'],
-                    epiphyte_phenology=row['epiphyte_phenology'],
+                    number=row['num'],
+                    date_in=row['date_in'],
+                    date_out=row['date_out'],
                     johanson_zone=row['johanson_zone'],
                     relocation_position_latitude=row['relocation_position_latitude'],
                     relocation_position_longitude=row['relocation_position_longitude'],
@@ -202,7 +188,7 @@ async def upload_transect_herpetofauna(
                     family_bryophyte_id=none_value(row['family_bryophyte_id']),
                     relocation_zone_id=row['relocation_zone_id'],
                 )
-                await create_flora_relocation(db, new_flora_relocation)
+                await create_flora_relocation(db, new_transect_herpetofauna)
         except Exception as e:
             # Rollback the transaction in case of an error
             raise HTTPException(
