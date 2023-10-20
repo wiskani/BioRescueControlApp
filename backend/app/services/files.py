@@ -96,15 +96,15 @@ def generateUTMData(df:pd.DataFrame, cols:dict) -> list[UTMData]:
 
 
 def insertGEOData(
-    df:pd.DataFrame,
+    df: pd.DataFrame,
     utmData: list[UTMData],
-    nameLatitude:str,
-    nameLongitude:str
+    nameLatitude: str,
+    nameLongitude: str
 ) -> pd.DataFrame:
     """
     Inserts GEO data into a dataframe that
-    revice a list of UTMData objects and
-    convert to latitude and longitude
+    receives a list of UTMData objects and
+    converts them to latitude and longitude
 
     Parameters
     ----------
@@ -117,10 +117,11 @@ def insertGEOData(
     -------
     df : pandas dataframe with latitude and longitude columns
     """
-    geoData = []
-    for utm in utmData:
-        geoData.append(utm_to_latlong(utm))
-    df[nameLongitude] = geoData[0]
-    df[nameLatitude] = geoData[1]
+
+    for column, utm in zip(df.columns, utmData):
+        longlat = utm_to_latlong(utm)
+        df.at[0, column][nameLongitude] = longlat[0]
+        df.at[0, column][nameLatitude] = longlat[1]
+
     return df
 

@@ -65,7 +65,7 @@ def test_generateUTMData():
 def test_insertGEOData():
     # Sample data
     data = {
-        'utm1': [{'x': 50000, 'y': 4649776, 'zona': 20, 'letra': 'K', 'numer': 1}],
+        'utm1': [{'x': 258182, 'y': 4649776, 'zona': 20, 'letra': 'K', 'numer': 1}],
         'utm2': [{'x': 50000, 'y': 4649776, 'zona': 20, 'letra': 'K', 'numer': 2}],
     }
     df=pd.DataFrame(data)
@@ -116,6 +116,8 @@ def test_insertGEOData():
 
     # Test
     result = insertGEOData(df, utmData, nameLatitude, nameLongitude)
+    print (expected)
+    print (result)
     assert result.equals(expected)
 
 
