@@ -97,7 +97,7 @@ def generateUTMData(df:pd.DataFrame, cols:dict) -> list[UTMData]:
 
 def insertGEOData(
     df: pd.DataFrame,
-    utmData: list[UTMData],
+    cols: dict,
     nameLatitude: str,
     nameLongitude: str
 ) -> pd.DataFrame:
@@ -117,11 +117,11 @@ def insertGEOData(
     -------
     df : pandas dataframe with latitude and longitude columns
     """
-
-    for column, utm in zip(df.columns, utmData):
-        longlat = utm_to_latlong(utm)
-        df.at[0, column][nameLongitude] = longlat[0]
-        df.at[0, column][nameLatitude] = longlat[1]
-
+    utmDataList = generateUTMData(df, cols)
+    for column, utmData in zip(df.columns, utmDataList):
+        lat, lon = utm_to_latlong(utmData)
+        df.at[0, column][nameLatitude] = lat
+        df.at[0, column][nameLongitude] = lon
     return df
+
 
