@@ -5,10 +5,17 @@ from fastapi.responses import JSONResponse
 import pandas as pd
 
 from app.api.deps import PermissonsChecker, get_db
+
+#CRUD
 from app.crud.rescue_flora import create_plant_nursery, create_flora_relocation
+from app.crud.tower import create_tower
+
+#Schemas
 from app.schemas.rescue_flora import PlantNurseryBase, FloraRelocationBase
 from app.schemas.rescue_herpetofauna import TransectHerpetofaunaCreate
+from app.schemas.towers import TowerBase
 from app.schemas.services import UTMData
+
 from app.services.files import convert_to_datetime, remplace_nan_with_none, none_value
 
 router = APIRouter()
@@ -141,6 +148,49 @@ async def upload_flora_relocation(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="File must be an excel file",
         )
+
+#upload tower excel file
+@router.post(
+    path="/upload/tower",
+    response_model= None,
+    summary="Upload tower excel file",
+    tags=["Upload"],
+)
+async def upload_tower(
+    file: UploadFile=File(...),
+    db: AsyncSession = Depends(get_db),
+    permissions: str = Depends(PermissonsChecker(["admin"])),
+):
+    if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
+        df = pd.read_excel(file.file)
+
+        # Replace NaN with None
+        df = remplace_nan_with_none(df)
+
+        try:
+            for _, row in df.iterrows():
+                new_tower = TowerBase(
+                    number=row['number'],
+                    latitude=row['lat'],
+                    longitude=row['lon'],
+                )
+                await create_tower(db, new_tower)
+        except Exception as e:
+            # Rollback the transaction in case of an error
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Error: {e}",
+            )
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={"message": "Tower excel file uploaded successfully"},
+        )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File must be an excel file",
+        )
+
 
 # Upload transect herpetofauna excel file
 @router.post(
