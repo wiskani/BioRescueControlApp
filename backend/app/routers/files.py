@@ -8,15 +8,23 @@ from app.api.deps import PermissonsChecker, get_db
 
 #CRUD
 from app.crud.rescue_flora import create_plant_nursery, create_flora_relocation
+<<<<<<< HEAD
 from app.crud.tower import create_tower
 
 #Schemas
+=======
+from app.crud.rescue_herpetofauna import create_transect_herpetofauna
+>>>>>>> 5a408b99553112dd95c2894436047f846f69b281
 from app.schemas.rescue_flora import PlantNurseryBase, FloraRelocationBase
 from app.schemas.rescue_herpetofauna import TransectHerpetofaunaCreate
 from app.schemas.towers import TowerBase
 from app.schemas.services import UTMData
+<<<<<<< HEAD
 
 from app.services.files import convert_to_datetime, remplace_nan_with_none, none_value
+=======
+from app.services.files import convert_to_datetime, remplace_nan_with_none, none_value, insertGEOData
+>>>>>>> 5a408b99553112dd95c2894436047f846f69b281
 
 router = APIRouter()
 
@@ -215,6 +223,32 @@ async def upload_transect_herpetofauna(
             'date_in',
             'date_out',
         ]
+        UTM_columns_in = {
+            'easting': 'este_in',
+            'northing': 'sur_in',
+            'zone_number': 'zona',
+            'zone_letter': 'zona_letra',
+        }
+        UTM_columns_out = {
+            'easting': 'este_out',
+            'northing': 'sur_out',
+            'zone_number': 'zona',
+            'zone_letter': 'zona_letra',
+        }
+
+        #Names of columns geodata columns to in transect
+        nameLatitude_in = 'latitude_in'
+        nameLongitude_in = 'longitude_in'
+
+        #Names of columns geodata columns to out transect
+        nameLatitude_out = 'latitude_out'
+        nameLongitude_out = 'longitude_out'
+
+        # Insert columns lat y lon to df
+        df = insertGEOData(df, UTM_columns_in, nameLatitude_in, nameLongitude_in)
+        df = insertGEOData(df, UTM_columns_out, nameLatitude_out, nameLongitude_out)
+
+        # Cnvert time to datetime
         df = convert_to_datetime(df, date_columns)
 
         try:
@@ -223,23 +257,15 @@ async def upload_transect_herpetofauna(
                     number=row['num'],
                     date_in=row['date_in'],
                     date_out=row['date_out'],
-                    johanson_zone=row['johanson_zone'],
-                    relocation_position_latitude=row['relocation_position_latitude'],
-                    relocation_position_longitude=row['relocation_position_longitude'],
-                    bryophyte_number=row['bryophyte_number'],
-                    dap_bryophyte=row['dap_bryophyte'],
-                    height_bryophyte=row['height_bryophyte'],
-                    bark_type=row['bark_type'],
-                    infested_lianas=row['infested_lianas'],
-                    relocation_number=row['relocation_number'],
-                    other_observations=none_value(row['other_observations']),
-                    flora_rescue_id=row['flora_rescue_id'],
-                    specie_bryophyte_id=none_value(row['specie_bryophyte_id']),
-                    genus_bryophyte_id=none_value(row['genus_bryophyte_id']),
-                    family_bryophyte_id=none_value(row['family_bryophyte_id']),
-                    relocation_zone_id=row['relocation_zone_id'],
+                    latitude_in=row['latitude_in'],
+                    longitude_in=row['longitude_in'],
+                    altitude_in=row['altitud_in'],
+                    latitude_out=row['latitude_out'],
+                    longitude_out=row['longitude_out'],
+                    altitude_out=row['altitud_out'],
+                    tower_id=row['torre'],
                 )
-                await create_flora_relocation(db, new_transect_herpetofauna)
+                await  create_transect_herpetofauna(db, new_transect_herpetofauna)
         except Exception as e:
             # Rollback the transaction in case of an error
             raise HTTPException(
