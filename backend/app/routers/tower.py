@@ -84,11 +84,10 @@ async def create_tower_api(
 async def get_towers_api(
     db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> List[TowerResponse]:
+) -> List[Tower]:
     towers: List[Tower]= await get_towers(db)
-    towers_data= TypeAdapter(List[TowerResponse]).validate_python(towers)
-    return towers_data
- 
+    return towers
+
 # Get tower by number
 @router.get(
     path="/api/towers/{number}",

@@ -80,18 +80,19 @@ def generateUTMData(df:pd.DataFrame, cols:dict) -> list[UTMData]:
     -------
     utmData : list of UTMData objects
     """
+    #Change columns types
+    df = df.astype({cols["easting"]: float, cols["northing"]: float, cols["zone_number"]: int, cols["zone_letter"]: str})
     utmData = []
     for _, row in df.iterrows():
-        for utm_key in df.columns:
-            try:
-                utmData.append(UTMData(
-                    easting=row[utm_key][cols["easting"]],
-                    northing=row[utm_key][cols["northing"]],
-                    zone_number=row[utm_key][cols["zone_number"]],
-                    zone_letter=row[utm_key][cols["zone_letter"]]
-                ))
-            except:
-                raise Exception(f"Error converting column {utm_key} to UTM")
+        try:
+            utmData.append(UTMData(
+                easting=row[cols["easting"]],
+                northing=row[cols["northing"]],
+                zone_number=row[cols["zone_number"]],
+                zone_letter=row[cols["zone_letter"]]
+            ))
+        except Exception as e:
+            raise Exception(f"Error of data on number row:  {row[0]} to UTM {e}")
     return utmData
 
 

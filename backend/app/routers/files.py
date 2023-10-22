@@ -8,23 +8,16 @@ from app.api.deps import PermissonsChecker, get_db
 
 #CRUD
 from app.crud.rescue_flora import create_plant_nursery, create_flora_relocation
-<<<<<<< HEAD
 from app.crud.tower import create_tower
 
 #Schemas
-=======
 from app.crud.rescue_herpetofauna import create_transect_herpetofauna
->>>>>>> 5a408b99553112dd95c2894436047f846f69b281
 from app.schemas.rescue_flora import PlantNurseryBase, FloraRelocationBase
 from app.schemas.rescue_herpetofauna import TransectHerpetofaunaCreate
 from app.schemas.towers import TowerBase
 from app.schemas.services import UTMData
-<<<<<<< HEAD
 
-from app.services.files import convert_to_datetime, remplace_nan_with_none, none_value
-=======
 from app.services.files import convert_to_datetime, remplace_nan_with_none, none_value, insertGEOData
->>>>>>> 5a408b99553112dd95c2894436047f846f69b281
 
 router = APIRouter()
 
