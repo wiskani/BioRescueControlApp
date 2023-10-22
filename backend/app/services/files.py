@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from fastapi import HTTPException, status
 from typing import List, Any
 
@@ -81,7 +82,10 @@ def generateUTMData(df:pd.DataFrame, cols:dict) -> list[UTMData]:
     utmData : list of UTMData objects
     """
     #Change columns types
-    df = df.astype({cols["easting"]: float, cols["northing"]: float, cols["zone_number"]: int, cols["zone_letter"]: str})
+    try:
+        df = df.astype({cols["easting"]: float, cols["northing"]: float, cols["zone_number"]: int, cols["zone_letter"]: str})
+    except Exception as e:
+        raise Exception(f"Error changing columns types: {e}")
     utmData = []
     for _, row in df.iterrows():
         try:
@@ -118,11 +122,21 @@ def insertGEOData(
     -------
     df : pandas dataframe with latitude and longitude columns
     """
+
     utmDataList = generateUTMData(df, cols)
+
+    # Add columns latitude and longitude
+    df[nameLatitude] = np.nan
+    df[nameLongitude] = np.nan
+
     for column, utmData in zip(df.columns, utmDataList):
         lat, lon = utm_to_latlong(utmData)
-        df.at[0, column][nameLatitude] = lat
-        df.at[0, column][nameLongitude] = lon
+        try:
+            df.at[column, nameLatitude] = lat
+            df.at[column, nameLongitude] = lon
+        except Exception as e:
+            raise Exception(f"Error inserting GEO data on column {column}: {e}")
+    print(f"Dataframe with GEO data: {df}")
     return df
 
 
