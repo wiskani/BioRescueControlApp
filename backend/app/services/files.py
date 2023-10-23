@@ -124,19 +124,20 @@ def insertGEOData(
     """
 
     utmDataList = generateUTMData(df, cols)
+    latitude = []
+    longitude = []
 
-    # Add columns latitude and longitude
-    df[nameLatitude] = np.nan
-    df[nameLongitude] = np.nan
+    for utmData in utmDataList:
+       lat, long = utm_to_latlong(utmData) 
 
-    for column, utmData in zip(df.columns, utmDataList):
-        lat, lon = utm_to_latlong(utmData)
-        try:
-            df.at[column, nameLatitude] = lat
-            df.at[column, nameLongitude] = lon
-        except Exception as e:
-            raise Exception(f"Error inserting GEO data on column {column}: {e}")
-    print(f"Dataframe with GEO data: {df}")
+       # Apend lat and long to list
+       latitude.append(lat)
+       longitude.append(long)
+
+    # add  latitude and longitude columns
+    df[nameLatitude] = latitude
+    df[nameLongitude] = longitude
+
     return df
 
 

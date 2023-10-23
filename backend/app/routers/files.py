@@ -9,9 +9,9 @@ from app.api.deps import PermissonsChecker, get_db
 #CRUD
 from app.crud.rescue_flora import create_plant_nursery, create_flora_relocation
 from app.crud.tower import create_tower
+from app.crud.rescue_herpetofauna import create_transect_herpetofauna, get_transect_herpetofauna_by_number
 
 #Schemas
-from app.crud.rescue_herpetofauna import create_transect_herpetofauna
 from app.schemas.rescue_flora import PlantNurseryBase, FloraRelocationBase
 from app.schemas.rescue_herpetofauna import TransectHerpetofaunaCreate
 from app.schemas.towers import TowerBase
@@ -244,8 +244,10 @@ async def upload_transect_herpetofauna(
         # Cnvert time to datetime
         df = convert_to_datetime(df, date_columns)
 
-        try:
-            for _, row in df.iterrows():
+        numberExistList = []
+
+        for _, row in df.iterrows():
+            try:
                 new_transect_herpetofauna = TransectHerpetofaunaCreate(
                     number=row['num'],
                     date_in=row['date_in'],
@@ -258,16 +260,19 @@ async def upload_transect_herpetofauna(
                     altitude_out=row['altitud_out'],
                     tower_id=row['torre'],
                 )
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Error: {e}",
+                )
+            if await get_transect_herpetofauna_by_number(db, new_transect_herpetofauna.number):
+                numberExistList.append(new_transect_herpetofauna.number)
+                continue
+            else:
                 await  create_transect_herpetofauna(db, new_transect_herpetofauna)
-        except Exception as e:
-            # Rollback the transaction in case of an error
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Error: {e}",
-            )
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
-            content={"message": "Flora relocation excel file uploaded successfully"},
+            content={"message": "Flora relocation excel file uploaded successfully", "Not upload numbers because repeate": numberExistList},
         )
     else:
         raise HTTPException(

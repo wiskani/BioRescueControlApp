@@ -20,7 +20,7 @@ class AgeGroup (_database.Base):
 class TransectHerpetofauna (_database.Base):
     __tablename__ = 'transect_herpetofauna'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    number: Mapped[int] = mapped_column(Integer, nullable=False)
+    number: Mapped[int] = mapped_column(Integer, nullable=False, unique=True)
     date_in: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     date_out: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     latitude_in: Mapped[float] = mapped_column(Float, nullable=False)

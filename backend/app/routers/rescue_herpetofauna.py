@@ -168,8 +168,6 @@ async def create_transect_herpetofauna_api(
     authorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> TransectHerpetofauna|HTTPException:
     transect_herpetofauna_db = await get_transect_herpetofauna_by_number(db, new_transect_herpetofauna.number)
-    if transect_herpetofauna_db:
-        raise HTTPException(status_code=400, detail="Transect herpetofauna number already exists")
     return await create_transect_herpetofauna(db, new_transect_herpetofauna)
 
 #Get all transect herpetofauna
