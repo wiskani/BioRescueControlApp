@@ -33,8 +33,10 @@ def test_none_value():
 def test_generateUTMData():
     # Sample data
     data = {
-        'utm1': [{'x': 50000, 'y': 4649776, 'zona': 20, 'letra': 'K', 'numer': 1}],
-        'utm2': [{'x': 50000, 'y': 4649776, 'zona': 20, 'letra': 'K', 'numer': 2}],
+        'x': [50000, 50000],
+        'y': [4649776, 4649776],
+        'zona': [20, 20],
+        'letra': ['K', 'K'],
     }
     df=pd.DataFrame(data)
 
@@ -65,8 +67,11 @@ def test_generateUTMData():
 def test_insertGEOData():
     # Sample data
     data = {
-        'utm1': [{'x': 258182, 'y': 8062818, 'zona': 20, 'letra': 'S', 'numer': 1}],
-        'utm2': [{'x': 258175, 'y': 8062839, 'zona': 20, 'letra': 'S', 'numer': 2}],
+        'x': [258182, 258175],
+        'y': [8062818, 8062839],
+        'zona': [20, 20],
+        'letra': ['S', 'S'],
+        'numer': [1, 2]
     }
     df=pd.DataFrame(data)
 
@@ -80,26 +85,13 @@ def test_insertGEOData():
 
     # Expected result
     expected = pd.DataFrame({
-        'utm1': [
-            {'x': 258182,
-             'y': 8062818,
-             'zona': 20,
-             'letra': 'S',
-             'numer': 1,
-             'longitude1': -65.27753191052074,
-             'latitude1': -17.50783403355633
-             }
-        ],
-        'utm2': [
-            {'x': 258175,
-             'y': 8062839,
-             'zona': 20,
-             'letra': 'S',
-             'numer': 2,
-             'longitude1': -65.27759543591202,
-             'latitude1': -17.50764360693236
-             }
-        ],
+        'x': [258182, 258175],
+        'y': [8062818, 8062839],
+        'zona': [20, 20],
+        'letra': ['S', 'S'],
+        'numer': [1, 2],
+        'latitude1': [-17.50783403355633, -17.50764360693236],
+        'longitude1': [-65.27753191052074, -65.27759543591202]
     })
 
     # Test

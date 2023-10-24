@@ -8,12 +8,12 @@ from app.api.deps import PermissonsChecker, get_db
 
 #CRUD
 from app.crud.rescue_flora import create_plant_nursery, create_flora_relocation
-from app.crud.tower import create_tower
+from app.crud.tower import create_tower, get_tower_by_number
 from app.crud.rescue_herpetofauna import create_transect_herpetofauna, get_transect_herpetofauna_by_number
 
 #Schemas
 from app.schemas.rescue_flora import PlantNurseryBase, FloraRelocationBase
-from app.schemas.rescue_herpetofauna import TransectHerpetofaunaCreate
+from app.schemas.rescue_herpetofauna import TransectHerpetofaunaCreate, RescueHerpetofaunaCreate
 from app.schemas.towers import TowerBase
 from app.schemas.services import UTMData
 
@@ -168,23 +168,28 @@ async def upload_tower(
         # Replace NaN with None
         df = remplace_nan_with_none(df)
 
-        try:
-            for _, row in df.iterrows():
+        numberExistList = []
+
+        for _, row in df.iterrows():
+            try:
                 new_tower = TowerBase(
                     number=row['number'],
                     latitude=row['lat'],
                     longitude=row['lon'],
                 )
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Error to create tower data: {e}",
+                )
+            if await get_tower_by_number(db, new_tower.number):
+                numberExistList.append(new_tower.number)
+                continue
+            else:
                 await create_tower(db, new_tower)
-        except Exception as e:
-            # Rollback the transaction in case of an error
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Error: {e}",
-            )
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
-            content={"message": "Tower excel file uploaded successfully"},
+            content={"message": "Tower excel file uploaded successfully", "numberExistList": numberExistList},
         )
     else:
         raise HTTPException(
@@ -279,6 +284,53 @@ async def upload_transect_herpetofauna(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="File must be an excel file",
         )
+
+# Upload rescue herpetofauna excel file
+@router.post(
+    path="/upload/rescue_herpetofauna",
+    summary="Upload rescue herpetofauna excel file",
+    response_model= None,
+    tags=["Upload"],
+)
+async def upload_rescue_herpetofauna(
+    file: UploadFile=File(...),
+    db: AsyncSession = Depends(get_db),
+    permissions: str = Depends(PermissonsChecker(["admin"])),
+) -> JSONResponse | HTTPException:
+    if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
+        df = pd.read_excel(file.file)
+
+        # Replace NaN with None
+        df = remplace_nan_with_none(df)
+
+        # Convert date columns to datetime objects
+        date_columns = [
+            'date_in',
+            'date_out',
+        ]
+        UTM_columns_in = {
+            'easting': 'este_in',
+            'northing': 'sur_in',
+            'zone_number': 'zona',
+            'zone_letter': 'zona_letra',
+        }
+        UTM_columns_out = {
+            'easting': 'este_out',
+            'northing': 'sur_out',
+            'zone_number': 'zona',
+            'zone_letter': 'zona_letra',
+        }
+
+        #Names of columns geodata columns to in rescue
+        nameLatitude_in = 'latitude_in'
+        nameLongitude_in = 'longitude_in'
+
+        #Names of columns geodata columns to out rescue
+        nameLatitude_out = 'latitude_out'
+        nameLongitude_out = 'longitude_out'
+
+        # Insert columns lat y lon to df
+        df = insertGEOData
 
 
 

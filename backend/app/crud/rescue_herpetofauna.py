@@ -99,27 +99,22 @@ async def get_all_transect_herpetofauna(db: AsyncSession) -> List[TransectHerpet
 #Create transect herpetofauna
 async def create_transect_herpetofauna(db: AsyncSession, transect_herpetofauna: TransectHerpetofaunaCreate) -> TransectHerpetofauna | HTTPException:
     #Check if transect herpetofauna exists
-    result = await get_transect_herpetofauna_by_number(db, transect_herpetofauna.number)
-
-    if result is None:
-        transect_herpetofauna_db = TransectHerpetofauna(
-            number=transect_herpetofauna.number,
-            date_in = transect_herpetofauna.date_in,
-            date_out = transect_herpetofauna.date_out,
-            latitude_in = transect_herpetofauna.latitude_in,
-            longitude_in = transect_herpetofauna.longitude_in,
-            altitude_in = transect_herpetofauna.altitude_in,
-            latitude_out = transect_herpetofauna.latitude_out,
-            longitude_out = transect_herpetofauna.longitude_out,
-            altitude_out = transect_herpetofauna.altitude_out,
-            tower_id = transect_herpetofauna.tower_id,
+    transect_herpetofauna_db = TransectHerpetofauna(
+        number=transect_herpetofauna.number,
+        date_in = transect_herpetofauna.date_in,
+        date_out = transect_herpetofauna.date_out,
+        latitude_in = transect_herpetofauna.latitude_in,
+        longitude_in = transect_herpetofauna.longitude_in,
+        altitude_in = transect_herpetofauna.altitude_in,
+        latitude_out = transect_herpetofauna.latitude_out,
+        longitude_out = transect_herpetofauna.longitude_out,
+        altitude_out = transect_herpetofauna.altitude_out,
+        tower_id = transect_herpetofauna.tower_id,
         )
-        db.add(transect_herpetofauna_db)
-        await db.commit()
-        await db.refresh(transect_herpetofauna_db)
-        return transect_herpetofauna_db
-
-    raise HTTPException(status_code=400, detail="Transect herpetofauna number already exists")
+    db.add(transect_herpetofauna_db)
+    await db.commit()
+    await db.refresh(transect_herpetofauna_db)
+    return transect_herpetofauna_db
 
 #Update transect herpetofauna
 async def update_transect_herpetofauna(db: AsyncSession, transect_herpetofauna_id: int , transect_herpetofauna_update: TransectHerpetofaunaBase) -> TransectHerpetofauna:
