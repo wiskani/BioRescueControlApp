@@ -13,8 +13,8 @@ class AgeGroup (_database.Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.now(pytz.timezone('America/La_Paz')))
 
-    #relationship with mark_herpetofauna
-    mark_herpetofauna = relationship('MarkHerpetofauna', back_populates='age_group')
+    #relationship with rescue_herpetofauna
+    rescue_herpetofauna = relationship('RescueHerpetofauna', back_populates='age_group')
 
 
 class TransectHerpetofauna (_database.Base):
@@ -45,16 +45,11 @@ class MarkHerpetofauna (_database.Base):
     date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     number: Mapped[int] = mapped_column(Integer, nullable=False, unique=True)
     code: Mapped[str] = mapped_column(String(50), nullable=True, unique=True)
-    gender: Mapped[bool] = mapped_column(Boolean, nullable=True)
     LHC : Mapped[float] = mapped_column(Float, nullable=True)
     weight: Mapped[float] = mapped_column(Float, nullable=True)
     is_photo_mark: Mapped[bool] = mapped_column(Boolean, default=False)
     is_elastomer_mark: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False,default=datetime.now(pytz.timezone('America/La_Paz')))
-
-    #realtionship with age_group
-    age_group_id: Mapped[int] = mapped_column(Integer, ForeignKey('age_group.id'))
-    age_group = relationship('AgeGroup', back_populates='mark_herpetofauna')
 
     #relationship with rescue_herpetofauna
     rescue_herpetofauna = relationship('RescueHerpetofauna', back_populates='mark_herpetofauna')
@@ -63,6 +58,7 @@ class RescueHerpetofauna (_database.Base):
     __tablename__ = 'rescue_herpetofauna'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     number: Mapped[int] = mapped_column(Integer, nullable=False)
+    gender: Mapped[bool] = mapped_column(Boolean, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.now(pytz.timezone('America/La_Paz')))
 
     #relationship with specie
@@ -76,3 +72,7 @@ class RescueHerpetofauna (_database.Base):
     #relationship with transect_herpetofauna
     transect_herpetofauna_id: Mapped[int] = mapped_column(Integer, ForeignKey('transect_herpetofauna.id'))
     transect_herpetofauna = relationship('TransectHerpetofauna', back_populates='rescue_herpetofauna')
+
+    #relationship with age_group
+    age_group_id: Mapped[int] = mapped_column(Integer, ForeignKey('age_group.id'), nullable=True)
+    age_group = relationship('AgeGroup', back_populates='rescue_herpetofauna')

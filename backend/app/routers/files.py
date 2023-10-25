@@ -303,34 +303,36 @@ async def upload_rescue_herpetofauna(
         # Replace NaN with None
         df = remplace_nan_with_none(df)
 
-        # Convert date columns to datetime objects
-        date_columns = [
-            'date_in',
-            'date_out',
-        ]
-        UTM_columns_in = {
-            'easting': 'este_in',
-            'northing': 'sur_in',
-            'zone_number': 'zona',
-            'zone_letter': 'zona_letra',
-        }
-        UTM_columns_out = {
-            'easting': 'este_out',
-            'northing': 'sur_out',
-            'zone_number': 'zona',
-            'zone_letter': 'zona_letra',
-        }
+        numberExistList = []
 
-        #Names of columns geodata columns to in rescue
-        nameLatitude_in = 'latitude_in'
-        nameLongitude_in = 'longitude_in'
-
-        #Names of columns geodata columns to out rescue
-        nameLatitude_out = 'latitude_out'
-        nameLongitude_out = 'longitude_out'
-
-        # Insert columns lat y lon to df
-        df = insertGEOData
+        for _, row in df.iterrows():
+            try:
+                new_rescue_herpetofauna = RescueHerpetofaunaCreate(
+                    number=row['num'],
+                    specie_id=row['especie'],
+                    mark_herpetofauna_id=row['marca'],
+                    transect_herpetofauna_id=row['transecto'],
+                )
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Error: {e}",
+                )
+            if await get_transect_herpetofauna_by_number(db, new_rescue_herpetofauna.number):
+                numberExistList.append(new_rescue_herpetofauna.number)
+                continue
+            else:
+                await  create_transect_herpetofauna(db, new_rescue_herpetofauna)
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={"message": "Flora relocation excel file uploaded successfully", "Not upload numbers because repeate": numberExistList},
+        )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File must be an excel file",
+        )
+    
 
 
 
