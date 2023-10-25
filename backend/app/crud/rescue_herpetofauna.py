@@ -171,12 +171,10 @@ async def create_mark_herpetofauna(db: AsyncSession, mark_herpetofauna: MarkHerp
         date=mark_herpetofauna.date,
         number=mark_herpetofauna.number,
         code=mark_herpetofauna.code,
-        gender=mark_herpetofauna.gender,
         LHC=mark_herpetofauna.LHC,
         weight=mark_herpetofauna.weight,
         is_photo_mark = mark_herpetofauna.is_photo_mark,
         is_elastomer_mark = mark_herpetofauna.is_elastomer_mark,
-        age_group_id=mark_herpetofauna.age_group_id,
     )
     db.add(mark_herpetofauna_db)
     await db.commit()
@@ -192,12 +190,10 @@ async def update_mark_herpetofauna(db: AsyncSession, mark_herpetofauna_id: int ,
    mark_herpetofauna_db.date = mark_herpetofauna_update.date
    mark_herpetofauna_db.number = mark_herpetofauna_update.number
    mark_herpetofauna_db.code = mark_herpetofauna_update.code
-   mark_herpetofauna_db.gender = mark_herpetofauna_update.gender
    mark_herpetofauna_db.LHC = mark_herpetofauna_update.LHC
    mark_herpetofauna_db.weight = mark_herpetofauna_update.weight
    mark_herpetofauna_db.is_photo_mark = mark_herpetofauna_update.is_photo_mark
    mark_herpetofauna_db.is_elastomer_mark = mark_herpetofauna_update.is_elastomer_mark
-   mark_herpetofauna_db.age_group_id = mark_herpetofauna_update.age_group_id
    await db.commit()
    await db.refresh(mark_herpetofauna_db)
    return mark_herpetofauna_db
@@ -235,9 +231,11 @@ async def get_all_rescue_herpetofauna(db: AsyncSession) -> List[RescueHerpetofau
 async def create_rescue_herpetofauna(db: AsyncSession, rescue_herpetofauna: RescueHerpetofaunaCreate) -> RescueHerpetofauna:
     rescue_herpetofauna_db = RescueHerpetofauna(
         number=rescue_herpetofauna.number,
+        gender=rescue_herpetofauna.gender,
         specie_id=rescue_herpetofauna.specie_id,
         mark_herpetofauna_id=rescue_herpetofauna.mark_herpetofauna_id,
         transect_herpetofauna_id=rescue_herpetofauna.transect_herpetofauna_id,
+        age_group_id=rescue_herpetofauna.age_group_id,
     )
     db.add(rescue_herpetofauna_db)
     await db.commit()
@@ -251,9 +249,11 @@ async def update_rescue_herpetofauna(db: AsyncSession, rescue_herpetofauna_id: i
     if not rescue_herpetofauna_db:
         raise HTTPException(status_code=404, detail="Rescue herpetofauna not found")
     rescue_herpetofauna_db.number = rescue_herpetofauna_update.number
+    rescue_herpetofauna_db.gender = rescue_herpetofauna_update.gender
     rescue_herpetofauna_db.specie_id = rescue_herpetofauna_update.specie_id
     rescue_herpetofauna_db.mark_herpetofauna_id = rescue_herpetofauna_update.mark_herpetofauna_id
     rescue_herpetofauna_db.transect_herpetofauna_id = rescue_herpetofauna_update.transect_herpetofauna_id
+    rescue_herpetofauna_db.age_group_id = rescue_herpetofauna_update.age_group_id
     await db.commit()
     await db.refresh(rescue_herpetofauna_db)
     return rescue_herpetofauna_db

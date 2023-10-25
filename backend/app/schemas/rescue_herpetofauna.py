@@ -41,7 +41,6 @@ class MarkHerpetofaunaBase(BaseModel):
     date: datetime = Field(..., examples=[datetime.now()])
     number: int = Field(..., examples=[ 1 ])
     code: str|None = Field(examples=["1a"])
-    gender: bool = Field(examples=[True])
     LHC : float|None = Field(examples=[1.0])
     weight: float|None = Field(examples=[1.0])
     is_photo_mark: bool = Field(default=False)
@@ -57,10 +56,11 @@ class MarkHerpetofaunaResponse(MarkHerpetofaunaBase):
 
 class RescueHerpetofaunaBase(BaseModel):
     number: int = Field(..., examples=[ 1 ])
+    gender: bool|None = Field(examples=[True])
     specie_id: int = Field(..., examples=[ 1 ])
     mark_herpetofauna_id: int|None = Field(examples=[ 1 ])
     transect_herpetofauna_id: int = Field(..., examples=[ 1 ])
-    group_age_id: int|None = Field(examples=[ 1 ])
+    age_group_id: int|None = Field(examples=[ 1 ])
     class Config:
         orm_mode: bool = True
 

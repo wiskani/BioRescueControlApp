@@ -508,19 +508,16 @@ async def test_create_mark_herpetofauna(
     async_session: AsyncSession,
 ) -> None:
     number_mark: int = random.randint(1, 100)
-    age_group_id:int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
         "/api/mark_herpetofauna", json={
             "date": "2021-10-10T00:00:00",
             "number": number_mark,
             "code": "123456789",
-            "gender": True,
             "LHC": 1.5,
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "age_group_id": age_group_id,
         },
     )
     assert response.status_code == 201
@@ -535,19 +532,16 @@ async def test_create_mark_herpetofauna_with_tower_not_found(
     async_session: AsyncSession,
 ) -> None:
     number_mark: int = random.randint(1, 100)
-    age_group_id:int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
         "/api/mark_herpetofauna", json={
             "date": "2021-10-10T00:00:00",
             "number": number_mark,
             "code": "123456789",
-            "gender": True,
             "LHC": 1.5,
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "age_group_id": age_group_id,
         },
     )
     assert response.status_code == 201
@@ -560,12 +554,10 @@ async def test_create_mark_herpetofauna_with_tower_not_found(
             "date": "2021-10-10T00:00:00",
             "number": number_mark,
             "code": "123456789",
-            "gender": True,
             "LHC": 1.5,
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "age_group_id": age_group_id,
         },
     )
     assert response.status_code == 400
@@ -589,12 +581,10 @@ async def test_get_all_mark_herpetofauna(
             "date": "2021-10-10T00:00:00",
             "number": number_mark,
             "code": "123456789",
-            "gender": True,
             "LHC": 1.5,
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "age_group_id": age_group_id,
         },
     )
     assert response.status_code == 201
@@ -604,12 +594,10 @@ async def test_get_all_mark_herpetofauna(
             "date": "2021-10-10T00:00:00",
             "number": number_mark_2,
             "code": "123456789b",
-            "gender": True,
             "LHC": 1.5,
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "age_group_id": age_group_id_2,
         },
     )
     assert response.status_code == 201
@@ -628,19 +616,16 @@ async def test_get_mark_herpetofauna_by_id(
     async_session: AsyncSession,
 ) -> None:
     number_mark: int = random.randint(1, 100)
-    age_group_id:int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
         "/api/mark_herpetofauna", json={
             "date": "2021-10-10T00:00:00",
             "number": number_mark,
             "code": "123456789",
-            "gender": True,
             "LHC": 1.5,
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "age_group_id": age_group_id,
         },
     )
     assert response.status_code == 201
@@ -674,22 +659,18 @@ async def test_update_mark_herpetofauna(
     async_session: AsyncSession,
 ) -> None:
     number_mark: int = random.randint(1, 100)
-    age_group_id:int = await create_age_group(async_client)
 
     number_mark_2: int = random.randint(1, 100)
-    age_group_id_2:int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
         "/api/mark_herpetofauna", json={
             "date": "2021-10-10T00:00:00",
             "number": number_mark,
             "code": "123456789",
-            "gender": True,
             "LHC": 1.5,
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "age_group_id": age_group_id,
         },
     )
     assert response.status_code == 201
@@ -701,18 +682,15 @@ async def test_update_mark_herpetofauna(
             "date": "2021-10-10T00:00:00",
             "number": number_mark_2,
             "code": "123456789b",
-            "gender": True,
             "LHC": 1.5,
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "age_group_id": age_group_id_2,
         },
     )
     assert response.status_code == 200
     data = response.json()
     assert data["number"] == number_mark_2
-    assert data["age_group_id"] == age_group_id_2
 
 #test for delete mark herpetofauna
 @pytest.mark.asyncio
@@ -721,19 +699,16 @@ async def test_delete_mark_herpetofauna(
     async_session: AsyncSession,
 ) -> None:
     number_mark: int = random.randint(1, 100)
-    age_group_id:int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
         "/api/mark_herpetofauna", json={
             "date": "2021-10-10T00:00:00",
             "number": number_mark,
             "code": "123456789",
-            "gender": True,
             "LHC": 1.5,
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "age_group_id": age_group_id,
         },
     )
     assert response.status_code == 201
@@ -761,21 +736,27 @@ async def test_create_rescue_herpetofauna(
     specie_id:int = await create_specie(async_client)
     mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
     transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
+    age_group_id:int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
         "/api/rescue_herpetofauna", json={
             "number": number_rescue,
+            "gender": True,
             "specie_id": specie_id,
             "mark_herpetofauna_id": mark_herpetofauna_id,
             "transect_herpetofauna_id": transect_herpetofauna_id,
+            "age_group_id": age_group_id,
         },
     )
-    assert response.status_code == 201
     data = response.json()
+    print(f'La respuesta es {data}')
+    assert response.status_code == 201
     assert data["number"] == number_rescue
+    assert data["gender"] == True
     assert data["specie_id"] == specie_id
     assert data["mark_herpetofauna_id"] == mark_herpetofauna_id
     assert data["transect_herpetofauna_id"] == transect_herpetofauna_id
+    assert data["age_group_id"] == age_group_id
 
 #test get rescue herpetofauna by id
 @pytest.mark.asyncio
@@ -787,13 +768,16 @@ async def test_get_rescue_herpetofauna_by_id(
     specie_id:int = await create_specie(async_client)
     mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
     transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
+    age_group_id:int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
         "/api/rescue_herpetofauna", json={
             "number": number_rescue,
+            "gender": True,
             "specie_id": specie_id,
             "mark_herpetofauna_id": mark_herpetofauna_id,
             "transect_herpetofauna_id": transect_herpetofauna_id,
+            "age_group_id": age_group_id,
         },
     )
     assert response.status_code == 201
@@ -806,9 +790,11 @@ async def test_get_rescue_herpetofauna_by_id(
     assert response.status_code == 200
     data = response.json()
     assert data["number"] == number_rescue
+    assert data["gender"] == True
     assert data["specie_id"] == specie_id
     assert data["mark_herpetofauna_id"] == mark_herpetofauna_id
     assert data["transect_herpetofauna_id"] == transect_herpetofauna_id
+    assert data["age_group_id"] == age_group_id
 
 #test for create rescue herpetofauna with wrong number
 @pytest.mark.asyncio
@@ -820,13 +806,16 @@ async def test_create_rescue_herpetofauna_with_wrong_number(
     specie_id:int = await create_specie(async_client)
     mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
     transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
+    age_group_id:int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
         "/api/rescue_herpetofauna", json={
             "number": number_rescue,
+            "gender": True,
             "specie_id": specie_id,
             "mark_herpetofauna_id": mark_herpetofauna_id,
             "transect_herpetofauna_id": transect_herpetofauna_id,
+            "age_group_id": age_group_id,
         },
     )
     assert response.status_code == 201
@@ -835,9 +824,11 @@ async def test_create_rescue_herpetofauna_with_wrong_number(
     response: Response = await async_client.post(
         "/api/rescue_herpetofauna", json={
             "number": number_rescue,
+            "gender": True,
             "specie_id": specie_id,
             "mark_herpetofauna_id": mark_herpetofauna_id,
             "transect_herpetofauna_id": transect_herpetofauna_id,
+            "age_group_id": age_group_id,
         },
     )
     assert response.status_code == 400
@@ -854,13 +845,16 @@ async def test_get_all_rescue_herpetofauna(
     specie_id:int = await create_specie(async_client)
     mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
     transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
+    age_group_id:int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
         "/api/rescue_herpetofauna", json={
             "number": number_rescue,
+            "gender": True,
             "specie_id": specie_id,
             "mark_herpetofauna_id": mark_herpetofauna_id,
             "transect_herpetofauna_id": transect_herpetofauna_id,
+            "age_group_id": age_group_id,
         },
     )
     assert response.status_code == 201
@@ -883,17 +877,21 @@ async def test_update_rescue_herpetofauna(
     specie_id:int = await create_specie(async_client)
     mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
     transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
+    age_group_id:int = await create_age_group(async_client)
 
     number_rescue_update: int = random.randint(1, 100)
     specie_id_update:int = await create_specie(async_client)
+    age_group_id_update:int = await create_age_group(async_client)
 
 
     response: Response = await async_client.post(
         "/api/rescue_herpetofauna", json={
             "number": number_rescue,
+            "gender": True,
             "specie_id": specie_id,
             "mark_herpetofauna_id": mark_herpetofauna_id,
             "transect_herpetofauna_id": transect_herpetofauna_id,
+            "age_group_id": age_group_id,
         },
     )
     assert response.status_code == 201
@@ -903,17 +901,21 @@ async def test_update_rescue_herpetofauna(
     response: Response = await async_client.put(
         f"/api/rescue_herpetofauna/{rescue_herpetofauna_id}", json={
             "number": number_rescue_update,
+            "gender": True,
             "specie_id": specie_id_update,
             "mark_herpetofauna_id": mark_herpetofauna_id,
             "transect_herpetofauna_id": transect_herpetofauna_id,
+            "age_group_id": age_group_id_update,
         },
     )
     assert response.status_code == 200
     data = response.json()
     assert data["number"] == number_rescue_update
+    assert data["gender"] == True
     assert data["specie_id"] == specie_id_update
     assert data["mark_herpetofauna_id"] == mark_herpetofauna_id
     assert data["transect_herpetofauna_id"] == transect_herpetofauna_id
+    assert data["age_group_id"] == age_group_id_update
 
 #test for delete rescue herpetofauna
 @pytest.mark.asyncio
@@ -925,13 +927,16 @@ async def test_delete_rescue_herpetofauna(
     specie_id:int = await create_specie(async_client)
     mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
     transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
+    age_group_id:int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
         "/api/rescue_herpetofauna", json={
             "number": number_rescue,
+            "gender": True,
             "specie_id": specie_id,
             "mark_herpetofauna_id": mark_herpetofauna_id,
             "transect_herpetofauna_id": transect_herpetofauna_id,
+            "age_group_id": age_group_id,
         },
     )
     assert response.status_code == 201
