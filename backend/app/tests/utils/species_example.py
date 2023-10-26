@@ -86,6 +86,27 @@ async def create_genus(
     data: Dict[str, Any] = response.json()
     genus_id = data["id"]
     return genus_id
+#Create a specie
+@pytest.mark.asyncio
+async def create_specieWithName(
+    async_client: AsyncClient,
+) -> tuple[int, str]:
+    name_specie = random_string()
+
+
+    response: Response = await async_client.post(
+        "/api/species", json={
+            "scientific_name": name_specie,
+            "specific_epithet": name_specie,
+            "key_gbif": random_int(),
+            "status_id": await create_status_specie(async_client),
+            "genus_id": await create_genus(async_client),
+        },
+    )
+    assert response.status_code == 201
+    data: Dict[str, Any] = response.json()
+    specie_id = data["id"]
+    return specie_id, name_specie
 
 #Create a specie
 @pytest.mark.asyncio

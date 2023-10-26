@@ -162,13 +162,17 @@ async def addIdSpecieByName(
     df : pandas dataframe with idSpecie column
     """
     listNameSpecieNumberRow: list[tuple[int, str]] = []
+    colunmId: list[int | None] = []
 
     for _, row in df.iterrows():
         specie = await get_specie_by_name(db, row[col])
         if specie is None:
             listNameSpecieNumberRow.append((row[0], row[col]))
+            colunmId.append(None)
         else:
-            row['idSpecie'] = specie.id
+            colunmId.append(specie.id)
+
+    df['idSpecie'] = colunmId
 
     return df, listNameSpecieNumberRow
 
@@ -176,13 +180,13 @@ async def addMarkIdByNumber(
     db: AsyncSession,
     df: pd.DataFrame,
     col: str,
-    markId: int,
 ) -> tuple[pd.DataFrame, list[tuple[int, str]]]:
     """
     Adds the id of a mark to a dataframe
 
     Parameters
     ----------
+    db : AsyncSession
     df : pandas dataframe
     col : str with name of column with mark number
 
@@ -191,15 +195,19 @@ async def addMarkIdByNumber(
     df : pandas dataframe with idMark column
     """
     listMarkNumberRow: list[tuple[int, str]] = []
+    colunmId: list[int | None] = []
 
     for _, row in df.iterrows():
         mark = await get_mark_herpetofauna_by_number(db, row[col])
         if mark is None:
             listMarkNumberRow.append((row[0], row[col]))
+            colunmId.append(None)
         else:
-            row['idMark'] = mark.id
+            colunmId.append(mark.id)
+
+    df['idMark'] = colunmId
 
     return df, listMarkNumberRow
 
-)
+
 

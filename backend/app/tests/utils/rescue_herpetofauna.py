@@ -83,3 +83,26 @@ async def create_mark_herpetofauna(
     print(f'Response for create mark herpetofauna is : {data}')
     return data["id"]
 
+
+#Create a mark herpetofauna with number
+@pytest.mark.asyncio
+async def create_mark_herpetofaunaWithNumber(
+    async_client: AsyncClient,
+) -> tuple[int, int]:
+    number_mark: int = random.randint(1, 100)
+
+    response: Response = await async_client.post(
+        "/api/mark_herpetofauna", json={
+            "date": "2021-10-10T00:00:00",
+            "number": number_mark,
+            "code": "123456789",
+            "LHC": 1.5,
+            "weight": 1.5,
+            "is_photo_mark": True,
+            "is_elastomer_mark": True,
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    print(f'Response for create mark herpetofauna is : {data}')
+    return data["id"], number_mark

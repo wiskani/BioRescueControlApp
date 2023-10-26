@@ -2,7 +2,15 @@ import pandas as pd
 from httpx import Response, AsyncClient
 import pytest
 from app.schemas.services import UTMData
-from app.services.files import  convert_to_datetime, remplace_nan_with_none, none_value, generateUTMData, insertGEOData
+from app.services.files import (
+    convert_to_datetime,
+    remplace_nan_with_none,
+    none_value,
+    generateUTMData,
+    insertGEOData,
+    addIdSpecieByName,
+    addMarkIdByNumber
+)
 
 from app.tests.conftest import *
 from app.tests.utils.users import *
@@ -111,16 +119,67 @@ async def test_addIdSpecieByName(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ):
-    number_rescue: int = random.randint(1, 100)
-    specie_id:int = await create_specie(async_client)
-    mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
-    transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
-    age_group_id:int = await create_age_group(async_client)
+    specie_id, specie_name = await create_specieWithName(async_client)
+    col: str = "especie"
+
+    #Create DF for Test
+    data = {
+        'number' : [1, 2],
+        'especie': [specie_name, "unknown"],
+    }
+
+    df = pd.DataFrame(data)
+
+    # Expected result
+    expected = pd.DataFrame({
+        'number' : [1, 2],
+        'especie': [specie_name, "unknown"],
+        'idSpecie': [specie_id, None],
+    })
+
+    listExpect: list[tuple[int, str]] =  [(2, "unknown")]
+
+    # Result
+    resultDF, resulLIST = await addIdSpecieByName(async_session, df, col)
 
 
+    # Test
+    assert resultDF.equals(expected)
+    assert resulLIST == listExpect
 
+#Test for addMarkIdByNumber function
+@pytest.mark.asyncio
+async def test_addMarkIdByNumber(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+):
+    mark_id, mark_number = await create_mark_herpetofaunaWithNumber(async_client)
+    col: str = "marck"
+    number_mark: int = random.randint(1, 1000)
 
+    #Create DF for Test
+    data = {
+        'number' : [1, 2],
+        'marck': [mark_number, 12 ],
+    }
 
+    df = pd.DataFrame(data)
+
+    # Expected result
+    expected = pd.DataFrame({
+        'number' : [1, 2],
+        'marck': [mark_number, 12 ],
+        'idMark': [mark_id, None],
+    })
+
+    listExpect: list[tuple[int, int]] =  [(2, 12)]
+
+    # Result
+    resultDF, resulLIST = await addMarkIdByNumber(async_session, df, col)
+
+    # Test
+    assert resultDF.equals(expected)
+    assert resulLIST == listExpect
 
 
 
