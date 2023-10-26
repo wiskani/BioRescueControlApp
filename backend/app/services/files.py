@@ -1,10 +1,14 @@
 import pandas as pd
 import numpy as np
+from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 from typing import List, Any
 
 from app.services.system_coordinate import utm_to_latlong
 from app.schemas.services import  UTMData
+
+from app.crud.species import get_specie_by_name
+from app.crud.rescue_herpetofauna import get_mark_herpetofauna_by_number
 
 
 def convert_to_datetime(df:pd.DataFrame, cols:List[str]) -> pd.DataFrame:
@@ -128,7 +132,7 @@ def insertGEOData(
     longitude = []
 
     for utmData in utmDataList:
-       lat, long = utm_to_latlong(utmData) 
+       lat, long = utm_to_latlong(utmData)
 
        # Apend lat and long to list
        latitude.append(lat)
@@ -140,4 +144,62 @@ def insertGEOData(
 
     return df
 
+async def addIdSpecieByName(
+    db: AsyncSession,
+    df: pd.DataFrame,
+    col: str,
+) -> tuple[pd.DataFrame, list[tuple[int, str]]]:
+    """
+    Adds the id of a specie to a dataframe
+
+    Parameters
+    ----------
+    df : pandas dataframe
+    col : str with name of column with specie name
+
+    Returns
+    -------
+    df : pandas dataframe with idSpecie column
+    """
+    listNameSpecieNumberRow: list[tuple[int, str]] = []
+
+    for _, row in df.iterrows():
+        specie = await get_specie_by_name(db, row[col])
+        if specie is None:
+            listNameSpecieNumberRow.append((row[0], row[col]))
+        else:
+            row['idSpecie'] = specie.id
+
+    return df, listNameSpecieNumberRow
+
+async def addMarkIdByNumber(
+    db: AsyncSession,
+    df: pd.DataFrame,
+    col: str,
+    markId: int,
+) -> tuple[pd.DataFrame, list[tuple[int, str]]]:
+    """
+    Adds the id of a mark to a dataframe
+
+    Parameters
+    ----------
+    df : pandas dataframe
+    col : str with name of column with mark number
+
+    Returns
+    -------
+    df : pandas dataframe with idMark column
+    """
+    listMarkNumberRow: list[tuple[int, str]] = []
+
+    for _, row in df.iterrows():
+        mark = await get_mark_herpetofauna_by_number(db, row[col])
+        if mark is None:
+            listMarkNumberRow.append((row[0], row[col]))
+        else:
+            row['idMark'] = mark.id
+
+    return df, listMarkNumberRow
+
+)
 

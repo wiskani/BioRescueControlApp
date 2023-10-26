@@ -270,11 +270,3 @@ async def delete_rescue_herpetofauna(db: AsyncSession, rescue_herpetofauna_id: i
 
 
 
-
-
-
-
-    
-
-
-

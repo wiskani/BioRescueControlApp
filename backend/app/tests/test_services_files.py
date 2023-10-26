@@ -1,7 +1,14 @@
 import pandas as pd
+from httpx import Response, AsyncClient
 import pytest
 from app.schemas.services import UTMData
 from app.services.files import  convert_to_datetime, remplace_nan_with_none, none_value, generateUTMData, insertGEOData
+
+from app.tests.conftest import *
+from app.tests.utils.users import *
+from app.tests.utils.species_example import *
+from app.tests.utils.towers_example import *
+from app.tests.utils.rescue_herpetofauna import *
 
 # Test convert_to_datetime function
 def test_convert_to_datetime():
@@ -97,6 +104,20 @@ def test_insertGEOData():
     # Test
     result = insertGEOData(df, columns , nameLatitude, nameLongitude)
     assert result.equals(expected)
+
+# Test for addIdSpecieByName function
+@pytest.mark.asyncio
+async def test_addIdSpecieByName(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+):
+    number_rescue: int = random.randint(1, 100)
+    specie_id:int = await create_specie(async_client)
+    mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
+    transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
+    age_group_id:int = await create_age_group(async_client)
+
+
 
 
 

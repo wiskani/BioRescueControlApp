@@ -9,7 +9,12 @@ from app.api.deps import PermissonsChecker, get_db
 #CRUD
 from app.crud.rescue_flora import create_plant_nursery, create_flora_relocation
 from app.crud.tower import create_tower, get_tower_by_number
-from app.crud.rescue_herpetofauna import create_transect_herpetofauna, get_transect_herpetofauna_by_number
+from app.crud.rescue_herpetofauna import(
+    create_transect_herpetofauna,
+    get_transect_herpetofauna_by_number,
+    create_rescue_herpetofauna,
+    get_rescue_herpetofauna_by_number,
+)
 
 #Schemas
 from app.schemas.rescue_flora import PlantNurseryBase, FloraRelocationBase
@@ -17,7 +22,13 @@ from app.schemas.rescue_herpetofauna import TransectHerpetofaunaCreate, RescueHe
 from app.schemas.towers import TowerBase
 from app.schemas.services import UTMData
 
-from app.services.files import convert_to_datetime, remplace_nan_with_none, none_value, insertGEOData
+from app.services.files import (
+    convert_to_datetime,
+    remplace_nan_with_none,
+    none_value,
+    insertGEOData,
+    addIdSpecieByName
+)
 
 router = APIRouter()
 
@@ -303,36 +314,39 @@ async def upload_rescue_herpetofauna(
         # Replace NaN with None
         df = remplace_nan_with_none(df)
 
+        df, specieListWithOutName = await addIdSpecieByName(db, df, "especie")
+
         numberExistList = []
 
         for _, row in df.iterrows():
             try:
                 new_rescue_herpetofauna = RescueHerpetofaunaCreate(
                     number=row['num'],
-                    specie_id=row['especie'],
+                    gender=row['genero'],
+                    specie_id=row['idSpecie'],
                     mark_herpetofauna_id=row['marca'],
                     transect_herpetofauna_id=row['transecto'],
+                    age_group_id=row['grupo_edad'],
                 )
             except Exception as e:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=f"Error: {e}",
                 )
-            if await get_transect_herpetofauna_by_number(db, new_rescue_herpetofauna.number):
+            if await get_rescue_herpetofauna_by_number(db, new_rescue_herpetofauna.number):
                 numberExistList.append(new_rescue_herpetofauna.number)
                 continue
             else:
-                await  create_transect_herpetofauna(db, new_rescue_herpetofauna)
+                await create_rescue_herpetofauna (db, new_rescue_herpetofauna)
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
-            content={"message": "Flora relocation excel file uploaded successfully", "Not upload numbers because repeate": numberExistList},
+            content={"message": "Flora relocation excel file uploaded successfully", "Not upload numbers because repeate": numberExistList, "Some species not found": specieListWithOutName},
         )
     else:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="File must be an excel file",
         )
-    
 
 
 
