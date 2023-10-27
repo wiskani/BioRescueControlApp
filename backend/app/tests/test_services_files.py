@@ -9,7 +9,8 @@ from app.services.files import (
     generateUTMData,
     insertGEOData,
     addIdSpecieByName,
-    addMarkIdByNumber
+    addMarkIdByNumber,
+    addAgeGroupIdByName
 )
 
 from app.tests.conftest import *
@@ -180,6 +181,43 @@ async def test_addMarkIdByNumber(
     # Test
     assert resultDF.equals(expected)
     assert resulLIST == listExpect
+
+# Tes for addAgeGroupIdByName function
+@pytest.mark.asyncio
+async def test_addAgeGroupIdByName(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+):
+    age_group_id, age_group_name = await create_age_groupWithName(async_client)
+    col: str = "age_group"
+
+    #Create DF for Test
+    data = {
+        'number' : [1, 2],
+        'age_group': [age_group_name, "unknown"],
+    }
+
+    df = pd.DataFrame(data)
+
+    # Expected result
+    expected = pd.DataFrame({
+        'number' : [1, 2],
+        'age_group': [age_group_name, "unknown"],
+        'idAgeGroup': [age_group_id, None],
+    })
+
+    listExpect: list[tuple[int, str]] =  [(2, "unknown")]
+
+    # Result
+    resultDF, resulLIST = await addAgeGroupIdByName(async_session, df, col)
+
+    print(resultDF)
+    print(expected)
+
+    # Test
+    assert resultDF.equals(expected)
+    assert resulLIST == listExpect
+
 
 
 

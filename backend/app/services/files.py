@@ -8,7 +8,7 @@ from app.services.system_coordinate import utm_to_latlong
 from app.schemas.services import  UTMData
 
 from app.crud.species import get_specie_by_name
-from app.crud.rescue_herpetofauna import get_mark_herpetofauna_by_number
+from app.crud.rescue_herpetofauna import get_mark_herpetofauna_by_number, get_age_group_name
 
 
 def convert_to_datetime(df:pd.DataFrame, cols:List[str]) -> pd.DataFrame:
@@ -209,5 +209,35 @@ async def addMarkIdByNumber(
 
     return df, listMarkNumberRow
 
+async def addAgeGroupIdByName(
+        db: AsyncSession,
+        df: pd.DataFrame,
+        col: str,
+) -> tuple[pd.DataFrame, list[tuple[int, str]]]:
+    """
+    Adds the id of a age group to a dataframe
 
+    Parameters
+    ----------
+    db : AsyncSession
+    df : pandas dataframe
+    col : str with name of column with age group name
 
+    Returns
+    -------
+    df : pandas dataframe with idAgeGroup column
+    """
+    listAgeGroupNameRow: list[tuple[int, str]] = []
+    colunmId: list[int | None] = []
+
+    for _, row in df.iterrows():
+        ageGroup = await get_age_group_name(db, row[col])
+        if ageGroup is None:
+            listAgeGroupNameRow.append((row[0], row[col]))
+            colunmId.append(None)
+        else:
+            colunmId.append(ageGroup.id)
+
+    df['idAgeGroup'] = colunmId
+
+    return df, listAgeGroupNameRow

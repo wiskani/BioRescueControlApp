@@ -12,6 +12,22 @@ from app.tests.utils.towers_example import *
 def random_string() -> str:
     return "".join(random.choices(string.ascii_lowercase, k=10))
 
+
+#Create a Age Group with name
+@pytest.mark.asyncio
+async def create_age_groupWithName(
+    async_client: AsyncClient,
+) -> tuple[int, str] :
+    name = random_string()
+    response: Response = await async_client.post(
+        "/api/age_group", json={
+            "name": name
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    return data["id"], name
+
 #Create a Age Group
 @pytest.mark.asyncio
 async def create_age_group(
