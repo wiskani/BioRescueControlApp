@@ -10,7 +10,8 @@ from app.services.files import (
     insertGEOData,
     addIdSpecieByName,
     addMarkIdByNumber,
-    addAgeGroupIdByName
+    addAgeGroupIdByName,
+    addBooleanByGender
 )
 
 from app.tests.conftest import *
@@ -178,6 +179,9 @@ async def test_addMarkIdByNumber(
     # Result
     resultDF, resulLIST = await addMarkIdByNumber(async_session, df, col)
 
+    print(resultDF)
+    print(expected)
+
     # Test
     assert resultDF.equals(expected)
     assert resulLIST == listExpect
@@ -211,14 +215,42 @@ async def test_addAgeGroupIdByName(
     # Result
     resultDF, resulLIST = await addAgeGroupIdByName(async_session, df, col)
 
+    # Test
+    assert resultDF.equals(expected)
+    assert resulLIST == listExpect
+
+# Test for addBooleanByGender function
+def test_addBooleanByGender() -> None:
+
+    col= "sexo"
+    genderEqual: tuple[str, str] = ("Macho", "Hembra")
+
+    #Create DF for Test
+    data = {
+        'number' : [1, 2, 3],
+        'sexo': ["Macho", "Hembra", None],
+    }
+
+    df = pd.DataFrame(data)
+
+    # Expected result
+    expected = pd.DataFrame({
+        'number' : [1, 2, 3],
+        'sexo': ["Macho", "Hembra", None],
+        'booleanGender': [True, False, None],
+    })
+
+    listExpect: list[tuple[int, None ]] =  [(3, None)]
+
+    # Result
+    resultDF, resulLIST = addBooleanByGender(df, col, genderEqual)
+
     print(resultDF)
     print(expected)
 
     # Test
     assert resultDF.equals(expected)
     assert resulLIST == listExpect
-
-
 
 
 

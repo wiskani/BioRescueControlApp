@@ -241,3 +241,37 @@ async def addAgeGroupIdByName(
     df['idAgeGroup'] = colunmId
 
     return df, listAgeGroupNameRow
+
+def addBooleanByGender(
+    df: pd.DataFrame,
+    col: str,
+    genderEqual: tuple[str, str]
+) -> tuple[pd.DataFrame, list[tuple[int, str|None]]]:
+    """
+    Adds the id of with a boolean column to a dataframe
+    male = True
+    female = False
+
+    Parameters
+    ----------
+    df: pandas dataframe
+    col: str with name of column with gender
+    genderEqual:  tuple for a name of  male an female
+    """
+    listGenderNameRow: list[tuple[int, str|None]] = []
+    colunmId: list[bool | None] = []
+    male, female = genderEqual
+
+    for _, row in df.iterrows():
+        if row[col] == male:
+            colunmId.append(True)
+        if row[col] == female:
+            colunmId.append(False)
+        else:
+            listGenderNameRow.append((row[0], row[col]))
+            colunmId.append(None)
+
+    df['boolGender'] = colunmId
+
+    return df, listGenderNameRow
+
