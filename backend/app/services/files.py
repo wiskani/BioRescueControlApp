@@ -265,13 +265,13 @@ def addBooleanByGender(
     for _, row in df.iterrows():
         if row[col] == male:
             colunmId.append(True)
-        if row[col] == female:
+        elif row[col] == female:
             colunmId.append(False)
         else:
             listGenderNameRow.append((row[0], row[col]))
             colunmId.append(None)
-
-    df['boolGender'] = colunmId
+    
+    df['booleanGender'] = colunmId
 
     return df, listGenderNameRow
 

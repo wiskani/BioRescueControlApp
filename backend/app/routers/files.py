@@ -14,11 +14,13 @@ from app.crud.rescue_herpetofauna import(
     get_transect_herpetofauna_by_number,
     create_rescue_herpetofauna,
     get_rescue_herpetofauna_by_number,
+    create_mark_herpetofauna,
+    get_mark_herpetofauna_by_number
 )
 
 #Schemas
 from app.schemas.rescue_flora import PlantNurseryBase, FloraRelocationBase
-from app.schemas.rescue_herpetofauna import TransectHerpetofaunaCreate, RescueHerpetofaunaCreate
+from app.schemas.rescue_herpetofauna import TransectHerpetofaunaCreate, RescueHerpetofaunaCreate, MarkHerpetofaunaCreate
 from app.schemas.towers import TowerBase
 from app.schemas.services import UTMData
 
@@ -27,7 +29,10 @@ from app.services.files import (
     remplace_nan_with_none,
     none_value,
     insertGEOData,
-    addIdSpecieByName
+    addIdSpecieByName,
+    addBooleanByGender,
+    addMarkIdByNumber,
+    addAgeGroupIdByName
 )
 
 router = APIRouter()
@@ -315,6 +320,9 @@ async def upload_rescue_herpetofauna(
         df = remplace_nan_with_none(df)
 
         df, specieListWithOutName = await addIdSpecieByName(db, df, "especie")
+        df, genderListWithOutName = await addBooleanByGender(db, df, "genero",("Macho", "Hembra"))
+        df, markListWithOutName = await addMarkIdByNumber(db, df, "codigo_marcaje")
+        df, ageGroupListWithOutName = await addAgeGroupIdByName(db, df, "clase_etaria")
 
         numberExistList = []
 
@@ -322,11 +330,11 @@ async def upload_rescue_herpetofauna(
             try:
                 new_rescue_herpetofauna = RescueHerpetofaunaCreate(
                     number=row['num'],
-                    gender=row['genero'],
+                    gender=row['booleanGender'],
                     specie_id=row['idSpecie'],
-                    mark_herpetofauna_id=row['marca'],
-                    transect_herpetofauna_id=row['transecto'],
-                    age_group_id=row['grupo_edad'],
+                    mark_herpetofauna_id=row['idMark'],
+                    transect_herpetofauna_id=row['num_t'],
+                    age_group_id=row['idAgeGroup'],
                 )
             except Exception as e:
                 raise HTTPException(
@@ -340,7 +348,71 @@ async def upload_rescue_herpetofauna(
                 await create_rescue_herpetofauna (db, new_rescue_herpetofauna)
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
-            content={"message": "Flora relocation excel file uploaded successfully", "Not upload numbers because repeate": numberExistList, "Some species not found": specieListWithOutName},
+            content={
+                "message": "Flora relocation excel file uploaded successfully",
+                "Not upload numbers because repeate": numberExistList,
+                "Some species not found": specieListWithOutName,
+                "Some gender not found or are null": genderListWithOutName,
+                "Some mark not found or are null": markListWithOutName,
+                "Some age group not found or are null": ageGroupListWithOutName,
+                },
+        )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File must be an excel file",
+        )
+
+# Upload mark herpetofauna excel file
+@router.post(
+    path="/upload/mark_herpetofauna",
+    summary="Upload mark herpetofauna excel file",
+    response_model= None,
+    tags=["Upload"],
+)
+async def upload_mark_herpetofauna(
+    file: UploadFile=File(...),
+    db: AsyncSession = Depends(get_db),
+    permissions: str = Depends(PermissonsChecker(["admin"])),
+) -> JSONResponse | HTTPException:
+    if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
+        df = pd.read_excel(file.file)
+
+        # Replace NaN with None
+        df = remplace_nan_with_none(df)
+
+        # Convert date columns to datetime objects
+        date_columns = [
+            'date',
+        ]
+        df = convert_to_datetime(df, date_columns)
+
+        numberExistList = []
+
+        for _, row in df.iterrows():
+            try:
+                new_mark_herpetofauna = MarkHerpetofaunaCreate(
+                    date=row['date'],
+                    number=row['num'],
+                    code=row['code'],
+                    LHC=row['LHC'],
+                    weight=row['weight'],
+                    is_photo_mark=row['is_photo_mark'],
+                    is_elastomer_mark=row['is_elastomer_mark'],
+                )
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Error: {e}",
+                )
+            if await get_mark_herpetofauna_by_number(db, new_mark_herpetofauna.number):
+                numberExistList.append(new_mark_herpetofauna.number)
+                continue
+            else:
+                await create_mark_herpetofauna(db, new_mark_herpetofauna)
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={"message": "Flora relocation excel file uploaded successfully", "Not upload numbers because repeate": numberExistList},
         )
     else:
         raise HTTPException(
