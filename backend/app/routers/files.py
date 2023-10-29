@@ -320,32 +320,36 @@ async def upload_rescue_herpetofauna(
         df = remplace_nan_with_none(df)
 
         df, specieListWithOutName = await addIdSpecieByName(db, df, "especie")
-        df, genderListWithOutName = await addBooleanByGender(db, df, "genero",("Macho", "Hembra"))
+        df, genderListWithOutName = addBooleanByGender(df, "sexo",("Macho", "Hembra"))
         df, markListWithOutName = await addMarkIdByNumber(db, df, "codigo_marcaje")
         df, ageGroupListWithOutName = await addAgeGroupIdByName(db, df, "clase_etaria")
 
         numberExistList = []
 
         for _, row in df.iterrows():
-            try:
-                new_rescue_herpetofauna = RescueHerpetofaunaCreate(
-                    number=row['num'],
-                    gender=row['booleanGender'],
-                    specie_id=row['idSpecie'],
-                    mark_herpetofauna_id=row['idMark'],
-                    transect_herpetofauna_id=row['num_t'],
-                    age_group_id=row['idAgeGroup'],
-                )
-            except Exception as e:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Error: {e}",
-                )
-            if await get_rescue_herpetofauna_by_number(db, new_rescue_herpetofauna.number):
-                numberExistList.append(new_rescue_herpetofauna.number)
+            if row['idSpecie'] is None:
                 continue
             else:
-                await create_rescue_herpetofauna (db, new_rescue_herpetofauna)
+                print(row['idSpecie'])
+                try:
+                    new_rescue_herpetofauna = RescueHerpetofaunaCreate(
+                        number=row['num'],
+                        gender=none_value(row['booleanGender']),
+                        specie_id=row['idSpecie'],
+                        mark_herpetofauna_id= none_value(row['idMark']),
+                        transect_herpetofauna_id=row['num_t'],
+                        age_group_id=none_value(row['idAgeGroup']),
+                    )
+                except Exception as e:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail=f"Error: {e}",
+                    )
+                if await get_rescue_herpetofauna_by_number(db, new_rescue_herpetofauna.number):
+                    numberExistList.append(new_rescue_herpetofauna.number)
+                    continue
+                else:
+                    await create_rescue_herpetofauna (db, new_rescue_herpetofauna)
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
             content={
@@ -419,10 +423,6 @@ async def upload_mark_herpetofauna(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="File must be an excel file",
         )
-
-
-
-
 
 
 

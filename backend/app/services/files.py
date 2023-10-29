@@ -198,12 +198,22 @@ async def addMarkIdByNumber(
     colunmId: list[int | None] = []
 
     for _, row in df.iterrows():
-        mark = await get_mark_herpetofauna_by_number(db, row[col])
-        if mark is None:
+        if row[col] == "None":
             listMarkNumberRow.append((row[0], row[col]))
             colunmId.append(None)
         else:
-            colunmId.append(mark.id)
+            #conver row[col] to int
+            print(f'el numero es {row[col]}')
+            try:
+                row[col] = int(row[col])
+            except Exception as e:
+                raise Exception(f"Error converting mark number to int: {e}")
+            mark = await get_mark_herpetofauna_by_number(db, row[col])
+            if mark is None:
+                listMarkNumberRow.append((row[0], row[col]))
+                colunmId.append(None)
+            else:
+                colunmId.append(mark.id)
 
     df['idMark'] = colunmId
 

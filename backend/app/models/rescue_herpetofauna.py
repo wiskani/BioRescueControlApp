@@ -66,7 +66,7 @@ class RescueHerpetofauna (_database.Base):
     specie = relationship('Specie', back_populates='rescue_herpetofauna')
 
     #relationship with mark_herpetofauna
-    mark_herpetofauna_id: Mapped[int] = mapped_column(Integer, ForeignKey('mark_herpetofauna.id'))
+    mark_herpetofauna_id: Mapped[int] = mapped_column(Integer, ForeignKey('mark_herpetofauna.id'), nullable=True)
     mark_herpetofauna = relationship('MarkHerpetofauna', back_populates='rescue_herpetofauna')
 
     #relationship with transect_herpetofauna
