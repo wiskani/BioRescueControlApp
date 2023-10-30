@@ -326,7 +326,22 @@ def fixReepetedNumRescueHerpeto(
     df : pandas dataframe
     col : str with name of column with rescue herpetofauna number
     """
+    # sort col 
+    df = df.sort_values(by=[col], ascending=False)
 
+    for i in range(1, len(df)):
+        if df[col].iloc[i] == df[col].iloc[i-1]:
+            j = i
+            listRow = []
+            while df[col].iloc[j] == df[col].iloc[j-1]:
+                listRow.append(j)
+                j += 1
+            k=1
+            for row in listRow:
+                df[col].iloc[row] = df[col].iloc[row] + k  
+                k += 1
+    return df
+    
    
 
 
