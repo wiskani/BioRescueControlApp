@@ -72,6 +72,36 @@ async def create_transect_herpetofauna(
     assert response.status_code == 201
     data = response.json()
     return data["id"]
+    
+#Create transect herpetofauna with number
+@pytest.mark.asyncio
+async def create_transect_herpetofaunaWithNumber(
+    async_client: AsyncClient,
+) -> int:
+    number_transect: int = random.randint(1, 100)
+    tower_id: int =  await create_random_tower(async_client)
+    latitude_in: float = random.uniform(-90, 90)
+    longitude_in: float = random.uniform(-180, 180)
+    latitude_out: float = random.uniform(-90, 90)
+    longitude_out: float = random.uniform(-180, 180)
+
+    response: Response = await async_client.post(
+        "/api/transect_herpetofauna", json={
+            "number": number_transect,
+            "date_in": "2021-10-10T00:00:00",
+            "date_out": "2021-10-12T00:00:00",
+            "latitude_in": latitude_in,
+            "longitude_in": longitude_in,
+            "altitude_in": 100,
+            "latitude_out": latitude_out,
+            "longitude_out": longitude_out,
+            "altitude_out": 100,
+            "tower_id": tower_id
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    return data["id"], number_transect
 
 #Create a mark herpetofauna
 @pytest.mark.asyncio

@@ -11,7 +11,8 @@ from app.services.files import (
     addIdSpecieByName,
     addMarkIdByNumber,
     addAgeGroupIdByName,
-    addBooleanByGender
+    addBooleanByGender,
+    addTransectIdByNumber
 )
 
 from app.tests.conftest import *
@@ -245,12 +246,42 @@ def test_addBooleanByGender() -> None:
     # Result
     resultDF, resulLIST = addBooleanByGender(df, col, genderEqual)
 
-    print(resultDF)
-    print(expected)
 
     # Test
     assert resultDF.equals(expected)
     assert resulLIST == listExpect
+
+# Test for addTransectIdByNumber function
+@pytest.mark.asyncio
+async def test_addTransectIdByNumber(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+):
+    transect_id, transect_number = await create_transect_herpetofaunaWithNumber(async_client)
+    col: str = "transect"
+
+    #Create DF for Test
+    data = {
+        'number' : [1 ],
+        'transect': [transect_number ],
+    }
+
+    df = pd.DataFrame(data)
+
+    # Expected result
+    expected = pd.DataFrame({
+        'number' : [1],
+        'transect': [transect_number],
+        'idTransect': [transect_id],
+    })
+
+
+    # Result
+    resultDF = await addTransectIdByNumber(async_session, df, col)
+
+
+    # Test
+    assert resultDF.equals(expected)
 
 
 

@@ -8,7 +8,7 @@ from app.services.system_coordinate import utm_to_latlong
 from app.schemas.services import  UTMData
 
 from app.crud.species import get_specie_by_name
-from app.crud.rescue_herpetofauna import get_mark_herpetofauna_by_number, get_age_group_name
+from app.crud.rescue_herpetofauna import get_mark_herpetofauna_by_number, get_age_group_name, get_transect_herpetofauna_by_number
 
 
 def convert_to_datetime(df:pd.DataFrame, cols:List[str]) -> pd.DataFrame:
@@ -284,4 +284,50 @@ def addBooleanByGender(
     df['booleanGender'] = colunmId
 
     return df, listGenderNameRow
+
+async def addTransectIdByNumber(
+        db: AsyncSession,
+        df: pd.DataFrame,
+        col: str,
+) -> pd.DataFrame:
+    """
+    Adds the id of a transect to a dataframe
+
+    Parameters
+    ----------
+    db : AsyncSession
+    df : pandas dataframe
+    col : str with name of column with transect number
+    """
+    listTransectNumberRow: list[tuple[int, str]] = []
+    colunmId: list[int | None] = []
+
+    for _, row in df.iterrows():
+        #conver row[col] to int
+        transect = await get_transect_herpetofauna_by_number(db, row[col])
+        if transect is None:
+            raise Exception(f"Error converting transect number to int in row {row[0]}")
+        else:
+            colunmId.append(transect.id)
+
+    df['idTransect'] = colunmId
+
+    return df
+
+def fixReepetedNumRescueHerpeto(
+        df: pd.DataFrame,
+        col: str,
+) -> pd.DataFrame:
+    """
+    Fixes repeated numbers in a dataframe
+
+    Parameters
+    ----------
+    df : pandas dataframe
+    col : str with name of column with rescue herpetofauna number
+    """
+
+   
+
+
 

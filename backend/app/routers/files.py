@@ -32,7 +32,8 @@ from app.services.files import (
     addIdSpecieByName,
     addBooleanByGender,
     addMarkIdByNumber,
-    addAgeGroupIdByName
+    addAgeGroupIdByName,
+    addTransectIdByNumber
 )
 
 router = APIRouter()
@@ -323,6 +324,7 @@ async def upload_rescue_herpetofauna(
         df, genderListWithOutName = addBooleanByGender(df, "sexo",("Macho", "Hembra"))
         df, markListWithOutName = await addMarkIdByNumber(db, df, "codigo_marcaje")
         df, ageGroupListWithOutName = await addAgeGroupIdByName(db, df, "clase_etaria")
+        df = await addTransectIdByNumber(db, df, "num_t")
 
         numberExistList = []
 
@@ -330,14 +332,14 @@ async def upload_rescue_herpetofauna(
             if row['idSpecie'] is None:
                 continue
             else:
-                print(row['idSpecie'])
+                print(f"el transect es: {row['num_t']}")
                 try:
                     new_rescue_herpetofauna = RescueHerpetofaunaCreate(
                         number=row['num'],
                         gender=none_value(row['booleanGender']),
                         specie_id=row['idSpecie'],
                         mark_herpetofauna_id= none_value(row['idMark']),
-                        transect_herpetofauna_id=row['num_t'],
+                        transect_herpetofauna_id=row['idTransect'],
                         age_group_id=none_value(row['idAgeGroup']),
                     )
                 except Exception as e:
