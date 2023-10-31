@@ -48,7 +48,7 @@ async def create_age_group(
 async def create_transect_herpetofauna(
     async_client: AsyncClient,
 ) -> int:
-    number_transect: int = random.randint(1, 100)
+    number_transect: str = random_string()
     tower_id: int =  await create_random_tower(async_client)
     latitude_in: float = random.uniform(-90, 90)
     longitude_in: float = random.uniform(-180, 180)
@@ -78,7 +78,7 @@ async def create_transect_herpetofauna(
 async def create_transect_herpetofaunaWithNumber(
     async_client: AsyncClient,
 ) -> int:
-    number_transect: int = random.randint(1, 100)
+    number_transect: str = random_string()
     tower_id: int =  await create_random_tower(async_client)
     latitude_in: float = random.uniform(-90, 90)
     longitude_in: float = random.uniform(-180, 180)

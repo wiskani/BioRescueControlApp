@@ -200,7 +200,7 @@ async def test_create_transect_herpetofauna(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    number_transect: int = random.randint(1, 100)
+    number_transect: int = random_string()
     tower_id: int =  await create_random_tower(async_client)
     latitude_in: float = random.uniform(-90, 90)
     longitude_in: float = random.uniform(-180, 180)
@@ -236,7 +236,7 @@ async def test_create_transect_herpetofauna_with_invalid_number(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    number_transect: int = random.randint(1, 100)
+    number_transect: int = random_string()
     tower_id: int =  await create_random_tower(async_client)
     latitude_in: float = random.uniform(-90, 90)
     longitude_in: float = random.uniform(-180, 180)
@@ -283,7 +283,7 @@ async def test_get_transect_herpetofauna_by_id(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    number_transect: int = random.randint(1, 100)
+    number_transect: int = random_string()
     tower_id: int =  await create_random_tower(async_client)
     latitude_in: float = random.uniform(-90, 90)
     longitude_in: float = random.uniform(-180, 180)
@@ -339,14 +339,14 @@ async def test_get_all_transect_herpetofauna(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    number_transect: int = random.randint(1, 100)
+    number_transect: int = random_string()
     tower_id: int =  await create_random_tower(async_client)
     latitude_in: float = random.uniform(-90, 90)
     longitude_in: float = random.uniform(-180, 180)
     latitude_out: float = random.uniform(-90, 90)
     longitude_out: float = random.uniform(-180, 180)
 
-    number_transect_2: int = random.randint(1, 100)
+    number_transect_2: int = random_string()
     tower_id_2: int =  await create_random_tower(async_client)
     latitude_in_2: float = random.uniform(-90, 90)
     longitude_in_2: float = random.uniform(-180, 180)
@@ -398,14 +398,14 @@ async def test_update_transect_herpetofauna(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    number_transect: int = random.randint(1, 100)
+    number_transect: int = random_string()
     tower_id: int =  await create_random_tower(async_client)
     latitude_in: float = random.uniform(-90, 90)
     longitude_in: float = random.uniform(-180, 180)
     latitude_out: float = random.uniform(-90, 90)
     longitude_out: float = random.uniform(-180, 180)
 
-    number_transect_2: int = random.randint(1, 100)
+    number_transect_2: int = random_string()
     tower_id_2: int =  await create_random_tower(async_client)
     latitude_in_2: float = random.uniform(-90, 90)
     longitude_in_2: float = random.uniform(-180, 180)
@@ -459,7 +459,7 @@ async def test_delete_transect_herpetofauna(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    number_transect: int = random.randint(1, 100)
+    number_transect: int = random_string()
     tower_id: int =  await create_random_tower(async_client)
     latitude_in: float = random.uniform(-90, 90)
     longitude_in: float = random.uniform(-180, 180)
@@ -732,7 +732,7 @@ async def test_create_rescue_herpetofauna(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    number_rescue: int = random.randint(1, 100)
+    number_rescue: int = random_string()
     specie_id:int = await create_specie(async_client)
     mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
     transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
@@ -764,7 +764,7 @@ async def test_get_rescue_herpetofauna_by_id(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    number_rescue: int = random.randint(1, 100)
+    number_rescue: int = random_string()
     specie_id:int = await create_specie(async_client)
     mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
     transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
@@ -802,7 +802,7 @@ async def test_create_rescue_herpetofauna_with_wrong_number(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    number_rescue: int = random.randint(1, 100)
+    number_rescue: int = random_string()
     specie_id:int = await create_specie(async_client)
     mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
     transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
@@ -841,7 +841,7 @@ async def test_get_all_rescue_herpetofauna(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    number_rescue: int = random.randint(1, 100)
+    number_rescue: int = random_string()
     specie_id:int = await create_specie(async_client)
     mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
     transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
@@ -873,13 +873,13 @@ async def test_update_rescue_herpetofauna(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    number_rescue: int = random.randint(1, 100)
+    number_rescue: str = random_string()
     specie_id:int = await create_specie(async_client)
     mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
     transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
     age_group_id:int = await create_age_group(async_client)
 
-    number_rescue_update: int = random.randint(1, 100)
+    number_rescue_update: str = random_string()
     specie_id_update:int = await create_specie(async_client)
     age_group_id_update:int = await create_age_group(async_client)
 
@@ -923,7 +923,7 @@ async def test_delete_rescue_herpetofauna(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    number_rescue: int = random.randint(1, 100)
+    number_rescue: str = random_string()
     specie_id:int = await create_specie(async_client)
     mark_herpetofauna_id:int = await create_mark_herpetofauna(async_client)
     transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)

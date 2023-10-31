@@ -20,7 +20,7 @@ class AgeGroup (_database.Base):
 class TransectHerpetofauna (_database.Base):
     __tablename__ = 'transect_herpetofauna'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    number: Mapped[int] = mapped_column(Integer, nullable=False, unique=True)
+    number: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     date_in: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     date_out: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     latitude_in: Mapped[float] = mapped_column(Float, nullable=False)
@@ -57,7 +57,7 @@ class MarkHerpetofauna (_database.Base):
 class RescueHerpetofauna (_database.Base):
     __tablename__ = 'rescue_herpetofauna'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    number: Mapped[int] = mapped_column(Integer, nullable=False)
+    number: Mapped[str] = mapped_column(String, nullable=False)
     gender: Mapped[bool] = mapped_column(Boolean, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.now(pytz.timezone('America/La_Paz')))
 

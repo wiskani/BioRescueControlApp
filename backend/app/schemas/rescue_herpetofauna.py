@@ -16,7 +16,7 @@ class AgeGroupResponse(AgeGroupBase):
         orm_mode: bool = True
 
 class TransectHerpetofaunaBase(BaseModel):
-    number: int = Field(..., examples=[ 1 ])
+    number: str = Field(..., examples=[ 1 ])
     date_in: datetime = Field(..., examples=[ datetime.now() ])
     date_out: datetime = Field(..., examples=[ datetime.now()])
     latitude_in: float = Field(..., examples=[ 1.0])
@@ -55,7 +55,7 @@ class MarkHerpetofaunaResponse(MarkHerpetofaunaBase):
         orm_mode: bool = True
 
 class RescueHerpetofaunaBase(BaseModel):
-    number: int = Field(..., examples=[ 1 ])
+    number: str = Field(..., examples=[ 1 ])
     gender: bool|None = Field(examples=[True])
     specie_id: int = Field(..., examples=[ 1 ])
     mark_herpetofauna_id: int|None = Field(examples=[ 1 ])
