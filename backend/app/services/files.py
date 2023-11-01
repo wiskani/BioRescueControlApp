@@ -314,12 +314,12 @@ async def addTransectIdByNumber(
 
     return df
 
-def fixReepetedNumRescueHerpeto(
+def addNumRescueHerpeto(
         df: pd.DataFrame,
         col: str,
 ) -> pd.DataFrame:
     """
-    Fixes repeated numbers in a dataframe
+    Create a new column with the number of rescue herpetofauna
 
     Parameters
     ----------
@@ -329,17 +329,24 @@ def fixReepetedNumRescueHerpeto(
     # sort col 
     df = df.sort_values(by=[col], ascending=False)
 
-    for i in range(1, len(df)):
-        if df[col].iloc[i] == df[col].iloc[i-1]:
+    newCol = []
+
+    for i in range(0, len(df)):
+        if df[col].iloc[i] == df[col].iloc[i+1]:
             j = i
-            listRow = []
-            while df[col].iloc[j] == df[col].iloc[j-1]:
-                listRow.append(j)
+            listNum = []
+            while df[col].iloc[j] == df[col].iloc[j+1]:
+                listNum.append(df[col].iloc[j])
                 j += 1
             k=1
-            for row in listRow:
-                df[col].iloc[row] = df[col].iloc[row] + k  
+            for row in listNum:
+                newCol.append(row+"R"+str(k))
                 k += 1
+            i = j
+        else:
+            newCol.append(df[col].iloc[i]+"R1")
+    
+    df["numRescue"] = newCol
     return df
     
    

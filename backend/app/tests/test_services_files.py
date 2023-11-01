@@ -12,7 +12,8 @@ from app.services.files import (
     addMarkIdByNumber,
     addAgeGroupIdByName,
     addBooleanByGender,
-    addTransectIdByNumber
+    addTransectIdByNumber,
+    addNumRescueHerpeto
 )
 
 from app.tests.conftest import *
@@ -283,5 +284,29 @@ async def test_addTransectIdByNumber(
     # Test
     assert resultDF.equals(expected)
 
+# Test for addNumRescueHerpeto
+def test_addNumRescueHerpeto() -> None:
 
+    #Create DF for Test
+    data = {
+        'number' : ["101T09","101T13", "101T12","101T13","101T13","101T13"],
+        'rescue': [1, 2, 3, 4, 5, 6],
+    }
 
+    df = pd.DataFrame(data)
+
+    # Expected result
+    expected = pd.DataFrame({
+        'number' : ["101T09","101T12", "101T13","101T13","101T13","101T13"],
+        'rescue': [1, 3, 2, 4, 5, 6],
+        'numRescue' : ["101T09R1","101T12R1", "101T13R1","101T13R2","101T13R3","101T13R4"],
+    })
+
+    # Result
+    resultDF = addNumRescueHerpeto(df, "number")
+
+    print(resultDF)
+    print(expected)
+
+    # Test
+    assert resultDF.equals(expected)
