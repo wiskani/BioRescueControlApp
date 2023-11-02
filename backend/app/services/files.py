@@ -327,24 +327,36 @@ def addNumRescueHerpeto(
     col : str with name of column with rescue herpetofauna number
     """
     # sort col 
-    df = df.sort_values(by=[col], ascending=False)
+    df = df.sort_values(by=[col])
 
     newCol = []
+    
+    rowNumber: int = 0
 
-    for i in range(0, len(df)):
-        if df[col].iloc[i] == df[col].iloc[i+1]:
-            j = i
+    while rowNumber < len(df)-1:
+        if df[col].iloc[rowNumber] == df[col].iloc[rowNumber+1]:
+            j = rowNumber 
             listNum = []
-            while df[col].iloc[j] == df[col].iloc[j+1]:
+            while j < len(df)-1 and df[col].iloc[j] == df[col].iloc[j+1]:
                 listNum.append(df[col].iloc[j])
                 j += 1
+                if j == len(df)-1:
+                    listNum.append(df[col].iloc[j])
+                    j += 1
             k=1
+            if j < len(df)-1:
+                listNum.append(df[col].iloc[j])
+                j += 1
             for row in listNum:
                 newCol.append(row+"R"+str(k))
                 k += 1
-            i = j
+            rowNumber = j
+
         else:
-            newCol.append(df[col].iloc[i]+"R1")
+            newCol.append(df[col].iloc[rowNumber]+"R1")
+            rowNumber += 1
+    if rowNumber < len(df): 
+        newCol.append(df[col].iloc[rowNumber]+"R1")
     
     df["numRescue"] = newCol
     return df

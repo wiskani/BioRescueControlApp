@@ -5,6 +5,7 @@ from httpx import Response, AsyncClient
 from typing import Dict, Any
 from app.tests.conftest import *
 from app.tests.utils.towers_example import *
+from app.tests.utils.species_example import *
 
 
 
@@ -150,5 +151,53 @@ async def create_mark_herpetofaunaWithNumber(
     )
     assert response.status_code == 201
     data = response.json()
-    print(f'Response for create mark herpetofauna is : {data}')
     return data["id"], number_mark
+
+#Create a rescue herpetofauna
+@pytest.mark.asyncio
+async def create_rescue_herpetofauna(
+    async_client: AsyncClient,
+) -> int:
+    
+    transect_id: int = await create_transect_herpetofauna(async_client)
+    number : str = random_string()
+    specie_id: int = await create_specie(async_client)
+    age_group_id: int = await create_age_group(async_client)
+
+    response: Response = await async_client.post(
+        "/api/rescue_herpetofauna", json={
+            "number": number,
+            "gender": True,
+            "specie_id": specie_id,
+            "transect_herpetofauna_id": transect_id,
+            "age_group_id": age_group_id
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    return data["id"]
+
+#Create a rescue herpetofauna with number
+@pytest.mark.asyncio
+async def create_rescue_herpetofaunaWithNumber(
+    async_client: AsyncClient,
+) -> tuple[int, str]:
+    
+    transect_id: int = await create_transect_herpetofauna(async_client)
+    number : str = random_string()
+    specie_id: int = await create_specie(async_client)
+    age_group_id: int = await create_age_group(async_client)
+
+    response: Response = await async_client.post(
+        "/api/rescue_herpetofauna", json={
+            "number": number,
+            "gender": True,
+            "specie_id": specie_id,
+            "transect_herpetofauna_id": transect_id,
+            "age_group_id": age_group_id
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    return data["id"], number
+

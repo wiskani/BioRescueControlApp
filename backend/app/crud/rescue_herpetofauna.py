@@ -175,6 +175,7 @@ async def create_mark_herpetofauna(db: AsyncSession, mark_herpetofauna: MarkHerp
         weight=mark_herpetofauna.weight,
         is_photo_mark = mark_herpetofauna.is_photo_mark,
         is_elastomer_mark = mark_herpetofauna.is_elastomer_mark,
+        rescue_herpetofauna_id = mark_herpetofauna.rescue_herpetofauna_id,
     )
     db.add(mark_herpetofauna_db)
     await db.commit()
@@ -194,6 +195,7 @@ async def update_mark_herpetofauna(db: AsyncSession, mark_herpetofauna_id: int ,
    mark_herpetofauna_db.weight = mark_herpetofauna_update.weight
    mark_herpetofauna_db.is_photo_mark = mark_herpetofauna_update.is_photo_mark
    mark_herpetofauna_db.is_elastomer_mark = mark_herpetofauna_update.is_elastomer_mark
+   mark_herpetofauna_db.rescue_herpetofauna_id = mark_herpetofauna_update.rescue_herpetofauna_id
    await db.commit()
    await db.refresh(mark_herpetofauna_db)
    return mark_herpetofauna_db
@@ -233,7 +235,6 @@ async def create_rescue_herpetofauna(db: AsyncSession, rescue_herpetofauna: Resc
         number=rescue_herpetofauna.number,
         gender=rescue_herpetofauna.gender,
         specie_id=rescue_herpetofauna.specie_id,
-        mark_herpetofauna_id=rescue_herpetofauna.mark_herpetofauna_id,
         transect_herpetofauna_id=rescue_herpetofauna.transect_herpetofauna_id,
         age_group_id=rescue_herpetofauna.age_group_id,
     )
@@ -251,7 +252,6 @@ async def update_rescue_herpetofauna(db: AsyncSession, rescue_herpetofauna_id: i
     rescue_herpetofauna_db.number = rescue_herpetofauna_update.number
     rescue_herpetofauna_db.gender = rescue_herpetofauna_update.gender
     rescue_herpetofauna_db.specie_id = rescue_herpetofauna_update.specie_id
-    rescue_herpetofauna_db.mark_herpetofauna_id = rescue_herpetofauna_update.mark_herpetofauna_id
     rescue_herpetofauna_db.transect_herpetofauna_id = rescue_herpetofauna_update.transect_herpetofauna_id
     rescue_herpetofauna_db.age_group_id = rescue_herpetofauna_update.age_group_id
     await db.commit()

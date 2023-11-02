@@ -52,6 +52,7 @@ class MarkHerpetofauna (_database.Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False,default=datetime.now(pytz.timezone('America/La_Paz')))
 
     #relationship with rescue_herpetofauna
+    rescue_herpetofauna_id: Mapped[int] = mapped_column(Integer, ForeignKey('rescue_herpetofauna.id'))
     rescue_herpetofauna = relationship('RescueHerpetofauna', back_populates='mark_herpetofauna')
 
 class RescueHerpetofauna (_database.Base):
@@ -66,8 +67,8 @@ class RescueHerpetofauna (_database.Base):
     specie = relationship('Specie', back_populates='rescue_herpetofauna')
 
     #relationship with mark_herpetofauna
-    mark_herpetofauna_id: Mapped[int] = mapped_column(Integer, ForeignKey('mark_herpetofauna.id'), nullable=True)
     mark_herpetofauna = relationship('MarkHerpetofauna', back_populates='rescue_herpetofauna')
+
 
     #relationship with transect_herpetofauna
     transect_herpetofauna_id: Mapped[int] = mapped_column(Integer, ForeignKey('transect_herpetofauna.id'))

@@ -289,21 +289,22 @@ def test_addNumRescueHerpeto() -> None:
 
     #Create DF for Test
     data = {
-        'number' : ["101T09","101T13", "101T12","101T13","101T13","101T13"],
-        'rescue': [1, 2, 3, 4, 5, 6],
+        'number' : ["101T09","101T13", "101T12","101T13","101T13","101T13", "101T15"],
+        'rescue': [1, 2, 3, 4, 5, 6, 7],
     }
 
     df = pd.DataFrame(data)
 
     # Expected result
     expected = pd.DataFrame({
-        'number' : ["101T09","101T12", "101T13","101T13","101T13","101T13"],
-        'rescue': [1, 3, 2, 4, 5, 6],
-        'numRescue' : ["101T09R1","101T12R1", "101T13R1","101T13R2","101T13R3","101T13R4"],
+        'number' : ["101T09","101T12", "101T13","101T13","101T13","101T13", "101T15"],
+        'rescue': [1, 3, 2, 4, 5, 6, 7],
+        'numRescue' : ["101T09R1","101T12R1", "101T13R1","101T13R2","101T13R3","101T13R4", "101T15R1"],
     })
 
     # Result
     resultDF = addNumRescueHerpeto(df, "number")
+    resultDF = resultDF.reset_index(drop=True)
 
     print(resultDF)
     print(expected)
