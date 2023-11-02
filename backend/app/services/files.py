@@ -330,12 +330,12 @@ def addNumRescueHerpeto(
     df = df.sort_values(by=[col])
 
     newCol = []
-    
+
     rowNumber: int = 0
 
     while rowNumber < len(df)-1:
         if df[col].iloc[rowNumber] == df[col].iloc[rowNumber+1]:
-            j = rowNumber 
+            j = rowNumber
             listNum = []
             while j < len(df)-1 and df[col].iloc[j] == df[col].iloc[j+1]:
                 listNum.append(df[col].iloc[j])
@@ -355,13 +355,11 @@ def addNumRescueHerpeto(
         else:
             newCol.append(df[col].iloc[rowNumber]+"R1")
             rowNumber += 1
-    if rowNumber < len(df): 
+    if rowNumber < len(df):
         newCol.append(df[col].iloc[rowNumber]+"R1")
-    
+
     df["numRescue"] = newCol
     return df
-    
-   
 
 
 

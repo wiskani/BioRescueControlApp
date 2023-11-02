@@ -326,6 +326,7 @@ async def upload_rescue_herpetofauna(
         df, ageGroupListWithOutName = await addAgeGroupIdByName(db, df, "clase_etaria")
         df = await addTransectIdByNumber(db, df, "num_t")
         df = addNumRescueHerpeto(df, "num_t" )
+        df = remplace_nan_with_none(df)
 
         numberExistList = []
 
@@ -346,11 +347,10 @@ async def upload_rescue_herpetofauna(
                 except Exception as e:
                     raise HTTPException(
                         status_code=status.HTTP_400_BAD_REQUEST,
-                        detail=f"Error: {e}",
+                        detail=f"Error: {e} in row {row['numRescue']}",
                     )
                 if await get_rescue_herpetofauna_by_number(db, new_rescue_herpetofauna.number):
                     numberExistList.append(new_rescue_herpetofauna.number)
-                    continue
                 else:
                     await create_rescue_herpetofauna (db, new_rescue_herpetofauna)
         return JSONResponse(

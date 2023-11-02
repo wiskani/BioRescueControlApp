@@ -215,7 +215,7 @@ CRUD FOR RESCUE HERPETOFAUNA
 """
 
 #Get if rescue herpetofauna exists by number
-async def get_rescue_herpetofauna_by_number(db: AsyncSession, number:int ) -> RescueHerpetofauna | None:
+async def get_rescue_herpetofauna_by_number(db: AsyncSession, number:str ) -> RescueHerpetofauna | None:
     result = await db.execute(select(RescueHerpetofauna).where(RescueHerpetofauna.number == number))
     return result.scalars().first()
 
