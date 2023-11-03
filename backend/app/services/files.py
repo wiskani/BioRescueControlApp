@@ -8,7 +8,12 @@ from app.services.system_coordinate import utm_to_latlong
 from app.schemas.services import  UTMData
 
 from app.crud.species import get_specie_by_name
-from app.crud.rescue_herpetofauna import get_mark_herpetofauna_by_number, get_age_group_name, get_transect_herpetofauna_by_number
+from app.crud.rescue_herpetofauna import (
+    get_mark_herpetofauna_by_number,
+    get_age_group_name,
+    get_transect_herpetofauna_by_number,
+    get_rescue_herpetofauna_by_number
+    )
 
 
 def convert_to_datetime(df:pd.DataFrame, cols:List[str]) -> pd.DataFrame:
@@ -361,5 +366,57 @@ def addNumRescueHerpeto(
     df["numRescue"] = newCol
     return df
 
+def addBooleanByCheck(
+        df: pd.DataFrame,
+        col: str,
+):
+    """
+    Add a column with boolean values if the column is empty or not
+    empty = False
+    not empty = True
 
+    Parameters
+    ----------
+    df: pandas dataframe
+    col: str with name of column with check
+    """
+    df = remplace_nan_with_none(df)
+    newCol = []
+
+    for _, row in df.iterrows():
+        if row[col] == "None":
+            newCol.append(False)
+        else:
+            newCol.append(True)
+    df[f"boolean_{col}"] = newCol
+    return df
+
+async def addRescueIdByNumber(
+        db: AsyncSession,
+        df: pd.DataFrame,
+        col: str,
+) -> pd.DataFrame:
+    """
+    Adds the id of a rescue to a dataframe
+
+    Parameters
+    ----------
+    db : AsyncSession
+    df : pandas dataframe
+    col : str with name of column with rescue number
+    """
+    listRescueNumberRow: list[tuple[int, str]] = []
+    colunmId: list[int | None] = []
+
+    for _, row in df.iterrows():
+        #conver row[col] to int
+        rescue = await get_rescue_herpetofauna_by_number(db, row[col])
+        if rescue is None:
+            raise Exception(f"Error get rescue id in row {row[0]}")
+        else:
+            colunmId.append(rescue.id)
+
+    df['idRescue'] = colunmId
+
+    return df
 

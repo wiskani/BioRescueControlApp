@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from httpx import Response, AsyncClient
 import pytest
 from app.schemas.services import UTMData
@@ -13,7 +14,9 @@ from app.services.files import (
     addAgeGroupIdByName,
     addBooleanByGender,
     addTransectIdByNumber,
-    addNumRescueHerpeto
+    addNumRescueHerpeto,
+    addBooleanByCheck,
+    addRescueIdByNumber
 )
 
 from app.tests.conftest import *
@@ -306,8 +309,64 @@ def test_addNumRescueHerpeto() -> None:
     resultDF = addNumRescueHerpeto(df, "number")
     resultDF = resultDF.reset_index(drop=True)
 
-    print(resultDF)
-    print(expected)
+    # Test
+    assert resultDF.equals(expected)
+
+# Test for addBooleanByCheck function
+def test_addBooleanByCheck() -> None:
+
+
+    #Create DF with NaN values for Test
+    data = {
+        'number' : [1, 2, 3, 4, 5, 6, 7],
+        'check': ["prueba", "bueno", None, np.nan, "bueno", "prueba", None],
+    }
+
+    df = pd.DataFrame(data)
+
+    # Expected result
+    expected = pd.DataFrame({
+        'number' : [1, 2, 3, 4, 5, 6, 7],
+        'check': ["prueba", "bueno", "None", "None" , "bueno", "prueba", "None"],
+        'boolean_check': [True, True, False, False, True, True, False],
+    })
+
+    # Result
+    resultDF = addBooleanByCheck(df, "check")
 
     # Test
     assert resultDF.equals(expected)
+
+# Test for addRescueIdByNumber function
+@pytest.mark.asyncio
+async def test_addRescueIdByNumber(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+):
+    id, number = await create_rescue_herpetofaunaWithNumber(async_client)
+    id2, number2 = await create_rescue_herpetofaunaWithNumber(async_client)
+    id3, number3 = await create_rescue_herpetofaunaWithNumber(async_client)
+    col: str = "rescue"
+
+    #Create DF for Test
+    data = {
+        'number' : [1, 2, 3],
+        'rescue': [number, number2, number3],
+    }
+
+    df = pd.DataFrame(data)
+
+    # Expected result
+    expected = pd.DataFrame({
+        'number' : [1, 2, 3],
+        'rescue': [number, number2, number3],
+        'idRescue': [id, id2, id3],
+    })
+
+    # Result
+    resultDF = await addRescueIdByNumber(async_session, df, col)
+
+    # Test
+    assert resultDF.equals(expected)
+
+

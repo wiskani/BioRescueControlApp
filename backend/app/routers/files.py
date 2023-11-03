@@ -34,7 +34,9 @@ from app.services.files import (
     addMarkIdByNumber,
     addAgeGroupIdByName,
     addTransectIdByNumber,
-    addNumRescueHerpeto
+    addNumRescueHerpeto,
+    addBooleanByCheck,
+    addRescueIdByNumber
 )
 
 router = APIRouter()
@@ -392,6 +394,9 @@ async def upload_mark_herpetofauna(
             'date',
         ]
         df = convert_to_datetime(df, date_columns)
+        df = addBooleanByCheck(df, "is_photo")
+        df = addBooleanByCheck(df, "is_elastomer")
+        df = await addRescueIdByNumber(db, df, "number_rescue")
 
         numberExistList = []
 
@@ -399,12 +404,13 @@ async def upload_mark_herpetofauna(
             try:
                 new_mark_herpetofauna = MarkHerpetofaunaCreate(
                     date=row['date'],
-                    number=row['num'],
-                    code=row['code'],
+                    number=row['number'],
+                    code=row['cod'],
                     LHC=row['LHC'],
-                    weight=row['weight'],
-                    is_photo_mark=row['is_photo_mark'],
-                    is_elastomer_mark=row['is_elastomer_mark'],
+                    weight=row['peso'],
+                    is_photo_mark=row['boolean_is_photo'],
+                    is_elastomer_mark=row['boolean_is_elastomer'],
+                    rescue_herpetofauna_id=row['idRescue'],
                 )
             except Exception as e:
                 raise HTTPException(

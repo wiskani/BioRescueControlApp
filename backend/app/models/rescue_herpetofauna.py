@@ -44,7 +44,7 @@ class MarkHerpetofauna (_database.Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     number: Mapped[int] = mapped_column(Integer, nullable=False, unique=True)
-    code: Mapped[str] = mapped_column(String(50), nullable=True, unique=True)
+    code: Mapped[str] = mapped_column(String(50), nullable=True, unique=False)
     LHC : Mapped[float] = mapped_column(Float, nullable=True)
     weight: Mapped[float] = mapped_column(Float, nullable=True)
     is_photo_mark: Mapped[bool] = mapped_column(Boolean, default=False)
