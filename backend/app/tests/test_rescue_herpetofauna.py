@@ -949,3 +949,395 @@ async def test_delete_rescue_herpetofauna(
     data = response.json()
     assert data["detail"] == "Rescue herpetofauna deleted successfully"
 
+"""
+TESTS FOR CRUD TRANSECT HERPETOFAUNA TRANSLOCATION
+"""
+
+#test for create transect herpetofauna translocation
+@pytest.mark.asyncio
+async def test_create_transect_herpetofauna_translocation(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+
+    code= random_string()
+    
+    response: Response = await async_client.post(
+        "/api/transect_herpetofauna_translocation", json={
+            "cod": code,
+            "date": "2021-10-10T00:00:00",
+            "latitude_in": 1.5,
+            "longitude_in": 1.5,
+            "altitude_in": 15,
+            "latitude_out": 1.5,
+            "longitude_out": 1.5,
+            "altitude_out": 15,
+        },
+    )
+
+    data = response.json()
+
+    print(f'La respuesta es {data}')
+
+    assert response.status_code == 201
+    assert "id" in data
+    assert data["cod"] == code
+    assert data["latitude_in"] == 1.5
+    assert data["longitude_in"] == 1.5
+    assert data["altitude_in"] == 15
+    assert data["latitude_out"] == 1.5
+    assert data["longitude_out"] == 1.5
+    assert data["altitude_out"] == 15
+
+#Test for get all transect herpetofauna translocation
+@pytest.mark.asyncio
+async def test_get_all_transect_herpetofauna_translocation(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    
+    #Create two transect herpetofauna translocation
+    code1 = random_string()
+    code2 = random_string() 
+
+    response: Response = await async_client.post(
+        "/api/transect_herpetofauna_translocation", json={
+            "cod": code1,
+            "date": "2021-10-10T00:00:00",
+            "latitude_in": 1.5,
+            "longitude_in": 1.5,
+            "altitude_in": 15,
+            "latitude_out": 1.5,
+            "longitude_out": 1.5,
+            "altitude_out": 15,
+        },
+    )
+
+    assert response.status_code == 201
+
+    response: Response = await async_client.post(
+        "/api/transect_herpetofauna_translocation", json={
+            "cod": code2,
+            "date": "2021-10-10T00:00:00",
+            "latitude_in": 1.5,
+            "longitude_in": 1.5,
+            "altitude_in": 15,
+            "latitude_out": 1.5,
+            "longitude_out": 1.5,
+            "altitude_out": 15,
+        },
+    )
+    
+    assert response.status_code == 201
+
+    #Get two transect herpetofauna translocation
+    response: Response = await async_client.get(
+        "/api/transect_herpetofauna_translocation",
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 2
+
+#Test for get transect herpetofauna translocation by id
+@pytest.mark.asyncio
+async def test_get_transect_herpetofauna_translocation_by_id(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    #Create transect herpetofauna translocation
+    code = random_string()
+
+    response: Response = await async_client.post(
+        "/api/transect_herpetofauna_translocation", json={
+            "cod": code,
+            "date": "2021-10-10T00:00:00",
+            "latitude_in": 1.5,
+            "longitude_in": 1.5,
+            "altitude_in": 15,
+            "latitude_out": 1.5,
+            "longitude_out": 1.5,
+            "altitude_out": 15,
+        },
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+    transect_herpetofauna_translocation_id = data["id"]
+
+    #Get transect herpetofauna translocation by id
+    response: Response = await async_client.get(
+        f"/api/transect_herpetofauna_translocation/{transect_herpetofauna_translocation_id}",
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["cod"] == code
+
+#Test for update transect herpetofauna translocation
+@pytest.mark.asyncio
+async def test_update_transect_herpetofauna_translocation(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    
+    #Create transect herpetofauna translocation
+    code = random_string()
+
+    response: Response = await async_client.post(
+        "/api/transect_herpetofauna_translocation", json={
+            "cod": code,
+            "date": "2021-10-10T00:00:00",
+            "latitude_in": 1.5,
+            "longitude_in": 1.5,
+            "altitude_in": 15,
+            "latitude_out": 1.5,
+            "longitude_out": 1.5,
+            "altitude_out": 15,
+        },
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+    transect_herpetofauna_translocation_id = data["id"]
+
+    #Update transect herpetofauna translocation
+
+    code_update = random_string()
+
+    response: Response = await async_client.put(
+        f"/api/transect_herpetofauna_translocation/{transect_herpetofauna_translocation_id}", json={
+            "cod": code_update,
+            "date": "2021-10-10T00:00:00",
+            "latitude_in": 1.5,
+            "longitude_in": 1.5,
+            "altitude_in": 15,
+            "latitude_out": 1.5,
+            "longitude_out": 1.5,
+            "altitude_out": 15,
+        },
+    )
+
+    data = response.json()
+    print(f'La respuesta es {data}')
+    assert response.status_code == 200
+    assert data["cod"] == code_update
+
+#Test for delete transect herpetofauna translocation
+@pytest.mark.asyncio
+async def test_delete_transect_herpetofauna_translocation(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    #Create transect herpetofauna translocation
+    code = random_string()
+
+    response: Response = await async_client.post(
+        "/api/transect_herpetofauna_translocation", json={
+            "cod": code,
+            "date": "2021-10-10T00:00:00",
+            "latitude_in": 1.5,
+            "longitude_in": 1.5,
+            "altitude_in": 15,
+            "latitude_out": 1.5,
+            "longitude_out": 1.5,
+            "altitude_out": 15,
+        },
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+    transect_herpetofauna_translocation_id = data["id"]
+
+    #delete transect herpetofauna translocation
+    response: Response = await async_client.delete(
+        f"/api/transect_herpetofauna_translocation/{transect_herpetofauna_translocation_id}",
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["detail"] == "Transect herpetofauna translocation deleted successfully"
+
+"""	
+TESTS FOR CRUD POINT HERPETOFAUNA TRANSLOCATION
+"""
+
+#Test for create point herpetofauna translocation
+@pytest.mark.asyncio
+async def test_create_point_herpetofauna_translocation(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    
+        code= random_string()
+        
+        response: Response = await async_client.post(
+            "/api/point_herpetofauna_translocation", json={
+                "cod": code,
+                "date": "2021-10-10T00:00:00",
+                "latitude": 1.5,
+                "longitude": 1.5,
+                "altitude": 15,
+            },
+        )
+    
+        data = response.json()
+    
+        print(f'La respuesta es {data}')
+    
+        assert response.status_code == 201
+        assert "id" in data
+        assert data["cod"] == code
+        assert data["latitude"] == 1.5
+        assert data["longitude"] == 1.5
+        assert data["altitude"] == 15
+
+#Test for get all point herpetofauna translocation
+@pytest.mark.asyncio
+async def test_get_all_point_herpetofauna_translocation(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    # create two point herpetofauna translocation
+    code1 = random_string()
+    code2 = random_string()
+
+    response: Response = await async_client.post(
+        "/api/point_herpetofauna_translocation", json={
+            "cod": code1,
+            "date": "2021-10-10T00:00:00",
+            "latitude": 1.5,
+            "longitude": 1.5,
+            "altitude": 15,
+        },
+    )
+    assert response.status_code == 201
+
+    response: Response = await async_client.post(
+        "/api/point_herpetofauna_translocation", json={
+            "cod": code2,
+            "date": "2021-10-10T00:00:00",
+            "latitude": 1.5,
+            "longitude": 1.5,
+            "altitude": 15,
+        },
+    )
+    assert response.status_code == 201
+
+    #Get two point herpetofauna translocation
+    response: Response = await async_client.get(
+        "/api/point_herpetofauna_translocation",
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 2
+
+#Test for get point herpetofauna translocation by id
+@pytest.mark.asyncio
+async def test_get_point_herpetofauna_translocation_by_id(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    #Create point herpetofauna translocation
+    code = random_string()
+
+    response: Response = await async_client.post(
+        "/api/point_herpetofauna_translocation", json={
+            "cod": code,
+            "date": "2021-10-10T00:00:00",
+            "latitude": 1.5,
+            "longitude": 1.5,
+            "altitude": 15,
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    point_herpetofauna_translocation_id = data["id"]
+
+    #Get point herpetofauna translocation by id
+    response: Response = await async_client.get(
+        f"/api/point_herpetofauna_translocation/{point_herpetofauna_translocation_id}",
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["cod"] == code
+
+#Update point herpetofauna translocation
+@pytest.mark.asyncio
+async def test_update_point_herpetofauna_translocation(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    #Create point herpetofauna translocation
+    code = random_string()
+
+    response: Response = await async_client.post(
+        "/api/point_herpetofauna_translocation", json={
+            "cod": code,
+            "date": "2021-10-10T00:00:00",
+            "latitude": 1.5,
+            "longitude": 1.5,
+            "altitude": 15,
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    point_herpetofauna_translocation_id = data["id"]
+
+    #Update point herpetofauna translocation
+    code_update = random_string()
+
+    response: Response = await async_client.put(
+        f"/api/point_herpetofauna_translocation/{point_herpetofauna_translocation_id}", json={
+            "cod": code_update,
+            "date": "2021-10-10T00:00:00",
+            "latitude": 1.5,
+            "longitude": 1.5,
+            "altitude": 15,
+        },
+    )
+    data = response.json()
+    assert response.status_code == 200
+    assert data["cod"] == code_update
+
+#Test delete point herpetofauna translocation
+@pytest.mark.asyncio
+async def test_delete_point_herpetofauna_translocation(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    #Create point herpetofauna translocation
+    code = random_string()
+
+    response: Response = await async_client.post(
+        "/api/point_herpetofauna_translocation", json={
+            "cod": code,
+            "date": "2021-10-10T00:00:00",
+            "latitude": 1.5,
+            "longitude": 1.5,
+            "altitude": 15,
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    point_herpetofauna_translocation_id = data["id"]
+
+    #Delete point herpetofauna translocation
+    response: Response = await async_client.delete(
+        f"/api/point_herpetofauna_translocation/{point_herpetofauna_translocation_id}",
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["detail"] == "Point herpetofauna translocation deleted successfully"
+
+"""
+TESTS FOR CRUD TRANLOCATION HERPETOFAUNA
+"""	
+
+#Test for create translocation herpetofauna
+@pytest.mark.asyncio   
+async def test_create_translocation_herpetofauna(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+
+
+
+

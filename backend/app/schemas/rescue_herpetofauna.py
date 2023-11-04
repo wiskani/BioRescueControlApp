@@ -72,7 +72,55 @@ class RescueHerpetofaunaResponse(RescueHerpetofaunaBase):
     class Config:
         orm_mode: bool = True
 
+class TransectHerpetofaunaTranslocationBase(BaseModel):
+    cod: str = Field(..., examples=[ "1" ])
+    date: datetime = Field(..., examples=[datetime.now()])
+    latitude_in: float = Field(..., examples=[1.0])
+    longitude_in: float = Field(..., examples=[1.0])
+    altitude_in: int = Field(..., examples=[ 1 ])
+    latitude_out: float = Field(..., examples=[1.0])
+    longitude_out: float = Field(..., examples=[1.0])
+    altitude_out: int = Field(..., examples=[ 1 ])
+    class Config:
+        orm_mode: bool = True
 
+class TransectHerpetofaunaTranslocationCreate(TransectHerpetofaunaTranslocationBase):
+    pass
 
+class TransectHerpetofaunaTranslocationResponse(TransectHerpetofaunaTranslocationBase):
+    id: int
+    class Config:
+        orm_mode: bool = True
 
+class PointHerpetofaunaTranslocationBase(BaseModel):
+    cod: str = Field(..., examples=[ "1" ])
+    date: datetime = Field(..., examples=[datetime.now()])
+    latitude: float = Field(..., examples=[1.0])
+    longitude: float = Field(..., examples=[1.0])
+    altitude: int = Field(..., examples=[ 1 ])
+    class Config:
+        orm_mode: bool = True
 
+class PointHerpetofaunaTranslocationCreate(PointHerpetofaunaTranslocationBase):
+    pass
+
+class PointHerpetofaunaTranslocationResponse(PointHerpetofaunaTranslocationBase):
+    id: int
+    class Config:
+        orm_mode: bool = True
+
+class TranslocationHerpetofaunaBase(BaseModel):
+    cod: str = Field(..., examples=[ "1" ])
+    transect_herpetofauna_translocation_id: int|None = Field(examples=[ 1 ])
+    point_rescue_herpetofauna_translocation_id: int|None = Field(examples=[ 1 ])
+    specie_id: int = Field(..., examples=[ 1 ])
+    class Config:
+        orm_mode: bool = True
+
+class TranslocationHerpetofaunaCreate(TranslocationHerpetofaunaBase):
+    pass
+
+class TranslocationHerpetofaunaResponse(TranslocationHerpetofaunaBase):
+    id: int
+    class Config:
+        orm_mode: bool = True

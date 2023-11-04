@@ -20,13 +20,30 @@ from app.schemas.rescue_herpetofauna import (
     # RescueHerpetofauna
     RescueHerpetofaunaBase,
     RescueHerpetofaunaCreate,
+
+    # TransectHerpetofaunaTranslocation
+    TransectHerpetofaunaTranslocationBase,
+    TransectHerpetofaunaTranslocationCreate,
+
+    # PointTransectHerpetofauna
+    PointHerpetofaunaTranslocationBase,
+    PointHerpetofaunaTranslocationCreate,
+
+
+    # TranslocationHerpetofauna
+    TranslocationHerpetofaunaBase,
+    TranslocationHerpetofaunaCreate,
+
 )
 
 from app.models.rescue_herpetofauna import (
     AgeGroup,
     MarkHerpetofauna,
     TransectHerpetofauna,
-    RescueHerpetofauna
+    RescueHerpetofauna,
+    TransectHerpetofaunaTranslocation,
+    PointHerpetofaunaTranslocation,
+    TranslocationHerpetofauna,
 )
 
 # Purpose: CRUD operations for RescueHerpetofauna
@@ -267,6 +284,217 @@ async def delete_rescue_herpetofauna(db: AsyncSession, rescue_herpetofauna_id: i
     await db.execute(delete(RescueHerpetofauna).where(RescueHerpetofauna.id == rescue_herpetofauna_id))
     await db.commit()
     return rescue_herpetofauna_db
+
+"""
+CRUD FOR TRANSECT HERPETOFAUNA TRANSLOCATION
+"""
+
+#Get if transect herpetofauna translocation exists by cod
+async def get_transect_herpetofauna_translocation_by_cod(db: AsyncSession, cod:str ) -> TransectHerpetofaunaTranslocation | None:
+    result = await db.execute(select(TransectHerpetofaunaTranslocation).where(TransectHerpetofaunaTranslocation.cod == cod))
+    return result.scalars().first()
+
+#Get transect herpetofauna translocation by id
+async def get_transect_herpetofauna_translocation_by_id(db: AsyncSession, id: int) -> TransectHerpetofaunaTranslocation | None:
+    result = await db.execute(select(TransectHerpetofaunaTranslocation).where(TransectHerpetofaunaTranslocation.id == id))
+    return result.scalars().first()
+
+#Get all transect herpetofauna translocation
+async def get_all_transect_herpetofauna_translocation(db: AsyncSession) -> List[TransectHerpetofaunaTranslocation]:
+    transect_herpetofauna_translocation_db = await db.execute(select(TransectHerpetofaunaTranslocation))
+    return list(transect_herpetofauna_translocation_db.scalars().all())
+
+#Create transect herpetofauna translocation
+async def create_transect_herpetofauna_translocation(
+        db: AsyncSession,
+        transect_herpetofauna_translocation: TransectHerpetofaunaTranslocationCreate
+        ) -> TransectHerpetofaunaTranslocation:
+    transect_herpetofauna_translocation_db = TransectHerpetofaunaTranslocation(
+        cod = transect_herpetofauna_translocation.cod,
+        date = transect_herpetofauna_translocation.date,
+        latitude_in = transect_herpetofauna_translocation.latitude_in,
+        longitude_in = transect_herpetofauna_translocation.longitude_in,
+        altitude_in = transect_herpetofauna_translocation.altitude_in,
+        latitude_out = transect_herpetofauna_translocation.latitude_out,
+        longitude_out = transect_herpetofauna_translocation.longitude_out,
+        altitude_out = transect_herpetofauna_translocation.altitude_out,
+    )
+    db.add(transect_herpetofauna_translocation_db)
+    await db.commit()
+    await db.refresh(transect_herpetofauna_translocation_db)
+    return transect_herpetofauna_translocation_db
+
+#Update transect herpetofauna translocation
+async def update_transect_herpetofauna_translocation(
+        db: AsyncSession,
+        transect_herpetofauna_translocation_id: int ,
+        transect_herpetofauna_translocation_update: TransectHerpetofaunaTranslocationBase
+        ) -> TransectHerpetofaunaTranslocation:
+    result = await db.execute(select(TransectHerpetofaunaTranslocation).where(TransectHerpetofaunaTranslocation.id == transect_herpetofauna_translocation_id))
+    transect_herpetofauna_translocation_db = result.scalars().first()
+    if not transect_herpetofauna_translocation_db:
+        raise HTTPException(status_code=404, detail="Transect herpetofauna translocation not found")
+    transect_herpetofauna_translocation_db.cod = transect_herpetofauna_translocation_update.cod
+    transect_herpetofauna_translocation_db.date = transect_herpetofauna_translocation_update.date
+    transect_herpetofauna_translocation_db.latitude_in = transect_herpetofauna_translocation_update.latitude_in
+    transect_herpetofauna_translocation_db.longitude_in = transect_herpetofauna_translocation_update.longitude_in
+    transect_herpetofauna_translocation_db.altitude_in = transect_herpetofauna_translocation_update.altitude_in
+    transect_herpetofauna_translocation_db.latitude_out = transect_herpetofauna_translocation_update.latitude_out
+    transect_herpetofauna_translocation_db.longitude_out = transect_herpetofauna_translocation_update.longitude_out
+    transect_herpetofauna_translocation_db.altitude_out = transect_herpetofauna_translocation_update.altitude_out
+    await db.commit()
+    await db.refresh(transect_herpetofauna_translocation_db)
+    return transect_herpetofauna_translocation_db
+
+#Delete transect herpetofauna translocation
+async def delete_transect_herpetofauna_translocation(db: AsyncSession, transect_herpetofauna_translocation_id: int) -> TransectHerpetofaunaTranslocation:
+    result = await db.execute(select(TransectHerpetofaunaTranslocation).where(TransectHerpetofaunaTranslocation.id == transect_herpetofauna_translocation_id))
+    transect_herpetofauna_translocation_db = result.scalars().first()
+    if not transect_herpetofauna_translocation_db:
+        raise HTTPException(status_code=404, detail="Transect herpetofauna translocation not found")
+    await db.execute(delete(TransectHerpetofaunaTranslocation).where(TransectHerpetofaunaTranslocation.id == transect_herpetofauna_translocation_id))
+    await db.commit()
+    return transect_herpetofauna_translocation_db
+
+"""	
+CRUD FOR POINT HERPETOFAUNA TRANSLOCATION
+"""
+
+#Get if point herpetofauna translocation exists by cod
+async def get_point_herpetofauna_translocation_by_cod(db: AsyncSession, cod:str ) -> PointHerpetofaunaTranslocation | None:
+    result = await db.execute(select(PointHerpetofaunaTranslocation).where(PointHerpetofaunaTranslocation.cod == cod))
+    return result.scalars().first()
+
+#Get point herpetofauna translocation by id
+async def get_point_herpetofauna_translocation_by_id(db: AsyncSession, id: int) -> PointHerpetofaunaTranslocation | None:
+    result = await db.execute(select(PointHerpetofaunaTranslocation).where(PointHerpetofaunaTranslocation.id == id))
+    return result.scalars().first()
+
+#Get all point herpetofauna translocation
+async def get_all_point_herpetofauna_translocation(db: AsyncSession) -> List[PointHerpetofaunaTranslocation]:
+    point_herpetofauna_translocation_db = await db.execute(select(PointHerpetofaunaTranslocation))
+    return list(point_herpetofauna_translocation_db.scalars().all())
+
+#Create point herpetofauna translocation
+async def create_point_herpetofauna_translocation(
+    db: AsyncSession,
+    point_herpetofauna_translocation: PointHerpetofaunaTranslocationCreate 
+    ) -> PointHerpetofaunaTranslocation:
+    point_herpetofauna_translocation_db = PointHerpetofaunaTranslocation(
+        cod = point_herpetofauna_translocation.cod,
+        date = point_herpetofauna_translocation.date,
+        latitude = point_herpetofauna_translocation.latitude,
+        longitude = point_herpetofauna_translocation.longitude,
+        altitude = point_herpetofauna_translocation.altitude,
+    )
+    db.add(point_herpetofauna_translocation_db)
+    await db.commit()
+    await db.refresh(point_herpetofauna_translocation_db)
+    return point_herpetofauna_translocation_db
+
+#Update point herpetofauna translocation
+async def update_point_herpetofauna_translocation(
+        db: AsyncSession,
+        point_herpetofauna_translocation_id: int ,
+        point_herpetofauna_translocation_update: PointHerpetofaunaTranslocationBase 
+        ) -> PointHerpetofaunaTranslocation:
+        result = await db.execute(select(PointHerpetofaunaTranslocation).where(PointHerpetofaunaTranslocation.id == point_herpetofauna_translocation_id))
+        point_herpetofauna_translocation_db = result.scalars().first()
+        if not point_herpetofauna_translocation_db:
+            raise HTTPException(status_code=404, detail="Point herpetofauna translocation not found")
+        point_herpetofauna_translocation_db.cod = point_herpetofauna_translocation_update.cod
+        point_herpetofauna_translocation_db.date = point_herpetofauna_translocation_update.date
+        point_herpetofauna_translocation_db.latitude = point_herpetofauna_translocation_update.latitude
+        point_herpetofauna_translocation_db.longitude = point_herpetofauna_translocation_update.longitude
+        point_herpetofauna_translocation_db.altitude = point_herpetofauna_translocation_update.altitude
+        await db.commit()
+        await db.refresh(point_herpetofauna_translocation_db)
+        return point_herpetofauna_translocation_db
+
+#Delete point herpetofauna translocation
+async def delete_point_herpetofauna_translocation(
+        db: AsyncSession,
+        point_herpetofauna_translocation_id: int
+        ) -> PointHerpetofaunaTranslocation:
+        result = await db.execute(select(PointHerpetofaunaTranslocation).where(PointHerpetofaunaTranslocation.id == point_herpetofauna_translocation_id))
+        point_herpetofauna_translocation_db = result.scalars().first()
+        if not point_herpetofauna_translocation_db:
+            raise HTTPException(status_code=404, detail="Point herpetofauna translocation not found")
+        await db.execute(delete(PointHerpetofaunaTranslocation).where(PointHerpetofaunaTranslocation.id == point_herpetofauna_translocation_id))
+        await db.commit()
+        return point_herpetofauna_translocation_db
+
+"""
+CRUD FOR TRANSLOCATION HERPETOFAUNA
+"""
+
+#Get if translocation herpetofauna exists by cod
+async def get_translocation_herpetofauna_by_cod(db: AsyncSession, cod:str ) -> TranslocationHerpetofauna | None:
+    result = await db.execute(select(TranslocationHerpetofauna).where(TranslocationHerpetofauna.cod == cod))
+    return result.scalars().first()
+
+#Get translocation herpetofauna by id
+async def get_translocation_herpetofauna_by_id(db: AsyncSession, id: int) -> TranslocationHerpetofauna | None:
+    result = await db.execute(select(TranslocationHerpetofauna).where(TranslocationHerpetofauna.id == id))
+    return result.scalars().first()
+
+#Get all translocation herpetofauna
+async def get_all_translocation_herpetofauna(db: AsyncSession) -> List[TranslocationHerpetofauna]:
+    return await db.execute(select(TranslocationHerpetofauna)).scalars().all()
+
+#Create translocation herpetofauna
+async def create_translocation_herpetofauna(
+        db: AsyncSession,
+        translocation_herpetofauna: TranslocationHerpetofauna,
+        ) -> TranslocationHerpetofauna:
+        translocation_herpetofauna_db = TranslocationHerpetofauna(
+            cod = translocation_herpetofauna.cod,
+            transect_herpetofauna_translocation_id = translocation_herpetofauna.transect_herpetofauna_translocation_id,
+            point_rescue_herpetofauna_translocation_id = translocation_herpetofauna.point_rescue_herpetofauna_translocation_id,
+            specie_id = translocation_herpetofauna.specie_id,
+        )
+        db.add(translocation_herpetofauna_db)
+        await db.commit()
+        await db.refresh(translocation_herpetofauna_db)
+        return translocation_herpetofauna_db
+
+#Update translocation herpetofauna
+async def update_translocation_herpetofauna(
+        db: AsyncSession,
+        translocation_herpetofauna_id: int ,
+        translocation_herpetofauna_update: TranslocationHerpetofaunaBase
+        ) -> TranslocationHerpetofauna:
+    result = await db.execute(select(TranslocationHerpetofauna).where(TranslocationHerpetofauna.id == translocation_herpetofauna_id))
+    translocation_herpetofauna_db = result.scalars().first()
+    if not translocation_herpetofauna_db:
+        raise HTTPException(status_code=404, detail="Translocation herpetofauna not found")
+    translocation_herpetofauna_db.cod = translocation_herpetofauna_update.cod
+    translocation_herpetofauna_db.transect_herpetofauna_translocation_id = translocation_herpetofauna_update.transect_herpetofauna_translocation_id
+    translocation_herpetofauna_db.point_rescue_herpetofauna_translocation_id = translocation_herpetofauna_update.point_rescue_herpetofauna_translocation_id 
+    translocation_herpetofauna_db.specie_id = translocation_herpetofauna_update.specie_id
+    await db.commit()
+    await db.refresh(translocation_herpetofauna_db)
+    return translocation_herpetofauna_db
+
+#Delete translocation herpetofauna
+async def delete_translocation_herpetofauna(
+        db: AsyncSession,
+        translocation_herpetofauna_id: int
+        ) -> TranslocationHerpetofauna:
+    result = await db.execute(select(TranslocationHerpetofauna).where(TranslocationHerpetofauna.id == translocation_herpetofauna_id))
+    translocation_herpetofauna_db = result.scalars().first()
+    if not translocation_herpetofauna_db:
+        raise HTTPException(status_code=404, detail="Translocation herpetofauna not found")
+    await db.execute(delete(TranslocationHerpetofauna).where(TranslocationHerpetofauna.id == translocation_herpetofauna_id))
+    await db.commit()
+    return translocation_herpetofauna_db
+
+
+
+
+
+
+
 
 
 

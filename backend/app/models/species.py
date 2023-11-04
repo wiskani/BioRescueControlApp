@@ -45,6 +45,9 @@ class Specie(_database.Base):
     # Relationships with rescue_herpetofauna
     rescue_herpetofauna = relationship("RescueHerpetofauna", back_populates="specie")
 
+    # Relationships with translocation_herpetofauna
+    translocation_herpetofauna = relationship("TranslocationHerpetofauna", back_populates="specie")
+
 
 
 class Genus(_database.Base):
