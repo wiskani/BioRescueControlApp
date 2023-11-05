@@ -17,7 +17,9 @@ from app.crud.rescue_herpetofauna import(
     create_mark_herpetofauna,
     get_mark_herpetofauna_by_number,
     create_transect_herpetofauna_translocation,
-    get_transect_herpetofauna_translocation_by_cod
+    get_transect_herpetofauna_translocation_by_cod,
+    create_point_herpetofauna_translocation,
+    get_point_herpetofauna_translocation_by_cod
 )
 
 #Schemas
@@ -26,7 +28,8 @@ from app.schemas.rescue_herpetofauna import (
     TransectHerpetofaunaCreate,
     RescueHerpetofaunaCreate,
     MarkHerpetofaunaCreate,
-    TransectHerpetofaunaTranslocationCreate
+    TransectHerpetofaunaTranslocationCreate,
+    PointHerpetofaunaTranslocationCreate
 )
 from app.schemas.towers import TowerBase
 from app.schemas.services import UTMData
@@ -443,6 +446,90 @@ async def upload_mark_herpetofauna(
 @router.post(
     path="/upload/transect_herpetofauna_translocation",
     summary="Upload transect herpetofauna translocation excel file",
+    response_model= None,
+    tags=["Upload"],
+)
+async def upload_transect_herpetofauna_translocatio(
+    file: UploadFile=File(...),
+    db: AsyncSession = Depends(get_db),
+    permissions: str = Depends(PermissonsChecker(["admin"])),
+) -> JSONResponse|HTTPException:
+    if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
+        df = pd.read_excel(file.file)
+
+        # Replace NaN with None
+        df = remplace_nan_with_none(df)
+
+        # Convert date columns to datetime objects
+        date_columns = [
+            'date',
+        ]
+        df = convert_to_datetime(df, date_columns)
+
+        #change coordinate system
+        UTM_columns_in = {
+            'easting': 'este_in',
+            'northing': 'sur_in',
+            'zone_number': 'zona',
+            'zone_letter': 'zona_letra',
+        }
+        UTM_columns_out = {
+            'easting': 'este_out',
+            'northing': 'sur_out',
+            'zone_number': 'zona',
+            'zone_letter': 'zona_letra',
+        }
+
+        #Names of columns geodata columns to in transect
+        nameLatitude_in = 'latitude_in'
+        nameLongitude_in = 'longitude_in'
+
+        #Names of columns geodata columns to out transect
+        nameLatitude_out = 'latitude_out'
+        nameLongitude_out = 'longitude_out'
+
+        # Insert columns lat y lon to df
+        df = insertGEOData(df, UTM_columns_in, nameLatitude_in, nameLongitude_in)
+        df = insertGEOData(df, UTM_columns_out, nameLatitude_out, nameLongitude_out)
+
+        numberExistList = []
+
+        for _, row in df.iterrows():
+            try:
+                new_transect_herpetofauna_translocation = TransectHerpetofaunaTranslocationCreate(
+                    cod = row["cod"],
+                    date = row["date"],
+                    latitude_in= row["latitude_in"],
+                    longitude_in= row["longitude_in"],
+                    altitude_in= row["altitud_in"],
+                    latitude_out= row["latitude_out"],
+                    longitude_out= row["longitude_out"],
+                    altitude_out= row["altitud_out"]
+                )
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Error: {e}",
+                )
+            if await get_transect_herpetofauna_translocation_by_cod(db, new_transect_herpetofauna_translocation.cod):
+                numberExistList.append(new_transect_herpetofauna_translocation.cod)
+                continue
+            else:
+                await create_transect_herpetofauna_translocation(db, new_transect_herpetofauna_translocation)
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={"message": "The file was upload", "Not upload numbers because repeate": numberExistList},
+        )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File must be an excel file",
+        )
+
+#Upload point herpetofauna translocation
+@router.post(
+    path="/upload/point_herpetofauna_translocation",
+    summary="Upload point herpetofauna translocation excel file",
     response_model= None,
     tags=["Upload"],
 )
