@@ -19,7 +19,9 @@ from app.crud.rescue_herpetofauna import(
     create_transect_herpetofauna_translocation,
     get_transect_herpetofauna_translocation_by_cod,
     create_point_herpetofauna_translocation,
-    get_point_herpetofauna_translocation_by_cod
+    get_point_herpetofauna_translocation_by_cod,
+    create_translocation_herpetofauna,
+    get_translocation_herpetofauna_by_cod
 )
 
 #Schemas
@@ -29,7 +31,8 @@ from app.schemas.rescue_herpetofauna import (
     RescueHerpetofaunaCreate,
     MarkHerpetofaunaCreate,
     TransectHerpetofaunaTranslocationCreate,
-    PointHerpetofaunaTranslocationCreate
+    PointHerpetofaunaTranslocationCreate,
+    TranslocationHerpetofaunaCreate
 )
 from app.schemas.towers import TowerBase
 from app.schemas.services import UTMData
@@ -449,7 +452,7 @@ async def upload_mark_herpetofauna(
     response_model= None,
     tags=["Upload"],
 )
-async def upload_transect_herpetofauna_translocatio(
+async def upload_transect_herpetofauna_translocation(
     file: UploadFile=File(...),
     db: AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
@@ -533,7 +536,7 @@ async def upload_transect_herpetofauna_translocatio(
     response_model= None,
     tags=["Upload"],
 )
-async def upload_transect_herpetofauna_translocatio(
+async def upload_point_herpetofaun_location(
     file: UploadFile=File(...),
     db: AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
@@ -551,55 +554,41 @@ async def upload_transect_herpetofauna_translocatio(
         df = convert_to_datetime(df, date_columns)
 
         #change coordinate system
-        UTM_columns_in = {
-            'easting': 'este_in',
-            'northing': 'sur_in',
-            'zone_number': 'zona',
-            'zone_letter': 'zona_letra',
-        }
-        UTM_columns_out = {
-            'easting': 'este_out',
-            'northing': 'sur_out',
+        UTM_columns = {
+            'easting': 'este',
+            'northing': 'sur',
             'zone_number': 'zona',
             'zone_letter': 'zona_letra',
         }
 
         #Names of columns geodata columns to in transect
-        nameLatitude_in = 'latitude_in'
-        nameLongitude_in = 'longitude_in'
-
-        #Names of columns geodata columns to out transect
-        nameLatitude_out = 'latitude_out'
-        nameLongitude_out = 'longitude_out'
+        nameLatitude = 'latitude'
+        nameLongitude = 'longitude'
 
         # Insert columns lat y lon to df
-        df = insertGEOData(df, UTM_columns_in, nameLatitude_in, nameLongitude_in)
-        df = insertGEOData(df, UTM_columns_out, nameLatitude_out, nameLongitude_out)
+        df = insertGEOData(df, UTM_columns, nameLatitude, nameLongitude)
 
         numberExistList = []
 
         for _, row in df.iterrows():
             try:
-                new_transect_herpetofauna_translocation = TransectHerpetofaunaTranslocationCreate(
+                new_point_herpetofauna_translocation = PointHerpetofaunaTranslocationCreate(
                     cod = row["cod"],
                     date = row["date"],
-                    latitude_in= row["latitude_in"],
-                    longitude_in= row["longitude_in"],
-                    altitude_in= row["altitud_in"],
-                    latitude_out= row["latitude_out"],
-                    longitude_out= row["longitude_out"],
-                    altitude_out= row["altitud_out"]
+                    latitude= row["latitude"],
+                    longitude= row["longitude"],
+                    altitude= row["altitud"],
                 )
             except Exception as e:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Error: {e}",
+                    detail=f"Error to create data: {e}",
                 )
-            if await get_transect_herpetofauna_translocation_by_cod(db, new_transect_herpetofauna_translocation.cod):
-                numberExistList.append(new_transect_herpetofauna_translocation.cod)
+            if await get_point_herpetofauna_translocation_by_cod(db, new_point_herpetofauna_translocation.cod):
+                numberExistList.append(new_point_herpetofauna_translocation.cod)
                 continue
             else:
-                await create_transect_herpetofauna_translocation(db, new_transect_herpetofauna_translocation)
+                await create_point_herpetofauna_translocation(db, new_point_herpetofauna_translocation)
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
             content={"message": "The file was upload", "Not upload numbers because repeate": numberExistList},
@@ -609,6 +598,63 @@ async def upload_transect_herpetofauna_translocatio(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="File must be an excel file",
         )
+
+#Upload translocation herpetofauna
+@router.post(
+    path="/upload/translocation_herpetofauna",
+    summary="Upload translocation herpetofauna excel file",
+    response_model= None,
+    tags=["Upload"],
+)
+async def upload_translocation_herpetofauna(
+    file: UploadFile=File(...),
+    db: AsyncSession = Depends(get_db),
+    permissions: str = Depends(PermissonsChecker(["admin"])),
+) -> JSONResponse|HTTPException:
+    if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
+        df = pd.read_excel(file.file)
+
+        # Replace NaN with None
+        df = remplace_nan_with_none(df)
+
+        # Convert date columns to datetime objects
+        date_columns = [
+            'date',
+        ]
+        df = convert_to_datetime(df, date_columns)
+        df, specieListWithOutName = await addIdSpecieByName(db, df, "especie")
+
+
+        numberExistList = []
+
+        for _, row in df.iterrows():
+            try:
+                new_point_herpetofauna_translocation =  TranslocationHerpetofaunaCreate(
+                    cod = row["cod"],
+                    transect_herpetofauna_translocation_id = row["idTransect"],
+                    point_herpetofauna_translocation_id = row["idPoint"],
+                    specie_id = row["idSpecie"],
+                )
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Error to create data: {e}",
+                )
+            if await get_translocation_herpetofauna_by_cod(db, new_point_herpetofauna_translocation.cod):
+                numberExistList.append(new_point_herpetofauna_translocation.cod)
+                continue
+            else:
+                await create_translocation_herpetofauna(db, new_point_herpetofauna_translocation)
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={"message": "The file was upload", "Not upload numbers because repeate": numberExistList},
+        )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File must be an excel file",
+        )
+
 
 
 
