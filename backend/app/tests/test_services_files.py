@@ -16,7 +16,9 @@ from app.services.files import (
     addTransectIdByNumber,
     addNumRescueHerpeto,
     addBooleanByCheck,
-    addRescueIdByNumber
+    addRescueIdByNumber,
+    addTransectTranslocationIdByCod,
+    addPointTranslocationByCod
 )
 
 from app.tests.conftest import *
@@ -365,6 +367,70 @@ async def test_addRescueIdByNumber(
 
     # Result
     resultDF = await addRescueIdByNumber(async_session, df, col)
+
+    # Test
+    assert resultDF.equals(expected)
+
+# Test for addTransectTranslocationIdByCode function
+@pytest.mark.asyncio
+async def test_addTransectTranslocationIdByNumber(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+):
+    transect_id, transect_number = await  create_transect_herpetofauna_translocationWithCode(async_client)
+    col: str = "transect"
+
+    #Create DF for Test
+    data = {
+        'number' : [1 ],
+        'transect': [transect_number ],
+    }
+
+    df = pd.DataFrame(data)
+
+    # Expected result
+    expected = pd.DataFrame({
+        'number' : [1],
+        'transect': [transect_number],
+        'idTransectTranslocation': [transect_id],
+    })
+
+
+    # Result
+    resultDF = await addTransectTranslocationIdByCod(async_session, df, col)
+
+
+    # Test
+    assert resultDF.equals(expected)
+
+# Test for addPointTranslocationByCod function
+@pytest.mark.asyncio
+async def test_addPointTranslocationIdByCod(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+):
+    point_id, point_cod = await  create_point_herpetofauna_translocation_with_code(async_client)
+    col: str = "point"
+
+    #Create DF for Test
+    data = {
+        'number' : [1 ],
+        'point': [point_cod],
+    }
+
+    df = pd.DataFrame(data)
+
+    # Expected result
+    expected = pd.DataFrame({
+        'number' : [1],
+        'point': [point_cod],
+        'idPointTranslocation': [point_id],
+    })
+
+
+    # Result
+    resultDF = await addPointTranslocationByCod(async_session, df, col)
+
 
     # Test
     assert resultDF.equals(expected)

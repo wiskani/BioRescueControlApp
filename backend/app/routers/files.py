@@ -631,7 +631,7 @@ async def upload_translocation_herpetofauna(
             try:
                 new_point_herpetofauna_translocation =  TranslocationHerpetofaunaCreate(
                     cod = row["cod"],
-                    transect_herpetofauna_translocation_id = row["idTransect"],
+                    transect_herpetofauna_translocation_id = row["idTransectTranslocation"],
                     point_herpetofauna_translocation_id = row["idPoint"],
                     specie_id = row["idSpecie"],
                 )

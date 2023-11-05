@@ -13,7 +13,10 @@ from app.crud.rescue_herpetofauna import (
     get_mark_herpetofauna_by_number,
     get_age_group_name,
     get_transect_herpetofauna_by_number,
-    get_rescue_herpetofauna_by_number
+    get_rescue_herpetofauna_by_number,
+    get_transect_herpetofauna_translocation_by_cod,
+    get_point_herpetofauna_translocation_by_cod,
+    get_translocation_herpetofauna_by_cod
     )
 
 
@@ -420,3 +423,60 @@ async def addRescueIdByNumber(
 
     return df
 
+async def addTransectTranslocationIdByCod(
+        db: AsyncSession,
+        df: pd.DataFrame,
+        col: str,
+) -> pd.DataFrame:
+    """
+    Adds the id of a transect to a dataframe
+
+    Parameters
+    ----------
+    db : AsyncSession
+    df : pandas dataframe
+    col : str with name of column with transect translocation cod
+    """
+    listTransectNumberRow: list[tuple[int, str]] = []
+    colunmId: list[int | None] = []
+
+    for _, row in df.iterrows():
+        #conver row[col] to int
+        transect = await get_transect_herpetofauna_translocation_by_cod(db, row[col])
+        if transect is None:
+            raise Exception(f"Error converting transect number to int in row {row[0]}")
+        else:
+            colunmId.append(transect.id)
+
+    df['idTransectTranslocation'] = colunmId
+
+    return df
+
+async def addPointTranslocationByCod(
+        db: AsyncSession,
+        df: pd.DataFrame,
+        col: str,
+) -> pd.DataFrame:
+    """
+    Adds the id of a transect to a dataframe
+
+    Parameters
+    ----------
+    db : AsyncSession
+    df : pandas dataframe
+    col : str with name of column with point translocation number
+    """
+    listTransectNumberRow: list[tuple[int, str]] = []
+    colunmId: list[int | None] = []
+
+    for _, row in df.iterrows():
+        #conver row[col] to int
+        transect = await get_point_herpetofauna_translocation_by_cod(db, row[col])
+        if transect is None:
+            raise Exception(f"Error converting  point translocation to int in row {row[0]}")
+        else:
+            colunmId.append(transect.id)
+
+    df['idPointTranslocation'] = colunmId
+
+    return df
