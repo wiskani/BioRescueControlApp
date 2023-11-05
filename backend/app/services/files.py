@@ -1,3 +1,4 @@
+import pytz
 import pandas as pd
 import numpy as np
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -285,7 +286,7 @@ def addBooleanByGender(
         else:
             listGenderNameRow.append((row[0], row[col]))
             colunmId.append(None)
-    
+
     df['booleanGender'] = colunmId
 
     return df, listGenderNameRow
@@ -405,7 +406,6 @@ async def addRescueIdByNumber(
     df : pandas dataframe
     col : str with name of column with rescue number
     """
-    listRescueNumberRow: list[tuple[int, str]] = []
     colunmId: list[int | None] = []
 
     for _, row in df.iterrows():

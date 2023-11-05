@@ -112,7 +112,7 @@ class PointHerpetofaunaTranslocationResponse(PointHerpetofaunaTranslocationBase)
 class TranslocationHerpetofaunaBase(BaseModel):
     cod: str = Field(..., examples=[ "1" ])
     transect_herpetofauna_translocation_id: int|None = Field(examples=[ 1 ])
-    point_rescue_herpetofauna_translocation_id: int|None = Field(examples=[ 1 ])
+    point_herpetofauna_translocation_id: int|None = Field(examples=[ 1 ])
     specie_id: int = Field(..., examples=[ 1 ])
     class Config:
         orm_mode: bool = True

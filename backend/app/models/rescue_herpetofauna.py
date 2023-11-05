@@ -97,7 +97,7 @@ class TransectHerpetofaunaTranslocation (_database.Base):
 
 
 class PointHerpetofaunaTranslocation (_database.Base):
-    __tablename__ = 'point_rescue_herpetofauna_translocation'
+    __tablename__ = 'point_herpetofauna_translocation'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     cod: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
@@ -107,7 +107,7 @@ class PointHerpetofaunaTranslocation (_database.Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.now(pytz.timezone('America/La_Paz')))
 
     #relationship with translocation_herpetofauna
-    translocation_herpetofauna = relationship('TranslocationHerpetofauna', back_populates='point_rescue_herpetofauna_translocation')
+    translocation_herpetofauna = relationship('TranslocationHerpetofauna', back_populates='point_herpetofauna_translocation')
 
 class TranslocationHerpetofauna (_database.Base):
     __tablename__ = 'translocation_herpetofauna'
@@ -120,8 +120,8 @@ class TranslocationHerpetofauna (_database.Base):
     transect_herpetofauna_translocation = relationship('TransectHerpetofaunaTranslocation', back_populates='translocation_herpetofauna')
 
     #relationship with point_rescue_herpetofauna_translocation
-    point_rescue_herpetofauna_translocation_id: Mapped[int] = mapped_column(Integer, ForeignKey('point_rescue_herpetofauna_translocation.id'), nullable=True)
-    point_rescue_herpetofauna_translocation = relationship('PointHerpetofaunaTranslocation', back_populates='translocation_herpetofauna')
+    point_herpetofauna_translocation_id: Mapped[int] = mapped_column(Integer, ForeignKey('point_herpetofauna_translocation.id'), nullable=True)
+    point_herpetofauna_translocation = relationship('PointHerpetofaunaTranslocation', back_populates='translocation_herpetofauna')
 
     #relationship with specie
     specie_id: Mapped[int] = mapped_column(Integer, ForeignKey('species.id'))
