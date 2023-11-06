@@ -110,7 +110,7 @@ async def create_mark_herpetofauna(
     async_client: AsyncClient,
 ) -> int:
     number_mark: int = random.randint(1, 100)
-    age_group_id:int = await create_age_group(async_client)
+    rescue_herpetofauna_id: int = await create_rescue_herpetofauna(async_client)
 
     response: Response = await async_client.post(
         "/api/mark_herpetofauna", json={
@@ -122,12 +122,11 @@ async def create_mark_herpetofauna(
             "weight": 1.5,
             "is_photo_mark": True,
             "is_elastomer_mark": True,
-            "age_group_id": age_group_id,
+            "rescue_herpetofauna_id": rescue_herpetofauna_id
         },
     )
-    assert response.status_code == 201
     data = response.json()
-    print(f'Response for create mark herpetofauna is : {data}')
+    assert response.status_code == 201
     return data["id"]
 
 

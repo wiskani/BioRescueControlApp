@@ -55,6 +55,9 @@ class MarkHerpetofauna (_database.Base):
     rescue_herpetofauna_id: Mapped[int] = mapped_column(Integer, ForeignKey('rescue_herpetofauna.id'))
     rescue_herpetofauna = relationship('RescueHerpetofauna', back_populates='mark_herpetofauna')
 
+    #relationship with translocation_herpetofauna
+    translocation_herpetofauna = relationship('TranslocationHerpetofauna', back_populates='mark_herpetofauna')
+
 class RescueHerpetofauna (_database.Base):
     __tablename__ = 'rescue_herpetofauna'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -127,4 +130,7 @@ class TranslocationHerpetofauna (_database.Base):
     specie_id: Mapped[int] = mapped_column(Integer, ForeignKey('species.id'))
     specie = relationship('Specie', back_populates='translocation_herpetofauna')
 
+    #relationship with mark_herpetofauna
+    mark_herpetofauna = relationship('MarkHerpetofauna', back_populates='translocation_herpetofauna')
+    mark_herpetofauna_id: Mapped[int] = mapped_column(Integer, ForeignKey('mark_herpetofauna.id'), nullable=True)
 

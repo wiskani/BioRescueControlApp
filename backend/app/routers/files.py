@@ -49,7 +49,9 @@ from app.services.files import (
     addTransectIdByNumber,
     addNumRescueHerpeto,
     addBooleanByCheck,
-    addRescueIdByNumber
+    addRescueIdByNumber,
+    addTransectTranslocationIdByCod,
+    addPointTranslocationByCod
 )
 
 router = APIRouter()
@@ -617,13 +619,22 @@ async def upload_translocation_herpetofauna(
         # Replace NaN with None
         df = remplace_nan_with_none(df)
 
-        # Convert date columns to datetime objects
-        date_columns = [
-            'date',
-        ]
-        df = convert_to_datetime(df, date_columns)
+        # Add id specie by scientific name
         df, specieListWithOutName = await addIdSpecieByName(db, df, "especie")
 
+        # Add id transect herpetofauna translocation by cod
+        df = await addTransectTranslocationIdByCod(db, df, "cod_transect")
+
+        # Add id point herpetofauna translocation by cod
+        df = await addPointTranslocationByCod(db, df, "cod_point")
+
+        # Add id mark herpetofauna by number
+        df, markListWithOutNumber = await addMarkIdByNumber(db, df, "number_mark")
+
+        # Replace NaN with None
+        df = remplace_nan_with_none(df)
+
+        print(df.dtypes)
 
         numberExistList = []
 
@@ -631,14 +642,15 @@ async def upload_translocation_herpetofauna(
             try:
                 new_point_herpetofauna_translocation =  TranslocationHerpetofaunaCreate(
                     cod = row["cod"],
-                    transect_herpetofauna_translocation_id = row["idTransectTranslocation"],
-                    point_herpetofauna_translocation_id = row["idPoint"],
+                    transect_herpetofauna_translocation_id = none_value(row["idTransect"]),
+                    point_herpetofauna_translocation_id = none_value(row["idPoint"]),
                     specie_id = row["idSpecie"],
+                    mark_herpetofauna_id=none_value(row["idMark"]),
                 )
             except Exception as e:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Error to create data: {e}",
+                    detail=f"Error to create data: {e} in row {row['cod']}",
                 )
             if await get_translocation_herpetofauna_by_cod(db, new_point_herpetofauna_translocation.cod):
                 numberExistList.append(new_point_herpetofauna_translocation.cod)
@@ -647,7 +659,7 @@ async def upload_translocation_herpetofauna(
                 await create_translocation_herpetofauna(db, new_point_herpetofauna_translocation)
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
-            content={"message": "The file was upload", "Not upload numbers because repeate": numberExistList},
+            content={"message": "The file was upload", "Not upload numbers because repeate": numberExistList, "Some species not found": specieListWithOutName, "Some marks not found": markListWithOutNumber},
         )
     else:
         raise HTTPException(

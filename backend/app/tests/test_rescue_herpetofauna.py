@@ -1337,7 +1337,8 @@ async def test_create_translocation_herpetofauna(
     transect_herpetofauna_translocation_id : int = await create_transect_herpetofauna_translocation(async_client)
     #Create point herpetofauna translocation 
     point_herpetofauna_translocation_id : int = await create_point_herpetofauna_translocation(async_client)
-    print(f"el id del punto es: {point_herpetofauna_translocation_id}")
+    #Create mark herpetofauna
+    mark_herpetofauna_id : int = await create_mark_herpetofauna(async_client)
 
     code = random_string()
 
@@ -1348,14 +1349,18 @@ async def test_create_translocation_herpetofauna(
             "transect_herpetofauna_translocation_id": transect_herpetofauna_translocation_id,
             "point_herpetofauna_translocation_id": point_herpetofauna_translocation_id,
             "specie_id": specie_id,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
         },
     )
 
     data = response.json()
+    print(f"La respuesta es {data}")
     assert response.status_code == 201
     assert data["cod"] == code
     assert data["transect_herpetofauna_translocation_id"]== transect_herpetofauna_translocation_id
     assert data["point_herpetofauna_translocation_id"] == point_herpetofauna_translocation_id
+    assert data["specie_id"] == specie_id
+    assert data["mark_herpetofauna_id"] == mark_herpetofauna_id
 
 #Test for get all translocation herpetofauna
 @pytest.mark.asyncio
@@ -1367,6 +1372,7 @@ async def test_get_all_translocation_herpetofauna(
     specie_id = await create_specie(async_client)
     transect_herpetofauna_translocation_id : int = await create_transect_herpetofauna_translocation(async_client)
     point_herpetofauna_translocation_id: int = await create_point_herpetofauna_translocation(async_client)
+    mark_herpetofauna_id: int = await create_mark_herpetofauna(async_client)
     code = random_string()
     code2= random_string()
 
@@ -1376,6 +1382,7 @@ async def test_get_all_translocation_herpetofauna(
             "transect_herpetofauna_translocation_id": transect_herpetofauna_translocation_id,
             "point_herpetofauna_translocation_id": None,
             "specie_id": specie_id,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
         },
     )
     assert response.status_code == 201
@@ -1386,6 +1393,7 @@ async def test_get_all_translocation_herpetofauna(
             "transect_herpetofauna_translocation_id": None,
             "point_herpetofauna_translocation_id": point_herpetofauna_translocation_id,
             "specie_id": specie_id,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
         },
     )
     assert response.status_code == 201
@@ -1407,6 +1415,8 @@ async def test_get_translocation_herpetofauna_by_id(
     #create a translocation herpetofauna
     specie_id = await create_specie(async_client)
     transect_herpetofauna_translocation_id : int = await create_transect_herpetofauna_translocation(async_client)
+    mark_herpetofauna_id: int = await create_mark_herpetofauna(async_client)
+    
     code = random_string()
 
     response: Response = await async_client.post(
@@ -1415,10 +1425,11 @@ async def test_get_translocation_herpetofauna_by_id(
             "transect_herpetofauna_translocation_id": transect_herpetofauna_translocation_id,
             "point_herpetofauna_translocation_id": None,
             "specie_id": specie_id,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
         },
     )
-    assert response.status_code == 201
     data = response.json()
+    assert response.status_code == 201
     translocation_herpetofauna_id = data["id"]
 
     #get translocation herpetofauna by id
@@ -1441,6 +1452,7 @@ async def test_update_translocation_herpetofauna(
     specie_id = await create_specie(async_client)
     transect_herpetofauna_translocation_id : int = await create_transect_herpetofauna_translocation(async_client)
     point_herpetofauna_translocation_id:int = await create_point_herpetofauna_translocation(async_client)
+    mark_herpetofauna_id: int = await create_mark_herpetofauna(async_client)
     code = random_string()
 
     response: Response = await async_client.post(
@@ -1449,10 +1461,11 @@ async def test_update_translocation_herpetofauna(
             "transect_herpetofauna_translocation_id": transect_herpetofauna_translocation_id,
             "point_herpetofauna_translocation_id": None,
             "specie_id": specie_id,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
         },
     )
-    assert response.status_code == 201
     data = response.json()
+    assert response.status_code == 201
     translocation_herpetofauna_id = data["id"]
 
     #update translocation herpetofauna
@@ -1463,10 +1476,10 @@ async def test_update_translocation_herpetofauna(
             "transect_herpetofauna_translocation_id": None,
             "point_herpetofauna_translocation_id": point_herpetofauna_translocation_id,
             "specie_id": specie_id,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
         },
     )
     data = response.json()
-    print(f"La respuesta es {data}")
     assert response.status_code == 200
     assert data["cod"] == code2
     assert data["transect_herpetofauna_translocation_id"] == None
@@ -1481,6 +1494,7 @@ async def test_delete_translocation_herpetofauna(
     #create a translocation herpetofauna
     specie_id = await create_specie(async_client)
     transect_herpetofauna_translocation_id : int = await create_transect_herpetofauna_translocation(async_client)
+    mark_herpetofauna_id: int = await create_mark_herpetofauna(async_client)
     code = random_string()
 
     response: Response = await async_client.post(
@@ -1489,6 +1503,7 @@ async def test_delete_translocation_herpetofauna(
             "transect_herpetofauna_translocation_id": transect_herpetofauna_translocation_id,
             "point_herpetofauna_translocation_id": None,
             "specie_id": specie_id,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
         },
     )
     assert response.status_code == 201
@@ -1499,7 +1514,7 @@ async def test_delete_translocation_herpetofauna(
     response: Response = await async_client.delete(
         f"/api/translocation_herpetofauna/{translocation_herpetofauna_id}",
     )
-    assert response.status_code == 200
     data = response.json()
+    assert response.status_code == 200
     assert data['detail'] == "Translocation herpetofauna deleted successfully"
 

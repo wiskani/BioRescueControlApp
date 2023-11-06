@@ -114,6 +114,7 @@ class TranslocationHerpetofaunaBase(BaseModel):
     transect_herpetofauna_translocation_id: int|None = Field(examples=[ 1 ])
     point_herpetofauna_translocation_id: int|None = Field(examples=[ 1 ])
     specie_id: int = Field(..., examples=[ 1 ])
+    mark_herpetofauna_id: int|None = Field(examples=[ 1 ])
     class Config:
         orm_mode: bool = True
 

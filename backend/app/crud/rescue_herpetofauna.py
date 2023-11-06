@@ -453,6 +453,7 @@ async def create_translocation_herpetofauna(
             transect_herpetofauna_translocation_id = translocation_herpetofauna.transect_herpetofauna_translocation_id,
             point_herpetofauna_translocation_id = translocation_herpetofauna.point_herpetofauna_translocation_id,
             specie_id = translocation_herpetofauna.specie_id,
+            mark_herpetofauna_id = translocation_herpetofauna.mark_herpetofauna_id,
         )
         db.add(translocation_herpetofauna_db)
         await db.commit()
@@ -473,6 +474,7 @@ async def update_translocation_herpetofauna(
     translocation_herpetofauna_db.transect_herpetofauna_translocation_id = translocation_herpetofauna_update.transect_herpetofauna_translocation_id
     translocation_herpetofauna_db.point_herpetofauna_translocation_id = translocation_herpetofauna_update.point_herpetofauna_translocation_id
     translocation_herpetofauna_db.specie_id = translocation_herpetofauna_update.specie_id
+    translocation_herpetofauna_db.mark_herpetofauna_id = translocation_herpetofauna_update.mark_herpetofauna_id
     await db.commit()
     await db.refresh(translocation_herpetofauna_db)
     return translocation_herpetofauna_db

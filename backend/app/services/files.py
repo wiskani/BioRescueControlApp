@@ -204,19 +204,13 @@ async def addMarkIdByNumber(
     df : pandas dataframe with idMark column
     """
     listMarkNumberRow: list[tuple[int, str]] = []
-    colunmId: list[int | None] = []
+    colunmId: list[str | None] = []
 
     for _, row in df.iterrows():
         if row[col] == "None":
             listMarkNumberRow.append((row[0], row[col]))
             colunmId.append(None)
         else:
-            #conver row[col] to int
-            print(f'el numero es {row[col]}')
-            try:
-                row[col] = int(row[col])
-            except Exception as e:
-                raise Exception(f"Error converting mark number to int: {e}")
             mark = await get_mark_herpetofauna_by_number(db, row[col])
             if mark is None:
                 listMarkNumberRow.append((row[0], row[col]))
@@ -444,13 +438,16 @@ async def addTransectTranslocationIdByCod(
         #conver row[col] to int
         transect = await get_transect_herpetofauna_translocation_by_cod(db, row[col])
         if transect is None:
-            raise Exception(f"Error converting transect number to int in row {row[0]}")
+            colunmId.append(None)
         else:
             colunmId.append(transect.id)
 
-    df['idTransectTranslocation'] = colunmId
+    df['idTransect'] = colunmId
 
     return df
+
+
+
 
 async def addPointTranslocationByCod(
         db: AsyncSession,
@@ -471,12 +468,12 @@ async def addPointTranslocationByCod(
 
     for _, row in df.iterrows():
         #conver row[col] to int
-        transect = await get_point_herpetofauna_translocation_by_cod(db, row[col])
-        if transect is None:
-            raise Exception(f"Error converting  point translocation to int in row {row[0]}")
+        point = await get_point_herpetofauna_translocation_by_cod(db, row[col])
+        if point is None:
+            colunmId.append(None)
         else:
-            colunmId.append(transect.id)
+            colunmId.append(point.id)
 
-    df['idPointTranslocation'] = colunmId
+    df['idPoint'] = colunmId
 
     return df
