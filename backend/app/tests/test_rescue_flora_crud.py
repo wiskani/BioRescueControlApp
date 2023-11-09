@@ -1,6 +1,6 @@
-from requests import Response
+from httpx import Response, AsyncClient
 from typing import Dict, Any, Union, List
-from fastapi.testclient import TestClient
+import pytest
 
 from app.tests.conftest import *
 from app.tests.utils.users import *
@@ -8,7 +8,6 @@ from app.tests.utils.flora_rescue_example import *
 from app.tests.utils.species_example import *
 
 
-db = override_get_db()
 
 #fuctions to create a longitude and latitude
 def create_longitude() -> float:
@@ -17,27 +16,20 @@ def create_longitude() -> float:
 def create_latitude() -> float:
     return random.uniform(-90, 90)
 
-specie_id =  loop.run_until_complete(create_specie_id(db))
-
-GENUS_ID= loop.run_until_complete(create_genus_id(db))
-
-FAMILY_ID = loop.run_until_complete(create_family_id(db))
-
-RESCUE_ZONE_ID = loop.run_until_complete(create_random_relocation_zone_id(db))
-
-RELOCATION_ZONE_ID = loop.run_until_complete(create_random_relocation_zone_id(db))
-
-FLORA_RESCUE_ID = loop.run_until_complete(create_random_flora_rescue_id(db))
 
 
 """
 TEST FOR RESCUE FLORA ZONE ENDPOINTS
 """
 #test create a rescue zone endpoint
-def test_create_rescue_zone() -> None:
+@pytest.mark.asyncio
+async def test_create_rescue_zone(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
     # create zone rescue
-    response = client.post(
-        "/api/rescue_flora/rescue_zone/", json={
+    response = await async_client.post(
+        "/api/rescue_flora/rescue_zone", json={
             "name": "test_rescue_zone",
             "description": "test_description",
         },
@@ -49,10 +41,14 @@ def test_create_rescue_zone() -> None:
     assert data["description"] == "test_description"
 
 #test create a rescue zone that already exists
-def test_create_rescue_zone_that_already_exists() -> None:
+@pytest.mark.asyncio
+async def test_create_rescue_zone_that_already_exists(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
     # create zone rescue
-    response = client.post(
-        "/api/rescue_flora/rescue_zone/", json={
+    response = await async_client.post(
+        "/api/rescue_flora/rescue_zone", json={
             "name": "test_rescue_zone2",
             "description": "test_description2",
         },
@@ -60,8 +56,8 @@ def test_create_rescue_zone_that_already_exists() -> None:
     assert response.status_code == 201, response.text
 
     # create zone rescue that already exists
-    response = client.post(
-        "/api/rescue_flora/rescue_zone/", json={
+    response = await async_client.post(
+        "/api/rescue_flora/rescue_zone", json={
             "name": "test_rescue_zone2",
             "description": "test_description",
         },
@@ -69,10 +65,14 @@ def test_create_rescue_zone_that_already_exists() -> None:
     assert response.status_code == 400, response.text
 
 #test get all rescue zones
-def test_get_all_rescue_zones() -> None:
+@pytest.mark.asyncio
+async def test_get_all_rescue_zones(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
     # create zone rescue
-    response = client.post(
-        "/api/rescue_flora/rescue_zone/", json={
+    response = await async_client.post(
+        "/api/rescue_flora/rescue_zone", json={
             "name": "test_rescue_zone3",
             "description": "test_description3",
         },
@@ -80,8 +80,8 @@ def test_get_all_rescue_zones() -> None:
     assert response.status_code == 201, response.text
 
     # create zone rescue
-    response = client.post(
-        "/api/rescue_flora/rescue_zone/", json={
+    response = await async_client.post(
+        "/api/rescue_flora/rescue_zone", json={
             "name": "test_rescue_zone4",
             "description": "test_description4",
         },
@@ -89,16 +89,20 @@ def test_get_all_rescue_zones() -> None:
     assert response.status_code == 201, response.text
 
     # get all rescue zones
-    response = client.get("/api/rescue_flora/rescue_zone/")
+    response = await async_client.get("/api/rescue_flora/rescue_zone")
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
     assert len(data) >= 2
 
 #test get a rescue zone by id
-def test_get_rescue_zone_by_id() -> None:
+@pytest.mark.asyncio
+async def test_get_rescue_zone_by_id(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
     # create zone rescue
-    response = client.post(
-        "/api/rescue_flora/rescue_zone/", json={
+    response = await async_client.post(
+        "/api/rescue_flora/rescue_zone", json={
             "name": "test_rescue_zone5",
             "description": "test_description5",
         },
@@ -108,23 +112,31 @@ def test_get_rescue_zone_by_id() -> None:
     rescue_zone_id = data["id"]
 
     # get a rescue zone by id
-    response = client.get(f"/api/rescue_flora/rescue_zone/{rescue_zone_id}")
+    response = await async_client.get(f"/api/rescue_flora/rescue_zone/{rescue_zone_id}")
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
     assert data["name"] == "test_rescue_zone5"
     assert data["description"] == "test_description5"
 
 #test get a rescue zone by id that does not exist
-def test_get_rescue_zone_by_id_that_does_not_exist() -> None:
+@pytest.mark.asyncio
+async def test_get_rescue_zone_by_id_that_does_not_exist(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
     # get a rescue zone by id that does not exist
-    response = client.get("/api/rescue_flora/rescue_zone/999")
+    response = await async_client.get("/api/rescue_flora/rescue_zone/999")
     assert response.status_code == 404, response.text
 
 #test update a rescue zone by id
-def test_update_rescue_zone_by_id() -> None:
+@pytest.mark.asyncio
+async def test_update_rescue_zone_by_id(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
     # create zone rescue
-    response = client.post(
-        "/api/rescue_flora/rescue_zone/", json={
+    response = await async_client.post(
+        "/api/rescue_flora/rescue_zone", json={
             "name": "test_rescue_zone6",
             "description": "test_description6",
         },
@@ -134,7 +146,7 @@ def test_update_rescue_zone_by_id() -> None:
     rescue_zone_id = data["id"]
 
     # update a rescue zone by id
-    response = client.put(
+    response = await async_client.put(
         f"/api/rescue_flora/rescue_zone/{rescue_zone_id}", json={
             "name": "test_rescue_zone6",
             "description": "test_description6",
@@ -146,10 +158,14 @@ def test_update_rescue_zone_by_id() -> None:
     assert data["description"] == "test_description6"
 
 #test delete a rescue zone by id
-def test_delete_rescue_zone_by_id() -> None:
+@pytest.mark.asyncio
+async def test_delete_rescue_zone_by_id(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
     # create zone rescue
-    response = client.post(
-        "/api/rescue_flora/rescue_zone/", json={
+    response = await async_client.post(
+        "/api/rescue_flora/rescue_zone", json={
             "name": "test_rescue_zone7",
             "description": "test_description7",
         },
@@ -159,11 +175,11 @@ def test_delete_rescue_zone_by_id() -> None:
     rescue_zone_id = data["id"]
 
     # delete a rescue zone by id
-    response = client.delete(f"/api/rescue_flora/rescue_zone/{rescue_zone_id}")
+    response = await async_client.delete(f"/api/rescue_flora/rescue_zone/{rescue_zone_id}")
     assert response.status_code == 200, response.text
 
     # get a rescue zone by id that does not exist
-    response = client.get(f"/api/rescue_flora/rescue_zone/{rescue_zone_id}")
+    response = await async_client.get(f"/api/rescue_flora/rescue_zone/{rescue_zone_id}")
     assert response.status_code == 404, response.text
 
 """
@@ -171,10 +187,14 @@ TEST FOR RELOCATION ZONE ENDPOINTS
 """
 
 #test create a relocartion  zone 
-def test_create_relocation_zone() -> None:
+@pytest.mark.asyncio
+async def test_create_relocation_zone(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
     # create zone relocation
-    response = client.post(
-        "/api/rescue_flora/relocation_zone/", json={
+    response = await async_client.post(
+        "/api/rescue_flora/relocation_zone", json={
             "name": "test_relocation_zone0",
         },
     )
@@ -183,27 +203,32 @@ def test_create_relocation_zone() -> None:
     assert data["name"] == "test_relocation_zone0"
 
 #test create a relocation zone that already exists
-def test_create_relocation_zone_that_already_exists() -> None:
+@pytest.mark.asyncio
+async def test_create_relocation_zone_that_already_exists(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
     # create zone relocation
-    response = client.post(
-        "/api/rescue_flora/relocation_zone/", json={
+    response =await async_client.post(
+        "/api/rescue_flora/relocation_zone", json={
             "name": "test_relocation_zone2",
         },
     )
     assert response.status_code == 201, response.text
 
     # create zone relocation that already exists
-    response = client.post(
-        "/api/rescue_flora/relocation_zone/", json={
+    response =await async_client.post(
+        "/api/rescue_flora/relocation_zone", json={
             "name": "test_relocation_zone2",
         },
     )
     assert response.status_code == 400, response.text
 
 #test get all relocation zones
-def test_get_all_relocation_zones() -> None:
+@pytest.mark.asyncio
+async def test_get_all_relocation_zones() -> None:
     # create zone relocation
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora/relocation_zone/", json={
             "name": "test_relocation_zone3",
         },
@@ -211,7 +236,7 @@ def test_get_all_relocation_zones() -> None:
     assert response.status_code == 201, response.text
 
     # create zone relocation
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora/relocation_zone/", json={
             "name": "test_relocation_zone4",
         },
@@ -219,15 +244,16 @@ def test_get_all_relocation_zones() -> None:
     assert response.status_code == 201, response.text
 
     # get all relocation zones
-    response = client.get("/api/rescue_flora/relocation_zone/")
+    response =await async_client.get("/api/rescue_flora/relocation_zone/")
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
     assert len(data) >= 2
 
 #test get a relocation zone by id
-def test_get_relocation_zone_by_id() -> None:
+@pytest.mark.asyncio
+async def test_get_relocation_zone_by_id() -> None:
     # create zone relocation
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora/relocation_zone/", json={
             "name": "test_relocation_zone5",
         },
@@ -237,22 +263,30 @@ def test_get_relocation_zone_by_id() -> None:
     relocation_zone_id: int = data["id"]
 
     # get a relocation zone by id
-    response = client.get(f"/api/rescue_flora/relocation_zone/{relocation_zone_id}")
+    response =await async_client.get(f"/api/rescue_flora/relocation_zone/{relocation_zone_id}")
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
     assert data["name"] == "test_relocation_zone5"
 
 #test get a relocation zone by id that does not exist
-def test_get_relocation_zone_by_id_that_does_not_exist() -> None:
+@pytest.mark.asyncio
+async def test_get_relocation_zone_by_id_that_does_not_exist(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
     # get a relocation zone by id that does not exist
-    response = client.get("/api/rescue_flora/relocation_zone/999")
+    response =await async_client.get("/api/rescue_flora/relocation_zone/999")
     assert response.status_code == 404, response.text
 
 #test update a relocation zone by id
-def test_update_relocation_zone_by_id() -> None:
+@pytest.mark.asyncio
+async def test_update_relocation_zone_by_id(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
     # create zone relocation
-    response = client.post(
-        "/api/rescue_flora/relocation_zone/", json={
+    response =await async_client.post(
+        "/api/rescue_flora/relocation_zone", json={
             "name": "test_relocation_zone6",
         },
     )
@@ -261,7 +295,7 @@ def test_update_relocation_zone_by_id() -> None:
     relocation_zone_id: int = data["id"]
 
     # update a relocation zone by id
-    response = client.put(
+    response =await async_client.put(
         f"/api/rescue_flora/relocation_zone/{relocation_zone_id}", json={
             "name": "test_relocation_zone6",
         },
@@ -271,10 +305,14 @@ def test_update_relocation_zone_by_id() -> None:
     assert data["name"] == "test_relocation_zone6"
 
 #test delete a relocation zone by id
-def test_delete_relocation_zone_by_id() -> None:
+@pytest.mark.asyncio
+async def test_delete_relocation_zone_by_id(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
     # create zone relocation
-    response = client.post(
-        "/api/rescue_flora/relocation_zone/", json={
+    response =await async_client.post(
+        "/api/rescue_flora/relocation_zone", json={
             "name": "test_relocation_zone7",
         },
     )
@@ -283,11 +321,11 @@ def test_delete_relocation_zone_by_id() -> None:
     relocation_zone_id: int = data["id"]
 
     # delete a relocation zone by id
-    response = client.delete(f"/api/rescue_flora/relocation_zone/{relocation_zone_id}")
+    response =await async_client.delete(f"/api/rescue_flora/relocation_zone/{relocation_zone_id}")
     assert response.status_code == 200, response.text
 
     # get a relocation zone by id that does not exist
-    response = client.get(f"/api/rescue_flora/relocation_zone/{relocation_zone_id}")
+    response =await async_client.get(f"/api/rescue_flora/relocation_zone/{relocation_zone_id}")
     assert response.status_code == 404, response.text
 
 """
@@ -295,9 +333,16 @@ TEST FOR FLORA RESCUE ENDPOINTS
 """
 
 #test create a flora rescue
-def test_create_flora_rescue() -> None:
+@pytest.mark.asyncio
+async def test_create_flora_rescue(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    specie_id = await create_specie(async_client)
+    GENUS_ID = await create_genus(async_client)
+    FAMILY_ID = await create_family(async_client)
     # create flora rescue
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora", json={
             "epiphyte_number": 1,
             "rescue_date": "2021-10-10T00:00:00",
@@ -344,9 +389,9 @@ def test_create_flora_rescue() -> None:
 
 
 #test create a flora rescue that already exists
-def test_create_flora_rescue_that_already_exists() -> None:
+async def test_create_flora_rescue_that_already_exists() -> None:
     # create flora rescue
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora", json={
             "epiphyte_number": 2,
             "rescue_date": "2021-12-10T00:00:00",
@@ -371,7 +416,7 @@ def test_create_flora_rescue_that_already_exists() -> None:
     assert response.status_code == 201, response.text
 
     # create flora rescue that already exists
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora", json={
             "epiphyte_number": 2,
             "rescue_date": "2021-12-10T00:00:00",
@@ -396,9 +441,9 @@ def test_create_flora_rescue_that_already_exists() -> None:
     assert response.status_code == 400, response.text
 
 #test get all flora rescues
-def test_read_all_flora_rescues() -> None:
+async def test_read_all_flora_rescues() -> None:
     # create flora rescue
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora", json={
             "epiphyte_number": 3,
             "rescue_date": "2021-12-10T00:00:00",
@@ -423,7 +468,7 @@ def test_read_all_flora_rescues() -> None:
     assert response.status_code == 201, response.text
 
     # create flora rescue
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora", json={
             "epiphyte_number": 4,
             "rescue_date": "2021-12-10T00:00:00",
@@ -448,15 +493,15 @@ def test_read_all_flora_rescues() -> None:
     assert response.status_code == 201, response.text
 
     # get all flora rescues
-    response = client.get("/api/rescue_flora")
+    response =await async_client.get("/api/rescue_flora")
     assert response.status_code == 200, response.text
     data: List[Dict[str, Any]] = response.json()
     assert len(data) >= 2
 
 #test get a flora rescue by id
-def test_read_flora_rescue_by_id() -> None:
+async def test_read_flora_rescue_by_id() -> None:
     # create flora rescue
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora", json={
             "epiphyte_number": 5,
             "rescue_date": "2021-12-10T00:00:00",
@@ -482,7 +527,7 @@ def test_read_flora_rescue_by_id() -> None:
     data: Dict[str, Any] = response.json()
 
     # get a flora rescue by id
-    response = client.get(f"/api/rescue_flora/{data['id']}")
+    response =await async_client.get(f"/api/rescue_flora/{data['id']}")
     assert response.status_code == 200, response.text
     data = response.json()
     assert "id" in data
@@ -506,15 +551,15 @@ def test_read_flora_rescue_by_id() -> None:
     assert data["rescue_zone_id"] == RESCUE_ZONE_ID
 
 #test get a flora rescue by id not found
-def test_read_flora_rescue_by_id_not_found() -> None:
+async def test_read_flora_rescue_by_id_not_found() -> None:
     # get a flora rescue by id not found
-    response = client.get("/api/rescue_flora/0")
+    response =await async_client.get("/api/rescue_flora/0")
     assert response.status_code == 404, response.text
 
 #test update a flora rescue
-def test_update_flora_rescue() -> None:
+async def test_update_flora_rescue() -> None:
     # create flora rescue
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora", json={
             "epiphyte_number": 6,
             "rescue_date": "2021-12-10T00:00:00",
@@ -541,7 +586,7 @@ def test_update_flora_rescue() -> None:
     id = data["id"]
 
     # update a flora rescue
-    response = client.put(
+    response =await async_client.put(
        f"/api/rescue_flora/{id}", json={
             "epiphyte_number": 7,
             "rescue_date": "2021-12-11T00:00:00",
@@ -586,9 +631,9 @@ def test_update_flora_rescue() -> None:
     assert data["rescue_zone_id"] == RESCUE_ZONE_ID
 
 #test update a flora rescue not found
-def test_update_flora_rescue_not_found() -> None:
+async def test_update_flora_rescue_not_found() -> None:
     # update a flora rescue not found
-    response = client.put(
+    response =await async_client.put(
         "/api/rescue_flora/0", json={
             "epiphyte_number": 8,
             "rescue_date": "2021-12-10T00:00:00",
@@ -613,9 +658,9 @@ def test_update_flora_rescue_not_found() -> None:
     assert response.status_code == 404, response.text
 
 #test delete a flora rescue
-def test_delete_flora_rescue() -> None:
+async def test_delete_flora_rescue() -> None:
     # create flora rescue
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora", json={
             "epiphyte_number": 9,
             "rescue_date": "2021-12-10T00:00:00",
@@ -641,13 +686,13 @@ def test_delete_flora_rescue() -> None:
     data: Dict[str, Any] = response.json()
 
     # delete a flora rescue
-    response = client.delete(f"/api/rescue_flora/{data['id']}")
+    response =await async_client.delete(f"/api/rescue_flora/{data['id']}")
     assert response.status_code == 200, response.text
 
 #test delete a flora rescue not found
-def test_delete_flora_rescue_not_found() -> None:
+async def test_delete_flora_rescue_not_found() -> None:
     # delete a flora rescue not found
-    response = client.delete("/api/rescue_flora/0")
+    response =await async_client.delete("/api/rescue_flora/0")
     assert response.status_code == 404, response.text
 
 """
@@ -655,11 +700,11 @@ TESTS FOR PLANT NURSERY
 """
 
 #test create a plant nursery
-def test_create_plant_nursery() -> None:
+async def test_create_plant_nursery() -> None:
     #fuction to create a randon numnert int in a range of 111 to 999
 
     # create plant nursery
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora/plant_nursery", json={
             "entry_date": "2021-12-10T00:00:00",
             "cod_reg": "10",
@@ -690,9 +735,9 @@ def test_create_plant_nursery() -> None:
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
 
 #test create a plant nursery that already exists
-def test_create_plant_nursery_already_exists() -> None:
+async def test_create_plant_nursery_already_exists() -> None:
     # create plant nursery that already exists
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora/plant_nursery", json={
             "entry_date": "2021-12-10T00:00:00",
             "cod_reg": "10",
@@ -710,9 +755,9 @@ def test_create_plant_nursery_already_exists() -> None:
     assert response.status_code == 400, response.text
 
 #test get all plant nursery
-def test_read_all_plant_nursery() -> None:
+async def test_read_all_plant_nursery() -> None:
     # create two plant nursery
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora/plant_nursery", json={
             "entry_date": "2021-12-10T00:00:00",
             "cod_reg": "11",
@@ -728,7 +773,7 @@ def test_read_all_plant_nursery() -> None:
         },
     )
     assert response.status_code == 201, response.text
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora/plant_nursery", json={
             "entry_date": "2021-12-10T00:00:00",
             "cod_reg": "12",
@@ -746,15 +791,15 @@ def test_read_all_plant_nursery() -> None:
     assert response.status_code == 201, response.text
 
     # read all plant nursery
-    response = client.get("/api/plant_nurseries")
+    response =await async_client.get("/api/plant_nurseries")
     assert response.status_code == 200, response.text
     data: List[Dict[str, Any]] = response.json()
     assert len(data) >= 2
 
 #test get a plant nursery by id
-def test_read_plant_nursery() -> None:
+async def test_read_plant_nursery() -> None:
     # create a plant nursery
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora/plant_nursery", json={
             "entry_date": "2021-12-10T00:00:00",
             "cod_reg": "13",
@@ -772,7 +817,7 @@ def test_read_plant_nursery() -> None:
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     # read a plant nursery by id
-    response = client.get(f"/api/rescue_flora/plant_nursery/{data['id']}")
+    response =await async_client.get(f"/api/rescue_flora/plant_nursery/{data['id']}")
     assert response.status_code == 200, response.text
     data = response.json()
     assert data["entry_date"] == "2021-12-10T00:00:00"
@@ -790,9 +835,9 @@ def test_read_plant_nursery() -> None:
 TEST FOR RELOCATION FLORA
 """
 #test create a relocation flora
-def test_create_relocation_flora() -> None:
+async def test_create_relocation_flora() -> None:
     # create relocation flora
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "size": 1.0,
@@ -837,9 +882,9 @@ def test_create_relocation_flora() -> None:
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
 
 #test create a relocation flora that already exists
-def test_create_relocation_flora_already_exists() -> None:
+async def test_create_relocation_flora_already_exists() -> None:
     # create relocation flora that already exists
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "size": 1.0,
@@ -864,9 +909,9 @@ def test_create_relocation_flora_already_exists() -> None:
     assert response.status_code == 400, response.text
 
 #test get all relocation flora
-def test_read_all_relocation_flora() -> None:
+async def test_read_all_relocation_flora() -> None:
     # create two relocation flora
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "size": 2.0,
@@ -889,7 +934,7 @@ def test_read_all_relocation_flora() -> None:
         },
     )
     assert response.status_code == 201, response.text
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "size": 3.0,
@@ -913,15 +958,15 @@ def test_read_all_relocation_flora() -> None:
     )
     assert response.status_code == 201, response.text
     # read all relocation flora
-    response = client.get("/api/flora_relocations")
+    response =await async_client.get("/api/flora_relocations")
     assert response.status_code == 200, response.text
     data: List[Dict[str, Any]] = response.json()
     assert len(data) >= 2
 
 #test get a relocation flora by id
-def test_read_relocation_flora() -> None:
+async def test_read_relocation_flora() -> None:
     #create a relocation flora
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "size": 4.0,
@@ -947,7 +992,7 @@ def test_read_relocation_flora() -> None:
     data: Dict[str, Any] = response.json()
     id = data["id"]
     # read a relocation flora by id
-    response = client.get(f"/api/rescue_flora/flora_relocation/{id}")
+    response =await async_client.get(f"/api/rescue_flora/flora_relocation/{id}")
     assert response.status_code == 200, response.text
     data = response.json()
     assert data["relocation_date"] == "2021-12-10T00:00:00"
@@ -970,9 +1015,9 @@ def test_read_relocation_flora() -> None:
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
 
 #test update a relocation flora
-def test_update_relocation_flora() -> None:
+async def test_update_relocation_flora() -> None:
     #create a relocation flora
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "size": 5.0,
@@ -998,7 +1043,7 @@ def test_update_relocation_flora() -> None:
     data: Dict[str, Any] = response.json()
     id = data["id"]
     # update a relocation flora
-    response = client.put(
+    response =await async_client.put(
         f"/api/rescue_flora/flora_relocation/{id}", json={
             "relocation_date": "2021-12-10T00:00:00",
             "size": 6.0,
@@ -1042,9 +1087,9 @@ def test_update_relocation_flora() -> None:
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
 
 #test delete a relocation flora
-def test_delete_relocation_flora() -> None:
+async def test_delete_relocation_flora() -> None:
     #create a relocation flora
-    response = client.post(
+    response =await async_client.post(
         "/api/rescue_flora/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "size": 7.0,
@@ -1070,7 +1115,7 @@ def test_delete_relocation_flora() -> None:
     data: Dict[str, Any] = response.json()
     id = data["id"]
     # delete a relocation flora
-    response = client.delete(f"/api/rescue_flora/flora_relocation/{id}")
+    response =await async_client.delete(f"/api/rescue_flora/flora_relocation/{id}")
     assert response.status_code == 200, response.text
 
 

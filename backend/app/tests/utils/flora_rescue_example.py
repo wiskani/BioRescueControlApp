@@ -1,13 +1,17 @@
 import random
 import string
-from sqlalchemy.ext.asyncio import AsyncSession
+import pytest
+from httpx import Response, AsyncClient
 from app.tests.conftest import *
 from app.tests.utils.species_example import *
 from app.models.rescue_flora import *
 
 
 # Create a radom rescue_zone
-async def create_random_rescue_zone_id(db: AsyncSession)-> int:
+@pytest.mark.asyncio
+async def create_random_rescue_zone_id(
+    async_client: AsyncClient
+)-> int:
     if db is None:
         raise ValueError("db is None")
     result = await db.execute(select(FloraRescueZone))

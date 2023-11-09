@@ -2,6 +2,7 @@ from sqlalchemy import Integer, String, Float, ForeignKey, DateTime, Boolean
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from datetime import datetime
 
+import pytz
 import app.models.species
 import app.db.database as _database
 
@@ -10,7 +11,7 @@ class FloraRescueZone(_database.Base):
     id:Mapped[int]= mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String, index=True)
     description: Mapped[str] = mapped_column(String, index=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(pytz.timezone('America/La_Paz')))
 
     #Relationship for flora_rescue
     flora_rescue = relationship("FloraRescue", back_populates="flora_rescue_zone")
@@ -20,7 +21,7 @@ class FloraRelocationZone(_database.Base):
     __tablename__ = "flora_relocation_zone"
     id:Mapped[int]= mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String, index=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(pytz.timezone('America/La_Paz')))
 
     #Relationship for flora_relocation
     flora_relocation = relationship("FloraRelocation", back_populates="flora_relocation_zone")
@@ -31,7 +32,7 @@ class FloraRescue(_database.Base):
     __tablename__ = "flora_rescue"
     id:Mapped[int]= mapped_column(Integer, primary_key=True, index=True)
     epiphyte_number: Mapped[int] = mapped_column(Integer, index=True)
-    rescue_date: Mapped[datetime] = mapped_column(DateTime)
+    rescue_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     rescue_area_latitude: Mapped[float] = mapped_column(Float, index=True)
     rescue_area_longitude: Mapped[float] = mapped_column(Float, index=True)
     substrate: Mapped[str] = mapped_column(String, index=True, nullable=True)
@@ -43,7 +44,7 @@ class FloraRescue(_database.Base):
     health_status_epiphyte: Mapped[str] = mapped_column(String, index=True)
     microhabitat: Mapped[str] = mapped_column(String, index=True)
     other_observations: Mapped[str] = mapped_column(String, index=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(pytz.timezone('America/La_Paz')))
 
     #Relationship for species
     specie_bryophyte_id: Mapped[int] = mapped_column(Integer, ForeignKey("species.id"), nullable=True)
@@ -74,7 +75,7 @@ class FloraRescue(_database.Base):
 class PlantNursery(_database.Base):
     __tablename__ = "plant_nursery"
     id:Mapped[int]= mapped_column(Integer, primary_key=True, index=True)
-    entry_date: Mapped[datetime] = mapped_column(DateTime)
+    entry_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     cod_reg: Mapped[str] = mapped_column(String, index=True)
     health_status_epiphyte: Mapped[str] = mapped_column(String, index=True)
     vegetative_state: Mapped[str] = mapped_column(String, index=True)
@@ -84,7 +85,7 @@ class PlantNursery(_database.Base):
     is_phytosanitary_treatment: Mapped[bool] = mapped_column(Boolean, default=False)
     substrate: Mapped[str] = mapped_column(String, index=True)
     departure_date: Mapped[datetime] = mapped_column(DateTime)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(pytz.timezone('America/La_Paz')))
 
     #Relationship for flora_rescue
     flora_rescue_id: Mapped[int] = mapped_column(Integer, ForeignKey("flora_rescue.id"))
@@ -94,7 +95,7 @@ class PlantNursery(_database.Base):
 class FloraRelocation(_database.Base):
     __tablename__ = "flora_relocation"
     id:Mapped[int]= mapped_column(Integer, primary_key=True, index=True)
-    relocation_date: Mapped[datetime] = mapped_column(DateTime)
+    relocation_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     size: Mapped[float] = mapped_column(Float, index=True)
     epiphyte_phenology: Mapped[str] = mapped_column(String, index=True)
     johanson_zone: Mapped[str] = mapped_column(String, index=True, nullable=True)
@@ -107,7 +108,7 @@ class FloraRelocation(_database.Base):
     infested_lianas: Mapped[str] = mapped_column(String, index=True, nullable=True)
     relocation_number: Mapped[int] = mapped_column(Integer, index=True, nullable=True)
     other_observations: Mapped[str] = mapped_column(String, index=True, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(pytz.timezone('America/La_Paz')))
 
     #Relationship for flora rescue
     flora_rescue_id: Mapped[int] = mapped_column(Integer, ForeignKey("flora_rescue.id"))
