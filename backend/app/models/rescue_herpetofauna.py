@@ -16,6 +16,9 @@ class AgeGroup (_database.Base):
     #relationship with rescue_herpetofauna
     rescue_herpetofauna = relationship('RescueHerpetofauna', back_populates='age_group')
 
+    #relationship with rescue_mammals
+    rescue_mammals = relationship('RescueMammals', back_populates='age_group')
+
 
 class TransectHerpetofauna (_database.Base):
     __tablename__ = 'transect_herpetofauna'
