@@ -79,12 +79,12 @@ class PlantNursery(_database.Base):
     cod_reg: Mapped[str] = mapped_column(String, index=True)
     health_status_epiphyte: Mapped[str] = mapped_column(String, index=True)
     vegetative_state: Mapped[str] = mapped_column(String, index=True)
-    flowering_date: Mapped[datetime] = mapped_column(DateTime)
+    flowering_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     treatment_product: Mapped[str] = mapped_column(String, index=True)
     is_pruned: Mapped[bool] = mapped_column(Boolean, default=False)
     is_phytosanitary_treatment: Mapped[bool] = mapped_column(Boolean, default=False)
     substrate: Mapped[str] = mapped_column(String, index=True)
-    departure_date: Mapped[datetime] = mapped_column(DateTime)
+    departure_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(pytz.timezone('America/La_Paz')))
 
     #Relationship for flora_rescue

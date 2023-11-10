@@ -218,7 +218,7 @@ PLANT NURSERY CRUD
 """
 
 #get if plant nursery exists by cod_reg
-async def get_plant_nursery(db: AsyncSession, plant_nursery_cod_reg: int) -> PlantNursery | None:
+async def get_plant_nursery(db: AsyncSession, plant_nursery_cod_reg:str) -> PlantNursery | None:
     plant_nursery_db = await db.execute(select(PlantNursery).where(PlantNursery.cod_reg == plant_nursery_cod_reg))
     return plant_nursery_db.scalars().first()
 

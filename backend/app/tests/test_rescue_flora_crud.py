@@ -226,10 +226,13 @@ async def test_create_relocation_zone_that_already_exists(
 
 #test get all relocation zones
 @pytest.mark.asyncio
-async def test_get_all_relocation_zones() -> None:
+async def test_get_all_relocation_zones(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
     # create zone relocation
     response =await async_client.post(
-        "/api/rescue_flora/relocation_zone/", json={
+        "/api/rescue_flora/relocation_zone", json={
             "name": "test_relocation_zone3",
         },
     )
@@ -237,24 +240,27 @@ async def test_get_all_relocation_zones() -> None:
 
     # create zone relocation
     response =await async_client.post(
-        "/api/rescue_flora/relocation_zone/", json={
+        "/api/rescue_flora/relocation_zone", json={
             "name": "test_relocation_zone4",
         },
     )
     assert response.status_code == 201, response.text
 
     # get all relocation zones
-    response =await async_client.get("/api/rescue_flora/relocation_zone/")
+    response =await async_client.get("/api/rescue_flora/relocation_zone")
     assert response.status_code == 200, response.text
     data: Dict[str, Any] = response.json()
     assert len(data) >= 2
 
 #test get a relocation zone by id
 @pytest.mark.asyncio
-async def test_get_relocation_zone_by_id() -> None:
+async def test_get_relocation_zone_by_id(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
     # create zone relocation
     response =await async_client.post(
-        "/api/rescue_flora/relocation_zone/", json={
+        "/api/rescue_flora/relocation_zone", json={
             "name": "test_relocation_zone5",
         },
     )
@@ -341,6 +347,7 @@ async def test_create_flora_rescue(
     specie_id = await create_specie(async_client)
     GENUS_ID = await create_genus(async_client)
     FAMILY_ID = await create_family(async_client)
+    RESCUE_ZONE_ID = await create_random_rescue_zone_id(async_client)
     # create flora rescue
     response =await async_client.post(
         "/api/rescue_flora", json={
@@ -368,7 +375,7 @@ async def test_create_flora_rescue(
     data: Dict[str, Any] = response.json()
     assert "id" in data
     assert data["epiphyte_number"] == 1
-    assert data["rescue_date"] == "2021-10-10T00:00:00"
+    assert data["rescue_date"] == "2021-10-10T00:00:00Z"
     assert data["rescue_area_latitude"] >= -90 and data["rescue_area_latitude"] <= 90
     assert data["rescue_area_longitude"] >= -180 and data["rescue_area_longitude"] <= 180
     assert data["substrate"] == "test_substrate"
@@ -389,8 +396,16 @@ async def test_create_flora_rescue(
 
 
 #test create a flora rescue that already exists
-async def test_create_flora_rescue_that_already_exists() -> None:
+@pytest.mark.asyncio
+async def test_create_flora_rescue_that_already_exists(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
     # create flora rescue
+    specie_id = await create_specie(async_client)
+    GENUS_ID = await create_genus(async_client)
+    FAMILY_ID = await create_family(async_client)
+    RESCUE_ZONE_ID = await create_random_rescue_zone_id(async_client)
     response =await async_client.post(
         "/api/rescue_flora", json={
             "epiphyte_number": 2,
@@ -435,13 +450,21 @@ async def test_create_flora_rescue_that_already_exists() -> None:
             "genus_bryophyte_id": GENUS_ID,
             "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
-            "rescue_zone_id": RELOCATION_ZONE_ID,
+            "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )
     assert response.status_code == 400, response.text
 
 #test get all flora rescues
-async def test_read_all_flora_rescues() -> None:
+@pytest.mark.asyncio
+async def test_read_all_flora_rescues(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    specie_id = await create_specie(async_client)
+    GENUS_ID = await create_genus(async_client)
+    FAMILY_ID = await create_family(async_client)
+    RESCUE_ZONE_ID = await create_random_rescue_zone_id(async_client)
     # create flora rescue
     response =await async_client.post(
         "/api/rescue_flora", json={
@@ -499,7 +522,15 @@ async def test_read_all_flora_rescues() -> None:
     assert len(data) >= 2
 
 #test get a flora rescue by id
-async def test_read_flora_rescue_by_id() -> None:
+@pytest.mark.asyncio
+async def test_read_flora_rescue_by_id(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    specie_id = await create_specie(async_client)
+    GENUS_ID = await create_genus(async_client)
+    FAMILY_ID = await create_family(async_client)
+    RESCUE_ZONE_ID = await create_random_rescue_zone_id(async_client)
     # create flora rescue
     response =await async_client.post(
         "/api/rescue_flora", json={
@@ -532,7 +563,7 @@ async def test_read_flora_rescue_by_id() -> None:
     data = response.json()
     assert "id" in data
     assert data["epiphyte_number"] == 5
-    assert data["rescue_date"] == "2021-12-10T00:00:00"
+    assert data["rescue_date"] == "2021-12-10T00:00:00Z"
     assert data["rescue_area_latitude"] >= -90 and data["rescue_area_latitude"] <= 90
     assert data["rescue_area_longitude"] >= -180 and data["rescue_area_longitude"] <= 180
     assert data["substrate"] == "test_substrate5"
@@ -551,13 +582,25 @@ async def test_read_flora_rescue_by_id() -> None:
     assert data["rescue_zone_id"] == RESCUE_ZONE_ID
 
 #test get a flora rescue by id not found
-async def test_read_flora_rescue_by_id_not_found() -> None:
+@pytest.mark.asyncio
+async def test_read_flora_rescue_by_id_not_found(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
     # get a flora rescue by id not found
     response =await async_client.get("/api/rescue_flora/0")
     assert response.status_code == 404, response.text
 
 #test update a flora rescue
-async def test_update_flora_rescue() -> None:
+@pytest.mark.asyncio
+async def test_update_flora_rescue(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    specie_id = await create_specie(async_client)
+    GENUS_ID = await create_genus(async_client)
+    FAMILY_ID = await create_family(async_client)
+    RESCUE_ZONE_ID = await create_random_rescue_zone_id(async_client)
     # create flora rescue
     response =await async_client.post(
         "/api/rescue_flora", json={
@@ -612,7 +655,7 @@ async def test_update_flora_rescue() -> None:
     data = response.json()
     assert "id" in data
     assert data["epiphyte_number"] == 7
-    assert data["rescue_date"] == "2021-12-11T00:00:00"
+    assert data["rescue_date"] == "2021-12-11T00:00:00Z"
     assert data["rescue_area_latitude"] >= -90 and data["rescue_area_latitude"] <= 90
     assert data["rescue_area_longitude"] >= -180 and data["rescue_area_longitude"] <= 180
     assert data["substrate"] == "test_substrate7"
@@ -631,7 +674,15 @@ async def test_update_flora_rescue() -> None:
     assert data["rescue_zone_id"] == RESCUE_ZONE_ID
 
 #test update a flora rescue not found
-async def test_update_flora_rescue_not_found() -> None:
+@pytest.mark.asyncio
+async def test_update_flora_rescue_not_found(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    specie_id = await create_specie(async_client)
+    GENUS_ID = await create_genus(async_client)
+    FAMILY_ID = await create_family(async_client)
+    RESCUE_ZONE_ID = await create_random_rescue_zone_id(async_client)
     # update a flora rescue not found
     response =await async_client.put(
         "/api/rescue_flora/0", json={
@@ -658,7 +709,15 @@ async def test_update_flora_rescue_not_found() -> None:
     assert response.status_code == 404, response.text
 
 #test delete a flora rescue
-async def test_delete_flora_rescue() -> None:
+@pytest.mark.asyncio
+async def test_delete_flora_rescue(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    specie_id = await create_specie(async_client)
+    GENUS_ID = await create_genus(async_client)
+    FAMILY_ID = await create_family(async_client)
+    RESCUE_ZONE_ID = await create_random_rescue_zone_id(async_client)
     # create flora rescue
     response =await async_client.post(
         "/api/rescue_flora", json={
@@ -690,7 +749,11 @@ async def test_delete_flora_rescue() -> None:
     assert response.status_code == 200, response.text
 
 #test delete a flora rescue not found
-async def test_delete_flora_rescue_not_found() -> None:
+@ pytest.mark.asyncio
+async def test_delete_flora_rescue_not_found(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
     # delete a flora rescue not found
     response =await async_client.delete("/api/rescue_flora/0")
     assert response.status_code == 404, response.text
@@ -700,9 +763,12 @@ TESTS FOR PLANT NURSERY
 """
 
 #test create a plant nursery
-async def test_create_plant_nursery() -> None:
-    #fuction to create a randon numnert int in a range of 111 to 999
-
+@pytest.mark.asyncio
+async def test_create_plant_nursery(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    FLORA_RESCUE_ID = await create_random_flora_rescue_id(async_client)
     # create plant nursery
     response =await async_client.post(
         "/api/rescue_flora/plant_nursery", json={
@@ -722,20 +788,43 @@ async def test_create_plant_nursery() -> None:
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     assert "id" in data
-    assert data["entry_date"] == "2021-12-10T00:00:00"
+    assert data["entry_date"] == "2021-12-10T00:00:00Z"
     assert data["cod_reg"] == "10"
     assert data["health_status_epiphyte"] == "test_health_status_epiphyte10"
-    assert data["flowering_date"] == "2021-12-10T00:00:00"
+    assert data["flowering_date"] == "2021-12-10T00:00:00Z"
     assert data["vegetative_state"] == "test_vegetative_state10"
     assert data["treatment_product"] == "test_treatment_product10"
     assert data["is_pruned"] == False
     assert data["is_phytosanitary_treatment"] == False
     assert data["substrate"] == "test_substrate10"
-    assert data["departure_date"] == "2021-12-10T00:00:00"
+    assert data["departure_date"] == "2021-12-10T00:00:00Z"
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
 
 #test create a plant nursery that already exists
-async def test_create_plant_nursery_already_exists() -> None:
+@pytest.mark.asyncio
+async def test_create_plant_nursery_already_exists(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    FLORA_RESCUE_ID = await create_random_flora_rescue_id(async_client)
+    # create plant nursery that already exists
+    response =await async_client.post(
+        "/api/rescue_flora/plant_nursery", json={
+            "entry_date": "2021-12-10T00:00:00",
+            "cod_reg": "10",
+            "health_status_epiphyte": "test_health_status_epiphyte10",
+            "flowering_date": "2021-12-10T00:00:00",
+            "vegetative_state": "test_vegetative_state10",
+            "treatment_product": "test_treatment_product10",
+            "is_pruned": False,
+            "is_phytosanitary_treatment": False,
+            "substrate": "test_substrate10",
+            "departure_date": "2021-12-10T00:00:00",
+            "flora_rescue_id": FLORA_RESCUE_ID,
+        },
+    )
+    assert response.status_code == 201, response.text
+
     # create plant nursery that already exists
     response =await async_client.post(
         "/api/rescue_flora/plant_nursery", json={
@@ -755,7 +844,12 @@ async def test_create_plant_nursery_already_exists() -> None:
     assert response.status_code == 400, response.text
 
 #test get all plant nursery
-async def test_read_all_plant_nursery() -> None:
+@pytest.mark.asyncio
+async def test_read_all_plant_nursery(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    FLORA_RESCUE_ID = await create_random_flora_rescue_id(async_client)
     # create two plant nursery
     response =await async_client.post(
         "/api/rescue_flora/plant_nursery", json={
@@ -797,7 +891,12 @@ async def test_read_all_plant_nursery() -> None:
     assert len(data) >= 2
 
 #test get a plant nursery by id
-async def test_read_plant_nursery() -> None:
+@pytest.mark.asyncio
+async def test_read_plant_nursery(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    FLORA_RESCUE_ID = await create_random_flora_rescue_id(async_client)
     # create a plant nursery
     response =await async_client.post(
         "/api/rescue_flora/plant_nursery", json={
@@ -820,22 +919,118 @@ async def test_read_plant_nursery() -> None:
     response =await async_client.get(f"/api/rescue_flora/plant_nursery/{data['id']}")
     assert response.status_code == 200, response.text
     data = response.json()
-    assert data["entry_date"] == "2021-12-10T00:00:00"
+    assert data["entry_date"] == "2021-12-10T00:00:00Z"
     assert data["cod_reg"] == "13"
     assert data["health_status_epiphyte"] == "test_health_status_epiphyte13"
-    assert data["flowering_date"] == "2021-12-10T00:00:00"
+    assert data["flowering_date"] == "2021-12-10T00:00:00Z"
     assert data["vegetative_state"] == "test_vegetative_state13"
     assert data["treatment_product"] == "test_treatment_product13"
     assert data["is_phytosanitary_treatment"] == False
     assert data["substrate"] == "test_substrate13"
-    assert data["departure_date"] == "2021-12-10T00:00:00"
+    assert data["departure_date"] == "2021-12-10T00:00:00Z"
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
+
+#test update a plant nursery
+@pytest.mark.asyncio
+async def test_update_plant_nursery(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    FLORA_RESCUE_ID = await create_random_flora_rescue_id(async_client)
+    # create a plant nursery
+    response =await async_client.post(
+        "/api/rescue_flora/plant_nursery", json={
+            "entry_date": "2021-12-10T00:00:00",
+            "cod_reg": "14",
+            "health_status_epiphyte": "test_health_status_epiphyte14",
+            "flowering_date": "2021-12-10T00:00:00",
+            "vegetative_state": "test_vegetative_state14",
+            "treatment_product": "test_treatment_product14",
+            "is_pruned": False,
+            "is_phytosanitary_treatment": False,
+            "substrate": "test_substrate14",
+            "departure_date": "2021-12-10T00:00:00",
+            "flora_rescue_id": FLORA_RESCUE_ID,
+        },
+    )
+    assert response.status_code == 201, response.text
+    data: Dict[str, Any] = response.json()
+    # update a plant nursery
+    response =await async_client.put(
+        f"/api/rescue_flora/plant_nursery/{data['id']}", json={
+            "entry_date": "2021-12-10T00:00:00",
+            "cod_reg": "15",
+            "health_status_epiphyte": "test_health_status_epiphyte15",
+            "flowering_date": "2021-12-10T00:00:00",
+            "vegetative_state": "test_vegetative_state15",
+            "treatment_product": "test_treatment_product15",
+            "is_pruned": False,
+            "is_phytosanitary_treatment": False,
+            "substrate": "test_substrate15",
+            "departure_date": "2021-12-10T00:00:00",
+            "flora_rescue_id": FLORA_RESCUE_ID,
+        },
+    )
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["entry_date"] == "2021-12-10T00:00:00Z"
+    assert data["cod_reg"] == "15"
+    assert data["health_status_epiphyte"] == "test_health_status_epiphyte15"
+    assert data["flowering_date"] == "2021-12-10T00:00:00Z"
+    assert data["vegetative_state"] == "test_vegetative_state15"
+    assert data["treatment_product"] == "test_treatment_product15"
+    assert data["is_phytosanitary_treatment"] == False
+    assert data["substrate"] == "test_substrate15"
+    assert data["departure_date"] == "2021-12-10T00:00:00Z"
+    assert data["flora_rescue_id"] == FLORA_RESCUE_ID
+
+#test delete a plant nursery
+@pytest.mark.asyncio
+async def test_delete_plant_nursery(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    FLORA_RESCUE_ID = await create_random_flora_rescue_id(async_client)
+    # create a plant nursery
+    response =await async_client.post(
+        "/api/rescue_flora/plant_nursery", json={
+            "entry_date": "2021-12-10T00:00:00",
+            "cod_reg": "16",
+            "health_status_epiphyte": "test_health_status_epiphyte16",
+            "flowering_date": "2021-12-10T00:00:00",
+            "vegetative_state": "test_vegetative_state16",
+            "treatment_product": "test_treatment_product16",
+            "is_pruned": False,
+            "is_phytosanitary_treatment": False,
+            "substrate": "test_substrate16",
+            "departure_date": "2021-12-10T00:00:00",
+            "flora_rescue_id": FLORA_RESCUE_ID,
+        },
+    )
+    assert response.status_code == 201, response.text
+    data: Dict[str, Any] = response.json()
+    # delete a plant nursery
+    response =await async_client.delete(f"/api/rescue_flora/plant_nursery/{data['id']}")
+
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["detail"] == "Plant nursery deleted"
+
 
 """
 TEST FOR RELOCATION FLORA
 """
 #test create a relocation flora
-async def test_create_relocation_flora() -> None:
+@pytest.mark.asyncio
+async def test_create_relocation_flora(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    FLORA_RESCUE_ID = await create_random_flora_rescue_id(async_client)
+    specie_id = await create_specie(async_client)
+    GENUS_ID = await create_genus(async_client)
+    FAMILY_ID = await create_family(async_client)
+    RELOCATION_ZONE_ID = await create_random_relocation_zone_id(async_client)
     # create relocation flora
     response =await async_client.post(
         "/api/rescue_flora/flora_relocation", json={
@@ -862,7 +1057,7 @@ async def test_create_relocation_flora() -> None:
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     assert "id" in data
-    assert data["relocation_date"] == "2021-12-10T00:00:00"
+    assert data["relocation_date"] == "2021-12-10T00:00:00Z"
     assert data["size"] == 1.0
     assert data["epiphyte_phenology"] == "test_epiphyte_phenology14"
     assert data["johanson_zone"] == "test_johanson_zone14"
@@ -882,7 +1077,16 @@ async def test_create_relocation_flora() -> None:
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
 
 #test create a relocation flora that already exists
-async def test_create_relocation_flora_already_exists() -> None:
+@pytest.mark.asyncio
+async def test_create_relocation_flora_already_exists(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    FLORA_RESCUE_ID = await create_random_flora_rescue_id(async_client)
+    specie_id = await create_specie(async_client)
+    GENUS_ID = await create_genus(async_client)
+    FAMILY_ID = await create_family(async_client)
+    RELOCATION_ZONE_ID = await create_random_relocation_zone_id(async_client)
     # create relocation flora that already exists
     response =await async_client.post(
         "/api/rescue_flora/flora_relocation", json={
@@ -906,10 +1110,48 @@ async def test_create_relocation_flora_already_exists() -> None:
             "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
+    assert response.status_code == 201, response.text
+
+    #create a relocation flora with a relocation that does already exists
+    response: Response =await async_client.post(
+        "/api/rescue_flora/flora_relocation", json={
+            "relocation_date": "2021-12-10T00:00:00",
+            "size": 1.0,
+            "epiphyte_phenology": "test_epiphyte_phenology14",
+            "johanson_zone": "test_johanson_zone14",
+            "relocation_position_latitude": create_latitude(),
+            "relocation_position_longitude": create_longitude(),
+            "bryophyte_number": 14,
+            "dap_bryophyte": 14.0,
+            "height_bryophyte": 14.0,
+            "bark_type": "test_bark_type14",
+            "infested_lianas": "Poco",
+            "relocation_number": 14,
+            "other_observations": "test_other_observations14",
+            "flora_rescue_id": FLORA_RESCUE_ID,
+            "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": GENUS_ID,
+            "family_bryophyte_id": FAMILY_ID,
+            "relocation_zone_id": RELOCATION_ZONE_ID,
+
+        },
+    )
     assert response.status_code == 400, response.text
+    data = response.json()
+    assert data["detail"] == "Flora relocation already exists"
+
 
 #test get all relocation flora
-async def test_read_all_relocation_flora() -> None:
+@pytest.mark.asyncio
+async def test_read_all_relocation_flora(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    FLORA_RESCUE_ID = await create_random_flora_rescue_id(async_client)
+    specie_id = await create_specie(async_client)
+    GENUS_ID = await create_genus(async_client)
+    FAMILY_ID = await create_family(async_client)
+    RELOCATION_ZONE_ID = await create_random_relocation_zone_id(async_client)
     # create two relocation flora
     response =await async_client.post(
         "/api/rescue_flora/flora_relocation", json={
@@ -964,7 +1206,16 @@ async def test_read_all_relocation_flora() -> None:
     assert len(data) >= 2
 
 #test get a relocation flora by id
-async def test_read_relocation_flora() -> None:
+@pytest.mark.asyncio
+async def test_read_relocation_flora(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    FLORA_RESCUE_ID = await create_random_flora_rescue_id(async_client)
+    specie_id = await create_specie(async_client)
+    GENUS_ID = await create_genus(async_client)
+    FAMILY_ID = await create_family(async_client)
+    RELOCATION_ZONE_ID = await create_random_relocation_zone_id(async_client)
     #create a relocation flora
     response =await async_client.post(
         "/api/rescue_flora/flora_relocation", json={
@@ -995,7 +1246,7 @@ async def test_read_relocation_flora() -> None:
     response =await async_client.get(f"/api/rescue_flora/flora_relocation/{id}")
     assert response.status_code == 200, response.text
     data = response.json()
-    assert data["relocation_date"] == "2021-12-10T00:00:00"
+    assert data["relocation_date"] == "2021-12-10T00:00:00Z"
     assert data["size"] == 4.0
     assert data["epiphyte_phenology"] == "test_epiphyte_phenology17"
     assert data["johanson_zone"] == "test_johanson_zone17"
@@ -1015,7 +1266,16 @@ async def test_read_relocation_flora() -> None:
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
 
 #test update a relocation flora
-async def test_update_relocation_flora() -> None:
+@pytest.mark.asyncio
+async def test_update_relocation_flora(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    FLORA_RESCUE_ID = await create_random_flora_rescue_id(async_client)
+    specie_id = await create_specie(async_client)
+    GENUS_ID = await create_genus(async_client)
+    FAMILY_ID = await create_family(async_client)
+    RELOCATION_ZONE_ID = await create_random_relocation_zone_id(async_client)
     #create a relocation flora
     response =await async_client.post(
         "/api/rescue_flora/flora_relocation", json={
@@ -1067,7 +1327,7 @@ async def test_update_relocation_flora() -> None:
     )
     assert response.status_code == 200, response.text
     data = response.json()
-    assert data["relocation_date"] == "2021-12-10T00:00:00"
+    assert data["relocation_date"] == "2021-12-10T00:00:00Z"
     assert data["size"] == 6.0
     assert data["epiphyte_phenology"] == "test_epiphyte_phenology19"
     assert data["johanson_zone"] == "test_johanson_zone19"
@@ -1087,7 +1347,16 @@ async def test_update_relocation_flora() -> None:
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
 
 #test delete a relocation flora
-async def test_delete_relocation_flora() -> None:
+@pytest.mark.asyncio
+async def test_delete_relocation_flora(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    FLORA_RESCUE_ID = await create_random_flora_rescue_id(async_client)
+    specie_id = await create_specie(async_client)
+    GENUS_ID = await create_genus(async_client)
+    FAMILY_ID = await create_family(async_client)
+    RELOCATION_ZONE_ID = await create_random_relocation_zone_id(async_client)
     #create a relocation flora
     response =await async_client.post(
         "/api/rescue_flora/flora_relocation", json={
@@ -1117,5 +1386,7 @@ async def test_delete_relocation_flora() -> None:
     # delete a relocation flora
     response =await async_client.delete(f"/api/rescue_flora/flora_relocation/{id}")
     assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["detail"] == "Flora relocation deleted"
 
 

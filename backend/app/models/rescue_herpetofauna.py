@@ -6,6 +6,7 @@ import pytz
 import app.models.towers
 import app.db.database as _database
 import app.models.species
+import app.models.rescue_mammals
 
 class AgeGroup (_database.Base):
     __tablename__ = 'age_group'

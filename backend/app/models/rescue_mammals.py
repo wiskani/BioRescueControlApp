@@ -45,14 +45,21 @@ class RescueMammals(_database.Base):
     age_group = relationship('AgeGroup', back_populates='rescue_mammals')
 
     #relationship with species
-    species_id: Mapped[int] = mapped_column(Integer, ForeignKey('species.id'))
-    species = relationship('Species', back_populates='rescue_mammals')
+    specie_id: Mapped[int] = mapped_column(Integer, ForeignKey('species.id'))
+    specie = relationship('Specie', back_populates='rescue_mammals')
+
+    #relationship with release_mammals
+    release_mammals = relationship('ReleaseMammals', back_populates='rescue_mammals')
+
 
 class SiteReleaseMammals(_database.Base):
     __tablename__ = 'site_release_mammals'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.now(pytz.timezone('America/La_Paz')))
+
+    #relationship with release_mammals
+    release_mammals = relationship('ReleaseMammals', back_populates='site_release_mammals')
 
 class ReleaseMammals(_database.Base):
     __tablename__ = 'release_mammals'
