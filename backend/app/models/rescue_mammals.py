@@ -64,6 +64,7 @@ class SiteReleaseMammals(_database.Base):
 class ReleaseMammals(_database.Base):
     __tablename__ = 'release_mammals'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    cod: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     longitude: Mapped[float] = mapped_column(Float, nullable=False)
     latitude: Mapped[float] = mapped_column(Float, nullable=False)
     altitude: Mapped[int] = mapped_column(Integer, nullable=False)

@@ -32,7 +32,7 @@ class RescueMammalsBase(BaseModel):
     observation: str|None = Field(examples=["Observacion"])
     habitat_id: int = Field(..., examples=[ 1 ])
     age_group_id: int|None = Field(examples=[ 1 ])
-    species_id: int = Field(..., examples=[ 1 ])
+    specie_id: int = Field(..., examples=[ 1 ])
     class Config:
         orm_mode: bool = True
 
@@ -58,6 +58,7 @@ class SiteReleaseMammalsResponse(SiteReleaseMammalsBase):
         orm_mode: bool = True
 
 class ReleaseMammalsBase(BaseModel):
+    cod: str = Field(..., examples=[ "1" ])
     longitude: float = Field(..., examples=[ 1.0 ])
     latitude: float = Field(..., examples=[ 1.0 ])
     altitude: int = Field(..., examples=[ 1 ])
