@@ -238,6 +238,7 @@ async def create_release_mammal(db: AsyncSession, release_mammal: ReleaseMammals
         cod = release_mammal.cod,
         longitude = release_mammal.longitude,
         latitude = release_mammal.latitude,
+        altitude = release_mammal.altitude,
         sustrate = release_mammal.sustrate,
         site_release_mammals_id = release_mammal.site_release_mammals_id,
         rescue_mammals_id = release_mammal.rescue_mammals_id,
@@ -256,6 +257,7 @@ async def update_release_mammal(db: AsyncSession, release_mammal_id: int , relea
     release_mammal_db.cod = release_mammal_update.cod
     release_mammal_db.longitude = release_mammal_update.longitude
     release_mammal_db.latitude = release_mammal_update.latitude
+    release_mammal_db.altitude = release_mammal_update.altitude
     release_mammal_db.sustrate = release_mammal_update.sustrate
     release_mammal_db.site_release_mammals_id = release_mammal_update.site_release_mammals_id
     release_mammal_db.rescue_mammals_id = release_mammal_update.rescue_mammals_id
