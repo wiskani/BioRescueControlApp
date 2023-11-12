@@ -200,7 +200,7 @@ async def test_create_transect_herpetofauna(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    number_transect: int = random_string()
+    number_transect: str = random_string()
     tower_id: int =  await create_random_tower(async_client)
     latitude_in: float = random.uniform(-90, 90)
     longitude_in: float = random.uniform(-180, 180)
