@@ -50,6 +50,7 @@ async def create_random_relocation_zone_id(
 async def create_random_flora_rescue_id(
     async_client: AsyncClient
 ) -> int:
+    epiphyte_number = random_string()
     specie_id = await create_specie(async_client)
     GENUS_ID = await create_genus(async_client)
     FAMILY_ID = await create_family(async_client)
@@ -57,7 +58,7 @@ async def create_random_flora_rescue_id(
     # create flora rescue
     response =await async_client.post(
         "/api/rescue_flora", json={
-            "epiphyte_number": 1,
+            "epiphyte_number": epiphyte_number,
             "rescue_date": "2021-10-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),

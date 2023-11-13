@@ -344,6 +344,7 @@ async def test_create_flora_rescue(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
+    epiphyte_number = random_string()
     specie_id = await create_specie(async_client)
     GENUS_ID = await create_genus(async_client)
     FAMILY_ID = await create_family(async_client)
@@ -351,7 +352,7 @@ async def test_create_flora_rescue(
     # create flora rescue
     response =await async_client.post(
         "/api/rescue_flora", json={
-            "epiphyte_number": 1,
+            "epiphyte_number": epiphyte_number,
             "rescue_date": "2021-10-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
@@ -374,7 +375,7 @@ async def test_create_flora_rescue(
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     assert "id" in data
-    assert data["epiphyte_number"] == 1
+    assert data["epiphyte_number"] == epiphyte_number 
     assert data["rescue_date"] == "2021-10-10T00:00:00Z"
     assert data["rescue_area_latitude"] >= -90 and data["rescue_area_latitude"] <= 90
     assert data["rescue_area_longitude"] >= -180 and data["rescue_area_longitude"] <= 180
@@ -401,6 +402,7 @@ async def test_create_flora_rescue_that_already_exists(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
+    epiphyte_number = random_string()
     # create flora rescue
     specie_id = await create_specie(async_client)
     GENUS_ID = await create_genus(async_client)
@@ -408,7 +410,7 @@ async def test_create_flora_rescue_that_already_exists(
     RESCUE_ZONE_ID = await create_random_rescue_zone_id(async_client)
     response =await async_client.post(
         "/api/rescue_flora", json={
-            "epiphyte_number": 2,
+            "epiphyte_number": epiphyte_number,
             "rescue_date": "2021-12-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
@@ -433,7 +435,7 @@ async def test_create_flora_rescue_that_already_exists(
     # create flora rescue that already exists
     response =await async_client.post(
         "/api/rescue_flora", json={
-            "epiphyte_number": 2,
+            "epiphyte_number": epiphyte_number,
             "rescue_date": "2021-12-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
@@ -461,6 +463,8 @@ async def test_read_all_flora_rescues(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
+    epiphyte_number = random_string()
+    epiphyte_number2 = random_string()
     specie_id = await create_specie(async_client)
     GENUS_ID = await create_genus(async_client)
     FAMILY_ID = await create_family(async_client)
@@ -468,7 +472,7 @@ async def test_read_all_flora_rescues(
     # create flora rescue
     response =await async_client.post(
         "/api/rescue_flora", json={
-            "epiphyte_number": 3,
+            "epiphyte_number": epiphyte_number,
             "rescue_date": "2021-12-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
@@ -493,7 +497,7 @@ async def test_read_all_flora_rescues(
     # create flora rescue
     response =await async_client.post(
         "/api/rescue_flora", json={
-            "epiphyte_number": 4,
+            "epiphyte_number": epiphyte_number2,
             "rescue_date": "2021-12-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
@@ -527,6 +531,7 @@ async def test_read_flora_rescue_by_id(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
+    epiphyte_number = random_string()
     specie_id = await create_specie(async_client)
     GENUS_ID = await create_genus(async_client)
     FAMILY_ID = await create_family(async_client)
@@ -534,7 +539,7 @@ async def test_read_flora_rescue_by_id(
     # create flora rescue
     response =await async_client.post(
         "/api/rescue_flora", json={
-            "epiphyte_number": 5,
+            "epiphyte_number": epiphyte_number,
             "rescue_date": "2021-12-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
@@ -562,7 +567,7 @@ async def test_read_flora_rescue_by_id(
     assert response.status_code == 200, response.text
     data = response.json()
     assert "id" in data
-    assert data["epiphyte_number"] == 5
+    assert data["epiphyte_number"] == epiphyte_number 
     assert data["rescue_date"] == "2021-12-10T00:00:00Z"
     assert data["rescue_area_latitude"] >= -90 and data["rescue_area_latitude"] <= 90
     assert data["rescue_area_longitude"] >= -180 and data["rescue_area_longitude"] <= 180
@@ -597,6 +602,8 @@ async def test_update_flora_rescue(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
+    epiphyte_number = random_string()
+    epiphyte_number2 = random_string()
     specie_id = await create_specie(async_client)
     GENUS_ID = await create_genus(async_client)
     FAMILY_ID = await create_family(async_client)
@@ -604,7 +611,7 @@ async def test_update_flora_rescue(
     # create flora rescue
     response =await async_client.post(
         "/api/rescue_flora", json={
-            "epiphyte_number": 6,
+            "epiphyte_number": epiphyte_number,
             "rescue_date": "2021-12-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
@@ -631,7 +638,7 @@ async def test_update_flora_rescue(
     # update a flora rescue
     response =await async_client.put(
        f"/api/rescue_flora/{id}", json={
-            "epiphyte_number": 7,
+            "epiphyte_number": epiphyte_number2,
             "rescue_date": "2021-12-11T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
@@ -654,7 +661,7 @@ async def test_update_flora_rescue(
     assert response.status_code == 200, response.text
     data = response.json()
     assert "id" in data
-    assert data["epiphyte_number"] == 7
+    assert data["epiphyte_number"] == epiphyte_number2 
     assert data["rescue_date"] == "2021-12-11T00:00:00Z"
     assert data["rescue_area_latitude"] >= -90 and data["rescue_area_latitude"] <= 90
     assert data["rescue_area_longitude"] >= -180 and data["rescue_area_longitude"] <= 180
@@ -679,6 +686,7 @@ async def test_update_flora_rescue_not_found(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
+    epiphyte_number = random_string()
     specie_id = await create_specie(async_client)
     GENUS_ID = await create_genus(async_client)
     FAMILY_ID = await create_family(async_client)
@@ -686,7 +694,7 @@ async def test_update_flora_rescue_not_found(
     # update a flora rescue not found
     response =await async_client.put(
         "/api/rescue_flora/0", json={
-            "epiphyte_number": 8,
+            "epiphyte_number": epiphyte_number,
             "rescue_date": "2021-12-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),
@@ -714,6 +722,7 @@ async def test_delete_flora_rescue(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
+    epiphyte_number = random_string()
     specie_id = await create_specie(async_client)
     GENUS_ID = await create_genus(async_client)
     FAMILY_ID = await create_family(async_client)
@@ -721,7 +730,7 @@ async def test_delete_flora_rescue(
     # create flora rescue
     response =await async_client.post(
         "/api/rescue_flora", json={
-            "epiphyte_number": 9,
+            "epiphyte_number": epiphyte_number,
             "rescue_date": "2021-12-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
             "rescue_area_longitude": create_longitude(),

@@ -31,7 +31,7 @@ class FloraRelocationZone(_database.Base):
 class FloraRescue(_database.Base):
     __tablename__ = "flora_rescue"
     id:Mapped[int]= mapped_column(Integer, primary_key=True, index=True)
-    epiphyte_number: Mapped[int] = mapped_column(Integer, index=True)
+    epiphyte_number: Mapped[str] = mapped_column(String, index=True, unique=True)
     rescue_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     rescue_area_latitude: Mapped[float] = mapped_column(Float, index=True)
     rescue_area_longitude: Mapped[float] = mapped_column(Float, index=True)

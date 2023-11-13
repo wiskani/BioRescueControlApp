@@ -28,7 +28,7 @@ class FloraRelocationZoneResponse(FloraRelocationZoneBase):
         from_attributes = True
 
 class FloraRescueBase(BaseModel):
-    epiphyte_number: int = Field(...)
+    epiphyte_number: str = Field(...)
     rescue_date: datetime = Field(...)
     rescue_area_latitude: float = Field(examples= [-17.444])
     rescue_area_longitude: float= Field(examples= [-66.444])
