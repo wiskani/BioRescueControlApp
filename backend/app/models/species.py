@@ -67,6 +67,7 @@ class Genus(_database.Base):
 
     # Relationships with flora_rescue
     flora_rescue_bryophyte = relationship("FloraRescue", back_populates="genus_bryophyte", foreign_keys="FloraRescue.genus_bryophyte_id")
+    flora_rescue_epiphyte = relationship("FloraRescue", back_populates="genus_epiphyte", foreign_keys="FloraRescue.genus_epiphyte_id")
 
     # Relationships with flora_relocation
     flora_relocation_bryophyte = relationship("FloraRelocation", back_populates="genus_bryophyte")
@@ -87,6 +88,7 @@ class Family(_database.Base):
 
     # Relationships with flora_rescue
     flora_rescue_bryophyte = relationship("FloraRescue", back_populates="family_bryophyte", foreign_keys="FloraRescue.family_bryophyte_id")
+    flora_rescue_epiphyte = relationship("FloraRescue", back_populates="family_epiphyte", foreign_keys="FloraRescue.family_epiphyte_id")
 
     # Relationships with flora_relocation
     flora_relocation_bryophyte = relationship("FloraRelocation", back_populates="family_bryophyte")

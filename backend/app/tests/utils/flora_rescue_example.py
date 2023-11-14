@@ -75,6 +75,8 @@ async def create_random_flora_rescue_id(
             "genus_bryophyte_id": GENUS_ID,
             "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
+            "genus_epiphyte_id": GENUS_ID,
+            "family_epiphyte_id": FAMILY_ID,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )

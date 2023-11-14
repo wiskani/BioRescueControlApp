@@ -50,16 +50,22 @@ class FloraRescue(_database.Base):
     specie_bryophyte_id: Mapped[int] = mapped_column(Integer, ForeignKey("species.id"), nullable=True)
     specie_bryophyte = relationship("Specie", back_populates="flora_rescue_bryophyte", foreign_keys=[specie_bryophyte_id])
 
-    specie_epiphyte_id: Mapped[int] = mapped_column(Integer, ForeignKey("species.id"))
+    specie_epiphyte_id: Mapped[int] = mapped_column(Integer, ForeignKey("species.id"), nullable=True)
     specie_epiphyte = relationship("Specie", back_populates="flora_rescue_epiphyte", foreign_keys=[specie_epiphyte_id])
 
     #Relationship for genus
     genus_bryophyte_id: Mapped[int] = mapped_column(Integer, ForeignKey("genus.id"), nullable=True)
     genus_bryophyte = relationship("Genus", back_populates="flora_rescue_bryophyte", foreign_keys=[genus_bryophyte_id])
 
+    genus_epiphyte_id: Mapped[int] = mapped_column(Integer, ForeignKey("genus.id"), nullable=True)
+    genus_epiphyte = relationship("Genus", back_populates="flora_rescue_epiphyte", foreign_keys=[genus_epiphyte_id])
+
     #Relationship for family
     family_bryophyte_id: Mapped[int] = mapped_column(Integer, ForeignKey("family.id"), nullable=True)
     family_bryophyte = relationship("Family", back_populates="flora_rescue_bryophyte", foreign_keys=[family_bryophyte_id])
+
+    family_epiphyte_id: Mapped[int] = mapped_column(Integer, ForeignKey("family.id"), nullable=True)
+    family_epiphyte = relationship("Family", back_populates="flora_rescue_epiphyte", foreign_keys=[family_epiphyte_id])
 
     # Relationships for flora_rescue_zone
     rescue_zone_id: Mapped[int] = mapped_column(Integer, ForeignKey("flora_rescue_zone.id"))

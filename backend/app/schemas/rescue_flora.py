@@ -1,4 +1,10 @@
-from pydantic import BaseModel, Field
+from pydantic import (
+    BaseModel,
+    Field,
+    field_validator,
+    ValidationError,
+    ValidationInfo,
+    )
 from datetime import datetime
 
 class FloraRescueZoneBase(BaseModel):
@@ -44,11 +50,34 @@ class FloraRescueBase(BaseModel):
     specie_bryophyte_id: int | None
     genus_bryophyte_id: int | None
     family_bryophyte_id: int | None
-    specie_epiphyte_id: int
+    specie_epiphyte_id: int | None
+    genus_epiphyte_id: int | None
+    family_epiphyte_id: int | None
     rescue_zone_id: int
 
     class Config:
         from_attributes = True
+
+    #Validators for genus, family and specie must be null if others are not null    
+    @field_validator("genus_bryophyte_id", "family_bryophyte_id")
+    @classmethod
+    def check_others_are_null(cls, v, info: ValidationInfo):
+        if info.data["specie_bryophyte_id"] is not None and v is not None:
+            raise ValueError(
+                "if specie is not null, genus and family must be null"
+                )
+        return v
+    
+    @field_validator("family_bryophyte_id")
+    @classmethod
+    def check_specie_and_genus_are_null(cls, v, info: ValidationInfo ):
+        if info.data["specie_bryophyte_id"] is not None and info.data["genus_bryophyte_id"] is not None:
+            if v is not None:
+                raise ValueError(
+                    "if specie or genus are not null, family must be null"
+                    )
+        return v
+
 
 class FloraRescueResponse(FloraRescueBase):
     id: int

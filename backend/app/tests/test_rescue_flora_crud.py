@@ -366,9 +366,11 @@ async def test_create_flora_rescue(
             "microhabitat": "test_microhabitat",
             "other_observations": "test_other_observations",
             "specie_bryophyte_id": specie_id,
-            "genus_bryophyte_id": GENUS_ID,
-            "family_bryophyte_id": FAMILY_ID,
+            "genus_bryophyte_id": None,
+            "family_bryophyte_id": None,
             "specie_epiphyte_id": specie_id,
+            "genus_epiphyte_id": GENUS_ID,
+            "family_epiphyte_id": FAMILY_ID,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )
@@ -389,10 +391,12 @@ async def test_create_flora_rescue(
     assert data["microhabitat"] == "test_microhabitat"
     assert data["other_observations"] == "test_other_observations"
     assert data["specie_bryophyte_id"] == specie_id
-    assert data["genus_bryophyte_id"] == GENUS_ID
-    assert data["family_bryophyte_id"] == FAMILY_ID
+    assert data["genus_bryophyte_id"] == None
+    assert data["family_bryophyte_id"] == None 
     assert data["specie_epiphyte_id"] == specie_id
     assert data["rescue_zone_id"] ==  RESCUE_ZONE_ID
+    assert data["genus_epiphyte_id"] == GENUS_ID
+    assert data["family_epiphyte_id"] == FAMILY_ID
 
 
 
@@ -428,6 +432,8 @@ async def test_create_flora_rescue_that_already_exists(
             "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
             "rescue_zone_id": RESCUE_ZONE_ID,
+            "genus_epiphyte_id": GENUS_ID,
+            "family_epiphyte_id": FAMILY_ID,	
         },
     )
     assert response.status_code == 201, response.text
@@ -453,6 +459,8 @@ async def test_create_flora_rescue_that_already_exists(
             "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
             "rescue_zone_id": RESCUE_ZONE_ID,
+            "genus_epiphyte_id": GENUS_ID,
+            "family_epiphyte_id": FAMILY_ID,	
         },
     )
     assert response.status_code == 400, response.text
@@ -489,6 +497,8 @@ async def test_read_all_flora_rescues(
             "genus_bryophyte_id": GENUS_ID,
             "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
+            "genus_epiphyte_id": GENUS_ID,
+            "family_epiphyte_id": FAMILY_ID,	
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )
@@ -514,6 +524,8 @@ async def test_read_all_flora_rescues(
             "genus_bryophyte_id": GENUS_ID,
             "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
+            "genus_epiphyte_id": GENUS_ID,	
+            "family_epiphyte_id": FAMILY_ID,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )
@@ -556,6 +568,8 @@ async def test_read_flora_rescue_by_id(
             "genus_bryophyte_id": GENUS_ID,
             "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
+            "genus_epiphyte_id": GENUS_ID,
+            "family_epiphyte_id": FAMILY_ID,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )
@@ -584,6 +598,8 @@ async def test_read_flora_rescue_by_id(
     assert data["genus_bryophyte_id"] == GENUS_ID
     assert data["family_bryophyte_id"] == FAMILY_ID
     assert data["specie_epiphyte_id"] == specie_id
+    assert data["genus_epiphyte_id"] == GENUS_ID
+    assert data["family_epiphyte_id"] == FAMILY_ID
     assert data["rescue_zone_id"] == RESCUE_ZONE_ID
 
 #test get a flora rescue by id not found
@@ -628,6 +644,8 @@ async def test_update_flora_rescue(
             "genus_bryophyte_id": GENUS_ID,
             "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
+            "genus_epiphyte_id": GENUS_ID,
+            "family_epiphyte_id": FAMILY_ID,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )
@@ -655,6 +673,8 @@ async def test_update_flora_rescue(
             "genus_bryophyte_id": GENUS_ID,
             "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
+            "genus_epiphyte_id": GENUS_ID,
+            "family_epiphyte_id": FAMILY_ID,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )
@@ -678,6 +698,8 @@ async def test_update_flora_rescue(
     assert data["genus_bryophyte_id"] == GENUS_ID
     assert data["family_bryophyte_id"] == FAMILY_ID
     assert data["specie_epiphyte_id"] == specie_id
+    assert data["genus_epiphyte_id"] == GENUS_ID
+    assert data["family_epiphyte_id"] == FAMILY_ID
     assert data["rescue_zone_id"] == RESCUE_ZONE_ID
 
 #test update a flora rescue not found
@@ -711,6 +733,8 @@ async def test_update_flora_rescue_not_found(
             "genus_bryophyte_id": GENUS_ID,
             "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
+            "genus_epiphyte_id": GENUS_ID,
+            "family_epiphyte_id": FAMILY_ID,	
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )
@@ -747,6 +771,8 @@ async def test_delete_flora_rescue(
             "genus_bryophyte_id": GENUS_ID,
             "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
+            "genus_epiphyte_id": GENUS_ID,
+            "family_epiphyte_id": FAMILY_ID,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )

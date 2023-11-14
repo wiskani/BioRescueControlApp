@@ -169,6 +169,8 @@ async def create_flora_rescue(db: AsyncSession, flora_rescue: FloraRescueBase) -
             genus_bryophyte_id = flora_rescue.genus_bryophyte_id,
             family_bryophyte_id = flora_rescue.family_bryophyte_id,
             specie_epiphyte_id = flora_rescue.specie_epiphyte_id,
+            genus_epiphyte_id = flora_rescue.genus_epiphyte_id,
+            family_epiphyte_id = flora_rescue.family_epiphyte_id,
             rescue_zone_id = flora_rescue.rescue_zone_id,
             )
     db.add(db_flora_rescue)
@@ -199,6 +201,8 @@ async def update_flora_rescue(db: AsyncSession, flora_rescue_id: int, flora_resc
     db_flora_rescue.genus_bryophyte_id = flora_rescue.genus_bryophyte_id
     db_flora_rescue.family_bryophyte_id = flora_rescue.family_bryophyte_id
     db_flora_rescue.specie_epiphyte_id = flora_rescue.specie_epiphyte_id
+    db_flora_rescue.genus_epiphyte_id = flora_rescue.genus_epiphyte_id
+    db_flora_rescue.family_epiphyte_id = flora_rescue.family_epiphyte_id
     db_flora_rescue.rescue_zone_id = flora_rescue.rescue_zone_id
     await db.commit()
     await db.refresh(db_flora_rescue)
