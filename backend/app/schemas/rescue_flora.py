@@ -1,10 +1,10 @@
 from pydantic import (
     BaseModel,
     Field,
-    field_validator,
-    ValidationError,
-    ValidationInfo,
+    model_validator,
     )
+
+from fastapi import HTTPException
 from datetime import datetime
 
 class FloraRescueZoneBase(BaseModel):
@@ -57,27 +57,108 @@ class FloraRescueBase(BaseModel):
 
     class Config:
         from_attributes = True
-
-    #Validators for genus, family and specie must be null if others are not null    
-    @field_validator("genus_bryophyte_id", "family_bryophyte_id")
-    @classmethod
-    def check_others_are_null(cls, v, info: ValidationInfo):
-        if info.data["specie_bryophyte_id"] is not None and v is not None:
-            raise ValueError(
-                "if specie is not null, genus and family must be null"
-                )
-        return v
     
-    @field_validator("family_bryophyte_id")
-    @classmethod
-    def check_specie_and_genus_are_null(cls, v, info: ValidationInfo ):
-        if info.data["specie_bryophyte_id"] is not None and info.data["genus_bryophyte_id"] is not None:
-            if v is not None:
-                raise ValueError(
-                    "if specie or genus are not null, family must be null"
-                    )
-        return v
+    @model_validator(mode='after')
+    def check_taxon_bryophyte(self):
+        if self.specie_bryophyte_id:
+            if self.genus_bryophyte_id or self.family_bryophyte_id:
+                raise HTTPException(
+                    status_code=400,
+                    detail="if specie bryophite exists, genus and family must be null"
+                )
+        elif self.genus_bryophyte_id:
+            if self.specie_bryophyte_id or self.family_bryophyte_id:
+                raise HTTPException(
+                    status_code=400,
+                    detail="if genus bryophite exists, specie and family must be null"
+                )
+        elif self.family_bryophyte_id:
+            if self.specie_bryophyte_id or self.genus_bryophyte_id:
+                raise HTTPException(
+                    status_code=400,
+                    detail="if family bryophite exists, specie and genus must be null"
+                )
+        return self
 
+    @model_validator(mode='after')
+    def check_taxon_epiphyte(self):
+        if self.specie_epiphyte_id:
+            if self.genus_epiphyte_id or self.family_epiphyte_id:
+                raise HTTPException(
+                    status_code=400,
+                    detail="if specie epiphyte exists, genus and family must be null"
+                )
+        elif self.genus_epiphyte_id:
+            if self.specie_epiphyte_id or self.family_epiphyte_id:
+                raise HTTPException(
+                    status_code=400,
+                    detail="if genus epiphyte exists, specie and family must be null"
+                )
+        elif self.family_epiphyte_id:
+            if self.specie_epiphyte_id or self.genus_epiphyte_id:
+                raise HTTPException(
+                    status_code=400,
+                    detail="if family epiphyte exists, specie and genus must be null"
+                )
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail="specie, genus or family epiphyte must be not null"
+            )   
+        return self
+
+
+
+    
+
+
+    ##Validators if genus exists, specie and family must be null
+    #@field_validator("genus_bryophyte_id")
+    #@classmethod
+    #def check_genus_bryophyte(cls, v, info: ValidationInfo):
+    #    if info.data["specie_bryophyte_id"] or info.data["family_bryophyte_id"]:
+    #        if v:
+    #            raise HTTPException(
+    #                status_code=400,
+    #                detail="if genus bryophite exists, specie and family must be null"
+    #            )
+    #    return v
+    
+    ##Validators if family exists, specie and genus must be null
+    #@field_validator("family_bryophyte_id")
+    #@classmethod
+    #def check_family_bryophyte(cls, v, info: ValidationInfo):
+    #    if info.data["specie_bryophyte_id"] or info.data["genus_bryophyte_id"]:
+    #        if v:
+    #            raise HTTPException(
+    #                status_code=400,
+    #                detail="if family bryophite exists, specie and genus must be null"
+    #            )
+    #    return v
+
+    #        
+    
+    ##Validators for genus, family and specie epiphyte must be null if others are not null    
+    #@field_validator("genus_epiphyte_id", "family_epiphyte_id")
+    #@classmethod
+    #def check_others_are_null(cls, v, info: ValidationInfo):
+    #    if info.data["specie_epiphyte_id"] is not None and v is not None:
+    #        raise HTTPException(
+    #            status_code=400,
+    #            detail="if epiphyte specie is not null, genus and family must be null",
+    #        )
+    #    return v
+    
+    #@field_validator("family_epiphyte_id")
+    #@classmethod
+    #def check_specie_and_genus_are_null(cls, v, info: ValidationInfo ):
+    #    if info.data["specie_epiphyte_id"] is not None and info.data["genus_epiphyte_id"] is not None:
+    #        if v is not None:
+    #            raise HTTPException(
+    #                status_code=400,
+    #                detail="if epiphyte specie and genus are not null, family must be null",
+    #            )
+    #    return v
 
 class FloraRescueResponse(FloraRescueBase):
     id: int

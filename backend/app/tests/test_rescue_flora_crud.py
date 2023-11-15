@@ -369,13 +369,13 @@ async def test_create_flora_rescue(
             "genus_bryophyte_id": None,
             "family_bryophyte_id": None,
             "specie_epiphyte_id": specie_id,
-            "genus_epiphyte_id": GENUS_ID,
-            "family_epiphyte_id": FAMILY_ID,
+            "genus_epiphyte_id": None,
+            "family_epiphyte_id": None,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )
-    assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
+    assert response.status_code == 201, response.text
     assert "id" in data
     assert data["epiphyte_number"] == epiphyte_number 
     assert data["rescue_date"] == "2021-10-10T00:00:00Z"
@@ -394,9 +394,9 @@ async def test_create_flora_rescue(
     assert data["genus_bryophyte_id"] == None
     assert data["family_bryophyte_id"] == None 
     assert data["specie_epiphyte_id"] == specie_id
+    assert data["genus_epiphyte_id"] ==  None
+    assert data["family_epiphyte_id"] == None
     assert data["rescue_zone_id"] ==  RESCUE_ZONE_ID
-    assert data["genus_epiphyte_id"] == GENUS_ID
-    assert data["family_epiphyte_id"] == FAMILY_ID
 
 
 
@@ -427,13 +427,13 @@ async def test_create_flora_rescue_that_already_exists(
             "health_status_epiphyte": "test_health_status_epiphyte2",
             "microhabitat": "test_microhabitat2",
             "other_observations": "test_other_observations2",
-            "specie_bryophyte_id": specie_id,
+            "specie_bryophyte_id": None,
             "genus_bryophyte_id": GENUS_ID,
-            "family_bryophyte_id": FAMILY_ID,
-            "specie_epiphyte_id": specie_id,
-            "rescue_zone_id": RESCUE_ZONE_ID,
-            "genus_epiphyte_id": GENUS_ID,
+            "family_bryophyte_id": None,
+            "specie_epiphyte_id": None,
+            "genus_epiphyte_id": None,
             "family_epiphyte_id": FAMILY_ID,	
+            "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )
     assert response.status_code == 201, response.text
@@ -454,16 +454,19 @@ async def test_create_flora_rescue_that_already_exists(
             "health_status_epiphyte": "test_health_status_epiphyte2",
             "microhabitat": "test_microhabitat2",
             "other_observations": "test_other_observations2",
-            "specie_bryophyte_id": specie_id,
-            "genus_bryophyte_id": GENUS_ID,
+            "specie_bryophyte_id": None,
+            "genus_bryophyte_id": None,
             "family_bryophyte_id": FAMILY_ID,
-            "specie_epiphyte_id": specie_id,
-            "rescue_zone_id": RESCUE_ZONE_ID,
-            "genus_epiphyte_id": GENUS_ID,
+            "specie_epiphyte_id": None,
+            "genus_epiphyte_id": None,
             "family_epiphyte_id": FAMILY_ID,	
+            "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )
+    data = response.json()
     assert response.status_code == 400, response.text
+    assert data["detail"] == "Flora rescue already exists"
+
 
 #test get all flora rescues
 @pytest.mark.asyncio
@@ -493,12 +496,12 @@ async def test_read_all_flora_rescues(
             "health_status_epiphyte": "test_health_status_epiphyte3",
             "microhabitat": "test_microhabitat3",
             "other_observations": "test_other_observations3",
-            "specie_bryophyte_id": specie_id,
-            "genus_bryophyte_id": GENUS_ID,
+            "specie_bryophyte_id": None,
+            "genus_bryophyte_id": None,
             "family_bryophyte_id": FAMILY_ID,
             "specie_epiphyte_id": specie_id,
-            "genus_epiphyte_id": GENUS_ID,
-            "family_epiphyte_id": FAMILY_ID,	
+            "genus_epiphyte_id": None,
+            "family_epiphyte_id": None,	
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )
@@ -521,10 +524,10 @@ async def test_read_all_flora_rescues(
             "microhabitat": "test_microhabitat4",
             "other_observations": "test_other_observations4",
             "specie_bryophyte_id": specie_id,
-            "genus_bryophyte_id": GENUS_ID,
-            "family_bryophyte_id": FAMILY_ID,
-            "specie_epiphyte_id": specie_id,
-            "genus_epiphyte_id": GENUS_ID,	
+            "genus_bryophyte_id": None,
+            "family_bryophyte_id": None,
+            "specie_epiphyte_id": None,
+            "genus_epiphyte_id": None,	
             "family_epiphyte_id": FAMILY_ID,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
@@ -564,12 +567,12 @@ async def test_read_flora_rescue_by_id(
             "health_status_epiphyte": "test_health_status_epiphyte5",
             "microhabitat": "test_microhabitat5",
             "other_observations": "test_other_observations5",
-            "specie_bryophyte_id": specie_id,
+            "specie_bryophyte_id": None,
             "genus_bryophyte_id": GENUS_ID,
-            "family_bryophyte_id": FAMILY_ID,
+            "family_bryophyte_id": None,
             "specie_epiphyte_id": specie_id,
-            "genus_epiphyte_id": GENUS_ID,
-            "family_epiphyte_id": FAMILY_ID,
+            "genus_epiphyte_id": None,
+            "family_epiphyte_id": None,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )
@@ -594,12 +597,12 @@ async def test_read_flora_rescue_by_id(
     assert data["health_status_epiphyte"] == "test_health_status_epiphyte5"
     assert data["microhabitat"] == "test_microhabitat5"
     assert data["other_observations"] == "test_other_observations5"
-    assert data["specie_bryophyte_id"] == specie_id
+    assert data["specie_bryophyte_id"] == None 
     assert data["genus_bryophyte_id"] == GENUS_ID
-    assert data["family_bryophyte_id"] == FAMILY_ID
+    assert data["family_bryophyte_id"] == None 
     assert data["specie_epiphyte_id"] == specie_id
-    assert data["genus_epiphyte_id"] == GENUS_ID
-    assert data["family_epiphyte_id"] == FAMILY_ID
+    assert data["genus_epiphyte_id"] == None 
+    assert data["family_epiphyte_id"] == None 
     assert data["rescue_zone_id"] == RESCUE_ZONE_ID
 
 #test get a flora rescue by id not found
@@ -641,11 +644,11 @@ async def test_update_flora_rescue(
             "microhabitat": "test_microhabitat6",
             "other_observations": "test_other_observations6",
             "specie_bryophyte_id": specie_id,
-            "genus_bryophyte_id": GENUS_ID,
-            "family_bryophyte_id": FAMILY_ID,
+            "genus_bryophyte_id": None,
+            "family_bryophyte_id": None,
             "specie_epiphyte_id": specie_id,
-            "genus_epiphyte_id": GENUS_ID,
-            "family_epiphyte_id": FAMILY_ID,
+            "genus_epiphyte_id": None,
+            "family_epiphyte_id": None,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )
@@ -669,11 +672,11 @@ async def test_update_flora_rescue(
             "health_status_epiphyte": "test_health_status_epiphyte7",
             "microhabitat": "test_microhabitat7",
             "other_observations": "test_other_observations7",
-            "specie_bryophyte_id": specie_id,
-            "genus_bryophyte_id": GENUS_ID,
+            "specie_bryophyte_id": None,
+            "genus_bryophyte_id": None,
             "family_bryophyte_id": FAMILY_ID,
-            "specie_epiphyte_id": specie_id,
-            "genus_epiphyte_id": GENUS_ID,
+            "specie_epiphyte_id": None,
+            "genus_epiphyte_id": None,
             "family_epiphyte_id": FAMILY_ID,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
@@ -694,11 +697,11 @@ async def test_update_flora_rescue(
     assert data["health_status_epiphyte"] == "test_health_status_epiphyte7"
     assert data["microhabitat"] == "test_microhabitat7"
     assert data["other_observations"] == "test_other_observations7"
-    assert data["specie_bryophyte_id"] == specie_id
-    assert data["genus_bryophyte_id"] == GENUS_ID
+    assert data["specie_bryophyte_id"] == None 
+    assert data["genus_bryophyte_id"] == None 
     assert data["family_bryophyte_id"] == FAMILY_ID
-    assert data["specie_epiphyte_id"] == specie_id
-    assert data["genus_epiphyte_id"] == GENUS_ID
+    assert data["specie_epiphyte_id"] == None
+    assert data["genus_epiphyte_id"] == None 
     assert data["family_epiphyte_id"] == FAMILY_ID
     assert data["rescue_zone_id"] == RESCUE_ZONE_ID
 
@@ -713,9 +716,10 @@ async def test_update_flora_rescue_not_found(
     GENUS_ID = await create_genus(async_client)
     FAMILY_ID = await create_family(async_client)
     RESCUE_ZONE_ID = await create_random_rescue_zone_id(async_client)
+    id = 0
     # update a flora rescue not found
     response =await async_client.put(
-        "/api/rescue_flora/0", json={
+        f"/api/rescue_flora/{id}", json={
             "epiphyte_number": epiphyte_number,
             "rescue_date": "2021-12-10T00:00:00",
             "rescue_area_latitude": create_latitude(),
@@ -729,16 +733,18 @@ async def test_update_flora_rescue_not_found(
             "health_status_epiphyte": "test_health_status_epiphyte8",
             "microhabitat": "test_microhabitat8",
             "other_observations": "test_other_observations8",
-            "specie_bryophyte_id": specie_id,
+            "specie_bryophyte_id": None,
             "genus_bryophyte_id": GENUS_ID,
-            "family_bryophyte_id": FAMILY_ID,
-            "specie_epiphyte_id": specie_id,
+            "family_bryophyte_id": None,
+            "specie_epiphyte_id": None,
             "genus_epiphyte_id": GENUS_ID,
-            "family_epiphyte_id": FAMILY_ID,	
+            "family_epiphyte_id": None,	
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )
+    data = response.json()
     assert response.status_code == 404, response.text
+    assert data["detail"] == "Flora rescue not found"
 
 #test delete a flora rescue
 @pytest.mark.asyncio
@@ -767,11 +773,11 @@ async def test_delete_flora_rescue(
             "health_status_epiphyte": "test_health_status_epiphyte9",
             "microhabitat": "test_microhabitat9",
             "other_observations": "test_other_observations9",
-            "specie_bryophyte_id": specie_id,
-            "genus_bryophyte_id": GENUS_ID,
+            "specie_bryophyte_id": None,
+            "genus_bryophyte_id": None,
             "family_bryophyte_id": FAMILY_ID,
-            "specie_epiphyte_id": specie_id,
-            "genus_epiphyte_id": GENUS_ID,
+            "specie_epiphyte_id": None,
+            "genus_epiphyte_id": None,
             "family_epiphyte_id": FAMILY_ID,
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
@@ -1068,7 +1074,7 @@ async def test_create_relocation_flora(
     RELOCATION_ZONE_ID = await create_random_relocation_zone_id(async_client)
     # create relocation flora
     response =await async_client.post(
-        "/api/rescue_flora/flora_relocation", json={
+        "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "size": 1.0,
             "epiphyte_phenology": "test_epiphyte_phenology14",
@@ -1124,7 +1130,7 @@ async def test_create_relocation_flora_already_exists(
     RELOCATION_ZONE_ID = await create_random_relocation_zone_id(async_client)
     # create relocation flora that already exists
     response =await async_client.post(
-        "/api/rescue_flora/flora_relocation", json={
+        f"/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "size": 1.0,
             "epiphyte_phenology": "test_epiphyte_phenology14",
@@ -1149,7 +1155,7 @@ async def test_create_relocation_flora_already_exists(
 
     #create a relocation flora with a relocation that does already exists
     response: Response =await async_client.post(
-        "/api/rescue_flora/flora_relocation", json={
+        "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "size": 1.0,
             "epiphyte_phenology": "test_epiphyte_phenology14",
@@ -1189,7 +1195,7 @@ async def test_read_all_relocation_flora(
     RELOCATION_ZONE_ID = await create_random_relocation_zone_id(async_client)
     # create two relocation flora
     response =await async_client.post(
-        "/api/rescue_flora/flora_relocation", json={
+        "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "size": 2.0,
             "epiphyte_phenology": "test_epiphyte_phenology15",
@@ -1212,7 +1218,7 @@ async def test_read_all_relocation_flora(
     )
     assert response.status_code == 201, response.text
     response =await async_client.post(
-        "/api/rescue_flora/flora_relocation", json={
+        "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "size": 3.0,
             "epiphyte_phenology": "test_epiphyte_phenology16",
@@ -1253,7 +1259,7 @@ async def test_read_relocation_flora(
     RELOCATION_ZONE_ID = await create_random_relocation_zone_id(async_client)
     #create a relocation flora
     response =await async_client.post(
-        "/api/rescue_flora/flora_relocation", json={
+        "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "size": 4.0,
             "epiphyte_phenology": "test_epiphyte_phenology17",
@@ -1278,7 +1284,7 @@ async def test_read_relocation_flora(
     data: Dict[str, Any] = response.json()
     id = data["id"]
     # read a relocation flora by id
-    response =await async_client.get(f"/api/rescue_flora/flora_relocation/{id}")
+    response =await async_client.get(f"/api/flora_relocation/{id}")
     assert response.status_code == 200, response.text
     data = response.json()
     assert data["relocation_date"] == "2021-12-10T00:00:00Z"
@@ -1313,7 +1319,7 @@ async def test_update_relocation_flora(
     RELOCATION_ZONE_ID = await create_random_relocation_zone_id(async_client)
     #create a relocation flora
     response =await async_client.post(
-        "/api/rescue_flora/flora_relocation", json={
+        "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "size": 5.0,
             "epiphyte_phenology": "test_epiphyte_phenology18",
@@ -1339,7 +1345,7 @@ async def test_update_relocation_flora(
     id = data["id"]
     # update a relocation flora
     response =await async_client.put(
-        f"/api/rescue_flora/flora_relocation/{id}", json={
+        f"/api/flora_relocation/{id}", json={
             "relocation_date": "2021-12-10T00:00:00",
             "size": 6.0,
             "epiphyte_phenology": "test_epiphyte_phenology19",
@@ -1394,7 +1400,7 @@ async def test_delete_relocation_flora(
     RELOCATION_ZONE_ID = await create_random_relocation_zone_id(async_client)
     #create a relocation flora
     response =await async_client.post(
-        "/api/rescue_flora/flora_relocation", json={
+        "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "size": 7.0,
             "epiphyte_phenology": "test_epiphyte_phenology20",
@@ -1419,7 +1425,7 @@ async def test_delete_relocation_flora(
     data: Dict[str, Any] = response.json()
     id = data["id"]
     # delete a relocation flora
-    response =await async_client.delete(f"/api/rescue_flora/flora_relocation/{id}")
+    response =await async_client.delete(f"/api/flora_relocation/{id}")
     assert response.status_code == 200, response.text
     data = response.json()
     assert data["detail"] == "Flora relocation deleted"

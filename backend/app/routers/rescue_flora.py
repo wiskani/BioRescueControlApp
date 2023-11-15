@@ -495,7 +495,7 @@ ENDPOINTS FOR FLORA RELOCATION
 
 #Create a new flora relocation endpoint
 @router.post(
-        path="/api/rescue_flora/flora_relocation",
+        path="/api/flora_relocation",
         response_model=FloraRelocationResponse,
         status_code=status.HTTP_201_CREATED,
         tags=["Flora Relocation"],
@@ -531,7 +531,7 @@ async def get_all_flora_relocations_(
 
 #Get a flora relocation by id endpoint
 @router.get(
-        path="/api/rescue_flora/flora_relocation/{flora_relocation_id}",
+        path="/api/flora_relocation/{flora_relocation_id}",
         response_model=FloraRelocationResponse,
         status_code=status.HTTP_200_OK,
         tags=["Flora Relocation"],
@@ -552,7 +552,7 @@ async def get_a_flora_relocation_by_id(
 
 #Update a flora relocation endpoint
 @router.put(
-        path="/api/rescue_flora/flora_relocation/{flora_relocation_id}",
+        path="/api/flora_relocation/{flora_relocation_id}",
         response_model=FloraRelocationResponse,
         status_code=status.HTTP_200_OK,
         tags=["Flora Relocation"],
@@ -574,7 +574,7 @@ async def update_a_flora_relocation(
 
 #Delete a flora relocation endpoint
 @router.delete(
-        path="/api/rescue_flora/flora_relocation/{flora_relocation_id}",
+        path="/api/flora_relocation/{flora_relocation_id}",
         status_code=status.HTTP_200_OK,
         tags=["Flora Relocation"],
         summary="Delete a flora relocation",
