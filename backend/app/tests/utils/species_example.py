@@ -50,6 +50,25 @@ async def create_order(
     order_id = data["id"]
     return order_id
 
+#Create a family with name
+@pytest.mark.asyncio
+async def create_familyWithName(
+    async_client: AsyncClient,
+) -> tuple[int, str]:
+    name_family = random_string()
+
+    response: Response = await async_client.post(
+        "/api/families", json={
+            "family_name": name_family,
+            "key_gbif": random_int(),
+            "order_id": await create_order(async_client),
+        },
+    )
+    data: Dict[str, Any] = response.json()
+    family_id = data["id"]
+    return family_id, name_family
+
+
 #Create a family
 @pytest.mark.asyncio
 async def create_family(
@@ -67,6 +86,25 @@ async def create_family(
     data: Dict[str, Any] = response.json()
     family_id = data["id"]
     return family_id
+
+#Create a genus with name
+@pytest.mark.asyncio
+async def create_genusWithName(
+    async_client: AsyncClient,
+) -> tuple[int, str]:
+    name_genus = random_string()
+
+    response: Response = await async_client.post(
+        "/api/genuses", json={
+            "genus_name": name_genus,
+            "genus_full_name": name_genus,
+            "key_gbif": random_int(),
+            "family_id": await create_family(async_client),
+        },
+    )
+    data: Dict[str, Any] = response.json()
+    genus_id = data["id"]
+    return genus_id, name_genus
 
 #Create a genus
 @pytest.mark.asyncio
@@ -86,7 +124,7 @@ async def create_genus(
     data: Dict[str, Any] = response.json()
     genus_id = data["id"]
     return genus_id
-#Create a specie
+#Create a specie with name
 @pytest.mark.asyncio
 async def create_specieWithName(
     async_client: AsyncClient,

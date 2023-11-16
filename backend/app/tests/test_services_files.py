@@ -10,6 +10,8 @@ from app.services.files import (
     generateUTMData,
     insertGEOData,
     addIdSpecieByName,
+    addIdGenusByName,
+    addIdFamilyByName,
     addMarkIdByNumber,
     addAgeGroupIdByName,
     addBooleanByGender,
@@ -130,6 +132,7 @@ async def test_addIdSpecieByName(
 ):
     specie_id, specie_name = await create_specieWithName(async_client)
     col: str = "especie"
+    colId: str = "idSpecie"
 
     #Create DF for Test
     data = {
@@ -149,12 +152,84 @@ async def test_addIdSpecieByName(
     listExpect: list[tuple[int, str]] =  [(2, "unknown")]
 
     # Result
-    resultDF, resulLIST = await addIdSpecieByName(async_session, df, col)
+    resultDF, resulLIST = await addIdSpecieByName(async_session, df, col, colId)
 
 
     # Test
     assert resultDF.equals(expected)
     assert resulLIST == listExpect
+
+# Test for addIdGenusByName function
+@pytest.mark.asyncio
+async def test_addIdGenusByName(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+):
+    genus_id, genus_name = await create_genusWithName(async_client)
+    col: str = "genero"
+    colId: str = "idGenus"
+
+    #Create DF for Test
+    data = {
+        'number' : [1, 2],
+        'genero': [genus_name, "unknown"],
+    }
+
+    df = pd.DataFrame(data)
+
+    # Expected result
+    expected = pd.DataFrame({
+        'number' : [1, 2],
+        'genero': [genus_name, "unknown"],
+        'idGenus': [genus_id, None],
+    })
+
+    listExpect: list[tuple[int, str]] =  [(2, "unknown")]
+
+    # Result
+    resultDF, resulLIST = await addIdGenusByName(async_session, df, col, colId)
+
+
+    # Test
+    assert resultDF.equals(expected)
+    assert resulLIST == listExpect
+
+# Test for addIdFamilyByName function
+@pytest.mark.asyncio
+async def test_addIdFamilyByName(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+):
+    family_id, family_name = await create_familyWithName(async_client)
+    col: str = "familia"
+    colId: str = "idFamily"
+
+    #Create DF for Test
+    data = {
+        'number' : [1, 2],
+        'familia': [family_name, "unknown"],
+    }
+
+    df = pd.DataFrame(data)
+
+    # Expected result
+    expected = pd.DataFrame({
+        'number' : [1, 2],
+        'familia': [family_name, "unknown"],
+        'idFamily': [family_id, None],
+    })
+
+    listExpect: list[tuple[int, str]] =  [(2, "unknown")]
+
+    # Result
+    resultDF, resulLIST = await addIdFamilyByName(async_session, df, col, colId)
+
+
+    # Test
+    assert resultDF.equals(expected)
+    assert resulLIST == listExpect
+
+
 
 #Test for addMarkIdByNumber function
 @pytest.mark.asyncio

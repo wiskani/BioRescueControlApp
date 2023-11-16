@@ -7,7 +7,11 @@ import pandas as pd
 from app.api.deps import PermissonsChecker, get_db
 
 #CRUD
-from app.crud.rescue_flora import create_plant_nursery, create_flora_relocation
+from app.crud.rescue_flora import (
+    create_plant_nursery,
+    create_flora_relocation,
+    create_flora_rescue
+    )
 from app.crud.tower import create_tower, get_tower_by_number
 from app.crud.rescue_herpetofauna import(
     create_transect_herpetofauna,
@@ -25,7 +29,11 @@ from app.crud.rescue_herpetofauna import(
 )
 
 #Schemas
-from app.schemas.rescue_flora import PlantNurseryBase, FloraRelocationBase
+from app.schemas.rescue_flora import (
+    PlantNurseryBase,
+    FloraRelocationBase,
+    FloraRescueBase,
+    )
 from app.schemas.rescue_herpetofauna import (
     TransectHerpetofaunaCreate,
     RescueHerpetofaunaCreate,
@@ -55,6 +63,86 @@ from app.services.files import (
 )
 
 router = APIRouter()
+
+# Upload flora rescue excel file
+@router.post(
+    path="/upload/flora_rescue",
+    response_model= None,
+    summary="Upload flora rescue excel file",
+    tags=["Upload"],
+)
+async def upload_flora_rescue(
+    file: UploadFile=File(...),
+    db: AsyncSession = Depends(get_db),
+    permissions: str = Depends(PermissonsChecker(["admin"])),
+):
+    if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
+        df = pd.read_excel(file.file)
+
+        # Replace NaN with None
+        df = remplace_nan_with_none(df)
+
+        # Convert date columns to datetime objects
+        date_columns = ['rescue_date']
+        df = convert_to_datetime(df, date_columns)
+
+        #change coordinate system
+        UTM_columns = {
+            'easting': 'este',
+            'northing': 'sur',
+            'zone_number': 'zona',
+            'zone_letter': 'zona_letra',
+        }
+
+        #Names of columns geodata columns to in transect
+        nameLatitude = 'latitude'
+        nameLongitude = 'longitude'
+
+        # Insert columns lat y lon to df
+        df = insertGEOData(df, UTM_columns, nameLatitude, nameLongitude)
+
+
+
+        try:
+            for _, row in df.iterrows():
+                new_flora_rescue = FloraRescueBase(
+                    epiphyte_number=row['epiphyte_number'],
+                    rescue_date=row['rescue_date'],
+                    rescue_area_latitude=row['latitude'],
+                    rescue_area_longitude=row['longitude'],
+                    substrate=row['substrate'],
+                    dap_bryophyte=row['dap_bryophyte'],
+                    height_bryophyte=row['height_bryophyte'],
+                    bryophyte_position=row['bryophyte_position'],
+                    growth_habit=row['growth_habit'],
+                    epiphyte_phenology=row['epiphyte_phenology'],
+                    health_status_epiphyte=row['health_status_epiphyte'],
+                    microhabitat=row['microhabitat'],
+                    other_observations=row['other_observations'],
+                    specie_bryophyte_id=row['specie_bryophyte_id'],
+                    genus_bryophyte_id=row['genus_bryophyte_id'],
+                    family_bryophyte_id=row['family_bryophyte_id'],
+                    specie_epiphyte_id=row['specie_epiphyte_id'],
+                    genus_epiphyte_id=row['genus_epiphyte_id'],
+                    family_epiphyte_id=row['family_epiphyte_id'],
+                    rescue_zone_id=row['rescue_zone_id'],
+                )
+                await create_flora_rescue(db, new_flora_rescue)
+        except Exception as e:
+            # Rollback the transaction in case of an error
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Error: {e}",
+            )
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={"message": "Flora rescue excel file uploaded successfully"},
+        )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File must be an excel file",
+        )
 
 # Upload plant nursery excel file
 @router.post(
@@ -338,7 +426,7 @@ async def upload_rescue_herpetofauna(
         # Replace NaN with None
         df = remplace_nan_with_none(df)
 
-        df, specieListWithOutName = await addIdSpecieByName(db, df, "especie")
+        df, specieListWithOutName = await addIdSpecieByName(db, df, "especie", "idSpecie")
         df, genderListWithOutName = addBooleanByGender(df, "sexo",("Macho", "Hembra"))
         df, ageGroupListWithOutName = await addAgeGroupIdByName(db, df, "clase_etaria")
         df = await addTransectIdByNumber(db, df, "num_t")
@@ -620,7 +708,7 @@ async def upload_translocation_herpetofauna(
         df = remplace_nan_with_none(df)
 
         # Add id specie by scientific name
-        df, specieListWithOutName = await addIdSpecieByName(db, df, "especie")
+        df, specieListWithOutName = await addIdSpecieByName(db, df, "especie", "idSpecie")
 
         # Add id transect herpetofauna translocation by cod
         df = await addTransectTranslocationIdByCod(db, df, "cod_transect")

@@ -8,7 +8,11 @@ from typing import List, Any
 from app.services.system_coordinate import utm_to_latlong
 from app.schemas.services import  UTMData
 
-from app.crud.species import get_specie_by_name
+from app.crud.species import (
+    get_specie_by_name,
+    get_genus_by_name,
+    get_family_by_name
+    )
 from app.crud.rescue_herpetofauna import (
     get_mark_herpetofauna_by_number,
     get_age_group_name,
@@ -157,6 +161,7 @@ async def addIdSpecieByName(
     db: AsyncSession,
     df: pd.DataFrame,
     col: str,
+    colId: str
 ) -> tuple[pd.DataFrame, list[tuple[int, str]]]:
     """
     Adds the id of a specie to a dataframe
@@ -165,6 +170,7 @@ async def addIdSpecieByName(
     ----------
     df : pandas dataframe
     col : str with name of column with specie name
+    colId : str with name of column to add id
 
     Returns
     -------
@@ -181,9 +187,80 @@ async def addIdSpecieByName(
         else:
             colunmId.append(specie.id)
 
-    df['idSpecie'] = colunmId
+    df[colId] = colunmId
 
     return df, listNameSpecieNumberRow
+
+async def addIdGenusByName(
+    db: AsyncSession,
+    df: pd.DataFrame,
+    col: str,
+    colId: str
+) -> tuple[pd.DataFrame, list[tuple[int, str]]]:
+    """
+    Adds the id of a genus to a dataframe
+
+    Parameters
+    ----------
+    df : pandas dataframe
+    col : str with name of column with genus name
+    colId : str with name of column to add id
+
+    Returns
+    -------
+    df : pandas dataframe with idGenus column
+    """
+    listNameGenusNumberRow: list[tuple[int, str]] = []
+    colunmId: list[int | None] = []
+
+    for _, row in df.iterrows():
+        genus = await get_genus_by_name(db, row[col])
+        if genus is None:
+            listNameGenusNumberRow.append((row[0], row[col]))
+            colunmId.append(None)
+        else:
+            colunmId.append(genus.id)
+
+    df[colId] = colunmId
+
+    return df, listNameGenusNumberRow
+
+async def addIdFamilyByName(
+    db: AsyncSession,
+    df: pd.DataFrame,
+    col: str,
+    colId: str
+) -> tuple[pd.DataFrame, list[tuple[int, str]]]:
+    """
+    Adds the id of a family to a dataframe
+
+    Parameters
+    ----------
+    df : pandas dataframe
+    col : str with name of column with family name
+    colId : str with name of column to add id
+
+    Returns
+    -------
+    df : pandas dataframe with idFamily column
+    """
+    listNameFamilyNumberRow: list[tuple[int, str]] = []
+    colunmId: list[int | None] = []
+
+    for _, row in df.iterrows():
+        family = await get_family_by_name(db, row[col])
+        if family is None:
+            listNameFamilyNumberRow.append((row[0], row[col]))
+            colunmId.append(None)
+        else:
+            colunmId.append(family.id)
+
+    df[colId] = colunmId
+
+    return df, listNameFamilyNumberRow
+
+
+
 
 async def addMarkIdByNumber(
     db: AsyncSession,
