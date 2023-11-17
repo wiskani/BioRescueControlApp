@@ -61,7 +61,8 @@ from app.services.files import (
     addBooleanByCheck,
     addRescueIdByNumber,
     addTransectTranslocationIdByCod,
-    addPointTranslocationByCod
+    addPointTranslocationByCod,
+    addFloraRescueZoneIdByName
 )
 
 router = APIRouter()
@@ -104,14 +105,17 @@ async def upload_flora_rescue(
         df = insertGEOData(df, UTM_columns, nameLatitude, nameLongitude)
 
         #convert specie, genus and family bryophyte to id
-        df = await addIdSpecieByName(db, df, "especie_forofito", "specie_bryophyte_id")
-        df = await addIdGenusByName(db, df, "genero_forofito", "genus_bryophyte_id")
-        df = await addIdFamilyByName(db, df, "familia_forofito", "family_bryophyte_id")
+        df, specieListWithOutNameB =  await addIdSpecieByName(db, df, "especie_forofito", "specie_bryophyte_id")
+        df, genusListWithOutNameB = await addIdGenusByName(db, df, "genero_forofito", "genus_bryophyte_id")
+        df, familyListWithOutNameB = await addIdFamilyByName(db, df, "familia_forofito", "family_bryophyte_id")
 
         #convert specie, genus and family epiphyte to id
-        df = await addIdSpecieByName(db, df, "especie_epifito", "specie_epiphyte_id")
-        df = await addIdGenusByName(db, df, "genero_epifito", "genus_epiphyte_id")
-        df = await addIdFamilyByName(db, df, "fammilia_epifito", "family_epiphyte_id")
+        df, specieListWithOutNameE = await addIdSpecieByName(db, df, "especie_epifito", "specie_epiphyte_id")
+        df, genusListWithOutNameE = await addIdGenusByName(db, df, "genero_epifito", "genus_epiphyte_id")
+        df, familyListWithOutNameE = await addIdFamilyByName(db, df, "fammilia_epifito", "family_epiphyte_id")
+
+        #convert rescue zone to id
+        df, rescueZoneListWithOutName = await addFloraRescueZoneIdByName(db, df, "zona_rescate")
 
         try:
             for _, row in df.iterrows():
@@ -121,7 +125,7 @@ async def upload_flora_rescue(
                     rescue_area_latitude=row['latitude'],
                     rescue_area_longitude=row['longitude'],
                     substrate=row['substrate'],
-                    dap_bryophyte=row['dap_bryophyte'],
+                    dap_bryophyte=row['DAP'],
                     height_bryophyte=row['height_bryophyte'],
                     bryophyte_position=row['bryophyte_position'],
                     growth_habit=row['growth_habit'],
@@ -135,7 +139,7 @@ async def upload_flora_rescue(
                     specie_epiphyte_id=row['specie_epiphyte_id'],
                     genus_epiphyte_id=row['genus_epiphyte_id'],
                     family_epiphyte_id=row['family_epiphyte_id'],
-                    rescue_zone_id=row['rescue_zone_id'],
+                    rescue_zone_id=row['idFloraRescueZone'],
                 )
                 await create_flora_rescue(db, new_flora_rescue)
         except Exception as e:
@@ -146,7 +150,7 @@ async def upload_flora_rescue(
             )
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
-            content={"message": "Flora rescue excel file uploaded successfully"},
+            content={"message": "Flora rescue excel file uploaded successfully", "Especies forofito no encontradas": specieListWithOutNameB, "Generos forofito no encontrados": genusListWithOutNameB, "Familias forofito no encontradas": familyListWithOutNameB, "Especies epifito no encontradas": specieListWithOutNameE, "Generos epifito no encontrados": genusListWithOutNameE, "Familias epifito no encontradas": familyListWithOutNameE},
         )
     else:
         raise HTTPException(

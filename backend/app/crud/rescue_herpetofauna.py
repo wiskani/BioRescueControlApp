@@ -446,7 +446,7 @@ async def get_all_translocation_herpetofauna(db: AsyncSession) -> List[Transloca
 #Create translocation herpetofauna
 async def create_translocation_herpetofauna(
         db: AsyncSession,
-        translocation_herpetofauna: TranslocationHerpetofauna,
+        translocation_herpetofauna: TranslocationHerpetofaunaCreate,
         ) -> TranslocationHerpetofauna:
         translocation_herpetofauna_db = TranslocationHerpetofauna(
             cod = translocation_herpetofauna.cod,
