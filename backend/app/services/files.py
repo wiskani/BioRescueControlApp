@@ -20,8 +20,11 @@ from app.crud.rescue_herpetofauna import (
     get_rescue_herpetofauna_by_number,
     get_transect_herpetofauna_translocation_by_cod,
     get_point_herpetofauna_translocation_by_cod,
-    get_translocation_herpetofauna_by_cod
     )
+
+from app.crud.rescue_flora import (
+    get_flora_rescue_zone
+)
 
 
 def convert_to_datetime(df:pd.DataFrame, cols:List[str]) -> pd.DataFrame:
@@ -259,9 +262,6 @@ async def addIdFamilyByName(
 
     return df, listNameFamilyNumberRow
 
-
-
-
 async def addMarkIdByNumber(
     db: AsyncSession,
     df: pd.DataFrame,
@@ -331,6 +331,40 @@ async def addAgeGroupIdByName(
     df['idAgeGroup'] = colunmId
 
     return df, listAgeGroupNameRow
+
+async def addFloraRescueZoneIdByName(
+        db: AsyncSession,
+        df: pd.DataFrame,
+        col: str,
+) -> tuple[pd.DataFrame, list[tuple[int, str]]]:
+    """
+    Adds the id of a flora rescue zone to a dataframe
+
+    Parameters
+    ----------
+    db : AsyncSession
+    df : pandas dataframe
+    col : str with name of column with flora rescue zone name
+
+    Returns
+    -------
+    df : pandas dataframe with idFloraRescueZone column
+    """
+    listFloraRescueZoneNameRow: list[tuple[int, str]] = []
+    colunmId: list[int | None] = []
+
+    for _, row in df.iterrows():
+        floraRescueZone = await get_flora_rescue_zone(db, row[col])
+        if floraRescueZone is None:
+            listFloraRescueZoneNameRow.append((row[0], row[col]))
+            colunmId.append(None)
+        else:
+            colunmId.append(floraRescueZone.id)
+
+    df['idFloraRescueZone'] = colunmId
+
+    return df, listFloraRescueZoneNameRow
+
 
 def addBooleanByGender(
     df: pd.DataFrame,

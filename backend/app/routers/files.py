@@ -51,6 +51,8 @@ from app.services.files import (
     none_value,
     insertGEOData,
     addIdSpecieByName,
+    addIdGenusByName,
+    addIdFamilyByName,
     addBooleanByGender,
     addMarkIdByNumber,
     addAgeGroupIdByName,
@@ -101,7 +103,15 @@ async def upload_flora_rescue(
         # Insert columns lat y lon to df
         df = insertGEOData(df, UTM_columns, nameLatitude, nameLongitude)
 
+        #convert specie, genus and family bryophyte to id
+        df = await addIdSpecieByName(db, df, "especie_forofito", "specie_bryophyte_id")
+        df = await addIdGenusByName(db, df, "genero_forofito", "genus_bryophyte_id")
+        df = await addIdFamilyByName(db, df, "familia_forofito", "family_bryophyte_id")
 
+        #convert specie, genus and family epiphyte to id
+        df = await addIdSpecieByName(db, df, "especie_epifito", "specie_epiphyte_id")
+        df = await addIdGenusByName(db, df, "genero_epifito", "genus_epiphyte_id")
+        df = await addIdFamilyByName(db, df, "fammilia_epifito", "family_epiphyte_id")
 
         try:
             for _, row in df.iterrows():

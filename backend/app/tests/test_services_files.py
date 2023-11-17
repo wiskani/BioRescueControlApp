@@ -20,7 +20,8 @@ from app.services.files import (
     addBooleanByCheck,
     addRescueIdByNumber,
     addTransectTranslocationIdByCod,
-    addPointTranslocationByCod
+    addPointTranslocationByCod,
+    addFloraRescueZoneIdByName
 )
 
 from app.tests.conftest import *
@@ -28,6 +29,7 @@ from app.tests.utils.users import *
 from app.tests.utils.species_example import *
 from app.tests.utils.towers_example import *
 from app.tests.utils.rescue_herpetofauna import *
+from app.tests.utils.flora_rescue_example import *
 
 # Test convert_to_datetime function
 def test_convert_to_datetime():
@@ -509,5 +511,39 @@ async def test_addPointTranslocationIdByCod(
 
     # Test
     assert resultDF.equals(expected)
+
+#test for addFloraRescueZoneIdByName
+@pytest.mark.asyncio
+async def test_addFloraRescueZoneIdByName(
+    async_client: AsyncClient,
+    async_session: AsyncSession
+) -> None:
+    flora_rescue_zone_id, flora_rescue_zone_name = await create_random_rescue_zone_id_wiht_name(async_client)
+    col: str = "zone_rescue"
+    
+    #Create DF for test
+    data = {
+       'number': [1, 2, 3] ,
+       'zone_rescue': [None, flora_rescue_zone_name, None],
+    }
+
+    df = pd.DataFrame(data)
+
+    # Expect result
+    expected = pd.DataFrame({
+        'number': [1,2,3],
+        'zone_rescue': [None, flora_rescue_zone_name, None],
+        'idFloraRescueZone': [None, flora_rescue_zone_id, None]
+    })
+
+    #Result
+    resultDF, listResult = await addFloraRescueZoneIdByName(async_session, df, col)
+
+    print(resultDF)
+    print(expected)
+
+    #Test
+    assert resultDF.equals(expected)
+    assert listResult == [(1, None), (3, None)]
 
 

@@ -7,6 +7,9 @@ from app.tests.utils.species_example import *
 from app.models.rescue_flora import *
 
 
+#make a fuction that return a random string of 10 characters
+def random_string() -> str:
+    return "".join(random.choices(string.ascii_lowercase, k=10))
 
 #fuctions to create a longitude and latitude
 def create_longitude() -> float:
@@ -45,6 +48,35 @@ async def create_random_relocation_zone_id(
     data: Dict[str, Any] = response.json()
     return data["id"]
 
+# Create a radom rescue_zone with name
+@pytest.mark.asyncio
+async def create_random_rescue_zone_id_wiht_name(
+    async_client: AsyncClient
+)-> tuple[int, str]:
+    # create zone rescue
+    name: str = random_string()
+    response = await async_client.post(
+        "/api/rescue_flora/rescue_zone", json={
+            "name": name,
+            "description": "test_description",
+        },
+    )
+    assert response.status_code == 201, response.text
+    data: Dict[str, Any] = response.json()
+    return data["id"], name
+
+@pytest.mark.asyncio
+async def create_random_relocation_zone_id(
+    async_client: AsyncClient
+)-> int:
+    response = await async_client.post(
+        "/api/rescue_flora/relocation_zone", json={
+            "name": "test_relocation_zone0",
+        },
+    )
+    assert response.status_code == 201, response.text
+    data: Dict[str, Any] = response.json()
+    return data["id"], 
 
 @pytest.mark.asyncio
 async def create_random_flora_rescue_id(
