@@ -539,9 +539,6 @@ async def test_addFloraRescueZoneIdByName(
     #Result
     resultDF, listResult = await addFloraRescueZoneIdByName(async_session, df, col)
 
-    print(resultDF)
-    print(expected)
-
     #Test
     assert resultDF.equals(expected)
     assert listResult == [(1, None), (3, None)]
