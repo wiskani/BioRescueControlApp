@@ -126,13 +126,13 @@ async def upload_flora_rescue(
                     rescue_area_longitude=row['longitude'],
                     substrate=row['substrate'],
                     dap_bryophyte=row['DAP'],
-                    height_bryophyte=row['height_bryophyte'],
-                    bryophyte_position=row['bryophyte_position'],
-                    growth_habit=row['growth_habit'],
-                    epiphyte_phenology=row['epiphyte_phenology'],
-                    health_status_epiphyte=row['health_status_epiphyte'],
+                    height_bryophyte=row['altura_forofito'],
+                    bryophyte_position=row['posicion_forofito'],
+                    growth_habit=row['habito'],
+                    epiphyte_phenology=row['fenologia_epifito'],
+                    health_status_epiphyte=row['estado_sanitario_epifito'],
                     microhabitat=row['microhabitat'],
-                    other_observations=row['other_observations'],
+                    other_observations=row['observaciones'],
                     specie_bryophyte_id=row['specie_bryophyte_id'],
                     genus_bryophyte_id=row['genus_bryophyte_id'],
                     family_bryophyte_id=row['family_bryophyte_id'],
@@ -146,11 +146,11 @@ async def upload_flora_rescue(
             # Rollback the transaction in case of an error
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Error: {e}",
+                detail=f"Error: error in row es {e}",
             )
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
-            content={"message": "Flora rescue excel file uploaded successfully", "Especies forofito no encontradas": specieListWithOutNameB, "Generos forofito no encontrados": genusListWithOutNameB, "Familias forofito no encontradas": familyListWithOutNameB, "Especies epifito no encontradas": specieListWithOutNameE, "Generos epifito no encontrados": genusListWithOutNameE, "Familias epifito no encontradas": familyListWithOutNameE},
+            content={"message": "Flora rescue excel file uploaded successfully", "Especies forofito no encontradas": specieListWithOutNameB, "Generos forofito no encontrados": genusListWithOutNameB, "Familias forofito no encontradas": familyListWithOutNameB, "Especies epifito no encontradas": specieListWithOutNameE, "Generos epifito no encontrados": genusListWithOutNameE, "Familias epifito no encontradas": familyListWithOutNameE, "Zonas de rescate no encontradas": rescueZoneListWithOutName},
         )
     else:
         raise HTTPException(
