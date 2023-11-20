@@ -23,7 +23,8 @@ from app.crud.rescue_herpetofauna import (
     )
 
 from app.crud.rescue_flora import (
-    get_flora_rescue_zone
+    get_flora_rescue_zone,
+    get_flora_rescue
 )
 
 
@@ -588,3 +589,34 @@ async def addPointTranslocationByCod(
     df['idPoint'] = colunmId
 
     return df
+
+async def addRescueFloraIdByNumber(
+        db: AsyncSession,
+        df: pd.DataFrame,
+        col: str,
+        )-> pd.DataFrame:
+    """
+    Adds the id of a rescue to a dataframe
+
+    Parameters
+    ----------
+    db : AsyncSession
+    df : pandas dataframe
+    col : str with name of column with rescue number
+    """
+    listRescueNumberRow: list[tuple[int, str]] = []
+    colunmId: list[int | None] = []
+
+    for _, row in df.iterrows():
+        rescue = await get_flora_rescue(db, row[col])
+        if rescue is None:
+            colunmId.append(None)
+            listRescueNumberRow.append((row[0], row[col]))
+        else:
+            colunmId.append(rescue.id)
+
+    df['idRescue'] = colunmId
+
+    return df, listRescueNumberRow
+
+

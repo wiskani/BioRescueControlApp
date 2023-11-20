@@ -38,15 +38,15 @@ class FloraRescueBase(BaseModel):
     rescue_date: datetime = Field(...)
     rescue_area_latitude: float = Field(examples= [-17.444])
     rescue_area_longitude: float= Field(examples= [-66.444])
-    substrate: str | None = Field(max_lengthi=50, examples=["Geofita"])
+    substrate: str | None = Field(max_length=50, examples=["Geofita"])
     dap_bryophyte: float | None
     height_bryophyte: float | None
     bryophyte_position: int | None
-    growth_habit: str = Field( max_length=50, examples=["Geófito"])
-    epiphyte_phenology: str = Field( max_length=50, examples=["Esteril"])
-    health_status_epiphyte: str = Field( max_length=50, examples=["Bueno"])
-    microhabitat: str = Field( max_length=50, examples=["Bosque de ladera"])
-    other_observations: str = Field(max_length=100)
+    growth_habit: str | None = Field( max_length=50, examples=["Geófito"])
+    epiphyte_phenology: str | None = Field( max_length=50, examples=["Esteril"])
+    health_status_epiphyte: str | None = Field( max_length=50, examples=["Bueno"])
+    microhabitat: str | None = Field( max_length=100, examples=["Bosque de ladera"])
+    other_observations: str | None = Field(max_length=100)
     specie_bryophyte_id: int | None
     genus_bryophyte_id: int | None
     family_bryophyte_id: int | None

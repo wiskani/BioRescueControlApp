@@ -39,11 +39,11 @@ class FloraRescue(_database.Base):
     dap_bryophyte: Mapped[float] = mapped_column(Float, index=True, nullable=True)
     height_bryophyte: Mapped[float] = mapped_column(Float, index=True, nullable=True)
     bryophyte_position: Mapped[int] = mapped_column(Integer, index=True, nullable=True)
-    growth_habit: Mapped[str] = mapped_column(String, index=True)
-    epiphyte_phenology: Mapped[str] = mapped_column(String, index=True)
-    health_status_epiphyte: Mapped[str] = mapped_column(String, index=True)
-    microhabitat: Mapped[str] = mapped_column(String, index=True)
-    other_observations: Mapped[str] = mapped_column(String, index=True)
+    growth_habit: Mapped[str] = mapped_column(String, index=True, nullable=True)
+    epiphyte_phenology: Mapped[str] = mapped_column(String, index=True, nullable=True)
+    health_status_epiphyte: Mapped[str] = mapped_column(String, index=True, nullable=True)
+    microhabitat: Mapped[str] = mapped_column(String, index=True, nullable=True)
+    other_observations: Mapped[str] = mapped_column(String, nullable=True) 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(pytz.timezone('America/La_Paz')))
 
     #Relationship for species

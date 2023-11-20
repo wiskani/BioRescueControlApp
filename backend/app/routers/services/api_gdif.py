@@ -2,7 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Union, Dict, Optional
 
-from app.services.gbif.api_gbif import get_species_suggestions, get_species_details
+from app.services.gbif.api_gbif import (
+        get_species_suggestions,
+        get_species_details,
+        get_genus_details,
+        get_family_details,
+        )
 
 from app.api.deps import PermissonsChecker, get_db
 
@@ -25,9 +30,11 @@ from app.schemas.species import (
 
     Genuses,
     GenusesCreate,
+    GenusesResponse,
 
     Families,
     FamiliesCreate,
+    FamiliesResponse,
 
     Orders,
     OrdersCreate,
@@ -35,9 +42,13 @@ from app.schemas.species import (
     Classes,
     ClassesCreate,
 )
-from app.schemas.services import SpecieGbif
+from app.schemas.services import (
+        SpecieGbif,
+        GenusGbif,
+        FamilyGbif,
+        )
 
-from app.models.species import Specie
+from app.models.species import Specie, Genus, Family, Order 
 
 router:APIRouter = APIRouter()
 
@@ -131,4 +142,90 @@ async def create_specie_by_key(
 
     return HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Specie already exists")
 
+# create new genus  by key of gbif 
+@router.post(
+    path="/genus_gdif/create",
+    tags=["GBIF"],
+    response_model= GenusesResponse,
+    status_code=status.HTTP_201_CREATED
+    )
+async def create_genus_by_key(
+    key: str,
+    db: AsyncSession = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"])),
+)->Genus:
+    """
+    Create a new genus by key of gbif
+    """
+    data  = get_genus_details(key)
+    if data is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Genus not found")
+
+    #check if class exists
+    db_class = await get_class_by_name(db, data.class_)
+    if db_class is None:
+        new_class = ClassesCreate(class_name=data.class_, key_gbif=data.classKey)
+        db_class = await create_class(db, new_class)
+
+    #check if order exists
+    db_order = await get_order_by_name(db, data.order)
+    if db_order is None:
+        new_order = OrdersCreate(order_name=data.order, key_gbif=data.orderKey, class__id=db_class.id)
+        db_order = await create_order(db, new_order)
+
+    #check if family exists
+    db_family = await get_family_by_name(db, data.family)
+    if db_family is None:
+        new_family = FamiliesCreate(family_name=data.family, key_gbif=data.familyKey, order_id=db_order.id)
+        db_family = await create_family(db, new_family)
+
+    #check if genus exists
+    db_genus = await get_genus_by_name(db, data.genus)
+    if db_genus is None:
+        new_genus = GenusesCreate(genus_name=data.genus, key_gbif=data.genusKey, family_id=db_family.id)
+        db_genus = await create_genus(db, new_genus)
+        return db_genus
+
+    return HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Genus already exists")
+
+
+# create new family  by key of gbif
+@router.post(
+    path="/family_gdif/create",
+    tags=["GBIF"],
+    response_model= FamiliesResponse,
+    status_code=status.HTTP_201_CREATED
+    )
+async def create_family_by_key(
+    key: str,
+    db: AsyncSession = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"])),
+)->Family:
+    """
+    Create a new family by key of gbif
+    """
+    data  = get_family_details(key)
+    if data is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Family not found")
+
+    #check if class exists
+    db_class = await get_class_by_name(db, data.class_)
+    if db_class is None:
+        new_class = ClassesCreate(class_name=data.class_, key_gbif=data.classKey)
+        db_class = await create_class(db, new_class)
+
+    #check if order exists
+    db_order = await get_order_by_name(db, data.order)
+    if db_order is None:
+        new_order = OrdersCreate(order_name=data.order, key_gbif=data.orderKey, class__id=db_class.id)
+        db_order = await create_order(db, new_order)
+
+    #check if family exists
+    db_family = await get_family_by_name(db, data.family)
+    if db_family is None:
+        new_family = FamiliesCreate(family_name=data.family, key_gbif=data.familyKey, order_id=db_order.id)
+        db_family = await create_family(db, new_family)
+        return db_family
+
+    return HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Family already exists")
 

@@ -21,7 +21,8 @@ from app.services.files import (
     addRescueIdByNumber,
     addTransectTranslocationIdByCod,
     addPointTranslocationByCod,
-    addFloraRescueZoneIdByName
+    addFloraRescueZoneIdByName,
+    addRescueFloraIdByNumber,
 )
 
 from app.tests.conftest import *
@@ -542,5 +543,38 @@ async def test_addFloraRescueZoneIdByName(
     #Test
     assert resultDF.equals(expected)
     assert listResult == [(1, None), (3, None)]
+
+#test for addRescueZoneIdByName
+@pytest.mark.asyncio
+async def test_addRescueZoneIdByName(
+        async_client: AsyncClient,
+        async_session: AsyncSession
+) -> None:
+    rescue_zone_id, rescue_zone_name = await create_random_flora_rescue_idWithNumber(async_client)
+    col: str = "zone_rescue"
+
+    #Create DF for test
+    data = {
+        'number': [1, 2, 3] ,
+        'zone_rescue': [None, rescue_zone_name, None],
+    }
+
+    df = pd.DataFrame(data)
+
+    # Expect result
+    expected = pd.DataFrame({
+        'number': [1,2,3],
+        'zone_rescue': [None, rescue_zone_name, None],
+        'idRescue': [None, rescue_zone_id, None]
+    })
+
+    #Result
+    resultDF, listResult = await addRescueFloraIdByNumber(async_session, df, col)
+
+    #Test
+    assert resultDF.equals(expected)
+    assert listResult == [(1, None), (3, None)]
+
+
 
 

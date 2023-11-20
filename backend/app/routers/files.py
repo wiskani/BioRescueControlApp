@@ -10,7 +10,9 @@ from app.api.deps import PermissonsChecker, get_db
 from app.crud.rescue_flora import (
     create_plant_nursery,
     create_flora_relocation,
-    create_flora_rescue
+    create_flora_rescue,
+    get_flora_rescue,
+    get_plant_nursery,
     )
 from app.crud.tower import create_tower, get_tower_by_number
 from app.crud.rescue_herpetofauna import(
@@ -112,45 +114,63 @@ async def upload_flora_rescue(
         #convert specie, genus and family epiphyte to id
         df, specieListWithOutNameE = await addIdSpecieByName(db, df, "especie_epifito", "specie_epiphyte_id")
         df, genusListWithOutNameE = await addIdGenusByName(db, df, "genero_epifito", "genus_epiphyte_id")
-        df, familyListWithOutNameE = await addIdFamilyByName(db, df, "fammilia_epifito", "family_epiphyte_id")
+        df, familyListWithOutNameE = await addIdFamilyByName(db, df, "familia_epifito", "family_epiphyte_id")
 
         #convert rescue zone to id
         df, rescueZoneListWithOutName = await addFloraRescueZoneIdByName(db, df, "zona_rescate")
 
-        try:
-            for _, row in df.iterrows():
+        # Replace NaN with None
+        df = remplace_nan_with_none(df)
+
+        numberExistList = []
+
+        for _, row in df.iterrows():
+            try:
                 new_flora_rescue = FloraRescueBase(
-                    epiphyte_number=row['epiphyte_number'],
+                    epiphyte_number=row['number'],
                     rescue_date=row['rescue_date'],
                     rescue_area_latitude=row['latitude'],
                     rescue_area_longitude=row['longitude'],
-                    substrate=row['substrate'],
-                    dap_bryophyte=row['DAP'],
-                    height_bryophyte=row['altura_forofito'],
-                    bryophyte_position=row['posicion_forofito'],
-                    growth_habit=row['habito'],
-                    epiphyte_phenology=row['fenologia_epifito'],
-                    health_status_epiphyte=row['estado_sanitario_epifito'],
-                    microhabitat=row['microhabitat'],
-                    other_observations=row['observaciones'],
-                    specie_bryophyte_id=row['specie_bryophyte_id'],
-                    genus_bryophyte_id=row['genus_bryophyte_id'],
-                    family_bryophyte_id=row['family_bryophyte_id'],
-                    specie_epiphyte_id=row['specie_epiphyte_id'],
-                    genus_epiphyte_id=row['genus_epiphyte_id'],
-                    family_epiphyte_id=row['family_epiphyte_id'],
+                    substrate=none_value(row['sustrato_forofito']),
+                    dap_bryophyte=none_value(row['DAP']),
+                    height_bryophyte=none_value(row['altura_forofito']),
+                    bryophyte_position=none_value(row['posicion_forofito']),
+                    growth_habit=none_value(row['habito']),
+                    epiphyte_phenology=none_value(row['fenologia_epifito']),
+                    health_status_epiphyte=none_value(row['estado_sanitario_epifito']),
+                    microhabitat=none_value(row['microhabitat']),
+                    other_observations=none_value(row['observaciones']),
+                    specie_bryophyte_id=none_value(row['specie_bryophyte_id']),
+                    genus_bryophyte_id=none_value(row['genus_bryophyte_id']),
+                    family_bryophyte_id=none_value(row['family_bryophyte_id']),
+                    specie_epiphyte_id=none_value(row['specie_epiphyte_id']),
+                    genus_epiphyte_id=none_value(row['genus_epiphyte_id']),
+                    family_epiphyte_id=none_value(row['family_epiphyte_id']),
                     rescue_zone_id=row['idFloraRescueZone'],
                 )
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Error in row {row['number']}: {e}"
+                )
+            if await get_flora_rescue(db, new_flora_rescue.epiphyte_number):
+                numberExistList.append(new_flora_rescue.epiphyte_number)
+                continue
+            else:
                 await create_flora_rescue(db, new_flora_rescue)
-        except Exception as e:
-            # Rollback the transaction in case of an error
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Error: error in row es {e}",
-            )
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
-            content={"message": "Flora rescue excel file uploaded successfully", "Especies forofito no encontradas": specieListWithOutNameB, "Generos forofito no encontrados": genusListWithOutNameB, "Familias forofito no encontradas": familyListWithOutNameB, "Especies epifito no encontradas": specieListWithOutNameE, "Generos epifito no encontrados": genusListWithOutNameE, "Familias epifito no encontradas": familyListWithOutNameE, "Zonas de rescate no encontradas": rescueZoneListWithOutName},
+            content={
+                "message": "Flora rescue excel file uploaded successfully",
+                "Numeros de epifitos ya existentes": numberExistList,
+                "Especies forofito no encontradas": specieListWithOutNameB,
+                "Generos forofito no encontrados": genusListWithOutNameB,
+                "Familias forofito no encontradas": familyListWithOutNameB,
+                "Especies epifito no encontradas": specieListWithOutNameE,
+                "Generos epifito no encontrados": genusListWithOutNameE,
+                "Familias epifito no encontradas": familyListWithOutNameE,
+                "Zonas de rescate no encontradas": rescueZoneListWithOutName
+                },
         )
     else:
         raise HTTPException(
@@ -180,8 +200,10 @@ async def upload_plant_nursery(
         date_columns = ['entry_date', 'flowering_date', 'departure_date']
         df = convert_to_datetime(df, date_columns)
 
-        try:
-            for _, row in df.iterrows():
+        numberExistList = []
+
+        for _, row in df.iterrows():
+            try:
                 new_plant_nursery = PlantNurseryBase(
                     entry_date=row['entry_date'],
                     cod_reg=row['cod_reg'],
@@ -195,16 +217,22 @@ async def upload_plant_nursery(
                     departure_date=row['departure_date'],
                     flora_rescue_id=row['flora_rescue_id'],
                 )
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Error in row {row['number']}: {e}"
+                )
+            if await get_plant_nursery(db, new_plant_nursery.cod_reg):
+                numberExistList.append(new_plant_nursery.cod_reg)
+                continue
+            else:
                 await create_plant_nursery(db, new_plant_nursery)
-        except Exception as e:
-            # Rollback the transaction in case of an error
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Error: {e}",
-            )
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
-            content={"message": "Plant nursery excel file uploaded successfully"},
+            content={
+                "message": "Plant nursery excel file uploaded successfully",
+                "Codigos de registro ya existentes": numberExistList,
+                },
         )
     else:
         raise HTTPException(

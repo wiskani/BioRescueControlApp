@@ -135,7 +135,7 @@ CRUD FOR FLORA RESCUE
 """
 
 # Get if flora rescue exists by epiphyte number
-async def get_flora_rescue(db: AsyncSession, flora_rescue_epiphyte_number: int) -> FloraRescue | None:
+async def get_flora_rescue(db: AsyncSession, flora_rescue_epiphyte_number: str ) -> FloraRescue | None:
     flora_resuce_db= await db.execute(select(FloraRescue).filter(FloraRescue.epiphyte_number == flora_rescue_epiphyte_number))
     return flora_resuce_db.scalars().first()
 

@@ -44,3 +44,35 @@ class SpecieGbif(BaseModel):
     canonicalName: str = Field(...)
     class_: str = Field(..., alias="class")
     classKey: int = Field(...)
+
+
+# This model is for a genus from GBIF API, for recieve data for a specie from GBIF API
+class GenusGbif(BaseModel):
+    key: int = Field(...)
+    kingdom: str = Field(...)
+    phylum: str = Field(...)
+    order: str = Field(...)
+    family: str = Field(...)
+    genus: str = Field(...)
+    kingdomKey: int = Field(...)
+    phylumKey: int = Field(...)
+    orderKey: int = Field(...)
+    familyKey: int = Field(...)
+    genusKey: int = Field(...)
+    class_: str = Field(..., alias="class")
+    classKey: int = Field(...)
+
+# This model is for a family from GBIF API, for recieve data for a specie from GBIF API
+class FamilyGbif(BaseModel):
+    key: int = Field(...)
+    kingdom: str = Field(...)
+    phylum: str = Field(...)
+    order: str = Field(...)
+    family: str = Field(...)
+    kingdomKey: int = Field(...)
+    phylumKey: int = Field(...)
+    orderKey: int = Field(...)
+    familyKey: int = Field(...)
+    class_: str = Field(..., alias="class")
+    classKey: int = Field(...)
+
