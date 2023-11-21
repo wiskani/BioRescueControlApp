@@ -4,6 +4,7 @@ from typing import List, Union
 from fastapi.responses import JSONResponse
 import pandas as pd
 
+
 from app.api.deps import PermissonsChecker, get_db
 
 #CRUD
@@ -194,6 +195,13 @@ async def upload_plant_nursery(
     if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
         df = pd.read_excel(file.file)
 
+        # Ensure sustrate is a string type
+        df['tipo_sustrato'] = df['tipo_sustrato'].astype('Int64')
+        df['tipo_sustrato'] = df['tipo_sustrato'].astype(str)
+
+        # Ensure treatment_product is a string type
+        df['producto_tratamiento'] = df['producto_tratamiento'].astype(str)
+
         # Replace NaN with None
         df = df.where(pd.notna(df), None)
 
@@ -210,7 +218,9 @@ async def upload_plant_nursery(
 
 
 
+
         numberExistList = []
+
 
         for _, row in df.iterrows():
             try:
