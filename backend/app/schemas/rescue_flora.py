@@ -107,59 +107,6 @@ class FloraRescueBase(BaseModel):
             )   
         return self
 
-
-
-    
-
-
-    ##Validators if genus exists, specie and family must be null
-    #@field_validator("genus_bryophyte_id")
-    #@classmethod
-    #def check_genus_bryophyte(cls, v, info: ValidationInfo):
-    #    if info.data["specie_bryophyte_id"] or info.data["family_bryophyte_id"]:
-    #        if v:
-    #            raise HTTPException(
-    #                status_code=400,
-    #                detail="if genus bryophite exists, specie and family must be null"
-    #            )
-    #    return v
-    
-    ##Validators if family exists, specie and genus must be null
-    #@field_validator("family_bryophyte_id")
-    #@classmethod
-    #def check_family_bryophyte(cls, v, info: ValidationInfo):
-    #    if info.data["specie_bryophyte_id"] or info.data["genus_bryophyte_id"]:
-    #        if v:
-    #            raise HTTPException(
-    #                status_code=400,
-    #                detail="if family bryophite exists, specie and genus must be null"
-    #            )
-    #    return v
-
-    #        
-    
-    ##Validators for genus, family and specie epiphyte must be null if others are not null    
-    #@field_validator("genus_epiphyte_id", "family_epiphyte_id")
-    #@classmethod
-    #def check_others_are_null(cls, v, info: ValidationInfo):
-    #    if info.data["specie_epiphyte_id"] is not None and v is not None:
-    #        raise HTTPException(
-    #            status_code=400,
-    #            detail="if epiphyte specie is not null, genus and family must be null",
-    #        )
-    #    return v
-    
-    #@field_validator("family_epiphyte_id")
-    #@classmethod
-    #def check_specie_and_genus_are_null(cls, v, info: ValidationInfo ):
-    #    if info.data["specie_epiphyte_id"] is not None and info.data["genus_epiphyte_id"] is not None:
-    #        if v is not None:
-    #            raise HTTPException(
-    #                status_code=400,
-    #                detail="if epiphyte specie and genus are not null, family must be null",
-    #            )
-    #    return v
-
 class FloraRescueResponse(FloraRescueBase):
     id: int
 
@@ -169,14 +116,14 @@ class FloraRescueResponse(FloraRescueBase):
 class PlantNurseryBase(BaseModel):
     entry_date: datetime = Field(...)
     cod_reg: str
-    health_status_epiphyte: str = Field( max_length=50)
-    vegetative_state: str = Field( max_length=50)
-    flowering_date: datetime
-    treatment_product: str = Field( max_length=50, examples=["1,2,3"])
+    health_status_epiphyte: str|None = Field( max_length=50)
+    vegetative_state: str|None = Field( max_length=50)
+    flowering_date: datetime|None
+    treatment_product: str|None = Field( max_length=50, examples=["1,2,3"])
     is_pruned: bool
     is_phytosanitary_treatment:bool
-    substrate: str = Field( max_length=50)
-    departure_date: datetime
+    substrate: str|None = Field( max_length=50)
+    departure_date: datetime | None
     flora_rescue_id: int
 
     class Config:

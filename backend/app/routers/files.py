@@ -64,7 +64,8 @@ from app.services.files import (
     addRescueIdByNumber,
     addTransectTranslocationIdByCod,
     addPointTranslocationByCod,
-    addFloraRescueZoneIdByName
+    addFloraRescueZoneIdByName,
+    addRescueFloraIdByNumber,
 )
 
 router = APIRouter()
@@ -197,30 +198,39 @@ async def upload_plant_nursery(
         df = df.where(pd.notna(df), None)
 
         # Convert date columns to datetime objects
-        date_columns = ['entry_date', 'flowering_date', 'departure_date']
+        date_columns = ['fecha_ingreso', 'fecha_floracion', 'fecha_salida']
         df = convert_to_datetime(df, date_columns)
+
+        #add boolean column for is_phytosanitary_treatment and is_pruned
+        df = addBooleanByCheck(df, "poda")
+        df = addBooleanByCheck(df, "tratamiento_fitosanitario")
+
+        #add id for flora rescue
+        df, floraRescueListWithOutName = await addRescueFloraIdByNumber(db, df, "cod")
+
+
 
         numberExistList = []
 
         for _, row in df.iterrows():
             try:
                 new_plant_nursery = PlantNurseryBase(
-                    entry_date=row['entry_date'],
-                    cod_reg=row['cod_reg'],
-                    health_status_epiphyte=row['health_status_epiphyte'],
-                    vegetative_state=row['vegetative_state'],
-                    flowering_date=row['flowering_date'],
-                    treatment_product=row['treatment_product'],
-                    is_pruned=row['is_pruned'],
-                    is_phytosanitary_treatment=row['is_phytosanitary_treatment'],
-                    substrate=row['substrate'],
-                    departure_date=row['departure_date'],
-                    flora_rescue_id=row['flora_rescue_id'],
+                    entry_date=row['fecha_ingreso'],
+                    cod_reg=row['cod'],
+                    health_status_epiphyte=none_value(row['estado_sanitario']),
+                    vegetative_state=none_value(row['estado_vegetativo']),
+                    flowering_date=none_value(row['fecha_floracion']),
+                    treatment_product=none_value(row['producto_tratamiento']),
+                    is_pruned=row['boolean_poda'],
+                    is_phytosanitary_treatment=row['boolean_tratamiento_fitosanitario'],
+                    substrate=none_value(row['tipo_sustrato']),
+                    departure_date=none_value(row['fecha_salida']),
+                    flora_rescue_id=row['idRescue'],
                 )
             except Exception as e:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Error in row {row['number']}: {e}"
+                    detail=f"Error in row {row['cod']}: {e}"
                 )
             if await get_plant_nursery(db, new_plant_nursery.cod_reg):
                 numberExistList.append(new_plant_nursery.cod_reg)
@@ -232,6 +242,7 @@ async def upload_plant_nursery(
             content={
                 "message": "Plant nursery excel file uploaded successfully",
                 "Codigos de registro ya existentes": numberExistList,
+                "Codigos de rescate no encontrados": floraRescueListWithOutName
                 },
         )
     else:

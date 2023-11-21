@@ -42,6 +42,7 @@ def convert_to_datetime(df:pd.DataFrame, cols:List[str]) -> pd.DataFrame:
     df : pandas dataframe with datetime columns on tz La_Paz
     """
     for col in cols:
+        print(df[col])
         try:
             df[col] = pd.to_datetime(df[col])
             df[col] = df[col].dt.tz_localize('America/La_Paz')
@@ -482,6 +483,7 @@ def addBooleanByCheck(
 ):
     """
     Add a column with boolean values if the column is empty or not
+    the new column is named boolean_{col}
     empty = False
     not empty = True
 
