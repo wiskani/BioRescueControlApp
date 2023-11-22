@@ -101,18 +101,19 @@ class PlantNursery(_database.Base):
 class FloraRelocation(_database.Base):
     __tablename__ = "flora_relocation"
     id:Mapped[int]= mapped_column(Integer, primary_key=True, index=True)
+    relocation_number: Mapped[str] = mapped_column(String, index=True )
     relocation_date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     size: Mapped[float] = mapped_column(Float, index=True)
     epiphyte_phenology: Mapped[str] = mapped_column(String, index=True)
     johanson_zone: Mapped[str] = mapped_column(String, index=True, nullable=True)
     relocation_position_latitude: Mapped[float] = mapped_column(Float, index=True)
     relocation_position_longitude: Mapped[float] = mapped_column(Float, index=True)
+    relocation_position_altitude: Mapped[int] = mapped_column(Integer, index=True)
     bryophyte_number: Mapped[int] = mapped_column(Integer, index=True)
     dap_bryophyte: Mapped[float] = mapped_column(Float, index=True, nullable=True)
     height_bryophyte: Mapped[float] = mapped_column(Float, index=True, nullable=True)
     bark_type: Mapped[str] = mapped_column(String, index=True, nullable=True)
     infested_lianas: Mapped[str] = mapped_column(String, index=True, nullable=True)
-    relocation_number: Mapped[int] = mapped_column(Integer, index=True, nullable=True)
     other_observations: Mapped[str] = mapped_column(String, index=True, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(pytz.timezone('America/La_Paz')))
 

@@ -137,17 +137,18 @@ class PlantNurseryResponse(PlantNurseryBase):
 
 class FloraRelocationBase(BaseModel):
     relocation_date: datetime = Field(...)
+    relocation_number: str= Field(...)
     size: float
     epiphyte_phenology: str = Field( max_length=50, examples=["Esteril"])
     johanson_zone: str | None = Field(max_length=50)
     relocation_position_latitude: float
     relocation_position_longitude: float
+    relocation_position_altitude: int
     bryophyte_number: int = Field(...)
     dap_bryophyte: float | None
     height_bryophyte: float | None
     bark_type:  str | None  = Field(max_length=50)
     infested_lianas: str | None = Field(examples=["Poco"])
-    relocation_number: int = Field(...)
     other_observations:  str | None = Field(max_length=100)
     flora_rescue_id: int
     specie_bryophyte_id: int | None  = Field(default=None)

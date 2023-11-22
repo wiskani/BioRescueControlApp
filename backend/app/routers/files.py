@@ -68,6 +68,7 @@ from app.services.files import (
     addPointTranslocationByCod,
     addFloraRescueZoneIdByName,
     addRescueFloraIdByNumber,
+    addRelocationZoneIdByNumber
 )
 
 router = APIRouter()
@@ -217,11 +218,7 @@ async def upload_plant_nursery(
         #add id for flora rescue
         df, floraRescueListWithOutName = await addRescueFloraIdByNumber(db, df, "cod")
 
-
-
-
         numberExistList = []
-
 
         for _, row in df.iterrows():
             try:
@@ -299,6 +296,9 @@ async def upload_flora_relocation(
         # Insert columns lat y lon to df
         df = insertGEOData(df, UTM_columns, nameLatitude, nameLongitude)
 
+        #add id for flora rescue
+        df, floraRescueListWithOutName = await addRescueFloraIdByNumber(db, df, "numer_rescue")
+
 
         numberExistList = []
 
@@ -306,19 +306,20 @@ async def upload_flora_relocation(
             try:
                 new_flora_relocation = FloraRelocationBase(
                     relocation_date=row['fecha'],
+                    relocation_number=row['number'],
                     size=row['tamaño'],
                     epiphyte_phenology=row['fenologia'],
-                    johanson_zone=row['johanson_zone'],
+                    johanson_zone=row['zona_johanson'],
                     relocation_position_latitude=row['latitude'],
                     relocation_position_longitude=row['longitude'],
-                    bryophyte_number=row['bryophyte_number'],
-                    dap_bryophyte=row['dap_bryophyte'],
-                    height_bryophyte=row['height_bryophyte'],
-                    bark_type=row['bark_type'],
-                    infested_lianas=row['infested_lianas'],
-                    relocation_number=row['relocation_number'],
-                    other_observations=none_value(row['other_observations']),
-                    flora_rescue_id=row['flora_rescue_id'],
+                    relocation_position_altitude=row['altitud'],
+                    bryophyte_number=row['numero_epifito'],
+                    dap_bryophyte=row['dap'],
+                    height_bryophyte=row['altura'],
+                    bark_type=row['corteza'],
+                    infested_lianas=row['lianas'],
+                    other_observations=none_value(row['observaciones']),
+                    flora_rescue_id=row['idRescue'],
                     specie_bryophyte_id=none_value(row['specie_bryophyte_id']),
                     genus_bryophyte_id=none_value(row['genus_bryophyte_id']),
                     family_bryophyte_id=none_value(row['family_bryophyte_id']),
@@ -339,6 +340,7 @@ async def upload_flora_relocation(
             content={
                 "message": "Flora relocation excel file uploaded successfully",
                 "Codigos de registro ya existentes": numberExistList,
+                "Codigos de rescate no encontrados": floraRescueListWithOutName
                 },
         )
     else:
@@ -797,8 +799,6 @@ async def upload_translocation_herpetofauna(
 
         # Replace NaN with None
         df = remplace_nan_with_none(df)
-
-        print(df.dtypes)
 
         numberExistList = []
 

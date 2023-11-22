@@ -290,7 +290,7 @@ FLORA RELOCATION CRUD
 """
 
 # Get if flora relocation exists
-async def get_flora_relocation(db: AsyncSession, flora_relocation_number: int) -> FloraRelocation | None:
+async def get_flora_relocation(db: AsyncSession, flora_relocation_number: str) -> FloraRelocation | None:
     flora_relocation_db = await db.execute(select(FloraRelocation).where(FloraRelocation.relocation_number == flora_relocation_number))
     return flora_relocation_db.scalars().first()
 
@@ -308,17 +308,18 @@ async def get_all_flora_relocations(db: AsyncSession) -> List[FloraRelocation]:
 async def create_flora_relocation(db: AsyncSession, flora_relocation: FloraRelocationBase) -> FloraRelocation:
     db_flora_relocation = FloraRelocation(
             relocation_date = flora_relocation.relocation_date,
+            relocation_number = flora_relocation.relocation_number,
             size = flora_relocation.size,
             epiphyte_phenology = flora_relocation.epiphyte_phenology,
             johanson_zone = flora_relocation.johanson_zone,
             relocation_position_latitude = flora_relocation.relocation_position_latitude,
             relocation_position_longitude = flora_relocation.relocation_position_longitude,
+            relocation_position_altitude = flora_relocation.relocation_position_altitude,
             bryophyte_number = flora_relocation.bryophyte_number,
             dap_bryophyte = flora_relocation.dap_bryophyte,
             height_bryophyte = flora_relocation.height_bryophyte,
             bark_type = flora_relocation.bark_type,
             infested_lianas = flora_relocation.infested_lianas,
-            relocation_number = flora_relocation.relocation_number,
             other_observations = flora_relocation.other_observations,
             flora_rescue_id = flora_relocation.flora_rescue_id,
             specie_bryophyte_id = flora_relocation.specie_bryophyte_id,
@@ -338,17 +339,18 @@ async def update_flora_relocation(db: AsyncSession, flora_relocation_id: int, fl
         raise HTTPException(status_code=404, detail="Flora relocation not found")
 
     db_flora_relocation.relocation_date = flora_relocation.relocation_date
+    db_flora_relocation.relocation_number = flora_relocation.relocation_number
     db_flora_relocation.size = flora_relocation.size
     db_flora_relocation.epiphyte_phenology = flora_relocation.epiphyte_phenology
     db_flora_relocation.johanson_zone = flora_relocation.johanson_zone
     db_flora_relocation.relocation_position_latitude = flora_relocation.relocation_position_latitude
     db_flora_relocation.relocation_position_longitude = flora_relocation.relocation_position_longitude
+    db_flora_relocation.relocation_position_altitude = flora_relocation.relocation_position_altitude
     db_flora_relocation.bryophyte_number = flora_relocation.bryophyte_number
     db_flora_relocation.dap_bryophyte = flora_relocation.dap_bryophyte
     db_flora_relocation.height_bryophyte = flora_relocation.height_bryophyte
     db_flora_relocation.bark_type = flora_relocation.bark_type
     db_flora_relocation.infested_lianas = flora_relocation.infested_lianas
-    db_flora_relocation.relocation_number = flora_relocation.relocation_number
     db_flora_relocation.other_observations = flora_relocation.other_observations
     db_flora_relocation.flora_rescue_id = flora_relocation.flora_rescue_id
     db_flora_relocation.specie_bryophyte_id = flora_relocation.specie_bryophyte_id

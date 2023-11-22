@@ -24,7 +24,8 @@ from app.crud.rescue_herpetofauna import (
 
 from app.crud.rescue_flora import (
     get_flora_rescue_zone,
-    get_flora_rescue
+    get_flora_rescue,
+    get_flora_relocation_zone
 )
 
 
@@ -620,5 +621,35 @@ async def addRescueFloraIdByNumber(
     df['idRescue'] = colunmId
 
     return df, listRescueNumberRow
+
+async def addRelocationZoneIdByNumber(
+        db: AsyncSession,
+        df: pd.DataFrame,
+        col: str,
+        )-> pd.DataFrame:
+    """
+    Adds the id of a relozation zone to a dataframe
+
+    Parameters
+    ----------
+    db : AsyncSession
+    df : pandas dataframe
+    col : str with name of column with relocation zone number
+    """
+    listRelocationZoneNumberRow: list[tuple[int, str]] = []
+    colunmId: list[int | None] = []
+
+    for _, row in df.iterrows():
+        relocationZone = await get_flora_relocation_zone(db, row[col])
+        if relocationZone is None:
+            colunmId.append(None)
+            listRelocationZoneNumberRow.append((row[0], row[col]))
+        else:
+            colunmId.append(relocationZone.id)
+
+    df['idRelocationZone'] = colunmId
+
+    return df, listRelocationZoneNumberRow
+
 
 

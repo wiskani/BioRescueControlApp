@@ -35,6 +35,7 @@ async def create_random_rescue_zone_id(
     data: Dict[str, Any] = response.json()
     return data["id"]
 
+# Create a radom relocation_zone
 @pytest.mark.asyncio
 async def create_random_relocation_zone_id(
     async_client: AsyncClient
@@ -47,6 +48,7 @@ async def create_random_relocation_zone_id(
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     return data["id"]
+
 
 # Create a radom rescue_zone with name
 @pytest.mark.asyncio
@@ -65,18 +67,20 @@ async def create_random_rescue_zone_id_wiht_name(
     data: Dict[str, Any] = response.json()
     return data["id"], name
 
+# Create a radom relocation_zone with name
 @pytest.mark.asyncio
 async def create_random_relocation_zone_idWithNumber(
     async_client: AsyncClient
 )-> tuple[int, str]:
+    name: str = random_string()
     response = await async_client.post(
         "/api/rescue_flora/relocation_zone", json={
-            "name": "test_relocation_zone0",
+            "name": name,
         },
     )
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
-    return data["id"], "test_relocation_zone0"
+    return data["id"], name 
 
 @pytest.mark.asyncio
 async def create_random_flora_rescue_id(

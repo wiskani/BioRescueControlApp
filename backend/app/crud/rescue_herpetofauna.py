@@ -99,7 +99,7 @@ async def delete_age_group(db: AsyncSession, age_group_id: int) -> AgeGroup:
 CRUD FOR TRANSECT HERPETOFAUNA
 """
 #Get if transect herpetofauna exists by number
-async def get_transect_herpetofauna_by_number(db: AsyncSession, number:int ) -> TransectHerpetofauna | None:
+async def get_transect_herpetofauna_by_number(db: AsyncSession, number:str ) -> TransectHerpetofauna | None:
     result = await db.execute(select(TransectHerpetofauna).where(TransectHerpetofauna.number == number))
     return result.scalars().first()
 

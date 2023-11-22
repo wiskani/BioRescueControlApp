@@ -1076,17 +1076,18 @@ async def test_create_relocation_flora(
     response =await async_client.post(
         "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
+            "relocation_number": "14",
             "size": 1.0,
             "epiphyte_phenology": "test_epiphyte_phenology14",
             "johanson_zone": "test_johanson_zone14",
             "relocation_position_latitude": create_latitude(),
             "relocation_position_longitude": create_longitude(),
+            "relocation_position_altitude": 14.0,
             "bryophyte_number": 14,
             "dap_bryophyte": 14.0,
             "height_bryophyte": 14.0,
             "bark_type": "test_bark_type14",
             "infested_lianas": "Poco",
-            "relocation_number": 14,
             "other_observations": "test_other_observations14",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
@@ -1099,17 +1100,18 @@ async def test_create_relocation_flora(
     data: Dict[str, Any] = response.json()
     assert "id" in data
     assert data["relocation_date"] == "2021-12-10T00:00:00Z"
+    assert data["relocation_number"] == "14"
     assert data["size"] == 1.0
     assert data["epiphyte_phenology"] == "test_epiphyte_phenology14"
     assert data["johanson_zone"] == "test_johanson_zone14"
     assert data["relocation_position_latitude"] >= -90 and data["relocation_position_latitude"] <= 90
     assert data["relocation_position_longitude"] >= -180 and data["relocation_position_longitude"] <= 180
+    assert data["relocation_position_altitude"] == 14.0
     assert data["bryophyte_number"] == 14
     assert data["dap_bryophyte"] == 14.0
     assert data["height_bryophyte"] == 14.0
     assert data["bark_type"] == "test_bark_type14"
     assert data["infested_lianas"] == "Poco"
-    assert data["relocation_number"] == 14
     assert data["other_observations"] == "test_other_observations14"
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
     assert data["specie_bryophyte_id"] == specie_id
@@ -1132,17 +1134,18 @@ async def test_create_relocation_flora_already_exists(
     response =await async_client.post(
         f"/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
+            "relocation_number": "14",
             "size": 1.0,
             "epiphyte_phenology": "test_epiphyte_phenology14",
             "johanson_zone": "test_johanson_zone14",
             "relocation_position_latitude": create_latitude(),
             "relocation_position_longitude": create_longitude(),
+            "relocation_position_altitude": 1000, 
             "bryophyte_number": 14,
             "dap_bryophyte": 14.0,
             "height_bryophyte": 14.0,
             "bark_type": "test_bark_type14",
             "infested_lianas": "Poco",
-            "relocation_number": 14,
             "other_observations": "test_other_observations14",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": None,
@@ -1157,17 +1160,18 @@ async def test_create_relocation_flora_already_exists(
     response: Response =await async_client.post(
         "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
+            "relocation_number": "14",
             "size": 1.0,
             "epiphyte_phenology": "test_epiphyte_phenology14",
             "johanson_zone": "test_johanson_zone14",
             "relocation_position_latitude": create_latitude(),
             "relocation_position_longitude": create_longitude(),
+            "relocation_position_altitude": 1000, 
             "bryophyte_number": 14,
             "dap_bryophyte": 14.0,
             "height_bryophyte": 14.0,
             "bark_type": "test_bark_type14",
             "infested_lianas": "Poco",
-            "relocation_number": 14,
             "other_observations": "test_other_observations14",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": None,
@@ -1197,17 +1201,18 @@ async def test_read_all_relocation_flora(
     response =await async_client.post(
         "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
+            "relocation_number": "15",
             "size": 2.0,
             "epiphyte_phenology": "test_epiphyte_phenology15",
             "johanson_zone": "test_johanson_zone15",
             "relocation_position_latitude": create_latitude(),
             "relocation_position_longitude": create_longitude(),
+            "relocation_position_altitude": 1000, 
             "bryophyte_number": 15,
             "dap_bryophyte": 15.0,
             "height_bryophyte": 15.0,
             "bark_type": "test_bark_type15",
             "infested_lianas": "Poco",
-            "relocation_number": 15,
             "other_observations": "test_other_observations15",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": None,
@@ -1220,17 +1225,18 @@ async def test_read_all_relocation_flora(
     response =await async_client.post(
         "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
+            "relocation_number": "16",
             "size": 3.0,
             "epiphyte_phenology": "test_epiphyte_phenology16",
             "johanson_zone": "test_johanson_zone16",
             "relocation_position_latitude": create_latitude(),
             "relocation_position_longitude": create_longitude(),
+            "relocation_position_altitude": 1000, 
             "bryophyte_number": 16,
             "dap_bryophyte": 16.0,
             "height_bryophyte": 16.0,
             "bark_type": "test_bark_type16",
             "infested_lianas": "Poco",
-            "relocation_number": 16,
             "other_observations": "test_other_observations16",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": None,
@@ -1261,17 +1267,18 @@ async def test_read_relocation_flora(
     response =await async_client.post(
         "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
+            "relocation_number": "17",
             "size": 4.0,
             "epiphyte_phenology": "test_epiphyte_phenology17",
             "johanson_zone": "test_johanson_zone17",
             "relocation_position_latitude": create_latitude(),
             "relocation_position_longitude": create_longitude(),
+            "relocation_position_altitude": 1000, 
             "bryophyte_number": 17,
             "dap_bryophyte": 17.0,
             "height_bryophyte": 17.0,
             "bark_type": "test_bark_type17",
             "infested_lianas": "Poco",
-            "relocation_number": 17,
             "other_observations": "test_other_observations17",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
@@ -1288,6 +1295,7 @@ async def test_read_relocation_flora(
     assert response.status_code == 200, response.text
     data = response.json()
     assert data["relocation_date"] == "2021-12-10T00:00:00Z"
+    assert data["relocation_number"] == "17"
     assert data["size"] == 4.0
     assert data["epiphyte_phenology"] == "test_epiphyte_phenology17"
     assert data["johanson_zone"] == "test_johanson_zone17"
@@ -1298,7 +1306,6 @@ async def test_read_relocation_flora(
     assert data["height_bryophyte"] == 17.0
     assert data["bark_type"] == "test_bark_type17"
     assert data["infested_lianas"] == "Poco"
-    assert data["relocation_number"] == 17
     assert data["other_observations"] == "test_other_observations17"
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
     assert data["specie_bryophyte_id"] == specie_id
@@ -1321,17 +1328,18 @@ async def test_update_relocation_flora(
     response =await async_client.post(
         "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
+            "relocation_number": "18",
             "size": 5.0,
             "epiphyte_phenology": "test_epiphyte_phenology18",
             "johanson_zone": "test_johanson_zone18",
             "relocation_position_latitude": create_latitude(),
             "relocation_position_longitude": create_longitude(),
+            "relocation_position_altitude": 1000, 
             "bryophyte_number": 18,
             "dap_bryophyte": 18.0,
             "height_bryophyte": 18.0,
             "bark_type": "test_bark_type18",
             "infested_lianas": "Poco",
-            "relocation_number": 18,
             "other_observations": "test_other_observations18",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": None,
@@ -1347,17 +1355,18 @@ async def test_update_relocation_flora(
     response =await async_client.put(
         f"/api/flora_relocation/{id}", json={
             "relocation_date": "2021-12-10T00:00:00",
+            "relocation_number": "19",
             "size": 6.0,
             "epiphyte_phenology": "test_epiphyte_phenology19",
             "johanson_zone": "test_johanson_zone19",
             "relocation_position_latitude": create_latitude(),
             "relocation_position_longitude": create_longitude(),
+            "relocation_position_altitude": 1000, 
             "bryophyte_number": 19,
             "dap_bryophyte": 19.0,
             "height_bryophyte": 19.0,
             "bark_type": "test_bark_type19",
             "infested_lianas": "Poco",
-            "relocation_number": 19,
             "other_observations": "test_other_observations19",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
@@ -1369,6 +1378,7 @@ async def test_update_relocation_flora(
     assert response.status_code == 200, response.text
     data = response.json()
     assert data["relocation_date"] == "2021-12-10T00:00:00Z"
+    assert data["relocation_number"] == "19"
     assert data["size"] == 6.0
     assert data["epiphyte_phenology"] == "test_epiphyte_phenology19"
     assert data["johanson_zone"] == "test_johanson_zone19"
@@ -1379,7 +1389,6 @@ async def test_update_relocation_flora(
     assert data["height_bryophyte"] == 19.0
     assert data["bark_type"] == "test_bark_type19"
     assert data["infested_lianas"] == "Poco"
-    assert data["relocation_number"] == 19
     assert data["other_observations"] == "test_other_observations19"
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
     assert data["specie_bryophyte_id"] == specie_id
@@ -1402,17 +1411,18 @@ async def test_delete_relocation_flora(
     response =await async_client.post(
         "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
+            "relocation_number": "20",
             "size": 7.0,
             "epiphyte_phenology": "test_epiphyte_phenology20",
             "johanson_zone": "test_johanson_zone20",
             "relocation_position_latitude": create_latitude(),
             "relocation_position_longitude": create_longitude(),
+            "relocation_position_altitude": 1000, 
             "bryophyte_number": 20,
             "dap_bryophyte": 20.0,
             "height_bryophyte": 20.0,
             "bark_type": "test_bark_type20",
             "infested_lianas": "Poco",
-            "relocation_number": 20,
             "other_observations": "test_other_observations20",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": None,

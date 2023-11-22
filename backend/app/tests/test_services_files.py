@@ -23,6 +23,7 @@ from app.services.files import (
     addPointTranslocationByCod,
     addFloraRescueZoneIdByName,
     addRescueFloraIdByNumber,
+    addRelocationZoneIdByNumber,
 )
 
 from app.tests.conftest import *
@@ -574,6 +575,41 @@ async def test_addRescueZoneIdByName(
     #Test
     assert resultDF.equals(expected)
     assert listResult == [(1, None), (3, None)]
+
+#test for addRelocationZoneIdByName
+@pytest.mark.asyncio
+async def test_addRelocationZoneIdByName(
+        async_client: AsyncClient,
+        async_session: AsyncSession
+) -> None:
+    relocation_zone_id, relocation_zone_name = await create_random_relocation_zone_idWithNumber(async_client)
+    relocation_zone_id2, relocation_zone_name2 = await create_random_relocation_zone_idWithNumber(async_client)
+    relocation_zone_id3, relocation_zone_name3 = await create_random_relocation_zone_idWithNumber(async_client)
+
+    col: str = "zone_relocation"
+
+    #Create DF for test
+    data = {
+        'number': [1, 2, 3] ,
+        'zone_relocation': [relocation_zone_name, relocation_zone_name2, relocation_zone_name3] 
+    }
+
+    df = pd.DataFrame(data)
+
+    # Expect result
+    expected = pd.DataFrame({
+        'number': [1,2,3],
+        'zone_relocation': [relocation_zone_name, relocation_zone_name2, relocation_zone_name3],
+        'idRelocationZone': [relocation_zone_id, relocation_zone_id2, relocation_zone_id3]
+    })
+
+    #Result
+    resultDF, listResult = await addRelocationZoneIdByNumber(async_session, df, col)
+
+
+    #Test
+    assert resultDF.equals(expected)
+    assert listResult == []
 
 
 
