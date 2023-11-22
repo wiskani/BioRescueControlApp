@@ -14,6 +14,7 @@ from app.crud.rescue_flora import (
     create_flora_rescue,
     get_flora_rescue,
     get_plant_nursery,
+    get_flora_relocation,
     )
 from app.crud.tower import create_tower, get_tower_by_number
 from app.crud.rescue_herpetofauna import(
@@ -277,35 +278,39 @@ async def upload_flora_relocation(
         df = pd.read_excel(file.file)
 
         # Replace NaN with None
-        df = df.fillna('None')
-
-        # chek if NaN is in df 
-        if df.isnull().values.any():
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="File must not contain NaN",
-            )
-
-        #fuction to return None value if value is 'None'
-        def none_value(value):
-            if value == 'None':
-                return None
-            else:
-                return value
+        df = df.where(pd.notna(df), None)
 
         # Convert date columns to datetime objects
-        date_columns = ['relocation_date' ]
+        date_columns = ['fecha' ]
         df = convert_to_datetime(df, date_columns)
 
-        try:
-            for _, row in df.iterrows():
+        #change coordinate system
+        UTM_columns = {
+            'easting': 'este',
+            'northing': 'sur',
+            'zone_number': 'zona',
+            'zone_letter': 'zona_letra',
+        }
+
+        #Names of columns geodata columns to in transect
+        nameLatitude = 'latitude'
+        nameLongitude = 'longitude'
+
+        # Insert columns lat y lon to df
+        df = insertGEOData(df, UTM_columns, nameLatitude, nameLongitude)
+
+
+        numberExistList = []
+
+        for _, row in df.iterrows():
+            try:
                 new_flora_relocation = FloraRelocationBase(
-                    relocation_date=row['relocation_date'],
-                    size=row['size'],
-                    epiphyte_phenology=row['epiphyte_phenology'],
+                    relocation_date=row['fecha'],
+                    size=row['tamaño'],
+                    epiphyte_phenology=row['fenologia'],
                     johanson_zone=row['johanson_zone'],
-                    relocation_position_latitude=row['relocation_position_latitude'],
-                    relocation_position_longitude=row['relocation_position_longitude'],
+                    relocation_position_latitude=row['latitude'],
+                    relocation_position_longitude=row['longitude'],
                     bryophyte_number=row['bryophyte_number'],
                     dap_bryophyte=row['dap_bryophyte'],
                     height_bryophyte=row['height_bryophyte'],
@@ -319,16 +324,22 @@ async def upload_flora_relocation(
                     family_bryophyte_id=none_value(row['family_bryophyte_id']),
                     relocation_zone_id=row['relocation_zone_id'],
                 )
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Error in row {row['relocation_number']}: {e}"
+                )
+            if await get_flora_relocation(db, new_flora_relocation.relocation_number):
+                numberExistList.append(new_flora_relocation.relocation_number)
+                continue
+            else:
                 await create_flora_relocation(db, new_flora_relocation)
-        except Exception as e:
-            # Rollback the transaction in case of an error
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Error: {e}",
-            )
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
-            content={"message": "Flora relocation excel file uploaded successfully"},
+            content={
+                "message": "Flora relocation excel file uploaded successfully",
+                "Codigos de registro ya existentes": numberExistList,
+                },
         )
     else:
         raise HTTPException(
@@ -407,6 +418,8 @@ async def upload_transect_herpetofauna(
             'date_in',
             'date_out',
         ]
+
+        # Convert UTM columns to GeoData
         UTM_columns_in = {
             'easting': 'este_in',
             'northing': 'sur_in',

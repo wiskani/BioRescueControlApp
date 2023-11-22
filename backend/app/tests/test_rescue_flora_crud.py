@@ -1090,8 +1090,8 @@ async def test_create_relocation_flora(
             "other_observations": "test_other_observations14",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
-            "genus_bryophyte_id": GENUS_ID,
-            "family_bryophyte_id": FAMILY_ID,
+            "genus_bryophyte_id": None,
+            "family_bryophyte_id": None,
             "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
@@ -1113,8 +1113,8 @@ async def test_create_relocation_flora(
     assert data["other_observations"] == "test_other_observations14"
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
     assert data["specie_bryophyte_id"] == specie_id
-    assert data["genus_bryophyte_id"] == GENUS_ID
-    assert data["family_bryophyte_id"] == FAMILY_ID
+    assert data["genus_bryophyte_id"] == None 
+    assert data["family_bryophyte_id"] == None 
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
 
 #test create a relocation flora that already exists
@@ -1145,8 +1145,8 @@ async def test_create_relocation_flora_already_exists(
             "relocation_number": 14,
             "other_observations": "test_other_observations14",
             "flora_rescue_id": FLORA_RESCUE_ID,
-            "specie_bryophyte_id": specie_id,
-            "genus_bryophyte_id": GENUS_ID,
+            "specie_bryophyte_id": None,
+            "genus_bryophyte_id": None,
             "family_bryophyte_id": FAMILY_ID,
             "relocation_zone_id": RELOCATION_ZONE_ID,
         },
@@ -1170,8 +1170,8 @@ async def test_create_relocation_flora_already_exists(
             "relocation_number": 14,
             "other_observations": "test_other_observations14",
             "flora_rescue_id": FLORA_RESCUE_ID,
-            "specie_bryophyte_id": specie_id,
-            "genus_bryophyte_id": GENUS_ID,
+            "specie_bryophyte_id": None,
+            "genus_bryophyte_id": None,
             "family_bryophyte_id": FAMILY_ID,
             "relocation_zone_id": RELOCATION_ZONE_ID,
 
@@ -1210,9 +1210,9 @@ async def test_read_all_relocation_flora(
             "relocation_number": 15,
             "other_observations": "test_other_observations15",
             "flora_rescue_id": FLORA_RESCUE_ID,
-            "specie_bryophyte_id": specie_id,
+            "specie_bryophyte_id": None,
             "genus_bryophyte_id": GENUS_ID,
-            "family_bryophyte_id": FAMILY_ID,
+            "family_bryophyte_id": None,
             "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
@@ -1233,8 +1233,8 @@ async def test_read_all_relocation_flora(
             "relocation_number": 16,
             "other_observations": "test_other_observations16",
             "flora_rescue_id": FLORA_RESCUE_ID,
-            "specie_bryophyte_id": specie_id,
-            "genus_bryophyte_id": GENUS_ID,
+            "specie_bryophyte_id": None,
+            "genus_bryophyte_id": None,
             "family_bryophyte_id": FAMILY_ID,
             "relocation_zone_id": RELOCATION_ZONE_ID,
         },
@@ -1275,16 +1275,16 @@ async def test_read_relocation_flora(
             "other_observations": "test_other_observations17",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
-            "genus_bryophyte_id": GENUS_ID,
-            "family_bryophyte_id": FAMILY_ID,
+            "genus_bryophyte_id": None,
+            "family_bryophyte_id": None,
             "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
-    id = data["id"]
+    ide = data["id"]
     # read a relocation flora by id
-    response =await async_client.get(f"/api/flora_relocation/{id}")
+    response =await async_client.get(f"/api/flora_relocation/{ide}")
     assert response.status_code == 200, response.text
     data = response.json()
     assert data["relocation_date"] == "2021-12-10T00:00:00Z"
@@ -1302,8 +1302,8 @@ async def test_read_relocation_flora(
     assert data["other_observations"] == "test_other_observations17"
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
     assert data["specie_bryophyte_id"] == specie_id
-    assert data["genus_bryophyte_id"] == GENUS_ID
-    assert data["family_bryophyte_id"] == FAMILY_ID
+    assert data["genus_bryophyte_id"] == None
+    assert data["family_bryophyte_id"] == None 
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
 
 #test update a relocation flora
@@ -1334,9 +1334,9 @@ async def test_update_relocation_flora(
             "relocation_number": 18,
             "other_observations": "test_other_observations18",
             "flora_rescue_id": FLORA_RESCUE_ID,
-            "specie_bryophyte_id": specie_id,
+            "specie_bryophyte_id": None,
             "genus_bryophyte_id": GENUS_ID,
-            "family_bryophyte_id": FAMILY_ID,
+            "family_bryophyte_id": None,
             "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
@@ -1361,8 +1361,8 @@ async def test_update_relocation_flora(
             "other_observations": "test_other_observations19",
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
-            "genus_bryophyte_id": GENUS_ID,
-            "family_bryophyte_id": FAMILY_ID,
+            "genus_bryophyte_id": None,
+            "family_bryophyte_id": None,
             "relocation_zone_id": RELOCATION_ZONE_ID,
         },
     )
@@ -1383,8 +1383,8 @@ async def test_update_relocation_flora(
     assert data["other_observations"] == "test_other_observations19"
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
     assert data["specie_bryophyte_id"] == specie_id
-    assert data["genus_bryophyte_id"] == GENUS_ID
-    assert data["family_bryophyte_id"] == FAMILY_ID
+    assert data["genus_bryophyte_id"] == None 
+    assert data["family_bryophyte_id"] == None 
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
 
 #test delete a relocation flora
@@ -1415,8 +1415,8 @@ async def test_delete_relocation_flora(
             "relocation_number": 20,
             "other_observations": "test_other_observations20",
             "flora_rescue_id": FLORA_RESCUE_ID,
-            "specie_bryophyte_id": specie_id,
-            "genus_bryophyte_id": GENUS_ID,
+            "specie_bryophyte_id": None,
+            "genus_bryophyte_id": None,
             "family_bryophyte_id": FAMILY_ID,
             "relocation_zone_id": RELOCATION_ZONE_ID,
         },

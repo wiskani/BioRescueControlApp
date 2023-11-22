@@ -158,6 +158,28 @@ class FloraRelocationBase(BaseModel):
     class Config:
         from_attributes = True
 
+    @model_validator(mode='after')
+    def check_taxon_bryophyte(self):
+        if self.specie_bryophyte_id:
+            if self.genus_bryophyte_id or self.family_bryophyte_id:
+                raise HTTPException(
+                    status_code=400,
+                    detail="if specie bryophite exists, genus and family must be null"
+                )
+        elif self.genus_bryophyte_id:
+            if self.specie_bryophyte_id or self.family_bryophyte_id:
+                raise HTTPException(
+                    status_code=400,
+                    detail="if genus bryophite exists, specie and family must be null"
+                )
+        elif self.family_bryophyte_id:
+            if self.specie_bryophyte_id or self.genus_bryophyte_id:
+                raise HTTPException(
+                    status_code=400,
+                    detail="if family bryophite exists, specie and genus must be null"
+                )
+        return self
+
 class FloraRelocationResponse(FloraRelocationBase):
     id: int
 
