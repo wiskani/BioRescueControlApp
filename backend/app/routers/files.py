@@ -275,7 +275,7 @@ async def upload_flora_relocation(
         df = pd.read_excel(file.file)
 
         # Replace NaN with None
-        df = df.where(pd.notna(df), None)
+        df = remplace_nan_with_none(df)
 
         # Convert date columns to datetime objects
         date_columns = ['fecha' ]
@@ -297,10 +297,28 @@ async def upload_flora_relocation(
         df = insertGEOData(df, UTM_columns, nameLatitude, nameLongitude)
 
         #add id for flora rescue
-        df, floraRescueListWithOutName = await addRescueFloraIdByNumber(db, df, "numer_rescue")
+        df, floraRescueListWithOutName = await addRescueFloraIdByNumber(db, df, "number_rescue")
 
+       #add id for zone relocation
+        df, zoneRelocationListWithOutName = await addRelocationZoneIdByNumber(db, df, "zona_rescate")
+
+        #add id specie by name
+        df, specieListWithOutName = await addIdGenusByName(db, df, "especie_b", "specie_bryophyte_id")
+
+        #add id genus by name
+        df, genusListWithOutName = await addIdGenusByName(db, df, "genero_b", "genus_bryophyte_id")
+
+        #add family id by name
+        df, familyListWithOutName = await addIdFamilyByName(db, df, "familia_b", "family_bryophyte_id")
+
+        df["zona_johanson"] = df["zona_johanson"].astype(str)
+
+        # Replace NaN with None
+        df = remplace_nan_with_none(df)
 
         numberExistList = []
+        
+        print(df["fecha"])
 
         for _, row in df.iterrows():
             try:
@@ -323,12 +341,12 @@ async def upload_flora_relocation(
                     specie_bryophyte_id=none_value(row['specie_bryophyte_id']),
                     genus_bryophyte_id=none_value(row['genus_bryophyte_id']),
                     family_bryophyte_id=none_value(row['family_bryophyte_id']),
-                    relocation_zone_id=row['relocation_zone_id'],
+                    relocation_zone_id=row['idRelocationZone'],
                 )
             except Exception as e:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Error in row {row['relocation_number']}: {e}"
+                    detail=f"Error in row {row['number']}: {e}"
                 )
             if await get_flora_relocation(db, new_flora_relocation.relocation_number):
                 numberExistList.append(new_flora_relocation.relocation_number)
@@ -339,8 +357,8 @@ async def upload_flora_relocation(
             status_code=status.HTTP_201_CREATED,
             content={
                 "message": "Flora relocation excel file uploaded successfully",
-                "Codigos de registro ya existentes": numberExistList,
-                "Codigos de rescate no encontrados": floraRescueListWithOutName
+                "Lista de numeros repetidos": numberExistList,
+
                 },
         )
     else:

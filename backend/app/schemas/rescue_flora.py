@@ -153,7 +153,7 @@ class FloraRelocationBase(BaseModel):
     flora_rescue_id: int
     specie_bryophyte_id: int | None  = Field(default=None)
     genus_bryophyte_id: int | None = Field(default=None)
-    family_bryophyte_id:  int | None
+    family_bryophyte_id:  int | None = Field(default=None)
     relocation_zone_id:  int
 
     class Config:
