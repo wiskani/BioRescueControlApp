@@ -78,7 +78,7 @@ async def create_transect_herpetofauna(
 @pytest.mark.asyncio
 async def create_transect_herpetofaunaWithNumber(
     async_client: AsyncClient,
-) -> int:
+) -> tuple[int, str]:
     number_transect: str = random_string()
     tower_id: int =  await create_random_tower(async_client)
     latitude_in: float = random.uniform(-90, 90)

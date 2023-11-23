@@ -32,6 +32,16 @@ from app.crud.rescue_herpetofauna import(
     get_translocation_herpetofauna_by_cod
 )
 
+from app.crud.rescue_mammals import (
+        create_rescue_mammal,
+        get_rescue_mammal_cod,
+        create_site_release_mammal,
+        get_site_release_mammal_name,
+        create_release_mammal,
+        get_release_mammal_cod
+    )
+
+
 #Schemas
 from app.schemas.rescue_flora import (
     PlantNurseryBase,
@@ -46,6 +56,11 @@ from app.schemas.rescue_herpetofauna import (
     PointHerpetofaunaTranslocationCreate,
     TranslocationHerpetofaunaCreate
 )
+from app.schemas.rescue_mammals import (
+    RescueMammalsCreate,
+    ReleaseMammalsCreate,
+    )
+
 from app.schemas.towers import TowerBase
 from app.schemas.services import UTMData
 
@@ -842,6 +857,93 @@ async def upload_translocation_herpetofauna(
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
             content={"message": "The file was upload", "Not upload numbers because repeate": numberExistList, "Some species not found": specieListWithOutName, "Some marks not found": markListWithOutNumber},
+        )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File must be an excel file",
+        )
+
+#Upload Rescue Mammals 
+@router.post(
+    path="/upload/rescue_mammals",
+    summary="Upload rescue mammals excel file",
+    response_model= None,
+    tags=["Upload"],
+)
+async def upload_rescue_mammals(
+    file: UploadFile=File(...),
+    db: AsyncSession = Depends(get_db),
+    permissions: str = Depends(PermissonsChecker(["admin"])),
+) -> JSONResponse|HTTPException:
+    if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
+        df = pd.read_excel(file.file)
+
+        # Replace NaN with None
+        df = remplace_nan_with_none(df)
+
+        # Convert date columns to datetime objects
+        date_columns = [
+            'date',
+        ]
+        df = convert_to_datetime(df, date_columns)
+
+        #change coordinate system
+        UTM_columns = {
+            'easting': 'este',
+            'northing': 'sur',
+            'zone_number': 'zona',
+            'zone_letter': 'zona_letra',
+        }
+
+        #Names of columns geodata columns to in transect
+        nameLatitude = 'latitude'
+        nameLongitude = 'longitude'
+
+        # Insert columns lat y lon to df
+        df = insertGEOData(df, UTM_columns, nameLatitude, nameLongitude)
+
+        # Add boolean column for gender
+        df, ListOffRowWithGender  = addBooleanByGender(df, "sexo", ("macho", "hembra"))
+
+        numberExistList = []
+
+        for _, row in df.iterrows():
+            try:
+                new_rescue_mammals =  RescueMammalsCreate(
+                    cod = row["cod"],
+                    date = row["date"],
+                    mark = row["marca"],
+                    latitude = row["latitude"],
+                    longitude = row["longitude"],
+                    altitude = row["altitud"],
+                    gender = none_value(row["booleanGender"]),
+                    LT = row["LT"],
+                    LC = row["LC"],
+                    LP = row["LP"],
+                    LO = row["LO"],
+                    LA = row["LA"],
+                    transect_rescue_mammals_id = none_value(row["idTransect"]),
+                    point_rescue_mammals_id = none_value(row["idPoint"]),
+                    specie_id = row["idSpecie"],
+                    mark_rescue_mammals_id=none_value(row["idMark"]),
+                )
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Error to create data: {e} in row {row['cod']}",
+                )
+            if await get_rescue_mammals_by_cod(db, new_rescue_mammals.cod):
+                numberExistList.append(new_rescue_mammals.cod)
+                continue
+            else:
+                await create_rescue_mammals(db, new_rescue_mammals)
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={
+                "message": "The file was upload",
+                "Not upload numbers because repeate": numberExistList
+                },
         )
     else:
         raise HTTPException(

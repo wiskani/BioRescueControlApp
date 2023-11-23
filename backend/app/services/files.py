@@ -284,7 +284,7 @@ async def addMarkIdByNumber(
     df : pandas dataframe with idMark column
     """
     listMarkNumberRow: list[tuple[int, str]] = []
-    colunmId: list[str | None] = []
+    colunmId: list[int | None] = []
 
     for _, row in df.iterrows():
         if row[col] == "None":
@@ -389,10 +389,13 @@ def addBooleanByGender(
     colunmId: list[bool | None] = []
     male, female = genderEqual
 
+
     for _, row in df.iterrows():
-        if row[col] == male:
+        gender:str|None = row[col]
+        gender_lower: str|None = gender.lower() if gender is not None else None
+        if gender_lower == male.lower():
             colunmId.append(True)
-        elif row[col] == female:
+        elif gender_lower == female.lower():
             colunmId.append(False)
         else:
             listGenderNameRow.append((row[0], row[col]))

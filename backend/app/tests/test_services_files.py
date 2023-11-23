@@ -331,6 +331,9 @@ def test_addBooleanByGender() -> None:
     # Result
     resultDF, resulLIST = addBooleanByGender(df, col, genderEqual)
 
+    print(resultDF)
+    print(expected)
+
 
     # Test
     assert resultDF.equals(expected)
