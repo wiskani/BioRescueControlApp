@@ -28,6 +28,10 @@ from app.crud.rescue_flora import (
     get_flora_relocation_zone
 )
 
+from app.crud.rescue_mammals import (	
+    get_habitat_name,
+)
+
 
 def convert_to_datetime(df:pd.DataFrame, cols:List[str]) -> pd.DataFrame:
     """
@@ -653,6 +657,36 @@ async def addRelocationZoneIdByNumber(
     df['idRelocationZone'] = colunmId
 
     return df, listRelocationZoneNumberRow
+
+async def addHabitatIdByName(
+        db: AsyncSession,
+        df: pd.DataFrame,
+        col: str,
+        )-> pd.DataFrame:
+    """
+    Adds the id of a habitat to a dataframe
+
+    Parameters
+    ----------
+    db : AsyncSession
+    df : pandas dataframe
+    col : str with name of column with habitat name
+    """
+    listHabitatNameRow: list[tuple[int, str]] = []
+    colunmId: list[int | None] = []
+
+    for _, row in df.iterrows():
+        habitat = await get_habitat_name(db, row[col])
+        if habitat is None:
+            colunmId.append(None)
+            listHabitatNameRow.append((row[0], row[col]))
+        else:
+            colunmId.append(habitat.id)
+
+    df['idHabitat'] = colunmId
+
+    return df, listHabitatNameRow
+
 
 
 

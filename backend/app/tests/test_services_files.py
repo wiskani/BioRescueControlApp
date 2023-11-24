@@ -24,6 +24,7 @@ from app.services.files import (
     addFloraRescueZoneIdByName,
     addRescueFloraIdByNumber,
     addRelocationZoneIdByNumber,
+    addHabitatIdByName
 )
 
 from app.tests.conftest import *
@@ -32,6 +33,7 @@ from app.tests.utils.species_example import *
 from app.tests.utils.towers_example import *
 from app.tests.utils.rescue_herpetofauna import *
 from app.tests.utils.flora_rescue_example import *
+from app.tests.utils.rescue_mammals import *
 
 # Test convert_to_datetime function
 def test_convert_to_datetime():
@@ -614,6 +616,35 @@ async def test_addRelocationZoneIdByName(
     assert resultDF.equals(expected)
     assert listResult == []
 
+#test for addHabitatIdByName
+@pytest.mark.asyncio
+async def test_addHabitatIdByName(
+        async_client: AsyncClient,
+        async_session: AsyncSession
+) -> None:
+    habitat_id, habitat_name = await create_habitatWithName(async_client)
+    col: str = "habitat"
 
+    #Create DF for test
+    data = {
+        'number': [1, 2, 3] ,
+        'habitat': [None, habitat_name, None],
+    }
+
+    df = pd.DataFrame(data)
+
+    # Expect result
+    expected = pd.DataFrame({
+        'number': [1,2,3],
+        'habitat': [None, habitat_name, None],
+        'idHabitat': [None, habitat_id, None]
+    })
+
+    #Result
+    resultDF, listResult = await addHabitatIdByName(async_session, df, col)
+
+    #Test
+    assert resultDF.equals(expected)
+    assert listResult == [(1, None), (3, None)]
 
 

@@ -23,6 +23,22 @@ async def create_habitat(
     assert response.status_code == 201
     return data["id"]
 
+#generate radom habitat with name
+@pytest.mark.asyncio
+async def create_habitatWithName(
+    async_client: AsyncClient,
+) -> tuple[int, str]:
+    name_habitat = random_string()
+
+    response = await async_client.post(
+        "api/habitat", json={
+            "name": name_habitat
+        },
+    )
+    data = response.json()
+    assert response.status_code == 201
+    return data["id"], name_habitat
+
 #generate radom rescue mammals
 @pytest.mark.asyncio
 async def create_rescue_mammals(

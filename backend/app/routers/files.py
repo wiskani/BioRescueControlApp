@@ -83,7 +83,8 @@ from app.services.files import (
     addPointTranslocationByCod,
     addFloraRescueZoneIdByName,
     addRescueFloraIdByNumber,
-    addRelocationZoneIdByNumber
+    addRelocationZoneIdByNumber,
+    addHabitatIdByName
 )
 
 router = APIRouter()
@@ -906,6 +907,9 @@ async def upload_rescue_mammals(
         # Add boolean column for gender
         df, ListOffRowWithGender  = addBooleanByGender(df, "sexo", ("macho", "hembra"))
 
+        # Add id habitat column by name
+        df, habitatListWithOutName = await addHabitatIdByName(db, df, "habitat")
+
         numberExistList = []
 
         for _, row in df.iterrows():
@@ -918,31 +922,31 @@ async def upload_rescue_mammals(
                     longitude = row["longitude"],
                     altitude = row["altitud"],
                     gender = none_value(row["booleanGender"]),
-                    LT = row["LT"],
-                    LC = row["LC"],
-                    LP = row["LP"],
-                    LO = row["LO"],
-                    LA = row["LA"],
-                    transect_rescue_mammals_id = none_value(row["idTransect"]),
-                    point_rescue_mammals_id = none_value(row["idPoint"]),
-                    specie_id = row["idSpecie"],
-                    mark_rescue_mammals_id=none_value(row["idMark"]),
+                    LT = none_value(row["LT"]),
+                    LC = none_value(row["LC"]),
+                    LP = none_value(row["LP"]),
+                    LO = none_value(row["LO"]),
+                    LA = none_value(row["LA"]),
+                    weight=none_value(row["peso"]),
+                    observation=none_value(row["observaciones"]),
                 )
             except Exception as e:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=f"Error to create data: {e} in row {row['cod']}",
                 )
-            if await get_rescue_mammals_by_cod(db, new_rescue_mammals.cod):
+            if await get_release_mammal_cod(db, new_rescue_mammals.cod):
                 numberExistList.append(new_rescue_mammals.cod)
                 continue
             else:
-                await create_rescue_mammals(db, new_rescue_mammals)
+                await create_rescue_mammal(db, new_rescue_mammals)
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
             content={
                 "message": "The file was upload",
-                "Not upload numbers because repeate": numberExistList
+                "Not upload numbers because repeate": numberExistList,
+                "Not gender in this rows": ListOffRowWithGender,
+                "Some habitats not found": habitatListWithOutName
                 },
         )
     else:
@@ -950,9 +954,4 @@ async def upload_rescue_mammals(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="File must be an excel file",
         )
-
-
-
-
-
 
