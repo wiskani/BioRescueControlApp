@@ -117,9 +117,11 @@ async def create_rescue_mammal(db: AsyncSession, rescue_mammal: RescueMammalsCre
         LA = rescue_mammal.LA,
         weight = rescue_mammal.weight,
         observation = rescue_mammal.observation,
+        is_specie_confirmed = rescue_mammal.is_specie_confirmed,
         habitat_id = rescue_mammal.habitat_id,
         age_group_id = rescue_mammal.age_group_id,
         specie_id = rescue_mammal.specie_id,
+        genus_id = rescue_mammal.genus_id,
     )
     db.add(rescue_mammal_db)
     await db.commit()
@@ -146,9 +148,11 @@ async def update_rescue_mammal(db: AsyncSession, rescue_mammal_id: int , rescue_
     rescue_mammal_db.LA = rescue_mammal_update.LA
     rescue_mammal_db.weight = rescue_mammal_update.weight
     rescue_mammal_db.observation = rescue_mammal_update.observation
+    rescue_mammal_db.is_specie_confirmed = rescue_mammal_update.is_specie_confirmed
     rescue_mammal_db.habitat_id = rescue_mammal_update.habitat_id
     rescue_mammal_db.age_group_id = rescue_mammal_update.age_group_id
     rescue_mammal_db.specie_id = rescue_mammal_update.specie_id
+    rescue_mammal_db.genus_id = rescue_mammal_update.genus_id
     await db.commit()
     await db.refresh(rescue_mammal_db)
     return rescue_mammal_db

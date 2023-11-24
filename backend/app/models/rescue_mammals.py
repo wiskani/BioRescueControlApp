@@ -34,6 +34,7 @@ class RescueMammals(_database.Base):
     LA: Mapped[float] = mapped_column(Float, nullable=True)
     weight: Mapped[float] = mapped_column(Float, nullable=True)
     observation: Mapped[str] = mapped_column(String(100), nullable=True)
+    is_specie_confirmed: Mapped[bool] = mapped_column(Boolean, nullable=False)
     create_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.now(pytz.timezone('America/La_Paz')))
 
     #relationship with habitat
@@ -45,8 +46,12 @@ class RescueMammals(_database.Base):
     age_group = relationship('AgeGroup', back_populates='rescue_mammals')
 
     #relationship with species
-    specie_id: Mapped[int] = mapped_column(Integer, ForeignKey('species.id'))
+    specie_id: Mapped[int] = mapped_column(Integer, ForeignKey('species.id'), nullable=True)
     specie = relationship('Specie', back_populates='rescue_mammals')
+
+    #relationship with genus
+    genus_id: Mapped[int] = mapped_column(Integer, ForeignKey('genus.id'), nullable=True)
+    genus = relationship('Genus', back_populates='rescue_mammals')
 
     #relationship with release_mammals
     release_mammals = relationship('ReleaseMammals', back_populates='rescue_mammals')

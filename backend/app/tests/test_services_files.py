@@ -281,27 +281,33 @@ async def test_addAgeGroupIdByName(
     async_session: AsyncSession,
 ):
     age_group_id, age_group_name = await create_age_groupWithName(async_client)
+    age_group_id2, age_group_name2 = await create_age_groupWithName(async_client)
     col: str = "age_group"
+
+    age_group_name2UpperCase = age_group_name2.upper()
 
     #Create DF for Test
     data = {
-        'number' : [1, 2],
-        'age_group': [age_group_name, "unknown"],
+        'number' : [1, 2, 3],
+        'age_group': [age_group_name, "unknown", age_group_name2UpperCase],
     }
 
     df = pd.DataFrame(data)
 
     # Expected result
     expected = pd.DataFrame({
-        'number' : [1, 2],
-        'age_group': [age_group_name, "unknown"],
-        'idAgeGroup': [age_group_id, None],
+        'number' : [1, 2, 3],
+        'age_group': [age_group_name, "unknown", age_group_name2UpperCase],
+        'idAgeGroup': [age_group_id, None, age_group_id2],
     })
 
     listExpect: list[tuple[int, str]] =  [(2, "unknown")]
 
     # Result
     resultDF, resulLIST = await addAgeGroupIdByName(async_session, df, col)
+
+    print(resultDF)
+    print(expected)
 
     # Test
     assert resultDF.equals(expected)

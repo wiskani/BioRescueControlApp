@@ -210,6 +210,7 @@ async def test_create_rescue_mammal(
     habitat_id = await create_habitat(async_client)
     age_group_id = await create_age_group(async_client)
     specie_id = await create_specie(async_client)
+    genus_id = await create_genus(async_client)
     cod = random_string()
 
     response = await async_client.post(
@@ -228,9 +229,11 @@ async def test_create_rescue_mammal(
             "LA": 1.0,
             "weight": 10,
             "observation": "observation",
+            "is_specie_confirmed": True,
             "habitat_id": habitat_id,
             "age_group_id": age_group_id,
-            "specie_id": specie_id
+            "specie_id": specie_id,
+            "genus_id": None 
         },
     )
     data = response.json()
@@ -249,19 +252,21 @@ async def test_create_rescue_mammal(
     assert data["LA"] == 1.0
     assert data["weight"] == 10
     assert data["observation"] == "observation"
+    assert data["is_specie_confirmed"] == True
     assert data["habitat_id"] == habitat_id
     assert data["age_group_id"] == age_group_id
     assert data["specie_id"] == specie_id
 
-#test for create rescue mammal with cod already exists
+#test create rescue mammal with specie and genus 
 @pytest.mark.asyncio
-async def test_create_rescue_mammal_cod_already_exists(
+async def test_create_rescue_mammal_with_specie_and_genus(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
     habitat_id = await create_habitat(async_client)
     age_group_id = await create_age_group(async_client)
     specie_id = await create_specie(async_client)
+    genus_id = await create_genus(async_client)
     cod = random_string()
 
     response = await async_client.post(
@@ -280,9 +285,92 @@ async def test_create_rescue_mammal_cod_already_exists(
             "LA": 1.0,
             "weight": 10,
             "observation": "observation",
+            "is_specie_confirmed": True,
             "habitat_id": habitat_id,
             "age_group_id": age_group_id,
-            "specie_id": specie_id
+            "specie_id": specie_id,
+            "genus_id": genus_id
+        },
+    )
+    data = response.json()
+    assert response.status_code == 400
+    assert data["detail"] == "if specie exists, genus must be null"
+
+#test create rescue mammal with specie and genus are null same time
+@pytest.mark.asyncio
+async def test_create_rescue_mammal_with_specie_and_genus_are_null_same_time(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    habitat_id = await create_habitat(async_client)
+    age_group_id = await create_age_group(async_client)
+    specie_id = await create_specie(async_client)
+    genus_id = await create_genus(async_client)
+    cod = random_string()
+
+    response = await async_client.post(
+        "api/rescue_mammals", json={
+            "cod": cod,
+            "date": "2021-10-10T00:00:00",
+            "mark": "mark",
+            "longitude": 1.0,
+            "latitude": 1.0,
+            "altitude": 10,
+            "gender": True,
+            "LT": 1.0,
+            "LC": 1.0,
+            "LP": 1.0,
+            "LO": 1.0,
+            "LA": 1.0,
+            "weight": 10,
+            "observation": "observation",
+            "is_specie_confirmed": True,
+            "habitat_id": habitat_id,
+            "age_group_id": age_group_id,
+            "specie_id": None,
+            "genus_id": None
+        },
+    )
+    data = response.json()
+    assert response.status_code == 400
+    assert data["detail"] == "specie or genus must be not null"
+
+
+
+
+#test for create rescue mammal with cod already exists
+@pytest.mark.asyncio
+async def test_create_rescue_mammal_cod_already_exists(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    habitat_id = await create_habitat(async_client)
+    age_group_id = await create_age_group(async_client)
+    specie_id = await create_specie(async_client)
+    genus_id = await create_genus(async_client)
+    cod = random_string()
+
+    response = await async_client.post(
+        "api/rescue_mammals", json={
+            "cod": cod,
+            "date": "2021-10-10T00:00:00",
+            "mark": "mark",
+            "longitude": 1.0,
+            "latitude": 1.0,
+            "altitude": 10,
+            "gender": True,
+            "LT": 1.0,
+            "LC": 1.0,
+            "LP": 1.0,
+            "LO": 1.0,
+            "LA": 1.0,
+            "weight": 10,
+            "observation": "observation",
+            "is_specie_confirmed": True,
+            "habitat_id": habitat_id,
+            "age_group_id": age_group_id,
+            "specie_id": None,
+            "genus_id": genus_id
         },
     )
     data = response.json()
@@ -304,9 +392,11 @@ async def test_create_rescue_mammal_cod_already_exists(
             "LA": 1.0,
             "weight": 10,
             "observation": "observation",
+            "is_specie_confirmed": True,
             "habitat_id": habitat_id,
             "age_group_id": age_group_id,
-            "specie_id": specie_id
+            "specie_id": None,
+            "genus_id": genus_id
         },
     )
     data = response.json()
@@ -342,9 +432,11 @@ async def test_get_all_rescue_mammals(
             "LA": 1.0,
             "weight": 10,
             "observation": "observation",
+            "is_specie_confirmed": True,
             "habitat_id": habitat_id,
             "age_group_id": age_group_id,
-            "specie_id": specie_id
+            "specie_id": specie_id,
+            "genus_id": None
         },
     )
     assert response.status_code == 201
@@ -365,9 +457,11 @@ async def test_get_all_rescue_mammals(
             "LA": 1.0,
             "weight": 10,
             "observation": "observation",
+            "is_specie_confirmed": True,
             "habitat_id": habitat_id,
             "age_group_id": age_group_id,
-            "specie_id": specie_id
+            "specie_id": specie_id,
+            "genus_id": None
         },
     )
     data = response.json()
@@ -407,9 +501,11 @@ async def test_get_rescue_mammal_by_id(
             "LA": 1.0,
             "weight": 10,
             "observation": "observation",
+            "is_specie_confirmed": True,
             "habitat_id": habitat_id,
             "age_group_id": age_group_id,
-            "specie_id": specie_id
+            "specie_id": specie_id,
+            "genus_id": None
         },
     )
     data = response.json()
@@ -427,9 +523,11 @@ async def test_get_rescue_mammal_by_id(
     assert data["LA"] == 1.0
     assert data["weight"] == 10
     assert data["observation"] == "observation"
+    assert data["is_specie_confirmed"] == True
     assert data["habitat_id"] == habitat_id
     assert data["age_group_id"] == age_group_id
     assert data["specie_id"] == specie_id
+    assert data["genus_id"] == None
 
 #test for get rescue mammal by id not found
 @pytest.mark.asyncio
@@ -452,6 +550,7 @@ async def test_update_rescue_mammal(
     habitat_id = await create_habitat(async_client)
     age_group_id = await create_age_group(async_client)
     specie_id = await create_specie(async_client)
+    genus_id = await create_genus(async_client)
     cod = random_string()
 
     response = await async_client.post(
@@ -470,9 +569,11 @@ async def test_update_rescue_mammal(
             "LA": 1.0,
             "weight": 10,
             "observation": "observation",
+            "is_specie_confirmed": True,
             "habitat_id": habitat_id,
             "age_group_id": age_group_id,
-            "specie_id": specie_id
+            "specie_id": specie_id,
+            "genus_id": None
         },
     )
     data = response.json()
@@ -494,9 +595,11 @@ async def test_update_rescue_mammal(
             "LA": 3.0,
             "weight": 13,
             "observation": "observation2",
+            "is_specie_confirmed": False,
             "habitat_id": habitat_id,
             "age_group_id": age_group_id,
-            "specie_id": specie_id
+            "specie_id": None,
+            "genus_id": genus_id
         },
     )
     data = response.json()
@@ -514,9 +617,11 @@ async def test_update_rescue_mammal(
     assert data["LA"] == 3.0
     assert data["weight"] == 13
     assert data["observation"] == "observation2"
+    assert data["is_specie_confirmed"] == False
     assert data["habitat_id"] == habitat_id
     assert data["age_group_id"] == age_group_id
-    assert data["specie_id"] == specie_id
+    assert data["specie_id"] == None
+    assert data["genus_id"] == genus_id
 
 #test for delete rescue mammal
 @pytest.mark.asyncio
@@ -546,9 +651,11 @@ async def test_delete_rescue_mammal(
             "LA": 1.0,
             "weight": 10,
             "observation": "observation",
+            "is_specie_confirmed": True,
             "habitat_id": habitat_id,
             "age_group_id": age_group_id,
-            "specie_id": specie_id
+            "specie_id": specie_id,
+            "genus_id": None
         },
     )
     data = response.json()

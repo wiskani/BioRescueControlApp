@@ -65,9 +65,11 @@ async def create_rescue_mammals(
             "LA": 1.0,
             "weight": 10,
             "observation": "observation",
+            "is_specie_confirmed": True,
             "habitat_id": habitat_id,
             "age_group_id": age_group_id,
-            "specie_id": specie_id
+            "specie_id": specie_id,
+            "genus_id": None
         },
     )
     data = response.json()

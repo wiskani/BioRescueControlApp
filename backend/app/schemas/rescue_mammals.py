@@ -1,5 +1,10 @@
 from typing import List
-from pydantic import BaseModel, Field
+from pydantic import (
+    BaseModel,
+    Field,
+    model_validator,
+    )
+from fastapi import HTTPException
 from datetime import datetime
 
 class HabitatBase(BaseModel):
@@ -30,11 +35,28 @@ class RescueMammalsBase(BaseModel):
     LA: float|None = Field(examples=[1.0])
     weight: float|None = Field(examples=[1.0])
     observation: str|None = Field(examples=["Observacion"])
+    is_specie_confirmed: bool = Field(..., examples=[True])
     habitat_id: int = Field(..., examples=[ 1 ])
     age_group_id: int|None = Field(examples=[ 1 ])
-    specie_id: int = Field(..., examples=[ 1 ])
+    specie_id: int|None = Field(examples=[ 1 ])
+    genus_id: int|None = Field(examples=[ 1 ])
     class Config:
         orm_mode: bool = True
+
+    @model_validator(mode='after')
+    def check_taxon_bryophyte(self):
+        if self.specie_id:
+            if self.genus_id:
+                raise HTTPException(
+                    status_code=400,
+                    detail="if specie exists, genus must be null"
+                )
+        elif self.genus_id is None and self.specie_id is None:
+             raise HTTPException(
+                 status_code=400,
+                 detail="specie or genus must be not null"
+                )
+        return self
 
 class RescueMammalsCreate(RescueMammalsBase):
     pass

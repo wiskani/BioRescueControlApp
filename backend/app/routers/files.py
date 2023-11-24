@@ -84,7 +84,8 @@ from app.services.files import (
     addFloraRescueZoneIdByName,
     addRescueFloraIdByNumber,
     addRelocationZoneIdByNumber,
-    addHabitatIdByName
+    addHabitatIdByName,
+    addIdGenusByName
 )
 
 router = APIRouter()
@@ -910,6 +911,19 @@ async def upload_rescue_mammals(
         # Add id habitat column by name
         df, habitatListWithOutName = await addHabitatIdByName(db, df, "habitat")
 
+        # Add id age group column by name
+        df, ageGroupListWithOutName = await addAgeGroupIdByName(db, df, "edad")
+
+        # Add id specie column by scientific name
+        df, specieListWithOutName = await addIdSpecieByName(db, df, "especie", "idSpecie")
+
+        # Add id genus column by name
+        df, genusListWithOutName = await addIdGenusByName(db, df, "genero", "idGenus")
+
+        # Add id boolean column by check
+        df = await addBooleanByCheck(df, "especie_confirmada")
+
+
         numberExistList = []
 
         for _, row in df.iterrows():
@@ -929,6 +943,11 @@ async def upload_rescue_mammals(
                     LA = none_value(row["LA"]),
                     weight=none_value(row["peso"]),
                     observation=none_value(row["observaciones"]),
+                    is_specie_confirmed = row["boolean_especie_confirmada"],
+                    habitat_id = (row["idHabitat"]),
+                    age_group_id = none_value(row["idAgeGroup"]),
+                    specie_id = none_value(row["idSpecie"]),
+                    genus_id = none_value(row["idGenus"]),
                 )
             except Exception as e:
                 raise HTTPException(
@@ -946,7 +965,9 @@ async def upload_rescue_mammals(
                 "message": "The file was upload",
                 "Not upload numbers because repeate": numberExistList,
                 "Not gender in this rows": ListOffRowWithGender,
-                "Some habitats not found": habitatListWithOutName
+                "Some habitats not found": habitatListWithOutName,
+                "Some age groups not found": ageGroupListWithOutName,
+                "Some species not found": specieListWithOutName,
                 },
         )
     else:

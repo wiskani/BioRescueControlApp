@@ -16,6 +16,7 @@ from app.crud.species import (
 from app.crud.rescue_herpetofauna import (
     get_mark_herpetofauna_by_number,
     get_age_group_name,
+    get_all_age_groups,
     get_transect_herpetofauna_by_number,
     get_rescue_herpetofauna_by_number,
     get_transect_herpetofauna_translocation_by_cod,
@@ -327,14 +328,19 @@ async def addAgeGroupIdByName(
     listAgeGroupNameRow: list[tuple[int, str]] = []
     colunmId: list[int | None] = []
 
-    for _, row in df.iterrows():
-        ageGroup = await get_age_group_name(db, row[col])
-        if ageGroup is None:
+    ageGroups = await get_all_age_groups(db)
+
+    for index, row in df.iterrows():
+        for agegroup in ageGroups:
+            data_age = row[col]
+            age_name = agegroup.name
+
+            if data_age.lower() == age_name.lower():
+                colunmId.append(agegroup.id)
+                break
+        if len(colunmId) <= index:
             listAgeGroupNameRow.append((row[0], row[col]))
             colunmId.append(None)
-        else:
-            colunmId.append(ageGroup.id)
-
     df['idAgeGroup'] = colunmId
 
     return df, listAgeGroupNameRow
@@ -488,7 +494,7 @@ def addNumRescueHerpeto(
 def addBooleanByCheck(
         df: pd.DataFrame,
         col: str,
-):
+) -> pd.DataFrame:
     """
     Add a column with boolean values if the column is empty or not
     the new column is named boolean_{col}
