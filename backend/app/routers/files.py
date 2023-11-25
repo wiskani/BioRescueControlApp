@@ -921,7 +921,7 @@ async def upload_rescue_mammals(
         df, genusListWithOutName = await addIdGenusByName(db, df, "genero", "idGenus")
 
         # Add id boolean column by check
-        df = await addBooleanByCheck(df, "especie_confirmada")
+        df = addBooleanByCheck(df, "especie_confirmada")
 
 
         numberExistList = []
@@ -954,7 +954,7 @@ async def upload_rescue_mammals(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=f"Error to create data: {e} in row {row['cod']}",
                 )
-            if await get_release_mammal_cod(db, new_rescue_mammals.cod):
+            if await get_rescue_mammal_cod(db, new_rescue_mammals.cod):
                 numberExistList.append(new_rescue_mammals.cod)
                 continue
             else:
