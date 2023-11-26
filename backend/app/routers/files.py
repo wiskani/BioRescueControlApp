@@ -551,8 +551,6 @@ async def upload_rescue_herpetofauna(
 
         numberExistList = []
 
-        print(df)
-
         for _, row in df.iterrows():
             if row['idSpecie'] is None:
                 continue
