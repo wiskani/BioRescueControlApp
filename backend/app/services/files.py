@@ -31,6 +31,8 @@ from app.crud.rescue_flora import (
 
 from app.crud.rescue_mammals import (	
     get_habitat_name,
+    get_site_release_mammal_name,
+    get_rescue_mammal_cod
 )
 
 
@@ -110,21 +112,30 @@ def generateUTMData(df:pd.DataFrame, cols:dict) -> list[UTMData]:
     utmData : list of UTMData objects
     """
     #Change columns types
+    # print dataframe columns: easting, northing, zone_number, zone_letter
     try:
-        df = df.astype({cols["easting"]: float, cols["northing"]: float, cols["zone_number"]: int, cols["zone_letter"]: str})
+        df = df.astype({
+        cols["easting"]: 'float64',
+        cols["northing"]: 'float64',
+        cols["zone_number"]: 'Int64',  
+        cols["zone_letter"]: 'str'
+    })
     except Exception as e:
         raise Exception(f"Error changing columns types: {e}")
     utmData = []
     for _, row in df.iterrows():
-        try:
-            utmData.append(UTMData(
-                easting=row[cols["easting"]],
-                northing=row[cols["northing"]],
-                zone_number=row[cols["zone_number"]],
-                zone_letter=row[cols["zone_letter"]]
-            ))
-        except Exception as e:
-            raise Exception(f"Error of data on number row:  {row[0]} to UTM {e}")
+        if pd.isna(row[cols["easting"]]) or pd.isna(row[cols["northing"]]) or pd.isna(row[cols["zone_number"]]) or pd.isna(row[cols["zone_letter"]]):
+            utmData.append(None)
+        else:
+            try:
+                utmData.append(UTMData(
+                    easting=row[cols["easting"]],
+                    northing=row[cols["northing"]],
+                    zone_number=row[cols["zone_number"]],
+                    zone_letter=row[cols["zone_letter"]]
+                ))
+            except Exception as e:
+                raise Exception(f"Error of data on number row:  {row[0]} to UTM {e}")
     return utmData
 
 
@@ -156,11 +167,15 @@ def insertGEOData(
     longitude = []
 
     for utmData in utmDataList:
-       lat, long = utm_to_latlong(utmData)
+        if utmData is None:
+            latitude.append(None)
+            longitude.append(None)
+        else:
+            lat, long = utm_to_latlong(utmData)
 
-       # Apend lat and long to list
-       latitude.append(lat)
-       longitude.append(long)
+            # Apend lat and long to list
+            latitude.append(lat)
+            longitude.append(long)
 
     # add  latitude and longitude columns
     df[nameLatitude] = latitude
@@ -692,6 +707,65 @@ async def addHabitatIdByName(
     df['idHabitat'] = colunmId
 
     return df, listHabitatNameRow
+
+async def addSiteReleaseMammalIdByName(
+        db: AsyncSession,
+        df: pd.DataFrame,
+        col: str,
+        )-> pd.DataFrame:
+    """
+    Adds the id of a site release mammal to a dataframe
+
+    Parameters
+    ----------
+    db : AsyncSession
+    df : pandas dataframe
+    col : str with name of column with site release mammal name
+    """
+    listSiteReleaseMammalNameRow: list[tuple[int, str]] = []
+    colunmId: list[int | None] = []
+
+    for _, row in df.iterrows():
+        siteReleaseMammal = await get_site_release_mammal_name(db, row[col])
+        if siteReleaseMammal is None:
+            colunmId.append(None)
+            listSiteReleaseMammalNameRow.append((row[0], row[col]))
+        else:
+            colunmId.append(siteReleaseMammal.id)
+
+    df['idSiteReleaseMammal'] = colunmId
+
+    return df, listSiteReleaseMammalNameRow
+
+async def addRescueMammalIdByCode(
+        db: AsyncSession,
+        df: pd.DataFrame,
+        col: str,
+        )-> tuple[pd.DataFrame, list[tuple[int, str]]]:
+    """
+    Adds the id of a rescue mammal to a dataframe
+
+    Parameters
+    ----------
+    db : AsyncSession
+    df : pandas dataframe
+    col : str with name of column with rescue mammal code
+    """
+    listRescueMammalCodeRow: list[tuple[int, str]] = []
+    colunmId: list[int | None] = []
+
+    for _, row in df.iterrows():
+        rescueMammal = await get_rescue_mammal_cod(db, row[col])
+        if rescueMammal is None:
+            colunmId.append(None)
+            listRescueMammalCodeRow.append((row[0], row[col]))
+        else:
+            colunmId.append(rescueMammal.id)
+
+    df['idRescueMammal'] = colunmId
+
+    return df, listRescueMammalCodeRow
+
 
 
 

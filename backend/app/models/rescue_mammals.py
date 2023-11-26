@@ -70,9 +70,9 @@ class ReleaseMammals(_database.Base):
     __tablename__ = 'release_mammals'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     cod: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
-    longitude: Mapped[float] = mapped_column(Float, nullable=False)
-    latitude: Mapped[float] = mapped_column(Float, nullable=False)
-    altitude: Mapped[int] = mapped_column(Integer, nullable=False)
+    longitude: Mapped[float] = mapped_column(Float, nullable=True)
+    latitude: Mapped[float] = mapped_column(Float, nullable=True)
+    altitude: Mapped[int] = mapped_column(Integer, nullable=True)
     sustrate: Mapped[str] = mapped_column(String(50), nullable=True)
 
     #relationship with site_release_mammals

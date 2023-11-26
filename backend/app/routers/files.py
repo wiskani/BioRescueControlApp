@@ -17,6 +17,7 @@ from app.crud.rescue_flora import (
     get_flora_relocation,
     )
 from app.crud.tower import create_tower, get_tower_by_number
+
 from app.crud.rescue_herpetofauna import(
     create_transect_herpetofauna,
     get_transect_herpetofauna_by_number,
@@ -85,7 +86,9 @@ from app.services.files import (
     addRescueFloraIdByNumber,
     addRelocationZoneIdByNumber,
     addHabitatIdByName,
-    addIdGenusByName
+    addIdGenusByName,
+    addSiteReleaseMammalIdByName,
+    addRescueMammalIdByCode
 )
 
 router = APIRouter()
@@ -975,4 +978,80 @@ async def upload_rescue_mammals(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="File must be an excel file",
         )
+
+# Uploas release mammals
+@router.post(
+    path="/upload/release_mammals",
+    summary="Upload release mammals excel file",
+    response_model= None,
+    tags=["Upload"],
+)
+async def upload_release_mammals(
+    file: UploadFile=File(...),
+    db: AsyncSession = Depends(get_db),
+    permissions: str = Depends(PermissonsChecker(["admin"])),
+) -> JSONResponse|HTTPException:
+    if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
+        df = pd.read_excel(file.file)
+
+
+        #change coordinate system
+        UTM_columns = {
+            'easting': 'este',
+            'northing': 'sur',
+            'zone_number': 'zona',
+            'zone_letter': 'zona_letra',
+        }
+
+        #Names of columns geodata columns to in transect
+        nameLatitude = 'latitude'
+        nameLongitude = 'longitude'
+
+
+
+        # Insert columns lat y lon to df
+        df = insertGEOData(df, UTM_columns, nameLatitude, nameLongitude)
+        # Replace NaN with None
+        df = remplace_nan_with_none(df)
+        df, siteReleaseWithOutName = await addSiteReleaseMammalIdByName(db, df, "sitio")
+        df, rescueMammalListWithOutName = await addRescueMammalIdByCode(db, df, "cod")
+
+        numberExistList = []
+
+        for _, row in df.iterrows():
+            try:
+                new_release_mammals =  ReleaseMammalsCreate(
+                    cod = row["cod"],
+                    longitude = none_value(row["longitude"]),
+                    latitude = none_value(row["latitude"]),
+                    altitude = none_value(row["altitud"]),
+                    sustrate = none_value(row["sustrato"]),
+                    site_release_mammals_id = none_value(row["idSiteReleaseMammal"]),
+                    rescue_mammals_id = row["idRescueMammal"],
+                )
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Error to create data: {e} in row {row['cod']}",
+                )
+            if await get_release_mammal_cod(db, new_release_mammals.cod):
+                numberExistList.append(new_release_mammals.cod)
+                continue
+            else:
+                await create_release_mammal(db, new_release_mammals)
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={
+                "message": "The file was upload",
+                "Not upload numbers because repeate": numberExistList,
+                "Some sites not found": siteReleaseWithOutName,
+                "Some rescue mammals not found": rescueMammalListWithOutName,
+                },
+        )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File must be an excel file",
+    )
+
 

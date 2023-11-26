@@ -81,9 +81,9 @@ class SiteReleaseMammalsResponse(SiteReleaseMammalsBase):
 
 class ReleaseMammalsBase(BaseModel):
     cod: str = Field(..., examples=[ "1" ])
-    longitude: float = Field(..., examples=[ 1.0 ])
-    latitude: float = Field(..., examples=[ 1.0 ])
-    altitude: int = Field(..., examples=[ 1 ])
+    longitude: float|None = Field( examples=[ 1.0 ])
+    latitude: float|None = Field( examples=[ 1.0 ])
+    altitude: int|None = Field( examples=[ 1 ])
     sustrate: str|None = Field(examples=["Sustrato"])
     site_release_mammals_id: int = Field(..., examples=[ 1 ])
     rescue_mammals_id: int = Field(..., examples=[ 1 ])

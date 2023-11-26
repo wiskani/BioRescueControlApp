@@ -24,7 +24,9 @@ from app.services.files import (
     addFloraRescueZoneIdByName,
     addRescueFloraIdByNumber,
     addRelocationZoneIdByNumber,
-    addHabitatIdByName
+    addHabitatIdByName,
+    addSiteReleaseMammalIdByName,
+    addRescueMammalIdByCode
 )
 
 from app.tests.conftest import *
@@ -65,10 +67,10 @@ def test_none_value():
 def test_generateUTMData():
     # Sample data
     data = {
-        'x': [50000, 50000],
-        'y': [4649776, 4649776],
-        'zona': [20, 20],
-        'letra': ['K', 'K'],
+        'x': [50000, 50000, None],
+        'y': [4649776, 4649776, None],
+        'zona': [20, 20, None],
+        'letra': ['K', 'K', None],
     }
     df=pd.DataFrame(data)
 
@@ -88,7 +90,8 @@ def test_generateUTMData():
             northing=4649776,
             zone_number=20,
             zone_letter='K'
-        )
+        ),
+        None
     ]
 
     # Test
@@ -648,6 +651,68 @@ async def test_addHabitatIdByName(
 
     #Result
     resultDF, listResult = await addHabitatIdByName(async_session, df, col)
+
+    #Test
+    assert resultDF.equals(expected)
+    assert listResult == [(1, None), (3, None)]
+
+#test for addSiteReleaseMammalIdByName
+@pytest.mark.asyncio
+async def test_addSiteReleaseMammalIdByName(
+        async_client: AsyncClient,
+        async_session: AsyncSession
+) -> None:
+    site_release_mammal_id, site_release_mammal_name = await create_site_releaseWithName(async_client)
+    col: str = "site_release_mammal"
+
+    #Create DF for test
+    data = {
+        'number': [1, 2, 3] ,
+        'site_release_mammal': [None, site_release_mammal_name, None],
+    }
+
+    df = pd.DataFrame(data)
+
+    # Expect result
+    expected = pd.DataFrame({
+        'number': [1,2,3],
+        'site_release_mammal': [None, site_release_mammal_name, None],
+        'idSiteReleaseMammal': [None, site_release_mammal_id, None]
+    })
+
+    #Result
+    resultDF, listResult = await addSiteReleaseMammalIdByName(async_session, df, col)
+
+    #Test
+    assert resultDF.equals(expected)
+    assert listResult == [(1, None), (3, None)]
+
+#test for addRescueMammalIdByCode
+@pytest.mark.asyncio
+async def test_addRescueMammalIdByCode(
+        async_client: AsyncClient,
+        async_session: AsyncSession
+) -> None:
+    rescue_mammal_id, rescue_mammal_code = await create_rescue_mammalsWithCod(async_client)
+    col: str = "rescue_mammal"
+
+    #Create DF for test
+    data = {
+        'number': [1, 2, 3] ,
+        'rescue_mammal': [None, rescue_mammal_code, None],
+    }
+
+    df = pd.DataFrame(data)
+
+    # Expect result
+    expected = pd.DataFrame({
+        'number': [1,2,3],
+        'rescue_mammal': [None, rescue_mammal_code, None],
+        'idRescueMammal': [None, rescue_mammal_id, None]
+    })
+
+    #Result
+    resultDF, listResult = await addRescueMammalIdByCode(async_session, df, col)
 
     #Test
     assert resultDF.equals(expected)
