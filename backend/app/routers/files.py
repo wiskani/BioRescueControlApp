@@ -622,9 +622,9 @@ async def upload_mark_herpetofauna(
                 new_mark_herpetofauna = MarkHerpetofaunaCreate(
                     date=row['date'],
                     number=row['number'],
-                    code=row['cod'],
-                    LHC=row['LHC'],
-                    weight=row['peso'],
+                    code=none_value(row['cod']),
+                    LHC=none_value(row['LHC']),
+                    weight=none_value(row['peso']),
                     is_photo_mark=row['boolean_is_photo'],
                     is_elastomer_mark=row['boolean_is_elastomer'],
                     rescue_herpetofauna_id=row['idRescue'],
