@@ -338,7 +338,6 @@ async def upload_flora_relocation(
 
         numberExistList = []
         
-        print(df["fecha"])
 
         for _, row in df.iterrows():
             try:

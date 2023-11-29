@@ -21,6 +21,7 @@ from app.schemas.species import (
 )
 from app.models.species import Specie, Genus, Family, Order, Class_, Status
 from app.models.rescue_flora import FloraRescue
+from app.models.images import Image
 
 #Purpose: CRUD operations for Species
 
@@ -314,36 +315,36 @@ async def delete_status(db: AsyncSession, status_id: int) -> Status:
 
 #Make a join species and all other tables
 async def get_all_species_join_(db: AsyncSession) -> List[SpeciesJoin]:
-
-    result_db= await db.execute(
-        select(Specie).options(
-            joinedload(Specie.genus)
-            .joinedload(Genus.family)
-            .joinedload(Family.order)
-            .joinedload(Order.class_),
-            joinedload(Specie.images)
-        )
-    )
-
-    species = result_db.scalars().all()
+    species_result = await db.execute(select(Specie))
+    species = species_result.scalars().all()
 
     result = []
     for specie in species:
+        # Cargar las relaciones de forma individual
+        genus = await db.get(Genus, specie.genus_id)
+        family = await db.get(Family, genus.family_id) if genus else None
+        order = await db.get(Order, family.order_id) if family else None
+        class_ = await db.get(Class_, order.class__id) if order else None
+
+        # Cargar imágenes de manera individual
+        images_result = await db.execute(select(Image).where(Image.species_id == specie.id))
+        images_data = images_result.scalars().all()
+
         total_rescues = await count_flora_rescue_by_specie(db, specie.id)
         images_data = [
             {
-                "atribute": image.atribute,
+                "attribute": image.atribute,
                 "url": image.url,
                 "species_id": specie.id
             }
-            for image in specie.images
+            for image in images_data
         ]
         result.append({
             "scientific_name": specie.scientific_name,
-            "genus_full_name": specie.genus.genus_full_name,
-            "family_name": specie.genus.family.family_name,
-            "order_name": specie.genus.family.order.order_name,
-            "class_name": specie.genus.family.order.class_.class_name,
+            "genus_full_name": genus.genus_name if genus else None,
+            "family_name": family.family_name if family else None,
+            "order_name": order.order_name if order else None,
+            "class_name": class_.class_name if class_ else None,
             "images": images_data,
             "total_rescues": total_rescues
         })

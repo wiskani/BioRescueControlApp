@@ -511,8 +511,9 @@ async def create_a_new_class(
 async def get_all_classes_(
     db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
-) -> List[Classes]:
-    return await get_all_classes(db)
+) -> List[Class_]:
+    classes = await get_all_classes(db)
+    return classes
 
 #Get class by id
 @router.get(
