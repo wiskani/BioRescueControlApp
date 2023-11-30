@@ -100,6 +100,7 @@ class ClassesResponse (Classes):
 # model for global join species, genus, family, order, class and images
 class SpeciesJoin (BaseModel):
     scientific_name: str = Field(..., examples=["Ailuropoda melanoleuca"])
+    specie_name: str = Field(..., examples=["Panda"])
     genus_full_name: str = Field(..., examples=["Ailuropoda melanoleuca"])
     family_name: str = Field(..., examples=["Ursidae"])
     order_name: str = Field(..., examples=["Carnivora"])

@@ -6,11 +6,12 @@ interface SpecieListProps {
 }
 
 const SpecieList: React.FC<SpecieListProps> = ({species}) => {
+    console.log(species);
   const [searchSpecie, setSearchSpecie] = useState('');
 
   //function to filter the species
   const filteredSpecies = species.filter(specie => 
-    specie.scientific_name.toLowerCase().includes(searchSpecie.toLowerCase())
+    specie.specie_name.toLowerCase().includes(searchSpecie.toLowerCase())
   )
   return (
         <div className="container mx-auto px-4 py-20">
@@ -24,11 +25,18 @@ const SpecieList: React.FC<SpecieListProps> = ({species}) => {
               onChange={e => setSearchSpecie(e.target.value)}
             />
           </div>
+          { species.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {filteredSpecies.map((specieData) => (
-                    <SpecieItem key={specieData.scientific_name} {...specieData} />
+                    <SpecieItem key={specieData.specie_name} {...specieData} />
                 ))}
             </div>
+            ) : (
+            <div className="text-center">
+            <p>No hay especies registradas</p>
+            </div>
+            )
+            }
         </div>
     );
 }

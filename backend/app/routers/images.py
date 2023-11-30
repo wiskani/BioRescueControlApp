@@ -1,9 +1,9 @@
 import os
-from fastapi import APIRouter, File, UploadFile, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from typing import List, Union
+from fastapi import APIRouter, File, UploadFile, Depends, HTTPException, status, Form, Body
+from sqlalchemy.ext.asyncio import AsyncSession
+from typing import List, Union, Annotated
 
-from app.schemas.images import ImageBase, ImageResponse
+from app.schemas.images import ImageBase, ImageResponse, ImageCreate
 from app.models.images import Image
 from app.crud.images import get_image_by_url, create_image, get_all_images, get_image_by_id, update_image_by_id, delete_image_by_id
 from app.api.deps import PermissonsChecker, get_db
@@ -20,26 +20,30 @@ router = APIRouter()
         )
 async def create_image_specie(
     image: ImageBase,
-    db: Session = Depends(get_db),
-    permissions: str = Depends(PermissonsChecker(["admin"])),
+    db:AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
 ):
-    db_image = get_image_by_url(db, image.url)
+    if not image.url:
+        raise HTTPException(status_code=400, detail="Image url is required")
+    db_image = await get_image_by_url(db, image.url)
     if db_image:
         raise HTTPException(status_code=400, detail="Image already exists")
-    return create_image(db, image)
+    return await create_image(db, image)
 
 #get all images
 @router.get(
     path="/api/images_specie/",
     response_model=List[ImageResponse],
+    status_code=status.HTTP_200_OK,
     tags=["images"],
     summary="Get all images",
 )
 async def get_all_images_specie(
-    db: Session = Depends(get_db),
-    permissions: str = Depends(PermissonsChecker(["admin"])),
-):
-    return get_all_images(db)
+    db:AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
+)-> List[Image]:
+    return await get_all_images(db)
+
 
 #get image by id
 @router.get(
@@ -50,7 +54,7 @@ async def get_all_images_specie(
 )
 async def get_image_by_id_specie(
     image_id: int,
-    db: Session = Depends(get_db),
+    db:AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
 )-> Union[ImageResponse, HTTPException]:
     db_image = get_image_by_id(db, image_id)
@@ -68,7 +72,7 @@ async def get_image_by_id_specie(
 async def update_image_by_id_specie(
     image_id: int,
     image: ImageBase,
-    db: Session = Depends(get_db),
+    db:AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
 ):
     return update_image_by_id(db, image_id, image)
@@ -82,28 +86,30 @@ async def update_image_by_id_specie(
 )
 async def delete_image_by_id_specie(
     image_id: int,
-    db: Session = Depends(get_db),
-    permissions: str = Depends(PermissonsChecker(["admin"])),
+    db:AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
 ):
     return delete_image_by_id(db, image_id)
 
 #upload image
 @router.post(
-    path="/api/images_upload/{image_id}",
+    path="/api/image_upload",
+    response_model=ImageResponse,
+    status_code=status.HTTP_201_CREATED,
     summary="Upload image",
     tags=["images"],
 )
 async def upload_image(
-    image_id: int,
-    image: UploadFile = File(...),
-    db: Session = Depends(get_db),
-    permissions: str = Depends(PermissonsChecker(["admin"])),
-):
-    db_image = get_image_by_id(db, image_id)
-    if not db_image:
-        raise HTTPException(status_code=404, detail="Image not found")
+    image_data: ImageCreate= Body(...), 
+    image: UploadFile= File(...) ,
+    db:AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+)-> Image:
+
     #check imagen foder
     images_folder ="static/images/species/"
+
+    print(f"image_data: {image_data}")
 
     #check if folder exit
     if not os.path.exists(images_folder):
@@ -112,10 +118,19 @@ async def upload_image(
     contents = await image.read()
     with open(f"static/images/species/{image.filename}", "wb") as f:
         f.write(contents)
-    db_image.url = f"/static/images/species/{image.filename}"
-    db.commit()
-    db.refresh(db_image)
-    return db_image
+    try:
+        db_image = ImageBase(
+        url=f"/static/images/species/{image.filename}",
+        atribute=image_data.atribute,
+        species_id=image_data.species_id,
+            )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    db_image = await get_image_by_url(db, f"/static/images/species/{image.filename}")
+    if db_image:
+        raise HTTPException(status_code=400, detail="Image already exists")
+    return await create_image(db, image)
 
 
 

@@ -341,6 +341,7 @@ async def get_all_species_join_(db: AsyncSession) -> List[SpeciesJoin]:
         ]
         result.append({
             "scientific_name": specie.scientific_name,
+            "specie_name": specie.specific_epithet,
             "genus_full_name": genus.genus_name if genus else None,
             "family_name": family.family_name if family else None,
             "order_name": order.order_name if order else None,
