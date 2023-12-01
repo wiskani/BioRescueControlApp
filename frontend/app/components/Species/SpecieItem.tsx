@@ -6,7 +6,7 @@ const SpecieItem = (props: SpecieItemData) => {
     <section className="text-gray-700 body-font overflow-hidden bg-white">
       <div className="container px-5 py-5 mx-auto">
         <div className="mx-auto flex flex-wrap">
-            <Image alt="specie" width={100} height={100} className="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200" src={imageUrl}/>
+            <img alt="specie" className="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200" src={imageUrl}/>
             <div className="w-full mt-6 ">
               <h1 className="text-gray-900 text-xl  title-font font-medium mb-1">Especie: {props.specie_name}</h1>
               <h2 className="text-sm title-font text-gray-500 tracking-widest">Genero: {props.genus_full_name}</h2>

@@ -3,10 +3,12 @@ from fastapi import APIRouter, File, UploadFile, Depends, HTTPException, status,
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Union, Annotated
 
-from app.schemas.images import ImageBase, ImageResponse, ImageCreate
+from app.schemas.images import ImageBase, ImageResponse
 from app.models.images import Image
 from app.crud.images import get_image_by_url, create_image, get_all_images, get_image_by_id, update_image_by_id, delete_image_by_id
 from app.api.deps import PermissonsChecker, get_db
+from PIL import Image as PILImage
+from io import BytesIO
 
 router = APIRouter()
 
@@ -100,8 +102,9 @@ async def delete_image_by_id_specie(
     tags=["images"],
 )
 async def upload_image(
-    image_data: ImageCreate= Body(...), 
-    image: UploadFile= File(...) ,
+    image: Annotated[UploadFile, File(...)] ,
+    specie_id: Annotated[int, Form(...)],
+    atribute: Annotated[str, Form(...)],
     db:AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
 )-> Image:
@@ -109,28 +112,41 @@ async def upload_image(
     #check imagen foder
     images_folder ="static/images/species/"
 
-    print(f"image_data: {image_data}")
 
     #check if folder exit
     if not os.path.exists(images_folder):
         os.makedirs(images_folder)
 
     contents = await image.read()
-    with open(f"static/images/species/{image.filename}", "wb") as f:
-        f.write(contents)
+
+    # Open image with PIL
+    try:
+        img = PILImage.open(BytesIO(contents))
+        max_size = (640, 480)
+
+        # Resize image
+        img.thumbnail(max_size, PILImage.LANCZOS)
+
+        # Save image
+        img.save(os.path.join(images_folder, image.filename))
+
+
+
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
     try:
         db_image = ImageBase(
         url=f"/static/images/species/{image.filename}",
-        atribute=image_data.atribute,
-        species_id=image_data.species_id,
+        atribute=atribute,
+        species_id=specie_id,
             )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    db_image = await get_image_by_url(db, f"/static/images/species/{image.filename}")
-    if db_image:
+    if await get_image_by_url(db, f"/static/images/species/{image.filename}"):
         raise HTTPException(status_code=400, detail="Image already exists")
-    return await create_image(db, image)
+    return await create_image(db, db_image)
 
 
 

@@ -333,7 +333,7 @@ async def get_all_species_join_(db: AsyncSession) -> List[SpeciesJoin]:
         total_rescues = await count_flora_rescue_by_specie(db, specie.id)
         images_data = [
             {
-                "attribute": image.atribute,
+                "atribute": image.atribute,
                 "url": image.url,
                 "species_id": specie.id
             }
