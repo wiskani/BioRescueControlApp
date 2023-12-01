@@ -21,6 +21,8 @@ from app.schemas.species import (
 )
 from app.models.species import Specie, Genus, Family, Order, Class_, Status
 from app.models.rescue_flora import FloraRescue
+from app.models.rescue_herpetofauna import RescueHerpetofauna
+from app.models.rescue_mammals import RescueMammals
 from app.models.images import Image
 
 #Purpose: CRUD operations for Species
@@ -149,7 +151,7 @@ async def get_family_by_id(db: AsyncSession, family_id: int) -> Family | None:
     return family_db.scalars().first()
 
 #Get family by name
-async def get_family_by_name(db: AsyncSession, family_name: str) -> Union[Family, None]:
+async def get_family_by_name(db: AsyncSession, family_name: str) -> Family | None:
     family_db = await db.execute(select(Family).filter(Family.family_name == family_name))
     return family_db.scalars().first()
 
@@ -192,12 +194,12 @@ async def get_all_orders(db: AsyncSession) -> List[Order]:
     return list(orders_db.scalars().all())
 
 #Get order by id
-async def get_order_by_id(db: AsyncSession, order_id: int) -> Union[Order, None]:
+async def get_order_by_id(db: AsyncSession, order_id: int) -> Order | None:
     order_db = await db.execute(select(Order).filter(Order.id == order_id))
     return order_db.scalars().first()
 
 #Get order by name
-async def get_order_by_name(db: AsyncSession, order_name: str) -> Union[Order, None]:
+async def get_order_by_name(db: AsyncSession, order_name: str) -> Order | None:
     order_db = await db.execute(select(Order).filter(Order.order_name == order_name))
     return order_db.scalars().first()
 
@@ -244,7 +246,7 @@ async def get_class_by_id(db: AsyncSession, class_id: int) -> Class_ | None:
     return class_db.scalars().first()
 
 #Get class by name
-async def get_class_by_name(db: AsyncSession, class_name: str) -> Union[Class_, None]:
+async def get_class_by_name(db: AsyncSession, class_name: str) -> Class_ | None:
     class_db = await db.execute(select(Class_).filter(Class_.class_name == class_name))
     return class_db.scalars().first()
 
@@ -269,7 +271,7 @@ async def delete_class(db: AsyncSession, class_id: int) -> Class_:
     return db_class
 
 #Get if status exists
-async def get_status_by_name(db: AsyncSession, status_name: str) -> Union[Status, None]:
+async def get_status_by_name(db: AsyncSession, status_name: str) -> Status | None:
     status_db = await db.execute(select(Status).filter(Status.status_name == status_name))
     return status_db.scalars().first()
 
@@ -289,7 +291,7 @@ async def get_all_status(db: AsyncSession) -> List[Status]:
     return list(status_db.scalars().all())
 
 #Get status by id
-async def get_status_by_id(db: AsyncSession, status_id: int) -> Union[Status, None]:
+async def get_status_by_id(db: AsyncSession, status_id: int) -> Status | None:
     status_db = await db.execute(select(Status).filter(Status.id == status_id))
     return status_db.scalars().first()
 
@@ -331,6 +333,10 @@ async def get_all_species_join_(db: AsyncSession) -> List[SpeciesJoin]:
         images_data = images_result.scalars().all()
 
         total_rescues = await count_flora_rescue_by_specie(db, specie.id)
+        if total_rescues == 0:
+            total_rescues = await count_herpetofauna_rescue_by_specie(db, specie.id)
+            if total_rescues == 0:
+                total_rescues = await count_mammal_rescue_by_specie(db, specie.id)
         images_data = [
             {
                 "atribute": image.atribute,
@@ -339,16 +345,19 @@ async def get_all_species_join_(db: AsyncSession) -> List[SpeciesJoin]:
             }
             for image in images_data
         ]
-        result.append({
-            "scientific_name": specie.scientific_name,
-            "specie_name": specie.specific_epithet,
-            "genus_full_name": genus.genus_name if genus else None,
-            "family_name": family.family_name if family else None,
-            "order_name": order.order_name if order else None,
-            "class_name": class_.class_name if class_ else None,
-            "images": images_data,
-            "total_rescues": total_rescues
-        })
+        if class_.class_name== "Magnoliopsida" or class_.class_name== "Pinopsida":
+            pass
+        else:
+            result.append({
+                "scientific_name": specie.scientific_name,
+                "specie_name": specie.specific_epithet,
+                "genus_full_name": genus.genus_name if genus else None,
+                "family_name": family.family_name if family else None,
+                "order_name": order.order_name if order else None,
+                "class_name": class_.class_name if class_ else None,
+                "images": images_data,
+                "total_rescues": total_rescues
+            })
     return result
 
 #Count flora_rescue by specie
@@ -365,6 +374,38 @@ async def count_flora_rescue_by_specie(db: AsyncSession, specie_id:int) -> int :
         return 0
 
     return total
+
+#Count herpetofauna rescue by specie
+async def count_herpetofauna_rescue_by_specie(db: AsyncSession, specie_id:int) -> int :
+    if not specie_id:
+        return 0
+    stmt = select(func.count(RescueHerpetofauna.id)).where(RescueHerpetofauna.specie_id == specie_id)
+
+    result = await db.execute(stmt)
+
+    total= result.scalar()
+
+    if total is None:
+        return 0
+
+    return total
+
+#Count mammal rescue by specie
+async def count_mammal_rescue_by_specie(db: AsyncSession, specie_id:int) -> int :
+    if not specie_id:
+        return 0
+    stmt = select(func.count(RescueMammals.id)).where(RescueMammals.specie_id == specie_id)
+
+    result = await db.execute(stmt)
+
+    total= result.scalar()
+
+    if total is None:
+        return 0
+
+    return total
+
+
 
 
 

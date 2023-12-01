@@ -10,6 +10,9 @@ const SpecieItem = (props: SpecieItemData) => {
             <div className="w-full mt-6 ">
               <h1 className="text-gray-900 text-xl  title-font font-medium mb-1">Especie: {props.specie_name}</h1>
               <h2 className="text-sm title-font text-gray-500 tracking-widest">Genero: {props.genus_full_name}</h2>
+              <h3 className="text-xs title-font text-gray-500 tracking-widest">Familia: {props.family_name}</h3>
+              <h3 className="text-xs title-font text-gray-500 tracking-widest">Orden: {props.order_name}</h3>
+              <h3 className="text-xs title-font text-gray-500 tracking-widest">Clase: {props.class_name}</h3>
               <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-200 mb-5">
                 <div className="flex">
                   <span className="mr-3">Cantidad de Rescates</span>
