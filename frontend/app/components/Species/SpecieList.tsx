@@ -6,7 +6,6 @@ interface SpecieListProps {
 }
 
 const SpecieList: React.FC<SpecieListProps> = ({species}) => {
-    console.log(species);
   const [searchSpecie, setSearchSpecie] = useState('');
 
   //function to filter the species
