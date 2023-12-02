@@ -7,13 +7,14 @@ import dynamic from 'next/dynamic';
 import { ApiRescueFlora } from "../api/rescue_flora/route";
 import { SpeciesItem } from '../api/species/route';
 import SpecieList from '../components/Species/SpecieList';
+import {LatLngExpression} from "leaflet";
 
 const MyMap =  dynamic(() => import('../components/Map/Map'), {ssr: false});
 
 export default function Dashboard() {
     const { data: session } = useSession();
-    const [centers, setCenters] = useState([])
-    const [specieData, setSpecieData] = useState([])
+    const [centers, setCenters] = useState<LatLngExpression[]>([]);
+    const [specieData, setSpecieData] = useState<SpecieItemData[]>([])
     const user = session?.user;
     const rescueDataFlora =async ()=>{
       if (user){
