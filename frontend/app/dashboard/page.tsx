@@ -16,7 +16,7 @@ export default function Dashboard() {
     const [centers, setCenters] = useState<LatLngExpression[]>([]);
     const [specieData, setSpecieData] = useState<SpecieItemData[]>([])
     const user = session?.user;
-    const rescueDataFlora =async ()=>{
+    const rescueDataFlora =async (): Promise<LatLngExpression[]>=>{
       if (user){
        const data= await ApiRescueFlora({token: user?.token})
        return data.map((item:FloraRescueData)=>[item.rescue_area_latitude, item.rescue_area_longitude] )
