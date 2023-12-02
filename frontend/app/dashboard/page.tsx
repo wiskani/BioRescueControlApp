@@ -1,7 +1,7 @@
 "use client"
 
 import { useSession  } from 'next-auth/react'
-import React,{useEffect, useState}  from 'react';
+import React,{useEffect, useState, useCallback}  from 'react';
 import { redirect } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { ApiRescueFlora } from "../api/rescue_flora/route";
@@ -16,7 +16,7 @@ export default function Dashboard() {
     const [centers, setCenters] = useState<LatLngExpression[]>([]);
     const [specieData, setSpecieData] = useState<SpecieItemData[]>([])
     const user = session?.user;
-    const rescueDataFlora =async (): Promise<LatLngExpression[]>=>{
+    const rescueDataFlora = useCallback(async (): Promise<LatLngExpression[]>=>{
       if (user){
        const data= await ApiRescueFlora({token: user?.token})
        return data.map((item:FloraRescueData)=>[item.rescue_area_latitude, item.rescue_area_longitude] )
@@ -24,8 +24,8 @@ export default function Dashboard() {
       else{
         return []
       }
-    }
-    const speciesData = async ()=>{
+    }, [user])
+    const speciesData = useCallback(async (): Promise<SpecieItemData[]>=>{
         if (user){
             const data= await SpeciesItem({token: user?.token})
             return data
@@ -33,7 +33,7 @@ export default function Dashboard() {
         else{
             return []
         }
-    }
+    }, [user])
 
     useEffect(() => {
         if (!session?.user) {
@@ -49,7 +49,7 @@ export default function Dashboard() {
 
         }
 
-    }, [session])
+    }, [session, rescueDataFlora, speciesData])
         return (
             <div>
                 <div className="flex flex-col  h-96 2xl:mb-52 xl:mb-52 lg:mb-40 md:flex-row md:mb-0 sm:mb-0 justify-center">

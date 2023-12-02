@@ -1,4 +1,3 @@
-import Image from 'next/image';
 
 const SpecieItem = (props: SpecieItemData) => {
   const imageUrl = props.images && props.images.length > 0 ? `http://localhost:8080${props.images[0].url}` : 'http://localhost:8080/static/images/species/no_imagen.svg';
