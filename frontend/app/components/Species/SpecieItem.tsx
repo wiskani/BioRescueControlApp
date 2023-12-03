@@ -15,7 +15,7 @@ const SpecieItem = (props: SpecieItemData) => {
               <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-200 mb-5">
                 <div className="flex">
                   <span className="mr-3">Cantidad de Rescates</span>
-                  <button className="flex items-center bg-blue-600 text-center text-white justify-center border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none">{props.total_rescues}</button>
+                  <button className="flex items-center bg-green-600 text-center text-xs text-white justify-center border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none">{props.total_rescues}</button>
                 </div>
               </div>
             </div>

@@ -10,6 +10,7 @@ import React,{useEffect, useState, useCallback}  from 'react';
 //Apis imports
 import { ApiRescueFlora } from "../api/rescue_flora/route";
 import { ApiTransectHerpetofaunaWithSpecies } from '../api/rescue_herpetofaina/route';
+import { ApiRescueMammalsWithSpecies } from '../api/rescue_mammals/router';
 import { SpeciesItem } from '../api/species/route';
 
 //Leaflet imports
@@ -22,6 +23,7 @@ import "leaflet-defaulticon-compatibility"
 //Components imports
 import SpecieList from '../components/Species/SpecieList';
 import TransectHerpetofaunaMap from '../components/Transectors/Transecto';
+import RescueMammalsSpecieMap from '../components/RescueMammals/RescueMammalsSpecie';
 import { LineProyect } from '../components/Map/lineProyect';
 import Legend from '../components/Map/Legend';
 
@@ -31,6 +33,7 @@ export default function Dashboard() {
     const [centers, setCenters] = useState<LatLngExpression[]>([]);
     const [specieData, setSpecieData] = useState<SpecieItemData[]>([])
     const [transectData, setTransectData] = useState<TransectHerpetoWithSpecies[]>([])
+    const [rescueMammalsData, setRescueMammalsData] = useState<RescueMammalsWithSpecieData[]>([])
 
     const user = session?.user;
 
@@ -64,6 +67,18 @@ export default function Dashboard() {
         }
     }, [user])
 
+    const rescueDataMammals = useCallback(async (): Promise<RescueMammalsWithSpecieData[]>=>{
+        if (user){
+            const data= await ApiRescueMammalsWithSpecies({token: user?.token})
+            return data
+        }
+        else{
+            return []
+        }
+    }, [user])
+
+
+
     useEffect(() => {
         if (!session?.user) {
             redirect('/')
@@ -78,6 +93,9 @@ export default function Dashboard() {
             transectDataHerpeto().then((data)=>{
                 setTransectData(data)
             })
+            rescueDataMammals().then((data)=>{
+                setRescueMammalsData(data)
+            })
 
         }
 
@@ -86,8 +104,8 @@ export default function Dashboard() {
 
     const lineOptions = { color: 'red' }
 
-    const legedColors = ['green', 'blue', 'red' ]
-    const legendLabels = ['Transcetors Herpetofauna', 'Puntos Rescates de Flora', 'Proyecto 230 kV Mizque - Sehuencas']
+    const legedColors = ['brown','green', 'blue', 'red' ]
+    const legendLabels = ['Puntos Rescate de Mamiferos','Transcetors Herpetofauna', 'Puntos Rescates de Flora', 'Proyecto 230 kV Mizque - Sehuencas']
         return (
             <div>
                 <div className="flex flex-col  h-96 2xl:mb-52 xl:mb-52 lg:mb-40 md:flex-row md:mb-0 sm:mb-0 justify-center">
@@ -103,6 +121,7 @@ export default function Dashboard() {
                                 url={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`}
                                 attribution='Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>'
                                 />
+                                <RescueMammalsSpecieMap data={rescueMammalsData}/>
                                 <TransectHerpetofaunaMap data={transectData}/>
                                 <Polyline pathOptions={lineOptions} positions={LineProyect} >
                                         <Tooltip>

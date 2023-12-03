@@ -113,6 +113,43 @@ async def create_rescue_mammalsWithCod(
     assert response.status_code == 201
     return data["id"], cod
 
+#generate radom rescue mammals with cod
+@pytest.mark.asyncio
+async def create_rescue_mammalsWithCodSpecieGenus(
+    async_client: AsyncClient,
+) -> tuple[int, str, str|None, str|None]:
+    habitat_id = await create_habitat(async_client)
+    age_group_id = await create_age_group(async_client)
+    specie_id, specie_name = await create_specieWithName(async_client)
+    cod = random_string()
+
+    response = await async_client.post(
+        "api/rescue_mammals", json={
+            "cod": cod,
+            "date": "2021-10-10T00:00:00",
+            "mark": "mark",
+            "longitude": 1.0,
+            "latitude": 1.0,
+            "altitude": 10,
+            "gender": True,
+            "LT": 1.0,
+            "LC": 1.0,
+            "LP": 1.0,
+            "LO": 1.0,
+            "LA": 1.0,
+            "weight": 10,
+            "observation": "observation",
+            "is_specie_confirmed": True,
+            "habitat_id": habitat_id,
+            "age_group_id": age_group_id,
+            "specie_id": specie_id,
+            "genus_id": None
+        },
+    )
+    data = response.json()
+    assert response.status_code == 201
+    return data["id"], cod, specie_name, None
+
 #generate radom site release
 @pytest.mark.asyncio
 async def create_site_release(

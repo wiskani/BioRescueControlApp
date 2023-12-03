@@ -11,15 +11,15 @@ from app.schemas.rescue_mammals import (
 
     #RescueMammal
     RescueMammalsCreate,
-    RescueMammalsResponse,
 
     #SiteRelease
     SiteReleaseMammalsCreate,
-    SiteReleaseMammalsResponse,
 
     #ReleaseMammals
     ReleaseMammalsCreate,
-    ReleaseMammalsResponse,
+
+    #RescueMammalsWithSpecie
+    RescueMammalsWithSpecie,
 )
 
 from app.models.rescue_mammals import (
@@ -27,6 +27,11 @@ from app.models.rescue_mammals import (
     RescueMammals,
     SiteReleaseMammals,
     ReleaseMammals,
+)
+
+from app.crud.species import (
+        get_specie_by_id,
+        get_genus_by_id
 )
 
 # Purpose: CRUD operations for RescueMammals
@@ -278,6 +283,40 @@ async def delete_release_mammal(db: AsyncSession, release_mammal_id: int) -> Rel
     await db.execute(delete(ReleaseMammals).where(ReleaseMammals.id == release_mammal_id))
     await db.commit()
     return release_mammal_db
+
+"""
+CRUD RESCUE MAMMALS WITH SPECIE
+"""
+#Get rescue mammals with specie
+async def get_rescue_mammals_with_specie(db: AsyncSession) -> List[RescueMammalsWithSpecie]:
+    rescues = await get_rescue_mammals(db)
+
+    result = []
+
+    for rescue in rescues:
+        specie_db = await get_specie_by_id(db, rescue.specie_id)
+        specie_name: str|None
+        if specie_db:
+            specie_name = specie_db.specific_epithet
+        else:
+            specie_name = None
+
+        genus_db = await get_genus_by_id(db, rescue.genus_id)
+        genus_name: str|None
+        if genus_db:
+            genus_name = genus_db.genus_name
+        else:
+            genus_name = None
+        result.append(RescueMammalsWithSpecie(
+            cod = rescue.cod,
+            date = rescue.date,
+            longitude = rescue.longitude,
+            latitude = rescue.latitude,
+            observation = rescue.observation,
+            specie_name = specie_name,
+            genus_name = genus_name,
+        ))
+    return result
 
 
 

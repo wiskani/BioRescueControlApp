@@ -98,3 +98,14 @@ class ReleaseMammalsResponse(ReleaseMammalsBase):
     class Config:
         orm_mode: bool = True
 
+
+class RescueMammalsWithSpecie(BaseModel):
+    cod: str 
+    date: datetime 
+    longitude: float 
+    latitude: float 
+    observation: str|None 
+    specie_name: str | None
+    genus_name: str | None
+    class Config:
+        orm_mode: bool = True

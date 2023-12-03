@@ -1537,7 +1537,6 @@ async def test_get_transect_herpetofauna_with_species_and_count_rescues(
     #Create a rescue herpetofauna
     rescue_herpetofauna_id : int = await create_rescue_herpetofauna(async_client)
 
-    #Create a transect herpetofauna with species and count rescues
     response: Response = await async_client.get(
         "/api/transect_herpetofauna_with_species_and_count", 
     )

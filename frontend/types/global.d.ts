@@ -26,6 +26,16 @@ declare global {
                 total_rescue: number;
         }
 
+        interface RescueMammalsWithSpecieData{
+                cod: string; 
+                date: Date; 
+                longitude: number; 
+                latitude: number; 
+                observation: string|null;
+                specie_name: string | null; 
+                genus_name: string | null;
+        }
+
         interface FloraRescueData {
                 epiphyte_number: number;
                 rescue_date: string;

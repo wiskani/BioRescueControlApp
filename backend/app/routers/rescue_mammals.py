@@ -4,24 +4,23 @@ from typing import List, Union, Dict
 
 from app.schemas.rescue_mammals import (
     #Habitat
-    HabitatBase,
     HabitatCreate,
     HabitatResponse,
 
     #Rescue Mammals
-    RescueMammalsBase,
     RescueMammalsCreate,
     RescueMammalsResponse,
 
     #Site Release
-    SiteReleaseMammalsBase,
     SiteReleaseMammalsCreate,
     SiteReleaseMammalsResponse,
 
     #Release Mammals
-    ReleaseMammalsBase,
     ReleaseMammalsCreate,
     ReleaseMammalsResponse,
+
+    #Rescue Mammals with species
+    RescueMammalsWithSpecie
 )
 
 from  app.models.rescue_mammals import (
@@ -29,6 +28,7 @@ from  app.models.rescue_mammals import (
     RescueMammals,
     SiteReleaseMammals,
     ReleaseMammals,
+    
 )
 
 from app.crud.rescue_mammals import (
@@ -63,6 +63,9 @@ from app.crud.rescue_mammals import (
     create_release_mammal,
     update_release_mammal,
     delete_release_mammal,
+
+    #Rescue Mammals with species
+    get_rescue_mammals_with_specie
 )
 
 from app.api.deps import PermissonsChecker, get_db
@@ -444,6 +447,20 @@ async def delete_release_mammals_api(
         )
     await delete_release_mammal(db, release_mammals_id)
     return {"detail": "Release Mammals deleted successfully"}
+
+#Get all rescue mammals with species
+@router.get(
+    path="/api/rescue_mammals_species",
+    response_model=List[RescueMammalsWithSpecie],
+    status_code=status.HTTP_200_OK,
+    tags=["Rescue Mammals"],
+    summary="Get all rescue mammals with species",
+    )
+async def get_rescue_mammals_with_species_api(
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> List[RescueMammalsWithSpecie]:
+    return await get_rescue_mammals_with_specie(db)
 
 
 

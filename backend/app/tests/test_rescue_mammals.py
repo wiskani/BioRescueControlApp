@@ -1046,6 +1046,32 @@ async def test_delete_release_mammal(
     data = response.json()
     assert data["detail"] == "Release Mammals deleted successfully"
 
+"""
+CRUD GET RESCUE MAMMALS WITH SPECIES AND GENUS
+"""
+
+#test for get rescue mammals with specie and genus
+@pytest.mark.asyncio
+async def test_get_rescue_mammals_with_specie_and_genus(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+
+    rescue_mammals_id, cod, specie, genus = await create_rescue_mammalsWithCodSpecieGenus(async_client)
+
+
+    response = await async_client.get(
+            "/api/rescue_mammals_species",
+            )
+
+    data = response.json()
+    print(f"La respuesta es: {data}")
+    assert response.status_code == 200
+    assert len(data) == 1
+    assert data[0]["cod"] == cod
+    assert data[0]["specie_name"] == specie
+    assert data[0]["genus_name"] == genus
+
 
 
 
