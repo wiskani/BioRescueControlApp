@@ -1,3 +1,4 @@
+from app.crud.species import get_specie_by_id
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
@@ -33,6 +34,9 @@ from app.schemas.rescue_herpetofauna import (
     # TranslocationHerpetofauna
     TranslocationHerpetofaunaBase,
     TranslocationHerpetofaunaCreate,
+
+    # Transect_herpetofauna_with_species
+    TransectHerpetoWithSpecies
 
 )
 
@@ -491,6 +495,49 @@ async def delete_translocation_herpetofauna(
     await db.execute(delete(TranslocationHerpetofauna).where(TranslocationHerpetofauna.id == translocation_herpetofauna_id))
     await db.commit()
     return translocation_herpetofauna_db
+
+"""
+CRUD FOR TRANSECT HERPETOFAUNA WIHT SPECIES AND COUNT
+"""
+
+#Get transect herpetofauna with species and count by name
+async def get_transect_herpetofauna_with_species_and_count_by_name(db: AsyncSession) -> List[TransectHerpetoWithSpecies]:
+    transectors = await get_all_transect_herpetofauna(db)
+
+    result= []
+
+    for transect in transectors:
+        #get rescue id
+        result_db = await db.execute(
+                select(RescueHerpetofauna)
+                .where(
+                    RescueHerpetofauna.transect_herpetofauna_id == transect.id
+                    ))
+        rescue_list = list(result_db.scalars().all())
+        species = []
+        total_rescue = 0
+        for rescue in rescue_list:
+            specie_id = rescue.specie_id
+            specie = await get_specie_by_id(db, specie_id)
+            if specie:
+                species.append(specie.specific_epithet)
+            total_rescue += 1
+        result.append(TransectHerpetoWithSpecies(
+            number = transect.number,
+            date_in = transect.date_in,
+            date_out = transect.date_out,
+            latitude_in = transect.latitude_in,
+            longitude_in = transect.longitude_in,
+            latitude_out = transect.latitude_out,
+            longitude_out = transect.longitude_out,
+            specie_names = species,
+            total_rescue = total_rescue
+        ))
+    return result
+
+
+
+
 
 
 

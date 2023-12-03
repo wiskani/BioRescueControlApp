@@ -125,3 +125,17 @@ class TranslocationHerpetofaunaResponse(TranslocationHerpetofaunaBase):
     id: int
     class Config:
         orm_mode: bool = True
+
+   
+class TransectHerpetoWithSpecies(BaseModel):
+    number: str 
+    date_in: datetime 
+    date_out: datetime 
+    latitude_in: float 
+    longitude_in: float
+    latitude_out: float 
+    longitude_out: float 
+    specie_names: List[str] 
+    total_rescue: int
+    class Config:
+        orm_mode: bool = True

@@ -1518,3 +1518,35 @@ async def test_delete_translocation_herpetofauna(
     assert response.status_code == 200
     assert data['detail'] == "Translocation herpetofauna deleted successfully"
 
+"""
+TESTS FOR CRUD GET TRANSECT HERPETOFAUNA WITH SPECIES AND COUNT RESCUES
+"""
+
+#Test for get transect herpetofauna with species and count rescues
+@pytest.mark.asyncio
+async def test_get_transect_herpetofauna_with_species_and_count_rescues(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    #Create a transect herpetofauna with number
+    transect_herpetofauna_id, number = await create_transect_herpetofaunaWithNumber(async_client)
+
+    #Create a specie with name
+    specie, name = await create_specieWithName(async_client)
+
+    #Create a rescue herpetofauna
+    rescue_herpetofauna_id : int = await create_rescue_herpetofauna(async_client)
+
+    #Create a transect herpetofauna with species and count rescues
+    response: Response = await async_client.get(
+        "/api/transect_herpetofauna_with_species_and_count", 
+    )
+    data = response.json()
+    assert len(data) >= 2
+    data_1 = data[0]
+    data_2 = data[1]
+    assert response.status_code == 200
+    assert data_1["number"] == number 
+    assert data_2["total_rescue"] == 1 
+
+

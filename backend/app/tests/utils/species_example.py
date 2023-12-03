@@ -116,7 +116,6 @@ async def create_genus(
     response: Response = await async_client.post(
         "/api/genuses", json={
             "genus_name": name_genus,
-            "genus_full_name": name_genus,
             "key_gbif": random_int(),
             "family_id": await create_family(async_client),
         },

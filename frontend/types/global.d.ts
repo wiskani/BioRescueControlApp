@@ -13,6 +13,19 @@ declare global {
                 altitude_out:number;
                 tower_id:number;
         }
+
+        interface TransectHerpetoWithSpecies{
+                number: string; 
+                date_in: Date; 
+                date_out: Date; 
+                latitude_in: number; 
+                longitude_in: number; 
+                latitude_out: number; 
+                longitude_out: number; 
+                specie_names: string[]; 
+                total_rescue: number;
+        }
+
         interface FloraRescueData {
                 epiphyte_number: number;
                 rescue_date: string;
