@@ -57,6 +57,17 @@ declare global {
                 rescue_zone_id: number;
                 id: number;
         }
+        
+        interface FloraRescueSpeciesData{
+                epiphyte_number: string; 
+                rescue_date: Date; 
+                rescue_area_latitude: number;
+                rescue_area_longitude: number; 
+                specie_name: string | None;
+                genus_name: string | None;
+                family_name: string| None;
+        }
+
         interface ImageSpecieData {
                 url: string;
                 atribute: string;

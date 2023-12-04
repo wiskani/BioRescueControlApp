@@ -8,7 +8,7 @@ import { redirect } from 'next/navigation';
 import React,{useEffect, useState, useCallback}  from 'react';
 
 //Apis imports
-import { ApiRescueFlora } from "../api/rescue_flora/route";
+import { ApiRescueFlora, ApiRescueFloraSpecie } from "../api/rescue_flora/route";
 import { ApiTransectHerpetofaunaWithSpecies } from '../api/rescue_herpetofaina/route';
 import { ApiRescueMammalsWithSpecies } from '../api/rescue_mammals/router';
 import { SpeciesItem } from '../api/species/route';
@@ -22,6 +22,7 @@ import "leaflet-defaulticon-compatibility"
 
 //Components imports
 import SpecieList from '../components/Species/SpecieList';
+import FloraRescueSpecieMap from '../components/RescueFlora/rescueFloraSpecie'; 
 import TransectHerpetofaunaMap from '../components/Transectors/Transecto';
 import RescueMammalsSpecieMap from '../components/RescueMammals/RescueMammalsSpecie';
 import { LineProyect } from '../components/Map/lineProyect';
@@ -31,16 +32,17 @@ import Legend from '../components/Map/Legend';
 export default function Dashboard() {
     const { data: session } = useSession();
     const [centers, setCenters] = useState<LatLngExpression[]>([]);
+    const [rescueFloraData, setRescueFloraData] = useState<FloraRescueSpeciesData[]>([]);
     const [specieData, setSpecieData] = useState<SpecieItemData[]>([])
     const [transectData, setTransectData] = useState<TransectHerpetoWithSpecies[]>([])
     const [rescueMammalsData, setRescueMammalsData] = useState<RescueMammalsWithSpecieData[]>([])
 
     const user = session?.user;
 
-    const rescueDataFlora = useCallback(async (): Promise<LatLngExpression[]>=>{
+    const rescueDataFlora = useCallback(async (): Promise<FloraRescueSpeciesData[]>=>{
       if (user){
-       const data= await ApiRescueFlora({token: user?.token})
-       return data.map((item:FloraRescueData)=>[item.rescue_area_latitude, item.rescue_area_longitude] )
+       const data= await ApiRescueFloraSpecie({token: user?.token})
+       return data
       }
       else{
         return []
@@ -85,7 +87,7 @@ export default function Dashboard() {
         }
         else{
             rescueDataFlora().then((data)=>{
-                setCenters(data)
+                setRescueFloraData(data)
             })
             speciesData().then((data)=>{
                 setSpecieData(data)
@@ -131,9 +133,7 @@ export default function Dashboard() {
                                                 </div>
                                         </Tooltip>
                                 </Polyline>
-                                {centers.map((center, index) => (
-                                    <Circle key={index} center={center} pathOptions={{color: 'blue'}} radius={10} />
-                                ))}
+                                <FloraRescueSpecieMap data={rescueFloraData}/>
 
                             <Legend colors={legedColors} labels={legendLabels} />
 

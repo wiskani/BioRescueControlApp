@@ -24,6 +24,7 @@ const TransectHerpetofaunaMap: React.FC<TransectHerpetofaunaMapProps> = ({data})
                                 <Tooltip>
                                         <div>
                                                 <h4>Transector Herpetofauna</h4>
+                                                <p>Codigo: {transect.number}</p>
                                                 <p>Number individuos rescatados: {transect.total_rescue}</p>
                                                 <p>Especies rescatadas: </p>
                                                 <>
