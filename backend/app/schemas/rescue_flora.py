@@ -187,3 +187,14 @@ class FloraRelocationResponse(FloraRelocationBase):
     class Config:
         from_attributes = True
 
+
+class FloraRescueSpecies(BaseModel):
+    epiphyte_number: str = Field(...)
+    rescue_date: datetime = Field(...)
+    rescue_area_latitude: float = Field(examples= [-17.444])
+    rescue_area_longitude: float= Field(examples= [-66.444])
+    specie_name: str | None
+    genus_name: str | None
+    family_name: str| None
+    class Config:
+        from_attributes = True

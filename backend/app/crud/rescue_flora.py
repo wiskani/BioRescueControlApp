@@ -7,24 +7,29 @@ from datetime import date
 from app.schemas.rescue_flora import (
         #Flora rescue zone
         FloraRescueZoneBase,
-        FloraRescueZoneResponse,
 
         #Flora relocation zone
         FloraRelocationZoneBase,
-        FloraRelocationZoneResponse,
 
         #Flora rescue
         FloraRescueBase,
-        FloraRescueResponse,
 
         #Plant nursery
         PlantNurseryBase,
-        PlantNurseryResponse,
 
         #Flora relocation
         FloraRelocationBase,
-        FloraRelocationResponse,
+
+        #Flora rescue with specie
+        FloraRescueSpecies
         )
+
+from app.crud.species import (
+        get_specie_by_id,
+        get_genus_by_id,
+        get_family_by_id
+)
+
 from app.models.rescue_flora import FloraRescueZone, FloraRelocationZone, FloraRescue, PlantNursery, FloraRelocation
 
 # Purpose: CRUD operations for rescue flora
@@ -369,6 +374,48 @@ async def delete_flora_relocation(db: AsyncSession, flora_relocation_id: int) ->
     await db.execute(delete(FloraRelocation).where(FloraRelocation.id == flora_relocation_id))
     await db.commit()
     return db_flora_relocation
+
+"""
+CRUD RESCUE FLORA WITH SPECIE
+"""
+# Get rescue flora with specie, genus and family name
+async def get_rescue_flora_with_specie(db: AsyncSession) -> List[FloraRescueSpecies]:
+    rescues: list[FloraRescue] = await get_all_flora_rescues(db)
+
+    result= []
+
+    for rescue in rescues:
+        specie_db = await get_specie_by_id(db, rescue.specie_epiphyte_id)
+        if specie_db:
+            specie = specie_db.specific_epithet
+        else:
+            specie = None
+
+        genus_db = await get_genus_by_id(db, rescue.genus_epiphyte_id)
+        if genus_db:
+            genus = genus_db.genus_name
+        else:
+            genus = None
+
+        family_db = await get_family_by_id(db, rescue.family_epiphyte_id)
+        if family_db:
+            family = family_db.family_name
+        else:
+            family = None
+
+        result.append(FloraRescueSpecies(
+            epiphyte_number = rescue.epiphyte_number,
+            rescue_date = rescue.rescue_date,
+            rescue_area_latitude = rescue.rescue_area_latitude,
+            rescue_area_longitude = rescue.rescue_area_longitude,
+            specie_name = specie,
+            genus_name = genus,
+            family_name = family,
+            ))
+
+    return result
+
+
 
 
 

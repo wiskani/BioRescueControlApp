@@ -1440,4 +1440,23 @@ async def test_delete_relocation_flora(
     data = response.json()
     assert data["detail"] == "Flora relocation deleted"
 
+#test for get all rescue flora with species
+@pytest.mark.asyncio
+async def test_get_all_rescue_flora_with_species(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    rescue_id, epiphyte_number, specie = await create_random_flora_rescue_WithNumberSpecie(async_client)
+
+    response = await async_client.get("/api/flora_rescue_species",)
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert len(data) >= 1
+    assert data[0]["epiphyte_number"] == epiphyte_number 
+    assert data[0]["specie_name"] == specie
+    assert data[0]["genus_name"] == None 
+    assert data[0]["family_name"] == None
+
+
+
 

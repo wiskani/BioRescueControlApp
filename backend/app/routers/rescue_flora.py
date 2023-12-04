@@ -17,6 +17,8 @@ from app.schemas.rescue_flora import (
 
         FloraRelocationBase,
         FloraRelocationResponse,
+
+        FloraRescueSpecies
         )
 from app.models.rescue_flora import (
     FloraRescueZone,
@@ -66,6 +68,9 @@ from app.crud.rescue_flora import (
         create_flora_relocation,
         update_flora_relocation,
         delete_flora_relocation,
+
+        # Rescue with species
+        get_rescue_flora_with_specie
 )
 
 from app.api.deps import PermissonsChecker, get_db
@@ -592,6 +597,20 @@ async def delete_a_flora_relocation(
                 )
     await delete_flora_relocation(db, flora_relocation_id)
     return {"detail":"Flora relocation deleted"}
+
+#Get all flora rescues with species, genus and family endpoint
+@router.get(
+        path="/api/flora_rescue_species",
+        response_model=List[FloraRescueSpecies],
+        status_code=status.HTTP_200_OK,
+        tags=["Flora Rescue"],
+        summary="Get all flora rescues with species, genus and family",
+)
+async def get_all_flora_rescue_species(
+        db: AsyncSession = Depends(get_db),
+        autorized: bool = Depends(PermissonsChecker(["admin"])),
+        )-> List[FloraRescueSpecies]:
+    return await get_rescue_flora_with_specie(db)
 
 
 
