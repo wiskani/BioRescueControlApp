@@ -405,6 +405,50 @@ async def count_mammal_rescue_by_specie(db: AsyncSession, specie_id:int) -> int 
 
     return total
 
+#List of species by family
+async def get_species_by_family(db: AsyncSession, family_id: int) -> List[int]:
+    genus_result = await db.execute(select(Genus).where(Genus.family_id == family_id))
+    genus = genus_result.scalars().all()
+    result = []
+    for gen in genus:
+        species_result = await db.execute(select(Specie).where(Specie.genus_id == gen.id))
+        species = species_result.scalars().all()
+        for specie in species:
+            result.append(specie.id)
+    return result
+
+#Count herpetofauna rescue by family
+async def count_herpetofauna_rescue_by_family(db: AsyncSession, family_id:int) -> int :
+    if not family_id:
+        return 0
+    stmt = select(func.count(RescueHerpetofauna.id)).where(RescueHerpetofauna.family_id == family_id)
+
+    result = await db.execute(stmt)
+
+    total= result.scalar()
+
+    if total is None:
+        return 0
+
+    return total
+
+#count mammal rescue by family
+async def count_mammal_rescue_by_family(db: AsyncSession, family_id:int) -> int :
+    if not family_id:
+        return 0
+    stmt = select(func.count(RescueMammals.id)).where(RescueMammals.family_id == family_id)
+
+    result = await db.execute(stmt)
+
+    total= result.scalar()
+
+    if total is None:
+        return 0
+
+    return total 
+
+
+
 
 
 
