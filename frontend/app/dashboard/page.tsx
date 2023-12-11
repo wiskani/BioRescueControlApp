@@ -8,10 +8,11 @@ import { redirect } from 'next/navigation';
 import React,{useEffect, useState, useCallback}  from 'react';
 
 //Apis imports
-import { ApiRescueFlora, ApiRescueFloraSpecie } from "../api/rescue_flora/route";
+import { ApiRescueFloraSpecie } from "../api/rescue_flora/route";
 import { ApiTransectHerpetofaunaWithSpecies } from '../api/rescue_herpetofaina/route';
 import { ApiRescueMammalsWithSpecies } from '../api/rescue_mammals/router';
 import { SpeciesItem } from '../api/species/route';
+import { ApiSunburstByFamily } from '../api/nivo/route';
 
 //Leaflet imports
 import { MapContainer, TileLayer,Circle, Polyline, Tooltip } from 'react-leaflet'
@@ -27,15 +28,17 @@ import TransectHerpetofaunaMap from '../components/Transectors/Transecto';
 import RescueMammalsSpecieMap from '../components/RescueMammals/RescueMammalsSpecie';
 import { LineProyect } from '../components/Map/lineProyect';
 import Legend from '../components/Map/Legend';
+import SunburstFamily from '../components/Nivo/SunBurstFamily';
 
 
 export default function Dashboard() {
     const { data: session } = useSession();
-    const [centers, setCenters] = useState<LatLngExpression[]>([]);
     const [rescueFloraData, setRescueFloraData] = useState<FloraRescueSpeciesData[]>([]);
     const [specieData, setSpecieData] = useState<SpecieItemData[]>([])
     const [transectData, setTransectData] = useState<TransectHerpetoWithSpecies[]>([])
     const [rescueMammalsData, setRescueMammalsData] = useState<RescueMammalsWithSpecieData[]>([])
+    const [sunburstData, setSunburstData] = useState<SunBurstFamilyData>({name: "root", color: "hsl(0, 0%, 100%)", loc: 0, children: []}
+)
 
     const user = session?.user;
 
@@ -79,6 +82,17 @@ export default function Dashboard() {
         }
     }, [user])
 
+    const sunburstDataApi = useCallback(async (): Promise<SunBurstFamilyData>=>{
+        if (user){
+                const data= await ApiSunburstByFamily({token: user?.token})
+                return data
+        }
+        else{
+                return  {name: "root", color: "hsl(0, 0%, 100%)", loc: 0, children: []}
+        }
+        }, [user])
+
+
 
 
     useEffect(() => {
@@ -99,9 +113,13 @@ export default function Dashboard() {
                 setRescueMammalsData(data)
             })
 
+            sunburstDataApi().then((data)=>{
+                setSunburstData(data)
+            })
+
         }
 
-    }, [session, rescueDataFlora, speciesData])
+    }, [session, rescueDataFlora, speciesData, transectDataHerpeto, rescueDataMammals, sunburstDataApi])
 
 
     const lineOptions = { color: 'red' }
@@ -110,8 +128,8 @@ export default function Dashboard() {
     const legendLabels = ['Puntos Rescate de Mamiferos','Transcetors Herpetofauna', 'Puntos Rescates de Flora', 'Proyecto 230 kV Mizque - Sehuencas']
         return (
             <div>
-                <div className="flex flex-col  h-96 2xl:mb-52 xl:mb-52 lg:mb-40 md:flex-row md:mb-0 sm:mb-0 justify-center">
-                    <div className="h-full p-0 z-50 md:w-1/2 p-4 md:h-[16rem] sd:h-[6rem]">
+                <div className="flex flex-col  h-full 2xl:mb-52 xl:mb-52 lg:mb-40 md:flex-row md:mb-0 sm:mb-0 justify-center">
+                    <div className="h-96 p-0 z-50 md:w-1/2 p-4 md:h-[16rem] sd:h-[6rem]">
                         <MapContainer
                             center={[-17.489, -65.271]}
                             zoom={12}
@@ -139,8 +157,8 @@ export default function Dashboard() {
 
                             </MapContainer>
                     </div>
-                    <div className='md:w-1/2 p-4'>
-                        <h1> Hola datos </h1>
+                    <div className='md:w-1/2 p-4 h-144 flex justify-center items-center 2xl:h-144 xl:h-128 md:h-96 sm:h-80'>
+                        <SunburstFamily data={sunburstData} />
                     </div>
                 </div>
                     <SpecieList species={specieData}  />

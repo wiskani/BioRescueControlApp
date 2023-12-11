@@ -58,7 +58,7 @@ ENDPOINTS FOR GBIF API
 
 # Get species suggestions
 @router.get(
-    path="/species_gbif/suggestions",
+    path="/api/species_gbif/suggestions",
     tags=["GBIF"],
     response_model=List[Dict],
     status_code=status.HTTP_200_OK
@@ -75,7 +75,7 @@ async def get_species_suggestions_endpoint(
 
 # Get species details
 @router.get(
-    path="/species_gbif/details",
+    path="/api/species_gbif/details",
     tags=["GBIF"],
     response_model=Dict,
     status_code=status.HTTP_200_OK
@@ -91,7 +91,7 @@ async def get_species_details_endpoint(
 
 #createa new specie by key of gbif
 @router.post(
-    path="/species_gdif/create",
+    path="/api/species_gdif/create",
     tags=["GBIF"],
     response_model= SpeciesResponse,
     status_code=status.HTTP_201_CREATED
@@ -144,7 +144,7 @@ async def create_specie_by_key(
 
 # create new genus  by key of gbif 
 @router.post(
-    path="/genus_gdif/create",
+    path="/api/genus_gdif/create",
     tags=["GBIF"],
     response_model= GenusesResponse,
     status_code=status.HTTP_201_CREATED
@@ -191,7 +191,7 @@ async def create_genus_by_key(
 
 # create new family  by key of gbif
 @router.post(
-    path="/family_gdif/create",
+    path="/api/family_gdif/create",
     tags=["GBIF"],
     response_model= FamiliesResponse,
     status_code=status.HTTP_201_CREATED

@@ -183,4 +183,52 @@ async def create_status_specie(
     status_specie_id = data["id"]
     return status_specie_id
 
+#Create specie with family
+@pytest.mark.asyncio
+async def create_specieWithFamily(
+    async_client: AsyncClient,
+) -> tuple[str, str, str, int, int, int]:
+
+    #Create a family
+    name_family = random_string()
+
+    response: Response = await async_client.post(
+        "/api/families", json={
+            "family_name": name_family,
+            "key_gbif": random_int(),
+            "order_id": await create_order(async_client),
+        },
+    )
+    data: Dict[str, Any] = response.json()
+    family_id = data["id"]
+
+    #Create a genus
+    name_genus = random_string()
+
+    response: Response = await async_client.post(
+        "/api/genuses", json={
+            "genus_name": name_genus,
+            "key_gbif": random_int(),
+            "family_id": family_id,
+        },
+    )
+    data: Dict[str, Any] = response.json()
+    genus_id = data["id"]
+
+    #Create a specie
+    name_specie = random_string()
+
+    response: Response = await async_client.post(
+        "/api/species", json={
+            "scientific_name": name_specie,
+            "specific_epithet": name_specie,
+            "key_gbif": random_int(),
+            "status_id": await create_status_specie(async_client),
+            "genus_id": genus_id,
+        },
+    )
+    assert response.status_code == 201
+    data: Dict[str, Any] = response.json()
+    specie_id = data["id"]
+    return  name_specie, name_genus, name_family, specie_id, genus_id, family_id
 
