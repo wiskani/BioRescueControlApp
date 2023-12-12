@@ -43,7 +43,7 @@ const SunburstFamily = ({ data}: SunBurstFamilyProps) => (
                 ]
             ]
         }}
-        layers={['arcs', 'arcLabels', , CenteredMetric({dataWithArc: data, centerX: 0, centerY: 0})]}
+        layers={['arcs', 'arcLabels', CenteredMetric]}
     />
 
 )

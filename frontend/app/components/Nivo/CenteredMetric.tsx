@@ -1,8 +1,5 @@
-interface CenteredMetricProps {
-        dataWithArc: SunBurstFamilyData;
-        centerX: number;
-        centerY: number;
-        }
+import { SunburstCustomLayerProps} from "@nivo/sunburst";
+type RawDatum = SunBurstFamilyData;
 function sumLoc(data: SunBurstFamilyData): number {
     // Sumar el valor de loc del nivel actual
     let total = data.loc;
@@ -17,23 +14,39 @@ function sumLoc(data: SunBurstFamilyData): number {
     return total;
 }
 
-const CenteredMetric: React.FC<CenteredMetricProps> = ({ dataWithArc, centerX, centerY }) => {
-        const totalLoc = sumLoc(dataWithArc);
+const CenteredMetric: React.FC<SunburstCustomLayerProps<RawDatum>> = ({ nodes, centerX, centerY }) => {
+        const totalLoc = nodes.reduce((acc, node) => acc + node.value, 0);
 
         return (
+        <>
             <text
                 x={centerX}
                 y={centerY}
                 textAnchor="middle"
                 dominantBaseline="central"
-                fill='white'
+                fill='black'
                 style={{
                     fontSize: '42px',
                     fontWeight: 600,
                 }}
             >
-                {totalLoc}
+                {totalLoc/2}
             </text>
+            <text
+                fill='black'
+                x={centerX}
+                y={centerY+50}
+                textAnchor="middle"
+                dominantBaseline="central"
+                style={{
+                    fontSize: '15px',
+                    fontWeight: 600,
+                }}
+
+            >
+            Especimenes rescatados
+            </text>
+            </>
         )
     }
 
