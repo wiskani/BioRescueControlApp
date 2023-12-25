@@ -117,7 +117,7 @@ async def create_rescue_mammalsWithCod(
 @pytest.mark.asyncio
 async def create_rescue_mammalsWithCodSpecieGenus(
     async_client: AsyncClient,
-) -> tuple[int, str, str|None, str|None]:
+) -> tuple[int, str, str|None, int|None, str|None, int|None]:
     habitat_id = await create_habitat(async_client)
     age_group_id = await create_age_group(async_client)
     specie_id, specie_name = await create_specieWithName(async_client)
@@ -148,7 +148,7 @@ async def create_rescue_mammalsWithCodSpecieGenus(
     )
     data = response.json()
     assert response.status_code == 201
-    return data["id"], cod, specie_name, None
+    return data["id"], cod, specie_name, specie_id, None, None
 
 #generate radom site release
 @pytest.mark.asyncio

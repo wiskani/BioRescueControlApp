@@ -536,9 +536,49 @@ async def get_transect_herpetofauna_with_species_and_count_by_name(db: AsyncSess
     return result
 
 
+#Get transect herpetofauna with rescues and species by specie id
+async def get_transect_herpetofauna_with_rescues_and_species_by_specie_id(db: AsyncSession, id: int) -> List[TransectHerpetoWithSpecies]:
+    transectors = await get_all_transect_herpetofauna(db)
 
+    result= []
 
+    transectors = await get_all_transect_herpetofauna(db)
 
+    result= []
 
-
-
+    for transect in transectors:
+        #get rescue id
+        result_db = await db.execute(
+                select(RescueHerpetofauna)
+                .where(
+                    RescueHerpetofauna.transect_herpetofauna_id == transect.id
+                    ))
+        rescue_list = list(result_db.scalars().all())
+        species = []
+        total_rescue = 0
+        for rescue in rescue_list:
+            specie_id = rescue.specie_id
+            if specie_id == id:
+                specie = await get_specie_by_id(db, specie_id)
+                if specie:
+                    species.append(specie.specific_epithet)
+                else:
+                    raise HTTPException(status_code=404, detail="Specie not found")
+            else:
+                continue
+            total_rescue += 1
+        if total_rescue == 0:
+            continue
+        else:
+            result.append(TransectHerpetoWithSpecies(
+                number = transect.number,
+                date_in = transect.date_in,
+                date_out = transect.date_out,
+                latitude_in = transect.latitude_in,
+                longitude_in = transect.longitude_in,
+                latitude_out = transect.latitude_out,
+                longitude_out = transect.longitude_out,
+                specie_names = species,
+                total_rescue = total_rescue
+            ))
+    return result

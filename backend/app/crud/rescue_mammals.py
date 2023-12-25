@@ -20,6 +20,7 @@ from app.schemas.rescue_mammals import (
 
     #RescueMammalsWithSpecie
     RescueMammalsWithSpecie,
+
 )
 
 from app.models.rescue_mammals import (
@@ -318,7 +319,84 @@ async def get_rescue_mammals_with_specie(db: AsyncSession) -> List[RescueMammals
         ))
     return result
 
+#Get rescue mammal with specie by id
+async def get_rescue_mammal_with_specie_id(db: AsyncSession, id: int) -> RescueMammalsWithSpecie:
+    """
+    Get rescue mammal with specie by id
+    db -> database connection
+    id -> id of rescue mammal
 
+    return -> RescueMammalsWithSpecie
+
+    """
+    rescue = await get_rescue_mammal_id(db, id)
+    if rescue is None:
+        raise HTTPException(status_code=404, detail="Rescue Mammal not found")
+
+    specie_db = await get_specie_by_id(db, rescue.specie_id)
+    specie_name: str|None
+    if specie_db:
+        specie_name = specie_db.specific_epithet
+    else:
+        specie_name = None
+
+    genus_db = await get_genus_by_id(db, rescue.genus_id)
+    genus_name: str|None
+    if genus_db:
+        genus_name = genus_db.genus_name
+    else:
+        genus_name = None
+
+    return RescueMammalsWithSpecie(
+        cod = rescue.cod,
+        date = rescue.date,
+        longitude = rescue.longitude,
+        latitude = rescue.latitude,
+        observation = rescue.observation,
+        specie_name = specie_name,
+        genus_name = genus_name,
+    )
+
+#Get rescue mammal list with specie by specie id
+async def get_rescue_mammal_list_with_specie_by_specie_id(db: AsyncSession, specie_id: int) -> List[RescueMammalsWithSpecie]:
+    """
+    Get rescue mammal list with specie by specie id
+    db -> database connection
+    specie_id -> id of specie
+
+    return -> List[RescueMammalsWithSpecie]
+
+    """
+    rescues = await db.execute(select(RescueMammals).filter(RescueMammals.specie_id == specie_id))
+    rescues_db = rescues.scalars().all()
+
+    result = []
+
+    for rescue in rescues_db:
+        specie_name: str|None
+        genus_name: str|None
+        specie_db = await get_specie_by_id(db, rescue.specie_id)
+        if specie_db:
+            specie_name = specie_db.specific_epithet
+            genus_name= None
+        else:
+            specie_name = None
+            genus_db = await get_genus_by_id(db, rescue.genus_id)
+            if genus_db:
+                genus_name = genus_db.genus_name
+            else:
+                genus_name = None
+
+        result.append(RescueMammalsWithSpecie(
+            cod = rescue.cod,
+            date = rescue.date,
+            longitude = rescue.longitude,
+            latitude = rescue.latitude,
+            observation = rescue.observation,
+            specie_name = specie_name,
+            genus_name = genus_name,
+        ))
+    return result
 
 
 

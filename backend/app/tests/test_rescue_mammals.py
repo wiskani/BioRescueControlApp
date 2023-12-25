@@ -8,6 +8,12 @@ from app.tests.utils.rescue_mammals import *
 from app.tests.utils.rescue_herpetofauna import *
 from app.tests.conftest import async_client
 
+from app.crud.rescue_mammals import (
+        get_rescue_mammal_with_specie_id,
+        get_rescue_mammal_list_with_specie_by_specie_id
+        )
+
+
 """
 TEST CRUD HABITAT
 """
@@ -1065,12 +1071,65 @@ async def test_get_rescue_mammals_with_specie_and_genus(
             )
 
     data = response.json()
-    print(f"La respuesta es: {data}")
     assert response.status_code == 200
     assert len(data) == 1
     assert data[0]["cod"] == cod
     assert data[0]["specie_name"] == specie
     assert data[0]["genus_name"] == genus
+
+#test for get rescue mammal with specie by id
+@pytest.mark.asyncio
+async def test_get_rescue_mammals_with_specie_and_genus_by_id(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+
+    (
+            rescue_mammals_id, cod,
+            specie,specie_id,
+            genus, genus_id
+    ) = await create_rescue_mammalsWithCodSpecieGenus(async_client)
+    if not rescue_mammals_id:
+        raise Exception("Rescue Mammals not created")
+    get_rescue_mammal_with_specie_id = await get_rescue_mammal_with_specie_id(
+            async_session,
+            rescue_mammals_id
+            )
+
+    assert get_rescue_mammal_with_specie_id["cod"] == cod
+    assert get_rescue_mammal_with_specie_id["specie_name"] == specie
+    assert get_rescue_mammal_with_specie_id["genus_name"] == genus
+
+
+#test for rescie mammals list witn specie by specie id 
+@pytest.mark.asyncio
+async def test_get_rescue_mammals_with_specie_and_genus_by_specie_id(
+        async_client: AsyncClient,
+        async_session: AsyncSession,
+) -> None:
+
+    (
+            rescue_mammals_id, cod,
+            specie,specie_id,
+            genus, genus_id
+    ) = await create_rescue_mammalsWithCodSpecieGenus(async_client)
+
+    if not specie_id:
+        raise Exception("specie_id not found") 
+
+    result = await get_rescue_mammal_list_with_specie_by_specie_id(async_session, specie_id)
+
+    print(f'el resultado es {result}')
+
+    for item in result:
+        assert item.cod == cod
+        assert item.specie_name == specie
+        assert item.genus_name == genus
+    
+
+
+
+
 
 
 

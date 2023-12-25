@@ -24,10 +24,15 @@ from app.schemas.species import(
     #jois
     SpeciesJoin,
 )
+from app.schemas.rescue_flora import  FloraRescueSpecies
+from app.schemas.rescue_mammals import RescueMammalsWithSpecie
+from app.schemas.rescue_herpetofauna import TransectHerpetoWithSpecies
 from app.models.species import Specie, Genus, Family, Order, Class_, Status
 from app.crud.species import (
     # Species
+    get_class_id_and_name_by_specie_id,
     get_specie_by_name,
+    get_specie_by_name_epithet,
     get_specie_by_id,
     create_specie,
     get_all_species,
@@ -77,6 +82,15 @@ from app.crud.species import (
     update_status,
     delete_status,
 )
+from app.crud.rescue_flora import (
+        get_rescue_flora_with_specie_by_specie_id,
+        )
+from app.crud.rescue_mammals import (
+        get_rescue_mammal_list_with_specie_by_specie_id,
+        )
+from app.crud.rescue_herpetofauna import (
+        get_transect_herpetofauna_with_rescues_and_species_by_specie_id,
+        )
 from app.api.deps import PermissonsChecker, get_db
 
 router: APIRouter = APIRouter()
@@ -691,6 +705,51 @@ async def delete_a_status(
             detail="Status not found",
         )
     return await delete_status(db, status_id)
+
+
+#Get rescues by specie name
+@router.get(
+    path="/api/specie/rescues/{specie_name}",
+    response_model=List[FloraRescueSpecies]| List[RescueMammalsWithSpecie]| List[TransectHerpetoWithSpecies],
+    status_code=status.HTTP_200_OK,
+    tags=["Species"],
+    summary="Get all rescues by specie name",
+)
+async def get_all_rescues_by_specie_name(
+    specie_name: str,
+    db: AsyncSession = Depends(get_db),
+    autorized: bool = Depends(PermissonsChecker(["admin"]))
+) -> List[FloraRescueSpecies] | List[RescueMammalsWithSpecie] | List[TransectHerpetoWithSpecies] | HTTPException:
+    #get id specie
+    db_specie = await get_specie_by_name_epithet(db, specie_name)
+    if not db_specie:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Specie not found",
+        )
+    specie_id = db_specie.id
+
+    #get class_ by specie id 
+    db_class = await get_class_id_and_name_by_specie_id(db, specie_id)
+
+    if not db_class:
+        return db_class
+
+    if db_class.class_name == "Mammalia":
+        return await get_rescue_mammal_list_with_specie_by_specie_id(db, specie_id)
+
+    if db_class.class_name == "Liliopsida" or db_class.class_name == "Polypodiopsida ":
+        return await get_rescue_flora_with_specie_by_specie_id(db, specie_id)
+
+    if db_class.class_name == "Amphibia" or db_class.class_name == "Reptilia":
+        return await get_transect_herpetofauna_with_rescues_and_species_by_specie_id(db, specie_id)
+    
+
+
+
+
+
+
 
 
 

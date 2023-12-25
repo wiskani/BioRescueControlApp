@@ -9,6 +9,10 @@ from app.tests.utils.towers_example import *
 from app.tests.utils.rescue_herpetofauna import *
 from app.tests.conftest import async_client
 
+from app.crud.rescue_herpetofauna import (
+    get_transect_herpetofauna_with_rescues_and_species_by_specie_id
+        )
+
 """
 TEST CRUD FOR AGE GROUP
 """
@@ -1546,5 +1550,66 @@ async def test_get_transect_herpetofauna_with_species_and_count_rescues(
     assert response.status_code == 200
     assert data_1["number"] == number 
     assert data_2["total_rescue"] == 1 
+
+#Test for get transect herpetofauna with species and count rescues by specie id
+@pytest.mark.asyncio
+async def test_get_transect_herpetofauna_with_species_and_count_rescues_by_specie_id(
+        async_client: AsyncClient,
+        async_session: AsyncSession,
+) -> None:
+    #Create a transect herpetofauna with number
+    transect_herpetofauna_id, number = await create_transect_herpetofaunaWithNumber(async_client)
+
+    #Create a specie with name
+    specie, name = await create_specieWithName(async_client)
+
+    #Create a rescue herpetofauna 1
+    (
+            id_rescue1,
+            number_transect1,
+            date_in1,
+            date_out1,
+            latitude_in1,
+            longitude_in1,
+            altitude_in1,
+            latitude_out1,
+            longitude_out1,
+            specie_id1,
+            specie_name1
+            ) = await create_rescue_herpetofaunaWithExtraData(async_client)
+
+    #Create a rescue herpetofauna 2
+    (
+            id_rescue2,
+            number_transect2,
+            date_in2,
+            date_out2,
+            latitude_in2,
+            longitude_in2,
+            altitude_in2,
+            latitude_out2,
+            longitude_out2,
+            specie_id2,
+            specie_name2
+            ) = await create_rescue_herpetofaunaWithExtraData(async_client)
+
+    result = await get_transect_herpetofauna_with_rescues_and_species_by_specie_id(
+            async_session,
+            specie_id1
+            )
+
+    assert len(result) == 1
+    for item in result:
+        assert item.number == number_transect1
+        assert item.latitude_in == latitude_in1
+        assert item.longitude_in == longitude_in1
+        assert item.latitude_out == latitude_out1
+        assert item.longitude_out == longitude_out1
+        assert item.specie_names == [specie_name1]
+        assert item.total_rescue == 1
+
+
+
+
 
 

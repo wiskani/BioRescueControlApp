@@ -139,3 +139,4 @@ class TransectHerpetoWithSpecies(BaseModel):
     total_rescue: int
     class Config:
         orm_mode: bool = True
+

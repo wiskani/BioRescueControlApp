@@ -199,5 +199,3 @@ class FloraRescueSpecies(BaseModel):
     class Config:
         from_attributes = True
 
-
-

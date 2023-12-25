@@ -7,7 +7,9 @@ from app.tests.utils.users import *
 from app.tests.utils.flora_rescue_example import *
 from app.tests.utils.species_example import *
 
-
+from app.crud.rescue_flora import (
+    get_rescue_flora_with_specie_by_specie_id,
+)
 
 #fuctions to create a longitude and latitude
 def create_longitude() -> float:
@@ -1456,6 +1458,34 @@ async def test_get_all_rescue_flora_with_species(
     assert data[0]["specie_name"] == specie
     assert data[0]["genus_name"] == None 
     assert data[0]["family_name"] == None
+
+"""
+TEST FOR SOME FUCTIONS
+"""
+
+# test for get rescue flora with species by specie id
+@pytest.mark.asyncio
+async def test_get_rescue_flora_with_species_by_specie_id(
+    async_client: AsyncClient,
+    async_session: AsyncSession,
+) -> None:
+    (
+        rescue_id, epiphyte_number,
+        specie_id, specie,
+        genus_id, genus,
+        family_id, family
+    )= await create_random_flora_rescue_WithSpecieGenusFamily(async_client)
+
+    rescue_db = await get_rescue_flora_with_specie_by_specie_id(async_session, specie_id)
+    for rescue in rescue_db:
+        assert rescue.epiphyte_number == epiphyte_number
+        assert rescue.specie_name == specie
+        assert rescue.genus_name == genus
+        assert rescue.family_name == family
+
+
+
+
 
 
 

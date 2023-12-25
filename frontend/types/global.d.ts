@@ -74,6 +74,7 @@ declare global {
                 specie_id: number;
         }
         interface SpecieItemData{
+                id: number;
                 scientific_name: string;
                 specie_name: string;
                 genus_full_name: string;

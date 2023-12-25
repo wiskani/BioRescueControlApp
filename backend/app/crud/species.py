@@ -32,6 +32,11 @@ async def get_specie_by_name(db: AsyncSession, scientific_name: str) -> Specie |
     specie_db= await db.execute(select(Specie).where(Specie.scientific_name == scientific_name))
     return specie_db.scalars().first()
 
+#Get if specie exists
+async def get_specie_by_name_epithet(db: AsyncSession, name: str) -> Specie | None:
+    specie_db= await db.execute(select(Specie).where(Specie.specific_epithet == name))
+    return specie_db.scalars().first()
+
 #Create a specie
 async def create_specie(db: AsyncSession, specie: SpeciesCreate) -> Specie:
     db_specie = Specie(
@@ -349,6 +354,7 @@ async def get_all_species_join_(db: AsyncSession) -> List[SpeciesJoin]:
             pass
         else:
             result.append({
+                "id": specie.id,
                 "scientific_name": specie.scientific_name,
                 "specie_name": specie.specific_epithet,
                 "genus_full_name": genus.genus_name if genus else None,
@@ -447,6 +453,24 @@ async def count_mammal_rescue_by_family(db: AsyncSession, family_id:int) -> int 
 
     return total 
 
+#Get class_ id and class_ name by specie id
+async def get_class_id_and_name_by_specie_id(db: AsyncSession, specie_id: int) -> Class_ | HTTPException:
+    specie = await get_specie_by_id(db, specie_id) 
+    if not specie:
+        return HTTPException(status_code=404, detail="Specie not found")
+    genus = await get_genus_by_id(db, specie.genus_id)
+    if not genus:
+        return HTTPException(status_code=404, detail="Genus not found")
+    family = await get_family_by_id(db, genus.family_id)
+    if not family:
+        return HTTPException(status_code=404, detail="Family not found")
+    order = await get_order_by_id(db, family.order_id)
+    if not order:
+        return HTTPException(status_code=404, detail="Order not found")
+    class_ = await get_class_by_id(db, order.class__id)
+    if not class_:
+        return HTTPException(status_code=404, detail="Class not found")
+    return class_
 
 
 

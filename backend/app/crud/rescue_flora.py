@@ -415,6 +415,46 @@ async def get_rescue_flora_with_specie(db: AsyncSession) -> List[FloraRescueSpec
 
     return result
 
+#Get rescue flora with specie, genus and family name by specie id
+async def get_rescue_flora_with_specie_by_specie_id(db: AsyncSession, specie_id: int) -> List[FloraRescueSpecies]:
+    rescues = await db.execute(select(FloraRescue).filter(FloraRescue.specie_epiphyte_id == specie_id))
+    rescues_db = rescues.scalars().all()
+
+    result= []
+
+    for rescue in rescues_db:
+        specie_db = await get_specie_by_id(db, rescue.specie_epiphyte_id)
+        if specie_db:
+            specie = specie_db.specific_epithet
+        else:
+            specie = None
+
+        genus_db = await get_genus_by_id(db, rescue.genus_epiphyte_id)
+        if genus_db:
+            genus = genus_db.genus_name
+        else:
+            genus = None
+
+        family_db = await get_family_by_id(db, rescue.family_epiphyte_id)
+        if family_db:
+            family = family_db.family_name
+        else:
+            family = None
+
+        result.append(FloraRescueSpecies(
+            epiphyte_number = rescue.epiphyte_number,
+            rescue_date = rescue.rescue_date,
+            rescue_area_latitude = rescue.rescue_area_latitude,
+            rescue_area_longitude = rescue.rescue_area_longitude,
+            specie_name = specie,
+            genus_name = genus,
+            family_name = family,
+            ))
+
+    return result
+
+
+
 
 
 
