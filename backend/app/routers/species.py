@@ -327,7 +327,7 @@ async def create_a_new_family(
 async def get_all_families_(
     db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
-) -> List[Families]:
+) -> List[Family]:
     return await get_all_families(db)
 
 #Get family by id
@@ -709,26 +709,17 @@ async def delete_a_status(
 
 #Get rescues by specie name
 @router.get(
-    path="/api/specie/rescues/{specie_name}",
+    path="/api/specie/rescues/{specie_id}",
     response_model=List[FloraRescueSpecies]| List[RescueMammalsWithSpecie]| List[TransectHerpetoWithSpecies],
     status_code=status.HTTP_200_OK,
     tags=["Species"],
     summary="Get all rescues by specie name",
 )
 async def get_all_rescues_by_specie_name(
-    specie_name: str,
+    specie_id: int,
     db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> List[FloraRescueSpecies] | List[RescueMammalsWithSpecie] | List[TransectHerpetoWithSpecies] | HTTPException:
-    #get id specie
-    db_specie = await get_specie_by_name_epithet(db, specie_name)
-    if not db_specie:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Specie not found",
-        )
-    specie_id = db_specie.id
-
     #get class_ by specie id 
     db_class = await get_class_id_and_name_by_specie_id(db, specie_id)
 

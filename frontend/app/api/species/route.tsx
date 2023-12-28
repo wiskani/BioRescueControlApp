@@ -1,3 +1,12 @@
+interface TokenWithSpecieName extends Token {
+        specie_id: number;
+}
+
+type RescuesSpecieData =
+        | FloraRescueSpeciesData
+        | TransectHerpetoWithSpeciesData
+        | RescueMammalsWithSpecieData 
+
 export const SpeciesItem = async (props:Token): Promise<SpecieItemData[]> => {
   const requestOptions = {
     method: 'GET',
@@ -14,9 +23,8 @@ export const SpeciesItem = async (props:Token): Promise<SpecieItemData[]> => {
   return data;
 }
 
-type RescuesSpecieData = FloraRescueSpeciesData | TransectHerpetoWithSpeciesData | RescueMammalsWithSpecieData 
 
-export const RescuesSpecie = async (props:Token): Promise<RescuesSpecieData[]> => { 
+export const RescuesSpecie = async (props:TokenWithSpecieName): Promise<RescuesSpecieData[]> => { 
   const requestOptions = {
     method: 'GET',
     headers: {
@@ -25,7 +33,7 @@ export const RescuesSpecie = async (props:Token): Promise<RescuesSpecieData[]> =
     },
   };
   const response = await fetch(
-    'http://localhost:8080/api/join/rescues/species',
+    `http://localhost:8080/api/specie/rescues/${props.specie_id}`,
     requestOptions
   );
   const data = await response.json();
