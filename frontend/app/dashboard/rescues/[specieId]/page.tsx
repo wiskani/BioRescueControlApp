@@ -37,7 +37,7 @@ export default function Page({ params} : { params: { specie_id: number } }) {
 
     const rescuesData = useCallback(async (): Promise<RescuesSpecieData[]> => {
             if (user) {
-                const data = await RescuesSpecie({ token: user.token, specie_id: params.specie_id });
+                const data = await RescuesSpecie({ token: user?.token, specie_id: params.specie_id });
                 return data;
             }
             else {
@@ -61,7 +61,7 @@ export default function Page({ params} : { params: { specie_id: number } }) {
             return rescues.map((rescue, index) => {
                     if (isFloraRescueSpeciesData(rescue)) {
                         return (
-                            <div>
+                            <div key={index}>
                                 <p>{rescue.epiphyte_number}</p>
                                 <p>{rescue.rescue_date.toString()}</p>
                                 <p>{rescue.rescue_area_latitude}</p>
@@ -69,9 +69,9 @@ export default function Page({ params} : { params: { specie_id: number } }) {
                             </div>
                         )
                     }
-                    if (isTransectHerpetoWithSpeciesData(rescue)) {
+                    else if (isTransectHerpetoWithSpeciesData(rescue)) {
                         return (
-                            <div>
+                            <div key={index}>
                                 <p>{rescue.number}</p>
                                 <p>{rescue.date_in.toString()}</p>
                                 <p>{rescue.latitude_in}</p>
@@ -81,10 +81,14 @@ export default function Page({ params} : { params: { specie_id: number } }) {
                         )
                     }
             })
+        }
 
         return (
             <div>
-                <h1>Los Datos son:</h1>
+            {user 
+            ? renderRescuesData()
+            : <p>loading...</p>
+            }
             </div>
         )
         }
