@@ -14,6 +14,19 @@ type RescuesSpecieData =
         | FloraRescueSpeciesData
         | TransectHerpetoWithSpeciesData
         | RescueMammalsWithSpecieData 
+
+//predicados fuctions
+function isFloraRescueSpeciesData(data: RescuesSpecieData): data is FloraRescueSpeciesData {
+    return  data && "epiphyte_number" in data;
+}
+
+function isTransectHerpetoWithSpeciesData(data: RescuesSpecieData): data is TransectHerpetoWithSpeciesData {
+    return  data && "number" in data;
+}
+
+function isRescueMammalsWithSpecieData(data: RescuesSpecieData): data is RescueMammalsWithSpecieData {
+    return  data && "cod" in data;
+}
         
 export default function Page({ params} : { params: { specie_id: number } }) {
     const { data: session } = useSession();
@@ -44,11 +57,34 @@ export default function Page({ params} : { params: { specie_id: number } }) {
                         }, [session, rescuesData]);
 
 
+    const renderRescuesData = () => {
+            return rescues.map((rescue, index) => {
+                    if (isFloraRescueSpeciesData(rescue)) {
+                        return (
+                            <div>
+                                <p>{rescue.epiphyte_number}</p>
+                                <p>{rescue.rescue_date.toString()}</p>
+                                <p>{rescue.rescue_area_latitude}</p>
+                                <p>{rescue.rescue_area_longitude}</p>
+                            </div>
+                        )
+                    }
+                    if (isTransectHerpetoWithSpeciesData(rescue)) {
+                        return (
+                            <div>
+                                <p>{rescue.number}</p>
+                                <p>{rescue.date_in.toString()}</p>
+                                <p>{rescue.latitude_in}</p>
+                                <p>{rescue.longitude_in}</p>
+
+                            </div>
+                        )
+                    }
+            })
 
         return (
             <div>
                 <h1>Los Datos son:</h1>
-
             </div>
         )
         }
