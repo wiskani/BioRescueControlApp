@@ -24,7 +24,7 @@ export const SpeciesItem = async (props:Token): Promise<SpecieItemData[]> => {
 }
 
 
-export const RescuesSpecie = async (props:TokenWithSpecieName): Promise<RescuesSpecieData[]> => { 
+export const ApiRescuesSpecie = async (props:TokenWithSpecieName): Promise<RescuesSpecieData[]> => { 
   const requestOptions = {
     method: 'GET',
     headers: {

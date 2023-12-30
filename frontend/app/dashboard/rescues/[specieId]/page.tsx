@@ -8,7 +8,7 @@ import { redirect } from 'next/navigation';
 import React,{useEffect, useState, useCallback}  from 'react';
 
 //Api imports
-import { RescuesSpecie } from "@/app/api/species/route"
+import { ApiRescuesSpecie } from "@/app/api/species/route"
 
 type RescuesSpecieData =
         | FloraRescueSpeciesData
@@ -28,36 +28,41 @@ function isRescueMammalsWithSpecieData(data: RescuesSpecieData): data is RescueM
     return  data && "cod" in data;
 }
         
-export default function Page({ params} : { params: { specie_id: number } }) {
+export default function Page({ params} : { params: { specieId: number } }) {
     const { data: session } = useSession();
-
     const user = session?.user;
     const [rescues, setRescues] = useState<RescuesSpecieData[]>([]);
+    const [error, SetError]= useState<string | null>(null);
 
 
     const rescuesData = useCallback(async (): Promise<RescuesSpecieData[]> => {
             if (user) {
-                const data = await RescuesSpecie({ token: user?.token, specie_id: params.specie_id });
-                return data;
+                    try {
+                        const data = await ApiRescuesSpecie({ token: user?.token, specie_id: params.specieId });
+                        return data;
+                    } catch (error) {
+                        SetError(error.message);
+                        return [];
+                    }
             }
             else {
                 return [];
                 }
-                }, [user, params.specie_id]);
+                }, [user, params.specieId]);
 
     useEffect(() => {
-            if(!session?.user){
-                redirect("/")
-                }
-                else{
                         rescuesData().then((data) => {
                                 setRescues(data);
                                 });
-                        }
                         }, [session, rescuesData]);
 
 
     const renderRescuesData = () => {
+            if (rescues.length === 0) {
+                return <p>no data</p>
+            }
+            else {
+
             return rescues.map((rescue, index) => {
                     if (isFloraRescueSpeciesData(rescue)) {
                         return (
@@ -80,8 +85,22 @@ export default function Page({ params} : { params: { specie_id: number } }) {
                             </div>
                         )
                     }
+
+                    else if (isRescueMammalsWithSpecieData(rescue)) {
+                        return (
+                        <div key={index}>
+                                <p>{rescue.cod}</p>
+                                <p>{rescue.date.toString()}</p>
+                                <p>{rescue.latitude}</p>
+                                <p>{rescue.longitude}</p>
+                        </div>
+                        )
+                        }
+
             })
+
         }
+    }
 
         return (
             <div>

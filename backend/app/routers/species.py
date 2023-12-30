@@ -720,6 +720,14 @@ async def get_all_rescues_by_specie_name(
     db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
 ) -> List[FloraRescueSpecies] | List[RescueMammalsWithSpecie] | List[TransectHerpetoWithSpecies] | HTTPException:
+    #Check if specie exists
+    db_specie = await get_specie_by_id(db, specie_id)
+    if not db_specie:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Specie not found",
+        )
+
     #get class_ by specie id 
     db_class = await get_class_id_and_name_by_specie_id(db, specie_id)
 
