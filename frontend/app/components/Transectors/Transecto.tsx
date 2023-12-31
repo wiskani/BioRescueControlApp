@@ -29,7 +29,7 @@ const TransectHerpetofaunaMap: React.FC<TransectHerpetofaunaMapProps> = ({data})
                                                 <p>Especies rescatadas: </p>
                                                 <>
                                                 {transect.specie_names.map((specie, index) => (
-                                                        <li>{index+1} {specie}</li>        
+                                                        <li key={index}>{index+1} {specie}</li>        
                                                 ))}
                                                 </>
                                         </div>

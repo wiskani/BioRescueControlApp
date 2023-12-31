@@ -32,7 +32,7 @@ export default function Page({ params} : { params: { specieId: number } }) {
     const { data: session } = useSession();
     const user = session?.user;
     const [rescues, setRescues] = useState<RescuesSpecieData[]>([]);
-    const [error, SetError]= useState<string | null>(null);
+    const [errorMessage, SetErrorMessage]= useState<string>();
 
 
     const rescuesData = useCallback(async (): Promise<RescuesSpecieData[]> => {
@@ -41,7 +41,11 @@ export default function Page({ params} : { params: { specieId: number } }) {
                         const data = await ApiRescuesSpecie({ token: user?.token, specie_id: params.specieId });
                         return data;
                     } catch (error) {
-                        SetError(error.message);
+                            if (error instanceof Error) {
+                                SetErrorMessage(error.message);
+                                console.error('Error:', error.message);
+                                return [];
+                            }
                         return [];
                     }
             }
@@ -58,10 +62,7 @@ export default function Page({ params} : { params: { specieId: number } }) {
 
 
     const renderRescuesData = () => {
-            if (rescues.length === 0) {
-                return <p>no data</p>
-            }
-            else {
+            if (rescues.length > 0) {
 
             return rescues.map((rescue, index) => {
                     if (isFloraRescueSpeciesData(rescue)) {
@@ -100,13 +101,22 @@ export default function Page({ params} : { params: { specieId: number } }) {
             })
 
         }
+        else {
+                return (
+                <div>
+
+                        <p>{errorMessage}</p>
+                </div>
+                )
+        }
+
     }
 
         return (
             <div>
             {user 
             ? renderRescuesData()
-            : <p>loading...</p>
+            : <p>inicia sesión</p>
             }
             </div>
         )
