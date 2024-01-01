@@ -7,9 +7,16 @@ import { redirect } from 'next/navigation';
 //React imports
 import React,{useEffect, useState, useCallback}  from 'react';
 
+//Table imports
+import { createColumnHelper } from '@tanstack/react-table';
+
 //Api imports
 import { ApiRescuesSpecie } from "@/app/api/species/route"
 
+//Componest imports
+import { TableSimple } from '@/app/components/Table/TableSimple';
+
+//types
 type RescuesSpecieData =
         | FloraRescueSpeciesData
         | TransectHerpetoWithSpeciesData
@@ -34,7 +41,7 @@ export default function Page({ params} : { params: { specieId: number } }) {
     const [rescues, setRescues] = useState<RescuesSpecieData[]>([]);
     const [errorMessage, SetErrorMessage]= useState<string>();
 
-
+    //Obtain data from api
     const rescuesData = useCallback(async (): Promise<RescuesSpecieData[]> => {
             if (user) {
                     try {
@@ -59,6 +66,7 @@ export default function Page({ params} : { params: { specieId: number } }) {
                                 setRescues(data);
                                 });
                         }, [session, rescuesData]);
+
 
 
     const renderRescuesData = () => {
@@ -111,11 +119,43 @@ export default function Page({ params} : { params: { specieId: number } }) {
         }
 
     }
+    //make columns
+    const columnHelper = createColumnHelper<RescuesSpecieData>();
+
+    const columnsFlora = [
+        columnHelper.accessor('epiphyte_number', {
+                        header: 'Número de epífito',
+                        footer: info => info.column.id,
+                }),
+        columnHelper.accessor('rescue_date', {
+                        header: 'Fecha de rescate',
+                        footer: info => info.column.id,
+                }),
+        columnHelper.accessor('specie_name', {
+                        header: 'Especie',
+                        footer: info => info.column.id,
+                }),
+        columnHelper.accessor('genus_name', {
+                        header: 'Género',
+                        footer: info => info.column.id,
+                }),
+        columnHelper.accessor('family_name', {
+                        header: 'Familia',
+                        footer: info => info.column.id,
+                }),
+    ]
+
 
         return (
             <div>
             {user 
-            ? renderRescuesData()
+            ? <TableSimple<RescuesSpecieData>
+             
+             columns={columnsFlora}
+             data={rescues}
+                
+
+            /> 
             : <p>inicia sesión</p>
             }
             </div>

@@ -1,10 +1,16 @@
 import {
         useReactTable,
         flexRender,
-        getCoreRowModel
+        getCoreRowModel,
+        ColumnDef,
         } from "@tanstack/react-table";
 
-const TableSimple = ({data, columns}) => {
+interface TableProps<T> {
+        data: T[];
+        columns: ColumnDef<T>[];
+}
+
+export function  TableSimple <T>({ data, columns }: TableProps<T>) { 
 
         const table = useReactTable({
                 columns,
@@ -13,6 +19,7 @@ const TableSimple = ({data, columns}) => {
         });
 
         return (
+        <>
         <div>
                 <table>
                       <thead>
@@ -60,7 +67,7 @@ const TableSimple = ({data, columns}) => {
                       </tfoot>
                 </table>
         </div>
+        </>
         )
 }
 
-export default TableSimple
