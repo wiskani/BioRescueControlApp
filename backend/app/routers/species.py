@@ -742,6 +742,11 @@ async def get_all_rescues_by_specie_name(
 
     if db_class.class_name == "Amphibia" or db_class.class_name == "Reptilia":
         return await get_transect_herpetofauna_with_rescues_and_species_by_specie_id(db, specie_id)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="This specie does not have rescues"
+        )
     
 
 

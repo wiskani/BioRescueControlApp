@@ -1,7 +1,8 @@
 "use client"
+
 //Next imports
 import { useSession  } from 'next-auth/react'
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 
 //React imports
@@ -40,6 +41,7 @@ export default function Page({ params} : { params: { specieId: number } }) {
     const user = session?.user;
     const [rescues, setRescues] = useState<RescuesSpecieData[]>([]);
     const [errorMessage, SetErrorMessage]= useState<string>();
+    const router = useRouter();
 
     //Obtain data from api
     const rescuesData = useCallback(async (): Promise<RescuesSpecieData[]> => {
@@ -69,44 +71,32 @@ export default function Page({ params} : { params: { specieId: number } }) {
 
 
 
-    const renderRescuesData = () => {
+    const renderTable = () => {
             if (rescues.length > 0) {
-
-            return rescues.map((rescue, index) => {
-                    if (isFloraRescueSpeciesData(rescue)) {
-                        return (
-                            <div key={index}>
-                                <p>{rescue.epiphyte_number}</p>
-                                <p>{rescue.rescue_date.toString()}</p>
-                                <p>{rescue.rescue_area_latitude}</p>
-                                <p>{rescue.rescue_area_longitude}</p>
-                            </div>
-                        )
-                    }
-                    else if (isTransectHerpetoWithSpeciesData(rescue)) {
-                        return (
-                            <div key={index}>
-                                <p>{rescue.number}</p>
-                                <p>{rescue.date_in.toString()}</p>
-                                <p>{rescue.latitude_in}</p>
-                                <p>{rescue.longitude_in}</p>
-
-                            </div>
-                        )
-                    }
-
-                    else if (isRescueMammalsWithSpecieData(rescue)) {
-                        return (
-                        <div key={index}>
-                                <p>{rescue.cod}</p>
-                                <p>{rescue.date.toString()}</p>
-                                <p>{rescue.latitude}</p>
-                                <p>{rescue.longitude}</p>
-                        </div>
-                        )
+                    if (isFloraRescueSpeciesData(rescues[0])) {
+                            return(
+                                <TableSimple<RescuesSpecieData>
+                                        columns={columnsFlora}
+                                        data={rescues}
+                                /> 
+                                )
                         }
-
-            })
+                        else if (isTransectHerpetoWithSpeciesData(rescues[0])) {
+                                return(
+                                <TableSimple<RescuesSpecieData>
+                                        columns={columnsHerpeto}
+                                        data={rescues}
+                                /> 
+                                )
+                        }
+                        else if (isRescueMammalsWithSpecieData(rescues[0])) {
+                                return(
+                                <TableSimple<RescuesSpecieData>
+                                        columns={columnsMammals}
+                                        data={rescues}
+                                /> 
+                                )
+                        }
 
         }
         else {
@@ -144,21 +134,69 @@ export default function Page({ params} : { params: { specieId: number } }) {
                         footer: info => info.column.id,
                 }),
     ]
+    const columnsHerpeto = [
+        columnHelper.accessor('number', {
+                        header: 'Número de Transecto ',
+                        footer: info => info.column.id,
+                }),
+        columnHelper.accessor('date_in', {
+                        header: 'Fecha de entrada',
+                        footer: info => info.column.id,
+                }),
+        columnHelper.accessor('date_out', {
+                        header: 'fecha de salida',
+                        footer: info => info.column.id,
+                }),
+        columnHelper.accessor('specie_names', {
+                        header: 'especies',
+                        footer: info => info.column.id,
+                }),
+        columnHelper.accessor('total_rescue', {
+                        header: 'Cantidad de rescates',
+                        footer: info => info.column.id,
+                }),
+    ]
+    const columnsMammals = [
+        columnHelper.accessor('cod', {
+                header: 'Código',
+                footer: info => info.column.id,
+        }),
+        columnHelper.accessor('date', {
+                header: 'Fecha',
+                footer: info => info.column.id,
+        }),
+        columnHelper.accessor('specie_name', {
+                header: 'Especie',
+                footer: info => info.column.id,
+        }),
+        columnHelper.accessor('observation', {
+                header: 'Observación',
+                footer: info => info.column.id,
+        }),
+        ]
+
 
 
         return (
+        <>
+        <div>
             <div>
             {user 
-            ? <TableSimple<RescuesSpecieData>
+            ? renderTable()
              
-             columns={columnsFlora}
-             data={rescues}
-                
-
-            /> 
             : <p>inicia sesión</p>
             }
             </div>
+            <button 
+                type="button"
+                onClick={() => router.back()}
+                className="bg-emerald-900  hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded"
+            >
+                Volver
+            </button>
+        </div>
+            
+        </>
         )
         }
 
