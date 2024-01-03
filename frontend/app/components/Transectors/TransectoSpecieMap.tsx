@@ -4,7 +4,7 @@ interface TransectHerpetofaunaMapProps {
         data: TransectHerpetoWithSpecies[];
 }
 
-const TransectHerpetofaunaMap: React.FC<TransectHerpetofaunaMapProps> = ({data}) => {
+const TransectHerpetofaunaSpecieMap: React.FC<TransectHerpetofaunaMapProps> = ({data}) => {
         const lineOptions = {
                 color: 'green',
                 weight: 2,
@@ -40,5 +40,5 @@ const TransectHerpetofaunaMap: React.FC<TransectHerpetofaunaMapProps> = ({data})
                 )
 }
 
-export default TransectHerpetofaunaMap;
+export default TransectHerpetofaunaSpecieMap;
 

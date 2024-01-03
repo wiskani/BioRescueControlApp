@@ -18,16 +18,15 @@ import { ApiSunburstByFamily } from '../api/nivo/route';
 
 //Leaflet imports
 import { MapContainer, TileLayer,Circle, Polyline, Tooltip } from 'react-leaflet'
-import {LatLngExpression} from "leaflet";
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
 import "leaflet-defaulticon-compatibility"
 
 //Components imports
 import SpecieList from '../components/Species/SpecieList';
-import FloraRescueSpecieMap from '../components/RescueFlora/rescueFloraSpecie'; 
-import TransectHerpetofaunaMap from '../components/Transectors/Transecto';
-import RescueMammalsSpecieMap from '../components/RescueMammals/RescueMammalsSpecie';
+import FloraRescueSpecieMap from '../components/RescueFlora/rescueFloraSpecieMap'; 
+import TransectHerpetofaunaSpecieMap from '../components/Transectors/TransectoSpecieMap';
+import RescueMammalsSpecieMap from '../components/RescueMammals/RescueMammalsSpecieMap';
 import { LineProyect } from '../components/Map/lineProyect';
 import Legend from '../components/Map/Legend';
 import SunburstFamily from '../components/Nivo/SunBurstFamily';
@@ -144,7 +143,7 @@ export default function Dashboard() {
                                 attribution='Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>'
                                 />
                                 <RescueMammalsSpecieMap data={rescueMammalsData}/>
-                                <TransectHerpetofaunaMap data={transectData}/>
+                                <TransectHerpetofaunaSpecieMap data={transectData}/>
                                 <Polyline pathOptions={lineOptions} positions={LineProyect} >
                                         <Tooltip>
                                                 <div>
@@ -154,10 +153,8 @@ export default function Dashboard() {
                                         </Tooltip>
                                 </Polyline>
                                 <FloraRescueSpecieMap data={rescueFloraData}/>
-
                             <Legend colors={legedColors} labels={legendLabels} />
-
-                            </MapContainer>
+                        </MapContainer>
                     </div>
                     <div className='md:w-1/2 p-4 h-144 flex justify-center items-center 2xl:h-144 xl:h-128 md:h-96 sm:h-80'>
                         <SunburstFamily data={sunburstData} />

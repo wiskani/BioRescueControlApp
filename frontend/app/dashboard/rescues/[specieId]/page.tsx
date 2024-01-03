@@ -14,8 +14,16 @@ import { createColumnHelper } from '@tanstack/react-table';
 //Api imports
 import { ApiRescuesSpecie } from "@/app/api/species/route"
 
+//Leaflet imports
+import { MapContainer, TileLayer,Circle, Polyline, Tooltip } from 'react-leaflet'
+
 //Componest imports
 import { TableSimple } from '@/app/components/Table/TableSimple';
+import { LineProyect } from '@/app/components/Map/lineProyect';
+import Legend from '@/app/components/Map/Legend';
+import FloraRescueSpecieMap from '@/app/components/RescueFlora/rescueFloraSpecieMap'; 
+import TransectHerpetofaunaSpecieMap from '@/app/components/Transectors/TransectoSpecieMap';
+import RescueMammalsSpecieMap from '@/app/components/RescueMammals/RescueMammalsSpecieMap';
 
 //types
 type RescuesSpecieData =
@@ -42,6 +50,35 @@ export default function Page({ params} : { params: { specieId: number } }) {
     const [rescues, setRescues] = useState<RescuesSpecieData[]>([]);
     const [errorMessage, SetErrorMessage]= useState<string>();
     const router = useRouter();
+    
+    //For map
+    const lineOptions = { color: 'red' }
+    const legendOptions : () => string[] = () => {
+        if (isFloraRescueSpeciesData(rescues[0])) {
+            return ['blue', 'red' ]
+        }
+        if (isTransectHerpetoWithSpeciesData(rescues[0])) {
+            return ['green', 'red' ]
+        }
+        if (isRescueMammalsWithSpecieData(rescues[0])) {
+            return ['brown', 'red' ]
+        }
+        return ['red' ]
+        }
+
+    const legendLabels: () => string[] = () => {
+        if (isFloraRescueSpeciesData(rescues[0])) {
+            return ['puntos rescates de flora', 'proyecto 230 kv mizque - sehuencas']
+        }
+        if (isTransectHerpetoWithSpeciesData(rescues[0])) {
+            return ['transcetors herpetofauna', 'proyecto 230 kv mizque - sehuencas']
+        }
+        if (isRescueMammalsWithSpecieData(rescues[0])) {
+            return ['puntos rescate de mamiferos', 'proyecto 230 kv mizque - sehuencas']
+        }
+        return ['proyecto 230 kv mizque - sehuencas']
+        }
+
 
     //Obtain data from api
     const rescuesData = useCallback(async (): Promise<RescuesSpecieData[]> => {
@@ -178,14 +215,76 @@ export default function Page({ params} : { params: { specieId: number } }) {
 
 
         return (
-        <>
         <div>
-            <div>
-            {user 
-            ? renderTable()
-             
-            : <p>inicia sesión</p>
+        {
+            isFloraRescueSpeciesData(rescues[0])
+            ? <h1
+                 className="m-4 text-gl text-center font-bold leading-none tracking-tight text-gray-600 md:text-xl lg:text-xl dark:text-white"
+                 >Rescates para la especie
+                     <span className='italic'> {rescues[0].specie_name}</span>
+              </h1>
+            : null
             }
+            {
+            isTransectHerpetoWithSpeciesData(rescues[0])
+            ? <h1
+                 className="m-4 text-gl text-center font-bold leading-none tracking-tight text-gray-600 md:text-xl lg:text-xl dark:text-white"
+                 >Rescates para la especie 
+                      <span className='italic'> {rescues[0].specie_names[0]}</span>
+              </h1>
+            : null
+            }
+            {
+            isRescueMammalsWithSpecieData(rescues[0])
+            ? <h1
+                 className="m-4 text-gl text-center font-bold leading-none tracking-tight text-gray-600 md:text-xl lg:text-xl dark:text-white"
+                 >Rescates para la especie
+                     <span className='italic'> {rescues[0].specie_name}</span>
+              </h1>
+            : null
+            }
+                <div className="flex flex-col h-full 2xl:mb-52 xl:mb-52 lg:mb-40 md:flex-row md:mb-0 sm:mb-0 justify-center">
+                    <div className="h-96 p-0 z-50 2xl:mb-52 xl:mb-52 lg:mb-40 md:w-1/2 p-4 md:h-[16rem] sd:h-[6rem]">
+                        <MapContainer
+                            center={[-17.489, -65.271]}
+                            zoom={12}
+                            scrollWheelZoom={false}
+                            className='h-80 w-full 2xl:h-[40rem] xl:h-[40rem] lg:h-[35rem]'
+                             >
+                                <TileLayer
+                                
+                                url={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`}
+                                attribution='Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>'
+                                />
+                                {
+                                    isRescueMammalsWithSpecieData(rescues[0])
+                                    ? <RescueMammalsSpecieMap data={rescues}/>
+                                    : null
+                                }
+                                {
+                                    isTransectHerpetoWithSpeciesData(rescues[0])
+                                    ?<TransectHerpetofaunaSpecieMap data={rescues}/>
+                                    : null
+                                }
+                                {
+                                    isFloraRescueSpeciesData(rescues[0])
+                                    ?<FloraRescueSpecieMap data={rescues}/>
+                                    : null
+                                }
+                                <Polyline pathOptions={lineOptions} positions={LineProyect} >
+                                        <Tooltip>
+                                                <div>
+                                                <h4>Detalles</h4>
+                                                <p>Proyecto 230 kV Mizque - Sehuencas</p>
+                                                </div>
+                                        </Tooltip>
+                                </Polyline>
+                            <Legend colors={legendOptions()} labels={legendLabels()} />
+                        </MapContainer>
+                    </div>
+                </div>
+            <div className="container mx-auto px-4 py-20">
+            {renderTable()}
             </div>
             <button 
                 type="button"
@@ -196,7 +295,6 @@ export default function Page({ params} : { params: { specieId: number } }) {
             </button>
         </div>
             
-        </>
         )
         }
 
