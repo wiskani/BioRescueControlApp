@@ -89,7 +89,6 @@ export default function Page({ params} : { params: { specieId: number } }) {
                     } catch (error) {
                             if (error instanceof Error) {
                                 SetErrorMessage(error.message);
-                                console.error('Error:', error.message);
                                 return [];
                             }
                         return [];
