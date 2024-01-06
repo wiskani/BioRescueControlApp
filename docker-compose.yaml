@@ -10,7 +10,6 @@ services:
       - "3000:3000"
     volumes:
       - ./frontend:/nextjs
-      - ./frontend/node_modules:/nextjs/node_nodules
 
   fastapi:
     build: ./backend

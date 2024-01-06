@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   nextjs:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: env.Dockerfile
     container_name: next-server
     depends_on:
       - fastapi
