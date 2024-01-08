@@ -1,5 +1,5 @@
 
-export const ApiRescueFlora=async(props:Token): Promise <FloraRescueData[]>=> {
+export const GetRescueFlora=async(props:Token): Promise <FloraRescueData[]>=> {
   const requestOptions = {
     method: 'GET',
     headers: {
@@ -16,7 +16,7 @@ export const ApiRescueFlora=async(props:Token): Promise <FloraRescueData[]>=> {
 }
 
 
-export const ApiRescueFloraSpecie=async(props:Token): Promise <FloraRescueSpeciesData[]>=> {
+export const GetRescueFloraSpecie=async(props:Token): Promise <FloraRescueSpeciesData[]>=> {
   const requestOptions = {
     method: 'GET',
     headers: {

@@ -1,4 +1,4 @@
-export const ApiSunburstByFamily= async (props: Token): Promise<SunBurstFamilyData> => {
+export const GetSunburstByFamily= async (props: Token): Promise<SunBurstFamilyData> => {
   const requestOptions = {
     method: 'GET',
     headers: {
@@ -7,7 +7,7 @@ export const ApiSunburstByFamily= async (props: Token): Promise<SunBurstFamilyDa
     },
   };
   const response = await fetch(
-    'http://localhost:8080/api/nivo/sunburst',
+    'http://localhost:8080/api/rescue_flora',
     requestOptions
   );
   const data = await response.json();

@@ -1,5 +1,3 @@
-import getpass
-
 from functools import lru_cache
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -111,5 +109,4 @@ async def startup() -> None:
         last_name: str = "admin"
         user: UsersCreate = UsersCreate(id=id, email=email, name=name, last_name=last_name, permissions=permissions, hashed_password=password)
         await create_user(db, user)
-        print("User created")
     await db.close()

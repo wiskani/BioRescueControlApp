@@ -15,8 +15,10 @@ services:
     build: ./backend
     container_name: simple-python-server
     depends_on:
-      - db
-    command: uvicorn app.main:app --host 0.0.0.0 --port 80 --reload
+      db:
+        condition: service_healthy
+          
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 80 --reload"
     ports:
       - 8080:80
     volumes:
@@ -32,6 +34,12 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
     volumes:
       - db_data:/var/lib/postgresql/data
   

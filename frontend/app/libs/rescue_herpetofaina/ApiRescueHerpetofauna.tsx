@@ -1,6 +1,4 @@
-
-
-export const ApiRescueHerpetofauna=async(props:Token): Promise <FloraRescueData[]>=> {
+export const GetRescueHerpetofauna=async(props:Token): Promise <FloraRescueData[]>=> {
         const requestOptions = {
         method: 'GET',
         headers: {
@@ -16,7 +14,7 @@ export const ApiRescueHerpetofauna=async(props:Token): Promise <FloraRescueData[
         return data;
 }
 
-export const ApiTransectHerpetofauna=async(props:Token): Promise < TransectHerpetofaunaData[]>=> {
+export const GetTransectHerpetofauna=async(props:Token): Promise < TransectHerpetofaunaData[]>=> {
         const requestOptions = {
         method: 'GET',
         headers: {
@@ -32,7 +30,7 @@ export const ApiTransectHerpetofauna=async(props:Token): Promise < TransectHerpe
         return data;
 }
 
-export const ApiTransectHerpetofaunaWithSpecies=async(props:Token): Promise < TransectHerpetoWithSpecies[]>=> {
+export const GetTransectHerpetofaunaWithSpecies=async(props:Token): Promise < TransectHerpetoWithSpecies[]>=> {
         const requestOptions = {
         method: 'GET',
         headers: {

@@ -1,5 +1,5 @@
 
-export const ApiRescueMammalsWithSpecies =
+export const GetRescueMammalsWithSpecies =
         async (props: Token): Promise<RescueMammalsWithSpecieData[]>=> {
         const requestOptions = {
         method: 'GET',

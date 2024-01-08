@@ -12,7 +12,7 @@ import React,{useEffect, useState, useCallback}  from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 
 //Api imports
-import { ApiRescuesSpecie } from "@/app/api/species/route"
+import { GetRescuesSpecie } from "@/app/libs/species/ApiSpecies"
 
 //Leaflet imports
 import { MapContainer, TileLayer,Circle, Polyline, Tooltip } from 'react-leaflet'
@@ -84,7 +84,7 @@ export default function Page({ params} : { params: { specieId: number } }) {
     const rescuesData = useCallback(async (): Promise<RescuesSpecieData[]> => {
             if (user) {
                     try {
-                        const data = await ApiRescuesSpecie({ token: user?.token, specie_id: params.specieId });
+                        const data = await GetRescuesSpecie({ token: user?.token, specie_id: params.specieId });
                         return data;
                     } catch (error) {
                             if (error instanceof Error) {

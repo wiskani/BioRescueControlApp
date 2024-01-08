@@ -10,11 +10,11 @@ import Link from 'next/link';
 import React,{useEffect, useState, useCallback}  from 'react';
 
 //Apis imports
-import { ApiRescueFloraSpecie } from "../api/rescue_flora/route";
-import { ApiTransectHerpetofaunaWithSpecies } from '../api/rescue_herpetofaina/route';
-import { ApiRescueMammalsWithSpecies } from '../api/rescue_mammals/router';
-import { SpeciesItem } from '../api/species/route';
-import { ApiSunburstByFamily } from '../api/nivo/route';
+import { GetRescueFloraSpecie } from "../libs/rescue_flora/ApiRescueFlora";
+import { GetTransectHerpetofaunaWithSpecies } from '../libs/rescue_herpetofaina/ApiRescueHerpetofauna';
+import { GetRescueMammalsWithSpecies } from '../libs/rescue_mammals/ApiRescueMammalsWithSpecies';
+import { GetSpeciesItem } from '../libs/species/ApiSpecies';
+import { GetSunburstByFamily } from '../libs/nivo/ApiSunBurstByFamily';
 
 //Leaflet imports
 import { MapContainer, TileLayer,Circle, Polyline, Tooltip } from 'react-leaflet'
@@ -45,7 +45,7 @@ export default function Dashboard() {
 
     const rescueDataFlora = useCallback(async (): Promise<FloraRescueSpeciesData[]>=>{
       if (user){
-       const data= await ApiRescueFloraSpecie({token: user?.token})
+       const data= await GetRescueFloraSpecie({token: user?.token})
        return data
       }
       else{
@@ -55,7 +55,7 @@ export default function Dashboard() {
     
     const speciesData = useCallback(async (): Promise<SpecieItemData[]>=>{
         if (user){
-            const data= await SpeciesItem({token: user?.token})
+            const data= await GetSpeciesItem({token: user?.token})
             return data
         }
         else{
@@ -65,7 +65,7 @@ export default function Dashboard() {
 
     const transectDataHerpeto = useCallback(async (): Promise<TransectHerpetoWithSpecies[]>=>{
         if (user){
-            const data= await ApiTransectHerpetofaunaWithSpecies({token: user?.token})
+            const data= await GetTransectHerpetofaunaWithSpecies({token: user?.token})
             return data
         }
         else{
@@ -75,7 +75,7 @@ export default function Dashboard() {
 
     const rescueDataMammals = useCallback(async (): Promise<RescueMammalsWithSpecieData[]>=>{
         if (user){
-            const data= await ApiRescueMammalsWithSpecies({token: user?.token})
+            const data= await GetRescueMammalsWithSpecies({token: user?.token})
             return data
         }
         else{
@@ -85,7 +85,7 @@ export default function Dashboard() {
 
     const sunburstDataApi = useCallback(async (): Promise<SunBurstFamilyData>=>{
         if (user){
-                const data= await ApiSunburstByFamily({token: user?.token})
+                const data= await GetSunburstByFamily({token: user?.token})
                 return data
         }
         else{

@@ -7,7 +7,7 @@ type RescuesSpecieData =
         | TransectHerpetoWithSpeciesData
         | RescueMammalsWithSpecieData 
 
-export const SpeciesItem = async (props:Token): Promise<SpecieItemData[]> => {
+export const GetSpeciesItem = async (props:Token): Promise<SpecieItemData[]> => {
   const requestOptions = {
     method: 'GET',
     headers: {
@@ -23,7 +23,7 @@ export const SpeciesItem = async (props:Token): Promise<SpecieItemData[]> => {
   return data;
 }
 
-export const ApiRescuesSpecie = async (props: TokenWithSpecieName): Promise<RescuesSpecieData[]> => {
+export const GetRescuesSpecie = async (props: TokenWithSpecieName): Promise<RescuesSpecieData[]> => {
   try {
     const requestOptions = {
       method: 'GET',
