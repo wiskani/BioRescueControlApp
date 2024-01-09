@@ -14,7 +14,7 @@ function sumLoc(data: SunBurstFamilyData): number {
     return total;
 }
 
-const CenteredMetric: React.FC<SunburstCustomLayerProps<RawDatum>> = ({ nodes, centerX, centerY }) => {
+const CenteredMetric: React.FC<SunburstCustomLayerProps<any>> = ({ nodes, centerX, centerY }) => {
         const totalLoc = nodes.reduce((acc, node) => acc + node.value, 0);
 
         return (
