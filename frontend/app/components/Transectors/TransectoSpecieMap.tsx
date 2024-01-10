@@ -1,3 +1,5 @@
+"use client"
+
 import {Polyline, Tooltip} from 'react-leaflet';
 
 interface TransectHerpetofaunaMapProps {

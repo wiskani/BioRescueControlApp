@@ -17,7 +17,7 @@ import { GetSpeciesItem } from '../libs/species/ApiSpecies';
 import { GetSunburstByFamily } from '../libs/nivo/ApiSunBurstByFamily';
 
 //Leaflet imports
-import { MapContainer, TileLayer,Circle, Polyline, Tooltip } from 'react-leaflet'
+import { MapContainer, TileLayer, Polyline, Tooltip } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
 import "leaflet-defaulticon-compatibility"

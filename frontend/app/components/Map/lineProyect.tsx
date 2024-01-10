@@ -1,3 +1,5 @@
+'use client'
+ 
 import {LatLngExpression} from "leaflet";
 
 export const LineProyect : LatLngExpression []= [

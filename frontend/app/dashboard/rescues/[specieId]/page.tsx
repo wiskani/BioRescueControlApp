@@ -257,17 +257,17 @@ export default function Page({ params} : { params: { specieId: number } }) {
                                 />
                                 {
                                     isRescueMammalsWithSpecieData(rescues[0])
-                                    ? <RescueMammalsSpecieMap data={rescues}/>
+                                    ? <RescueMammalsSpecieMap data={rescues.filter(isRescueMammalsWithSpecieData)}/>
                                     : null
                                 }
                                 {
                                     isTransectHerpetoWithSpeciesData(rescues[0])
-                                    ?<TransectHerpetofaunaSpecieMap data={rescues}/>
+                                    ?<TransectHerpetofaunaSpecieMap data={rescues.filter(isTransectHerpetoWithSpeciesData)}/>
                                     : null
                                 }
                                 {
                                     isFloraRescueSpeciesData(rescues[0])
-                                    ?<FloraRescueSpecieMap data={rescues}/>
+                                    ?<FloraRescueSpecieMap data={rescues.filter(isFloraRescueSpeciesData)}/>
                                     : null
                                 }
                                 <Polyline pathOptions={lineOptions} positions={LineProyect} >

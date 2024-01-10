@@ -1,3 +1,4 @@
+"use client"
 import { Circle, Tooltip } from "react-leaflet";
 
 interface FloraRescueSpecieMapProps {

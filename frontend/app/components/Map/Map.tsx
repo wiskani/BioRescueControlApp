@@ -1,3 +1,5 @@
+'use cliente'
+ 
 import { MapContainer, TileLayer,Circle, Polyline } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
