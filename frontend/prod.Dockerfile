@@ -10,6 +10,10 @@ COPY . .
 
 RUN npm run build
 
+COPY --from=builder /app/public ./public
+
 EXPOSE 3000
 
-CMD ["npm", "run"", "start"]
+ENV PORT 3000
+
+CMD ["node", "server.js"]
