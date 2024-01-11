@@ -1,6 +1,7 @@
 "use client"
 
 //Next imports
+import dynamic from 'next/dynamic'
 import { useSession  } from 'next-auth/react'
 import { useRouter } from 'next/navigation';
 
@@ -15,7 +16,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { GetRescuesSpecie } from "@/app/libs/species/ApiSpecies"
 
 //Leaflet imports
-import { MapContainer, TileLayer,Circle, Polyline, Tooltip } from 'react-leaflet'
+//import { MapContainer, TileLayer, Polyline, Tooltip } from 'react-leaflet'
 
 //Componest imports
 import { TableSimple } from '@/app/components/Table/TableSimple';
@@ -24,6 +25,27 @@ import Legend from '@/app/components/Map/Legend';
 import FloraRescueSpecieMap from '@/app/components/RescueFlora/rescueFloraSpecieMap'; 
 import TransectHerpetofaunaSpecieMap from '@/app/components/Transectors/TransectoSpecieMap';
 import RescueMammalsSpecieMap from '@/app/components/RescueMammals/RescueMammalsSpecieMap';
+
+const MapContainer = dynamic(
+        async () => (await import('react-leaflet')).MapContainer,
+        { ssr: false }  
+)
+
+const TileLayer = dynamic(
+        async () => (await import('react-leaflet')).TileLayer,
+        { ssr: false }
+)
+
+const Polyline = dynamic(
+        async () => (await import('react-leaflet')).Polyline,
+        { ssr: false }
+)
+
+const Tooltip = dynamic(
+        async () => (await import('react-leaflet')).Tooltip,
+        { ssr: false }
+)
+
 
 //types
 type RescuesSpecieData =

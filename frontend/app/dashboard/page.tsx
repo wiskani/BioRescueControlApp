@@ -3,6 +3,7 @@
 //Next imports
 import { useSession  } from 'next-auth/react'
 import { redirect } from 'next/navigation';
+import dynamic from 'next/dynamic'
 import Link from 'next/link';
 
 
@@ -17,19 +18,65 @@ import { GetSpeciesItem } from '../libs/species/ApiSpecies';
 import { GetSunburstByFamily } from '../libs/nivo/ApiSunBurstByFamily';
 
 //Leaflet imports
-import { MapContainer, TileLayer, Polyline, Tooltip } from 'react-leaflet'
+//import { MapContainer, TileLayer, Polyline, Tooltip } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
 import "leaflet-defaulticon-compatibility"
 
 //Components imports
 import SpecieList from '../components/Species/SpecieList';
-import FloraRescueSpecieMap from '../components/RescueFlora/rescueFloraSpecieMap'; 
-import TransectHerpetofaunaSpecieMap from '../components/Transectors/TransectoSpecieMap';
-import RescueMammalsSpecieMap from '../components/RescueMammals/RescueMammalsSpecieMap';
+//import FloraRescueSpecieMap from '../components/RescueFlora/rescueFloraSpecieMap'; 
+//import TransectHerpetofaunaSpecieMap from '../components/Transectors/TransectoSpecieMap';
+//import RescueMammalsSpecieMap from '../components/RescueMammals/RescueMammalsSpecieMap';
 import { LineProyect } from '../components/Map/lineProyect';
-import Legend from '../components/Map/Legend';
-import SunburstFamily from '../components/Nivo/SunBurstFamily';
+//import Legend from '../components/Map/Legend';
+//import SunburstFamily from '../components/Nivo/SunBurstFamily';
+
+//import with dynamic
+const MapContainer = dynamic(
+        async () => (await import('react-leaflet')).MapContainer,
+        { ssr: false }
+)
+
+const TileLayer = dynamic(
+        async () => (await import('react-leaflet')).TileLayer,
+        { ssr: false }
+)
+
+
+const Polyline = dynamic(
+        async () => (await import('react-leaflet')).Polyline,
+        { ssr: false }
+)
+
+const Tooltip = dynamic(
+        async () => (await import('react-leaflet')).Tooltip,
+        { ssr: false }
+)
+
+const Legend = dynamic(
+        () => (import('../components/Map/Legend')),
+        { ssr: false }
+)
+
+const SunburstFamily = dynamic(
+        () => (import('../components/Nivo/SunBurstFamily')),
+        { ssr: false }
+)
+
+const FloraRescueSpecieMap = dynamic(
+        () => (import('../components/RescueFlora/rescueFloraSpecieMap')),
+        { ssr: false }
+)
+
+const TransectHerpetofaunaSpecieMap = dynamic(
+        () => (import('../components/Transectors/TransectoSpecieMap')),
+        { ssr: false }
+)
+const RescueMammalsSpecieMap = dynamic(
+        () => (import('../components/RescueMammals/RescueMammalsSpecieMap')),
+        { ssr: false }
+)
 
 
 export default function Dashboard() {

@@ -1,6 +1,15 @@
 "use client"
+import dynamic from 'next/dynamic'
+//import { Circle, Tooltip } from "react-leaflet";
+const Circle = dynamic(
+        async () => (await import('react-leaflet')).Circle,
+        { ssr: false }
+)
 
-import { Circle, Tooltip } from "react-leaflet";
+const Tooltip = dynamic(
+        async () => (await import('react-leaflet')).Tooltip,
+        { ssr: false }
+)
 
 interface RescueMammalsWithSpecieMapProps {
         data: RescueMammalsWithSpecieData[]; 

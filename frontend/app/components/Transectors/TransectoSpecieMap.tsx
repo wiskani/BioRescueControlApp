@@ -1,6 +1,17 @@
 "use client"
+import dynamic from 'next/dynamic'
+//import {Polyline, Tooltip} from 'react-leaflet';
+//
+const Polyline = dynamic(
+        async () => (await import('react-leaflet')).Polyline,
+        { ssr: false }
+)
 
-import {Polyline, Tooltip} from 'react-leaflet';
+
+const Tooltip = dynamic(
+        async () => (await import('react-leaflet')).Tooltip,
+        { ssr: false }
+)
 
 interface TransectHerpetofaunaMapProps {
         data: TransectHerpetoWithSpecies[];
