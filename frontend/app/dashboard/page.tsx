@@ -18,19 +18,13 @@ import { GetSpeciesItem } from '../libs/species/ApiSpecies';
 import { GetSunburstByFamily } from '../libs/nivo/ApiSunBurstByFamily';
 
 //Leaflet imports
-//import { MapContainer, TileLayer, Polyline, Tooltip } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
-import "leaflet-defaulticon-compatibility"
 
 //Components imports
 import SpecieList from '../components/Species/SpecieList';
-//import FloraRescueSpecieMap from '../components/RescueFlora/rescueFloraSpecieMap'; 
-//import TransectHerpetofaunaSpecieMap from '../components/Transectors/TransectoSpecieMap';
-//import RescueMammalsSpecieMap from '../components/RescueMammals/RescueMammalsSpecieMap';
 import { LineProyect } from '../components/Map/lineProyect';
-//import Legend from '../components/Map/Legend';
-//import SunburstFamily from '../components/Nivo/SunBurstFamily';
+import SunburstFamily from '../components/Nivo/SunBurstFamily';
 
 //import with dynamic
 const MapContainer = dynamic(
@@ -59,11 +53,6 @@ const Legend = dynamic(
         { ssr: false }
 )
 
-const SunburstFamily = dynamic(
-        () => (import('../components/Nivo/SunBurstFamily')),
-        { ssr: false }
-)
-
 const FloraRescueSpecieMap = dynamic(
         () => (import('../components/RescueFlora/rescueFloraSpecieMap')),
         { ssr: false }
@@ -77,6 +66,8 @@ const RescueMammalsSpecieMap = dynamic(
         () => (import('../components/RescueMammals/RescueMammalsSpecieMap')),
         { ssr: false }
 )
+
+
 
 
 export default function Dashboard() {

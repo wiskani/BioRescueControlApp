@@ -15,9 +15,6 @@ import { createColumnHelper } from '@tanstack/react-table';
 //Api imports
 import { GetRescuesSpecie } from "@/app/libs/species/ApiSpecies"
 
-//Leaflet imports
-//import { MapContainer, TileLayer, Polyline, Tooltip } from 'react-leaflet'
-
 //Componest imports
 import { TableSimple } from '@/app/components/Table/TableSimple';
 import { LineProyect } from '@/app/components/Map/lineProyect';
@@ -26,6 +23,7 @@ import FloraRescueSpecieMap from '@/app/components/RescueFlora/rescueFloraSpecie
 import TransectHerpetofaunaSpecieMap from '@/app/components/Transectors/TransectoSpecieMap';
 import RescueMammalsSpecieMap from '@/app/components/RescueMammals/RescueMammalsSpecieMap';
 
+//Leaflet dynamic imports
 const MapContainer = dynamic(
         async () => (await import('react-leaflet')).MapContainer,
         { ssr: false }  
