@@ -30,6 +30,8 @@ RUN yarn build
 FROM base AS runner
 WORKDIR /nextjs
 
+ENV NODE_ENV=production
+
 
 COPY --from=builder /nextjs/public ./public
 

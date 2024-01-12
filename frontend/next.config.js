@@ -6,14 +6,14 @@ const nextConfig = {
       appDir: true,
     },
     output: 'standalone',
-        images: {
-                remotePatterns: [
-                        {
-                                protocol: 'http',
-                                hostname: 'localhost',
-                        }
-                ],
-        },
+        //images: {
+        //        remotePatterns: [
+        //                {
+        //                        protocol: 'http',
+        //                        hostname: 'localhost',
+        //                }
+        //        ],
+        //},
   };
 
 module.exports = nextConfig
