@@ -52,6 +52,7 @@ const handler = NextAuth({
             return session
         }
     },
+    secret: process.env.production,
 })
 
 export { handler as GET, handler as POST } ;
