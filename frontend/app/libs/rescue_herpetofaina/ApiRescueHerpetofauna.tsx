@@ -7,7 +7,7 @@ export const GetRescueHerpetofauna=async(props:Token): Promise <FloraRescueData[
         },
         };
         const response = await fetch(
-                        'http://localhost:8080/api/transect_herpetofauna',
+                        `${process.env.NEXT_PUBLIC_API_URL}:8080/api/transect_herpetofauna`,
                         requestOptions
                         );
         const data = await response.json();
@@ -23,7 +23,7 @@ export const GetTransectHerpetofauna=async(props:Token): Promise < TransectHerpe
         },
         };
         const response = await fetch(
-                        'http://localhost:8080/api/transect_herpetofauna',
+                        `${process.env.NEXT_PUBLIC_API_URL}:8080/api/transect_herpetofauna`,
                         requestOptions
                         );
         const data = await response.json();
@@ -39,7 +39,7 @@ export const GetTransectHerpetofaunaWithSpecies=async(props:Token): Promise < Tr
         },
         };
         const response = await fetch(
-                        'http://localhost:8080/api/transect_herpetofauna_with_species_and_count',
+                        `${process.env.NEXT_PUBLIC_API_URL}:8080/api/transect_herpetofauna_with_species_and_count`,
                         requestOptions
                         );
         const data = await response.json();

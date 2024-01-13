@@ -7,7 +7,7 @@ export const GetSunburstByFamily= async (props: Token): Promise<SunBurstFamilyDa
     },
   };
   const response = await fetch(
-    'http://localhost:8080/api/nivo/sunburst',
+    `${process.env.NEXT_PUBLIC_API_URL}:8080/api/nivo/sunburst`,
     requestOptions
   );
   const data = await response.json();

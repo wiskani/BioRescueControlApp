@@ -9,7 +9,7 @@ export const GetRescueMammalsWithSpecies =
         },
         };
         const response = await fetch(
-                        'http://localhost:8080/api/rescue_mammals_species',
+                        `${process.env.NEXT_PUBLIC_API_URL}:8080/api/rescue_mammals_species`,
                         requestOptions
                         );
         const data = await response.json();

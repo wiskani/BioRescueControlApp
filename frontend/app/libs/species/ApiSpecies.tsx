@@ -16,7 +16,7 @@ export const GetSpeciesItem = async (props:Token): Promise<SpecieItemData[]> => 
     },
   };
   const response = await fetch(
-    'http://localhost:8080/api/join/species',
+    `${process.env.NEXT_PUBLIC_API_URL}:8080/api/join/species`,
     requestOptions
   );
   const data = await response.json();
@@ -33,7 +33,7 @@ export const GetRescuesSpecie = async (props: TokenWithSpecieName): Promise<Resc
       },
     };
     const response = await fetch(
-      `http://localhost:8080/api/specie/rescues/${props.specie_id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}:8080/api/specie/rescues/${props.specie_id}`,
       requestOptions
     );
 
