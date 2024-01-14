@@ -44,6 +44,11 @@ const Tooltip = dynamic(
         { ssr: false }
 )
 
+const Pane = dynamic(
+        async () => (await import('react-leaflet')).Pane,
+        { ssr: false }
+)
+
 
 //types
 type RescuesSpecieData =
@@ -275,6 +280,7 @@ export default function Page({ params} : { params: { specieId: number } }) {
                                 url={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`}
                                 attribution='Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>'
                                 />
+                                <Pane name='rescues' style={{zIndex:499}}>
                                 {
                                     isRescueMammalsWithSpecieData(rescues[0])
                                     ? <RescueMammalsSpecieMap data={rescues.filter(isRescueMammalsWithSpecieData)}/>
@@ -290,6 +296,8 @@ export default function Page({ params} : { params: { specieId: number } }) {
                                     ?<FloraRescueSpecieMap data={rescues.filter(isFloraRescueSpeciesData)}/>
                                     : null
                                 }
+                                </Pane>
+                                <Pane name='linea' style={{zIndex:400}}>
                                 <Polyline pathOptions={lineOptions} positions={LineProyect} >
                                         <Tooltip>
                                                 <div>
@@ -298,6 +306,8 @@ export default function Page({ params} : { params: { specieId: number } }) {
                                                 </div>
                                         </Tooltip>
                                 </Polyline>
+
+                                </Pane>
                             <Legend colors={legendOptions()} labels={legendLabels()} />
                         </MapContainer>
                     </div>

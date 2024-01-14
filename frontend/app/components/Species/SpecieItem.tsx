@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 
 const SpecieItem = (props: SpecieItemData) => {
-  const imageUrl = props.images && props.images.length > 0 ? `http://localhost:8080${props.images[0].url}` : 'http://localhost:8080/static/images/species/no_imagen.svg';
+  const imageUrl = props.images && props.images.length > 0 ? `${process.env.NEXT_PUBLIC_API_URL}:8080${props.images[0].url}` : `${process.env.NEXT_PUBLIC_API_URL}:8080/static/images/species/no_imagen.svg`;
   const imageTitle = props.images && props.images.length > 0 ? props.images[0].atribute : 'No hay imagen';
 
   const router = useRouter();
