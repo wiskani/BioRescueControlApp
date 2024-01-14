@@ -38,10 +38,6 @@ app.mount("/static", StaticFiles(directory="/fastapi/static") , name="static")
 app.add_middleware(ErrorHandler)
 
 
-#Middleware for CORS
-origins = [
-    "http://localhost:3000",
-]
 
 app.add_middleware(
     CORSMiddleware,
@@ -57,6 +53,11 @@ app.add_middleware(
 def get_settings():
     return Settings()
 
+#Middleware for CORS
+origins = [
+    "http://localhost:3000",
+    get_settings().NEXTJS_URL,
+]
 #Routes
 app.include_router(_auth.router)
 app.include_router(_users.router)

@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     DATABASE_URL: str
     DATABASE_URL_TEST: str
+    NEXTJS_URL: str
 
 
     class Config:
