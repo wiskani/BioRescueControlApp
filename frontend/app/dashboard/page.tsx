@@ -4,7 +4,10 @@
 import { useSession  } from 'next-auth/react'
 import { redirect } from 'next/navigation';
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
 import Link from 'next/link';
+
+import banner from '../../public/images/banner.gif'
 
 
 //React imports
@@ -167,6 +170,21 @@ export default function Dashboard() {
     const legendLabels = ['Puntos Rescate de Mamiferos','Transcetors Herpetofauna', 'Puntos Rescates de Flora', 'Proyecto 230 kV Mizque - Sehuencas']
         return (
             <div>
+             <div
+                className="w-full bg-cover bg-center"
+                style={{
+                        height: "32rem",
+                        backgroundImage: `url(${banner.src})`,
+                }}
+                >
+                <div
+                        className="flex items-center justify-center h-full w-full bg-gray-900 bg-opacity-50"
+                >
+            <div className="text-center">
+                <h1 className="text-white text-2xl font-semibold uppercase md:text-3xl">Ejecución de Planes de <span className="text-emerald-400">rescate</span></h1>
+            </div>
+        </div>
+    </div>
                 <div className="flex flex-col  h-full 2xl:mb-52 xl:mb-52 lg:mb-40 md:flex-row md:mb-0 sm:mb-0 justify-center">
                     <div className="h-96 p-0 z-50 md:w-1/2 p-4 md:h-[16rem] sd:h-[6rem]">
                         <MapContainer
