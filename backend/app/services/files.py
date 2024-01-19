@@ -451,7 +451,7 @@ async def addTransectIdByNumber(
         #conver row[col] to int
         transect = await get_transect_herpetofauna_by_number(db, row[col])
         if transect is None:
-            raise Exception(f"Error converting transect number to int in row {row[0]}")
+            raise Exception(f"Error converting transect number not exist  in row {row[0]}")
         else:
             colunmId.append(transect.id)
 
