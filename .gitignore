@@ -68,6 +68,9 @@ ENV/
 env.bak/
 venv.bak/
 
+#ignore pytype file configuration
+backend/pytype.toml
+
 # === Next.js ===
 # Next.js build output
 .next
