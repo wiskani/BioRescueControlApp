@@ -82,17 +82,16 @@ async def create_random_relocation_zone_idWithNumber(
     data: Dict[str, Any] = response.json()
     return data["id"], name 
 
+
 @pytest.mark.asyncio
 async def create_random_flora_rescue_id(
     async_client: AsyncClient
 ) -> int:
     epiphyte_number = random_string()
     specie_id = await create_specie(async_client)
-    GENUS_ID = await create_genus(async_client)
-    FAMILY_ID = await create_family(async_client)
     RESCUE_ZONE_ID = await create_random_rescue_zone_id(async_client)
     # create flora rescue
-    response =await async_client.post(
+    response = await async_client.post(
         "/api/rescue_flora", json={
             "epiphyte_number": epiphyte_number,
             "rescue_date": "2021-10-10T00:00:00",
@@ -107,6 +106,8 @@ async def create_random_flora_rescue_id(
             "health_status_epiphyte": "test_health_status_epiphyte",
             "microhabitat": "test_microhabitat",
             "other_observations": "test_other_observations",
+            "is_epiphyte_confirmed": True,
+            "is_bryophyte_confirmed": True,
             "specie_bryophyte_id": specie_id,
             "genus_bryophyte_id": None,
             "family_bryophyte_id": None,
@@ -120,17 +121,16 @@ async def create_random_flora_rescue_id(
     data: Dict[str, Any] = response.json()
     return data["id"]
 
+
 @pytest.mark.asyncio
 async def create_random_flora_rescue_idWithNumber(
     async_client: AsyncClient
 ) -> tuple[int, str]:
     epiphyte_number = random_string()
     specie_id = await create_specie(async_client)
-    GENUS_ID = await create_genus(async_client)
-    FAMILY_ID = await create_family(async_client)
     RESCUE_ZONE_ID = await create_random_rescue_zone_id(async_client)
     # create flora rescue
-    response =await async_client.post(
+    response = await async_client.post(
         "/api/rescue_flora", json={
             "epiphyte_number": epiphyte_number,
             "rescue_date": "2021-10-10T00:00:00",
@@ -145,6 +145,8 @@ async def create_random_flora_rescue_idWithNumber(
             "health_status_epiphyte": "test_health_status_epiphyte",
             "microhabitat": "test_microhabitat",
             "other_observations": "test_other_observations",
+            "is_epiphyte_confirmed": True,
+            "is_bryophyte_confirmed": True,
             "specie_bryophyte_id": specie_id,
             "genus_bryophyte_id": None,
             "family_bryophyte_id": None,
@@ -165,11 +167,9 @@ async def create_random_flora_rescue_WithNumberSpecie(
 ) -> tuple[int, str, str]:
     epiphyte_number = random_string()
     specie_id, specie = await create_specieWithName(async_client)
-    GENUS_ID = await create_genus(async_client)
-    FAMILY_ID = await create_family(async_client)
     RESCUE_ZONE_ID = await create_random_rescue_zone_id(async_client)
     # create flora rescue
-    response =await async_client.post(
+    response = await async_client.post(
         "/api/rescue_flora", json={
             "epiphyte_number": epiphyte_number,
             "rescue_date": "2021-10-10T00:00:00",
@@ -184,6 +184,8 @@ async def create_random_flora_rescue_WithNumberSpecie(
             "health_status_epiphyte": "test_health_status_epiphyte",
             "microhabitat": "test_microhabitat",
             "other_observations": "test_other_observations",
+            "is_epiphyte_confirmed": True,
+            "is_bryophyte_confirmed": True,
             "specie_bryophyte_id": specie_id,
             "genus_bryophyte_id": None,
             "family_bryophyte_id": None,
@@ -198,18 +200,27 @@ async def create_random_flora_rescue_WithNumberSpecie(
     return data["id"], epiphyte_number, specie
 
 
-#create a random flora rescue with specie id name, genus id name and family id name
 @pytest.mark.asyncio
 async def create_random_flora_rescue_WithSpecieGenusFamily(
         async_client: AsyncClient,
-) -> tuple[int, str, int|None, str|None,int|None, str|None, int|None, str|None]:
+) -> tuple[
+        int,
+        str,
+        int | None,
+        str | None,
+        int | None,
+        str | None,
+        int | None,
+        str | None
+        ]:
+    """Create a flora rescue with a random specie, genus and family"""
     epiphyte_number = random_string()
     specie_id, specie = await create_specieWithName(async_client)
     genus_id, genus = None, None 
     family_id, family = None, None 
     RESCUE_ZONE_ID = await create_random_rescue_zone_id(async_client)
     # create flora rescue
-    response =await async_client.post(
+    response = await async_client.post(
         "/api/rescue_flora", json={
             "epiphyte_number": epiphyte_number,
             "rescue_date": "2021-10-10T00:00:00",
@@ -224,6 +235,8 @@ async def create_random_flora_rescue_WithSpecieGenusFamily(
             "health_status_epiphyte": "test_health_status_epiphyte",
             "microhabitat": "test_microhabitat",
             "other_observations": "test_other_observations",
+            "is_epiphyte_confirmed": True,
+            "is_bryophyte_confirmed": True,
             "specie_bryophyte_id": specie_id,
             "genus_bryophyte_id": genus_id,
             "family_bryophyte_id": family_id,
@@ -236,5 +249,3 @@ async def create_random_flora_rescue_WithSpecieGenusFamily(
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     return data["id"], epiphyte_number, specie_id, specie, genus_id, genus, family_id, family
-
-

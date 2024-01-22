@@ -8,20 +8,29 @@ import app.models.rescue_herpetofauna
 import app.db.database as _database
 import app.models.species
 
+
 class Habitat(_database.Base):
     __tablename__ = 'habitat'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.now(pytz.timezone('America/La_Paz')))
+    created_at: Mapped[datetime] = mapped_column(
+            DateTime(timezone=True),
+            nullable=False,
+            default=datetime.now(pytz.timezone('America/La_Paz'))
+            )
 
-    #relationship with rescue_mammals
+    # relationship with rescue_mammals
     rescue_mammals = relationship('RescueMammals', back_populates='habitat')
+
 
 class RescueMammals(_database.Base):
     __tablename__ = 'rescue_mammals'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     cod: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
-    date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    date: Mapped[datetime] = mapped_column(
+            DateTime(timezone=True),
+            nullable=False
+            )
     mark: Mapped[str] = mapped_column(String(150), nullable=False)
     longitude: Mapped[float] = mapped_column(Float, nullable=False)
     latitude: Mapped[float] = mapped_column(Float, nullable=False)
@@ -35,25 +44,41 @@ class RescueMammals(_database.Base):
     weight: Mapped[float] = mapped_column(Float, nullable=True)
     observation: Mapped[str] = mapped_column(String(200), nullable=True)
     is_specie_confirmed: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    create_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.now(pytz.timezone('America/La_Paz')))
+    create_at: Mapped[datetime] = mapped_column(
+            DateTime(timezone=True),
+            nullable=False,
+            default=datetime.now(pytz.timezone('America/La_Paz'))
+            )
 
-    #relationship with habitat
+    # relationship with habitat
     habitat_id: Mapped[int] = mapped_column(Integer, ForeignKey('habitat.id'))
     habitat = relationship('Habitat', back_populates='rescue_mammals')
 
-    #relationship with age_group
-    age_group_id: Mapped[int] = mapped_column(Integer, ForeignKey('age_group.id'), nullable=True)
+    # relationship with age_group
+    age_group_id: Mapped[int] = mapped_column(
+            Integer,
+            ForeignKey('age_group.id'),
+            nullable=True
+            )
     age_group = relationship('AgeGroup', back_populates='rescue_mammals')
 
-    #relationship with species
-    specie_id: Mapped[int] = mapped_column(Integer, ForeignKey('species.id'), nullable=True)
+    # relationship with species
+    specie_id: Mapped[int] = mapped_column(
+            Integer,
+            ForeignKey('species.id'),
+            nullable=True
+            )
     specie = relationship('Specie', back_populates='rescue_mammals')
 
-    #relationship with genus
-    genus_id: Mapped[int] = mapped_column(Integer, ForeignKey('genus.id'), nullable=True)
+    # relationship with genus
+    genus_id: Mapped[int] = mapped_column(
+            Integer,
+            ForeignKey('genus.id'),
+            nullable=True
+            )
     genus = relationship('Genus', back_populates='rescue_mammals')
 
-    #relationship with release_mammals
+    # relationship with release_mammals
     release_mammals = relationship('ReleaseMammals', back_populates='rescue_mammals')
 
 

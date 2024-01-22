@@ -7,6 +7,7 @@ from pydantic import (
 from fastapi import HTTPException
 from datetime import datetime
 
+
 class FloraRescueZoneBase(BaseModel):
     name: str = Field(..., max_length=50)
     description: str = Field(..., max_length=100)
@@ -21,11 +22,13 @@ class FloraRescueZoneResponse(FloraRescueZoneBase):
     class Config:
         from_attributes = True
 
+
 class FloraRelocationZoneBase(BaseModel):
     name: str = Field(..., max_length=50)
 
     class Config:
         from_attributes = True
+
 
 class FloraRelocationZoneResponse(FloraRelocationZoneBase):
     id: int
@@ -33,20 +36,29 @@ class FloraRelocationZoneResponse(FloraRelocationZoneBase):
     class Config:
         from_attributes = True
 
+
 class FloraRescueBase(BaseModel):
     epiphyte_number: str = Field(...)
     rescue_date: datetime = Field(...)
-    rescue_area_latitude: float = Field(examples= [-17.444])
-    rescue_area_longitude: float= Field(examples= [-66.444])
+    rescue_area_latitude: float = Field(examples=[-17.444])
+    rescue_area_longitude: float = Field(examples=[-66.444])
     substrate: str | None = Field(max_length=50, examples=["Geofita"])
     dap_bryophyte: float | None
     height_bryophyte: float | None
     bryophyte_position: int | None
-    growth_habit: str | None = Field( max_length=50, examples=["Geófito"])
-    epiphyte_phenology: str | None = Field( max_length=50, examples=["Esteril"])
-    health_status_epiphyte: str | None = Field( max_length=50, examples=["Bueno"])
-    microhabitat: str | None = Field( max_length=100, examples=["Bosque de ladera"])
+    growth_habit: str | None = Field(max_length=50, examples=["Geófito"])
+    epiphyte_phenology: str | None = Field(max_length=50, examples=["Esteril"])
+    health_status_epiphyte: str | None = Field(
+            max_length=50,
+            examples=["Bueno"]
+            )
+    microhabitat: str | None = Field(
+            max_length=100,
+            examples=["Bosque de ladera"]
+            )
     other_observations: str | None = Field(max_length=100)
+    is_epiphyte_confirmed: bool = Field(...)
+    is_bryophyte_confirmed: bool = Field(...)
     specie_bryophyte_id: int | None
     genus_bryophyte_id: int | None
     family_bryophyte_id: int | None
@@ -57,7 +69,7 @@ class FloraRescueBase(BaseModel):
 
     class Config:
         from_attributes = True
-    
+
     @model_validator(mode='after')
     def check_taxon_bryophyte(self):
         if self.specie_bryophyte_id:
