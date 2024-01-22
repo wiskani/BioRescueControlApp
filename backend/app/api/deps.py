@@ -41,6 +41,12 @@ async def get_current_user(db:AsyncSession =Depends(get_db), token: str = Depend
         result = await db.execute(select(User).filter_by(id=payload["id"]))
         user: User | None = result.scalars().first()
 
+        if user is None:
+            raise HTTPException(
+                status_code=401,
+                detail="User not found"
+            )
+
         if not isinstance(user.permissions, list):
              user.permissions = json.loads(user.permissions)
 

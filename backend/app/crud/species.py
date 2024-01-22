@@ -19,6 +19,7 @@ from app.schemas.species import (
     StatusBase,
     StatusResponse,
 )
+from app.schemas.images import ImageBase
 from app.models.species import Specie, Genus, Family, Order, Class_, Status
 from app.models.rescue_flora import FloraRescue
 from app.models.rescue_herpetofauna import RescueHerpetofauna
@@ -335,35 +336,39 @@ async def get_all_species_join_(db: AsyncSession) -> List[SpeciesJoin]:
 
         # Cargar imágenes de manera individual
         images_result = await db.execute(select(Image).where(Image.species_id == specie.id))
-        images_data = images_result.scalars().all()
+        images_data = list(images_result.scalars().all())
 
         total_rescues = await count_flora_rescue_by_specie(db, specie.id)
         if total_rescues == 0:
             total_rescues = await count_herpetofauna_rescue_by_specie(db, specie.id)
             if total_rescues == 0:
                 total_rescues = await count_mammal_rescue_by_specie(db, specie.id)
-        images_data = [
-            {
-                "atribute": image.atribute,
-                "url": image.url,
-                "species_id": specie.id
-            }
-            for image in images_data
-        ]
+        image_list = []
+        for image in images_data:
+            db_image = ImageBase(
+                atribute = image.atribute,
+                url = image.url,
+                species_id = specie.id
+            )
+            image_list.append(db_image)
+
+        if not class_:
+            raise HTTPException(status_code=404, detail="Class not found")
         if class_.class_name== "Magnoliopsida" or class_.class_name== "Pinopsida":
             pass
         else:
-            result.append({
-                "id": specie.id,
-                "scientific_name": specie.scientific_name,
-                "specie_name": specie.specific_epithet,
-                "genus_full_name": genus.genus_name if genus else None,
-                "family_name": family.family_name if family else None,
-                "order_name": order.order_name if order else None,
-                "class_name": class_.class_name if class_ else None,
-                "images": images_data,
-                "total_rescues": total_rescues
-            })
+            db_specie = SpeciesJoin(
+                id= specie.id,
+                scientific_name= specie.scientific_name,
+                specie_name= specie.specific_epithet,
+                genus_full_name= genus.genus_name if genus else None,
+                family_name= family.family_name if family else None,
+                order_name= order.order_name if order else None,
+                class_name= class_.class_name if class_ else None,
+                images= image_list,
+                total_rescues= total_rescues
+            )
+            result.append(db_specie)
     return result
 
 #Count flora_rescue by specie

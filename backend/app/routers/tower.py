@@ -244,7 +244,17 @@ async def get_clear_herpetofauna_api(
     autorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> List[ClearHerpetoFaunaResponse]:
     clear_herpetofauna: List[Clear_herpetofauna]= await get_clear_herpetofauna(db)
-    return parse_obj_as(List[ClearHerpetoFaunaResponse], clear_herpetofauna)
+    clear_herpetofuana_response: List[ClearHerpetoFaunaResponse] = []
+    for clear in clear_herpetofauna:
+        db_clear_herpetofauna = ClearHerpetoFaunaResponse(
+                id=clear.id,
+                tower_id=clear.tower_id,
+                is_clear=clear.is_clear,
+                clear_at=clear.clear_at
+            )
+        clear_herpetofuana_response.append(db_clear_herpetofauna)
+    return clear_herpetofuana_response
+
 
 # Get clear herpetofauna by tower number
 @router.get(

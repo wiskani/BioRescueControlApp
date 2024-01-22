@@ -98,7 +98,7 @@ def none_value(value) -> Any | None:
     else:
         return value
 
-def generateUTMData(df:pd.DataFrame, cols:dict) -> list[UTMData]:
+def generateUTMData(df:pd.DataFrame, cols:dict) -> list[UTMData|None]:
     """
     Generates a list of UTMData objects
 

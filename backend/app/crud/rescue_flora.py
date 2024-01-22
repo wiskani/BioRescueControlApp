@@ -1,26 +1,25 @@
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List, Union
+from typing import List
 from fastapi import HTTPException
-from datetime import date
 
 from app.schemas.rescue_flora import (
-        #Flora rescue zone
+        # Flora rescue zone
         FloraRescueZoneBase,
 
-        #Flora relocation zone
+        # Flora relocation zone
         FloraRelocationZoneBase,
 
-        #Flora rescue
+        # Flora rescue
         FloraRescueBase,
 
-        #Plant nursery
+        # Plant nursery
         PlantNurseryBase,
 
-        #Flora relocation
+        # Flora relocation
         FloraRelocationBase,
 
-        #Flora rescue with specie
+        # Flora rescue with specie
         FloraRescueSpecies
         )
 
@@ -30,33 +29,64 @@ from app.crud.species import (
         get_family_by_id
 )
 
-from app.models.rescue_flora import FloraRescueZone, FloraRelocationZone, FloraRescue, PlantNursery, FloraRelocation
+from app.models.rescue_flora import (
+        FloraRescueZone,
+        FloraRelocationZone,
+        FloraRescue,
+        PlantNursery,
+        FloraRelocation
+        )
 
 # Purpose: CRUD operations for rescue flora
 """
 CRUD FOR FLORA RESCUE ZONE
 """
 
-# Get if flora rescue zone exists 
-async def get_flora_rescue_zone(db: AsyncSession, flora_rescue_zone_name: str) -> FloraRescueZone | None:
-    rescue_zone_db = await db.execute(select(FloraRescueZone).filter(FloraRescueZone.name == flora_rescue_zone_name))
+# Get if flora rescue zone exists
+
+
+async def get_flora_rescue_zone(
+        db: AsyncSession,
+        flora_rescue_zone_name: str
+        ) -> FloraRescueZone | None:
+    rescue_zone_db = await db.execute(
+            select(FloraRescueZone)
+            .filter(FloraRescueZone.name == flora_rescue_zone_name)
+            )
     return rescue_zone_db.scalars().first()
 
 # Get flora rescue zone by id
-async def get_flora_rescue_zone_by_id(db:AsyncSession , flora_rescue_zone_id: int) -> FloraRescueZone |  None:
-    rescue_zone_db = await db.execute(select(FloraRescueZone).filter(FloraRescueZone.id == flora_rescue_zone_id))
+
+
+async def get_flora_rescue_zone_by_id(
+        db: AsyncSession,
+        flora_rescue_zone_id: int
+        ) -> FloraRescueZone | None:
+    rescue_zone_db = await db.execute(
+            select(FloraRescueZone)
+            .filter(FloraRescueZone.id == flora_rescue_zone_id)
+            )
     return rescue_zone_db.scalars().first()
 
 # Get all flora rescue zones
-async def get_all_flora_rescue_zones(db: AsyncSession) -> List[FloraRescueZone]:
+
+
+async def get_all_flora_rescue_zones(
+        db: AsyncSession
+        ) -> List[FloraRescueZone]:
     rescue_zones_db = await db.execute(select(FloraRescueZone))
     return list(rescue_zones_db.scalars().all())
 
 # Create a new flora rescue zone
-async def create_flora_rescue_zone(db: AsyncSession, flora_rescue_zone: FloraRescueZoneBase) -> FloraRescueZone:
+
+
+async def create_flora_rescue_zone(
+        db: AsyncSession,
+        flora_rescue_zone: FloraRescueZoneBase
+        ) -> FloraRescueZone:
     db_flora_rescue_zone = FloraRescueZone(
-            name = flora_rescue_zone.name,
-            description = flora_rescue_zone.description,
+            name=flora_rescue_zone.name,
+            description=flora_rescue_zone.description,
             )
     db.add(db_flora_rescue_zone)
     await db.commit()
@@ -64,11 +94,23 @@ async def create_flora_rescue_zone(db: AsyncSession, flora_rescue_zone: FloraRes
     return db_flora_rescue_zone
 
 # Update a flora rescue zone
-async def update_flora_rescue_zone(db: AsyncSession, flora_rescue_zone_id: int, flora_rescue_zone: FloraRescueZoneBase) -> FloraRescueZone:
-    result = await db.execute(select(FloraRescueZone).filter(FloraRescueZone.id == flora_rescue_zone_id))
+
+
+async def update_flora_rescue_zone(
+        db: AsyncSession,
+        flora_rescue_zone_id: int,
+        flora_rescue_zone: FloraRescueZoneBase
+        ) -> FloraRescueZone:
+    result = await db.execute(
+            select(FloraRescueZone)
+            .filter(FloraRescueZone.id == flora_rescue_zone_id)
+            )
     db_flora_rescue_zone = result.scalars().first()
     if not db_flora_rescue_zone:
-        raise HTTPException(status_code=404, detail="Flora rescue zone not found")
+        raise HTTPException(
+                status_code=404,
+                detail="Flora rescue zone not found"
+                )
     db_flora_rescue_zone.name = flora_rescue_zone.name
     db_flora_rescue_zone.description = flora_rescue_zone.description
     await db.commit()
@@ -76,7 +118,12 @@ async def update_flora_rescue_zone(db: AsyncSession, flora_rescue_zone_id: int, 
     return db_flora_rescue_zone
 
 # Delete a flora rescue zone
-async def delete_flora_rescue_zone(db: AsyncSession, flora_rescue_zone_id: int) -> FloraRescueZone:
+
+
+async def delete_flora_rescue_zone(
+        db: AsyncSession,
+        flora_rescue_zone_id: int
+        ) -> FloraRescueZone:
     result = await db.execute(select(FloraRescueZone).filter(FloraRescueZone.id == flora_rescue_zone_id))
     db_flora_rescue_zone = result.scalars().first()
     if not db_flora_rescue_zone:

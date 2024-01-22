@@ -102,10 +102,10 @@ class SpeciesJoin (BaseModel):
     id: int = Field(..., examples=[1])
     scientific_name: str = Field(..., examples=["Ailuropoda melanoleuca"])
     specie_name: str = Field(..., examples=["Panda"])
-    genus_full_name: str = Field(..., examples=["Ailuropoda melanoleuca"])
-    family_name: str = Field(..., examples=["Ursidae"])
-    order_name: str = Field(..., examples=["Carnivora"])
-    class_name: str = Field(..., examples=["Mammalia"])
+    genus_full_name: str|None = Field(examples=["Ailuropoda melanoleuca"])
+    family_name: str|None = Field(examples=["Ursidae"])
+    order_name: str|None = Field(examples=["Carnivora"])
+    class_name: str|None = Field(examples=["Mammalia"])
     images: List[ImageBase]
     total_rescues: int = Field(examples=[1])
     class Config:
