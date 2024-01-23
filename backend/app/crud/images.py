@@ -6,21 +6,14 @@ from fastapi import HTTPException
 from app.models.images import Image
 from app.schemas.images import ImageBase
 
-"""
-PRUPPOSE: CRUD IMAGES
-"""
-
-# Get if image exists by url
-
 
 async def get_image_by_url(db: AsyncSession,  url: str) -> Image | None:
+    """Get if image exists by url"""
     image_db = await db.execute(select(Image).filter(Image.url == url))
     return image_db.scalars().first()
 
-# Create a image
-
-
 async def create_image(db: AsyncSession, image: ImageBase) -> Image:
+    """Create a image"""
     db_image = Image(
         url=image.url,
         atribute=image.atribute,
@@ -31,21 +24,16 @@ async def create_image(db: AsyncSession, image: ImageBase) -> Image:
     await db.refresh(db_image)
     return db_image
 
-# Get all images
-
-
 async def get_all_images(db: AsyncSession) -> List[Image]:
+    """Get all images"""
     images_db = await db.execute(select(Image))
     return list(images_db.scalars().all())
 
-# Get image by id
-
 
 async def get_image_by_id(db: AsyncSession, image_id: int) -> Image | None:
+    """Get image by id"""
     image_db = await db.execute(select(Image).filter(Image.id == image_id))
     return image_db.scalars().first()
-
-# Update image by id
 
 
 async def update_image_by_id(
@@ -53,6 +41,7 @@ async def update_image_by_id(
         image_id: int,
         image: ImageBase
         ) -> Image:
+    """Update image by id"""
     db_image = await get_image_by_id(db, image_id)
     if not db_image:
         raise HTTPException(status_code=404, detail="Image not found")
@@ -62,10 +51,9 @@ async def update_image_by_id(
     await db.refresh(db_image)
     return db_image
 
-# Delete image by id
-
 
 async def delete_image_by_id(db: AsyncSession, image_id: int) -> Image:
+    """Delete image by id"""
     db_image = await get_image_by_id(db, image_id)
     if not db_image:
         raise HTTPException(status_code=404, detail="Image not found")

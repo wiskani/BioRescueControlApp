@@ -143,6 +143,10 @@ async def upload_flora_rescue(
         #convert rescue zone to id
         df, rescueZoneListWithOutName = await addFloraRescueZoneIdByName(db, df, "zona_rescate")
 
+        # Add id boolean column by check
+        df = addBooleanByCheck(df, "epifito_confirmado")
+        df = addBooleanByCheck(df, "forofito_confirmado")
+
         # Replace NaN with None
         df = remplace_nan_with_none(df)
 
@@ -164,6 +168,8 @@ async def upload_flora_rescue(
                     health_status_epiphyte=none_value(row['estado_sanitario_epifito']),
                     microhabitat=none_value(row['microhabitat']),
                     other_observations=none_value(row['observaciones']),
+                    is_epiphyte_confirmed=row['boolean_epifito_confirmado'],
+                    is_bryophyte_confirmed=row['boolean_forofito_confirmado'],
                     specie_bryophyte_id=none_value(row['specie_bryophyte_id']),
                     genus_bryophyte_id=none_value(row['genus_bryophyte_id']),
                     family_bryophyte_id=none_value(row['family_bryophyte_id']),
