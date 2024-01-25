@@ -287,6 +287,11 @@ class FloraRelocation(_database.Base):
             index=True,
             nullable=True
             )
+    is_bryophyte_confirmed: Mapped[bool] = mapped_column(
+            Boolean,
+            nullable=False,
+            default=False
+            )
     created_at: Mapped[datetime] = mapped_column(
             DateTime(timezone=True),
             default=datetime.now(pytz.timezone('America/La_Paz'))
@@ -335,10 +340,15 @@ class FloraRelocation(_database.Base):
             back_populates="flora_relocation_bryophyte"
             )
 
-
-    #Relationship for flora_relocation_zone
-    relocation_zone_id: Mapped[int] = mapped_column(Integer, ForeignKey("flora_relocation_zone.id"))
-    flora_relocation_zone = relationship("FloraRelocationZone", back_populates="flora_relocation")
+    # Relationship for flora_relocation_zone
+    relocation_zone_id: Mapped[int] = mapped_column(
+            Integer,
+            ForeignKey("flora_relocation_zone.id")
+            )
+    flora_relocation_zone = relationship(
+            "FloraRelocationZone",
+            back_populates="flora_relocation"
+            )
 
 
 

@@ -12,7 +12,7 @@ from io import BytesIO
 
 router = APIRouter()
 
-#create image
+
 @router.post(
     path="/api/images_specie/",
     response_model=ImageResponse,
@@ -32,7 +32,7 @@ async def create_image_specie(
         raise HTTPException(status_code=400, detail="Image already exists")
     return await create_image(db, image)
 
-#get all images
+
 @router.get(
     path="/api/images_specie/",
     response_model=List[ImageResponse],
@@ -41,13 +41,12 @@ async def create_image_specie(
     summary="Get all images",
 )
 async def get_all_images_specie(
-    db:AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
-)-> List[Image]:
+) -> List[Image]:
     return await get_all_images(db)
 
 
-#get image by id
 @router.get(
     path="/api/images_specie/{image_id}",
     response_model=ImageResponse,
@@ -56,15 +55,15 @@ async def get_all_images_specie(
 )
 async def get_image_by_id_specie(
     image_id: int,
-    db:AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
-)-> Union[ImageResponse, HTTPException]:
+) -> Union[ImageResponse, HTTPException]:
     db_image = get_image_by_id(db, image_id)
     if not db_image:
         raise HTTPException(status_code=404, detail="Image not found")
     return db_image
 
-#update image by id
+
 @router.put(
     path="/api/images_specie/{image_id}",
     response_model=ImageResponse,
@@ -74,12 +73,12 @@ async def get_image_by_id_specie(
 async def update_image_by_id_specie(
     image_id: int,
     image: ImageBase,
-    db:AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
 ):
     return update_image_by_id(db, image_id, image)
 
-#delete image by id
+
 @router.delete(
     path="/api/images_specie/{image_id}",
     response_model=ImageResponse,
@@ -88,12 +87,12 @@ async def update_image_by_id_specie(
 )
 async def delete_image_by_id_specie(
     image_id: int,
-    db:AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
 ):
     return delete_image_by_id(db, image_id)
 
-#upload image
+
 @router.post(
     path="/api/image_upload",
     response_model=ImageResponse,
@@ -102,18 +101,17 @@ async def delete_image_by_id_specie(
     tags=["images"],
 )
 async def upload_image(
-    image: Annotated[UploadFile, File(...)] ,
+    image: Annotated[UploadFile, File(...)],
     specie_id: Annotated[int, Form(...)],
     atribute: Annotated[str, Form(...)],
-    db:AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-)-> Image:
+) -> Image:
 
-    #check imagen foder
-    images_folder ="static/images/species/"
+    # check imagen foder
+    images_folder = "static/images/species/"
 
-
-    #check if folder exit
+    # check if folder exit
     if not os.path.exists(images_folder):
         os.makedirs(images_folder)
 
@@ -130,16 +128,13 @@ async def upload_image(
         # Save image
         img.save(os.path.join(images_folder, image.filename))
 
-
-
-
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     try:
         db_image = ImageBase(
-        url=f"/static/images/species/{image.filename}",
-        atribute=atribute,
-        species_id=specie_id,
+                url=f"/static/images/species/{image.filename}",
+                atribute=atribute,
+                species_id=specie_id,
             )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

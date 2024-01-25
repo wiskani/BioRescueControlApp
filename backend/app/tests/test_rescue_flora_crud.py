@@ -1114,7 +1114,9 @@ async def test_delete_plant_nursery(
 """
 TEST FOR RELOCATION FLORA
 """
-#test create a relocation flora
+
+
+# test create a relocation flora
 @pytest.mark.asyncio
 async def test_create_relocation_flora(
     async_client: AsyncClient,
@@ -1142,6 +1144,7 @@ async def test_create_relocation_flora(
             "bark_type": "test_bark_type14",
             "infested_lianas": "Poco",
             "other_observations": "test_other_observations14",
+            "is_bryophyte_confirmed": True,
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
             "genus_bryophyte_id": None,
@@ -1166,13 +1169,15 @@ async def test_create_relocation_flora(
     assert data["bark_type"] == "test_bark_type14"
     assert data["infested_lianas"] == "Poco"
     assert data["other_observations"] == "test_other_observations14"
+    assert data["is_bryophyte_confirmed"] == True
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
     assert data["specie_bryophyte_id"] == specie_id
     assert data["genus_bryophyte_id"] == None 
     assert data["family_bryophyte_id"] == None 
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
 
-#test create a relocation flora that already exists
+
+# test create a relocation flora that already exists
 @pytest.mark.asyncio
 async def test_create_relocation_flora_already_exists(
     async_client: AsyncClient,
@@ -1200,6 +1205,7 @@ async def test_create_relocation_flora_already_exists(
             "bark_type": "test_bark_type14",
             "infested_lianas": "Poco",
             "other_observations": "test_other_observations14",
+            "is_bryophyte_confirmed": True,
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": None,
             "genus_bryophyte_id": None,
@@ -1209,7 +1215,7 @@ async def test_create_relocation_flora_already_exists(
     )
     assert response.status_code == 201, response.text
 
-    #create a relocation flora with a relocation that does already exists
+    # create a relocation flora with a relocation that does already exists
     response: Response =await async_client.post(
         "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
@@ -1226,6 +1232,7 @@ async def test_create_relocation_flora_already_exists(
             "bark_type": "test_bark_type14",
             "infested_lianas": "Poco",
             "other_observations": "test_other_observations14",
+            "is_bryophyte_confirmed": True,
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": None,
             "genus_bryophyte_id": None,
@@ -1239,7 +1246,7 @@ async def test_create_relocation_flora_already_exists(
     assert data["detail"] == "Flora relocation already exists"
 
 
-#test get all relocation flora
+# test get all relocation flora
 @pytest.mark.asyncio
 async def test_read_all_relocation_flora(
     async_client: AsyncClient,
@@ -1251,7 +1258,7 @@ async def test_read_all_relocation_flora(
     FAMILY_ID = await create_family(async_client)
     RELOCATION_ZONE_ID = await create_random_relocation_zone_id(async_client)
     # create two relocation flora
-    response =await async_client.post(
+    response = await async_client.post(
         "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "relocation_number": "15",
@@ -1267,6 +1274,7 @@ async def test_read_all_relocation_flora(
             "bark_type": "test_bark_type15",
             "infested_lianas": "Poco",
             "other_observations": "test_other_observations15",
+            "is_bryophyte_confirmed": True,
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": None,
             "genus_bryophyte_id": GENUS_ID,
@@ -1275,7 +1283,7 @@ async def test_read_all_relocation_flora(
         },
     )
     assert response.status_code == 201, response.text
-    response =await async_client.post(
+    response = await async_client.post(
         "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "relocation_number": "16",
@@ -1291,6 +1299,7 @@ async def test_read_all_relocation_flora(
             "bark_type": "test_bark_type16",
             "infested_lianas": "Poco",
             "other_observations": "test_other_observations16",
+            "is_bryophyte_confirmed": True,
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": None,
             "genus_bryophyte_id": None,
@@ -1300,12 +1309,13 @@ async def test_read_all_relocation_flora(
     )
     assert response.status_code == 201, response.text
     # read all relocation flora
-    response =await async_client.get("/api/flora_relocations")
+    response = await async_client.get("/api/flora_relocations")
     assert response.status_code == 200, response.text
     data: List[Dict[str, Any]] = response.json()
     assert len(data) >= 2
 
-#test get a relocation flora by id
+
+# test get a relocation flora by id
 @pytest.mark.asyncio
 async def test_read_relocation_flora(
     async_client: AsyncClient,
@@ -1333,6 +1343,7 @@ async def test_read_relocation_flora(
             "bark_type": "test_bark_type17",
             "infested_lianas": "Poco",
             "other_observations": "test_other_observations17",
+            "is_bryophyte_confirmed": True,
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
             "genus_bryophyte_id": None,
@@ -1344,7 +1355,7 @@ async def test_read_relocation_flora(
     data: Dict[str, Any] = response.json()
     ide = data["id"]
     # read a relocation flora by id
-    response =await async_client.get(f"/api/flora_relocation/{ide}")
+    response = await async_client.get(f"/api/flora_relocation/{ide}")
     assert response.status_code == 200, response.text
     data = response.json()
     assert data["relocation_date"] == "2021-12-10T00:00:00Z"
@@ -1366,7 +1377,8 @@ async def test_read_relocation_flora(
     assert data["family_bryophyte_id"] == None 
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
 
-#test update a relocation flora
+
+# test update a relocation flora
 @pytest.mark.asyncio
 async def test_update_relocation_flora(
     async_client: AsyncClient,
@@ -1377,8 +1389,9 @@ async def test_update_relocation_flora(
     GENUS_ID = await create_genus(async_client)
     FAMILY_ID = await create_family(async_client)
     RELOCATION_ZONE_ID = await create_random_relocation_zone_id(async_client)
-    #create a relocation flora
-    response =await async_client.post(
+
+    # create a relocation flora
+    response = await async_client.post(
         "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "relocation_number": "18",
@@ -1394,6 +1407,7 @@ async def test_update_relocation_flora(
             "bark_type": "test_bark_type18",
             "infested_lianas": "Poco",
             "other_observations": "test_other_observations18",
+            "is_bryophyte_confirmed": True,
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": None,
             "genus_bryophyte_id": GENUS_ID,
@@ -1405,7 +1419,7 @@ async def test_update_relocation_flora(
     data: Dict[str, Any] = response.json()
     id = data["id"]
     # update a relocation flora
-    response =await async_client.put(
+    response = await async_client.put(
         f"/api/flora_relocation/{id}", json={
             "relocation_date": "2021-12-10T00:00:00",
             "relocation_number": "19",
@@ -1421,6 +1435,7 @@ async def test_update_relocation_flora(
             "bark_type": "test_bark_type19",
             "infested_lianas": "Poco",
             "other_observations": "test_other_observations19",
+            "is_bryophyte_confirmed": True,
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": specie_id,
             "genus_bryophyte_id": None,
@@ -1443,13 +1458,15 @@ async def test_update_relocation_flora(
     assert data["bark_type"] == "test_bark_type19"
     assert data["infested_lianas"] == "Poco"
     assert data["other_observations"] == "test_other_observations19"
+    assert data["is_bryophyte_confirmed"] == True
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
     assert data["specie_bryophyte_id"] == specie_id
     assert data["genus_bryophyte_id"] == None 
     assert data["family_bryophyte_id"] == None 
     assert data["relocation_zone_id"] == RELOCATION_ZONE_ID
 
-#test delete a relocation flora
+
+# test delete a relocation flora
 @pytest.mark.asyncio
 async def test_delete_relocation_flora(
     async_client: AsyncClient,
@@ -1470,13 +1487,14 @@ async def test_delete_relocation_flora(
             "johanson_zone": "test_johanson_zone20",
             "relocation_position_latitude": create_latitude(),
             "relocation_position_longitude": create_longitude(),
-            "relocation_position_altitude": 1000, 
+            "relocation_position_altitude": 1000,
             "bryophyte_number": 20,
             "dap_bryophyte": 20.0,
             "height_bryophyte": 20.0,
             "bark_type": "test_bark_type20",
             "infested_lianas": "Poco",
             "other_observations": "test_other_observations20",
+            "is_bryophyte_confirmed": True,
             "flora_rescue_id": FLORA_RESCUE_ID,
             "specie_bryophyte_id": None,
             "genus_bryophyte_id": None,
@@ -1488,12 +1506,13 @@ async def test_delete_relocation_flora(
     data: Dict[str, Any] = response.json()
     id = data["id"]
     # delete a relocation flora
-    response =await async_client.delete(f"/api/flora_relocation/{id}")
+    response = await async_client.delete(f"/api/flora_relocation/{id}")
     assert response.status_code == 200, response.text
     data = response.json()
     assert data["detail"] == "Flora relocation deleted"
 
-#test for get all rescue flora with species
+
+# test for get all rescue flora with species
 @pytest.mark.asyncio
 async def test_get_all_rescue_flora_with_species(
     async_client: AsyncClient,
@@ -1513,6 +1532,7 @@ async def test_get_all_rescue_flora_with_species(
 """
 TEST FOR SOME FUCTIONS
 """
+
 
 # test for get rescue flora with species by specie id
 @pytest.mark.asyncio

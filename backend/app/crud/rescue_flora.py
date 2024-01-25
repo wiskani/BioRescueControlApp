@@ -42,9 +42,8 @@ from app.models.rescue_flora import (
 CRUD FOR FLORA RESCUE ZONE
 """
 
+
 # Get if flora rescue zone exists
-
-
 async def get_flora_rescue_zone(
         db: AsyncSession,
         flora_rescue_zone_name: str
@@ -55,9 +54,8 @@ async def get_flora_rescue_zone(
             )
     return rescue_zone_db.scalars().first()
 
+
 # Get flora rescue zone by id
-
-
 async def get_flora_rescue_zone_by_id(
         db: AsyncSession,
         flora_rescue_zone_id: int
@@ -68,18 +66,16 @@ async def get_flora_rescue_zone_by_id(
             )
     return rescue_zone_db.scalars().first()
 
+
 # Get all flora rescue zones
-
-
 async def get_all_flora_rescue_zones(
         db: AsyncSession
         ) -> List[FloraRescueZone]:
     rescue_zones_db = await db.execute(select(FloraRescueZone))
     return list(rescue_zones_db.scalars().all())
 
+
 # Create a new flora rescue zone
-
-
 async def create_flora_rescue_zone(
         db: AsyncSession,
         flora_rescue_zone: FloraRescueZoneBase
@@ -93,9 +89,8 @@ async def create_flora_rescue_zone(
     await db.refresh(db_flora_rescue_zone)
     return db_flora_rescue_zone
 
+
 # Update a flora rescue zone
-
-
 async def update_flora_rescue_zone(
         db: AsyncSession,
         flora_rescue_zone_id: int,
@@ -117,9 +112,8 @@ async def update_flora_rescue_zone(
     await db.refresh(db_flora_rescue_zone)
     return db_flora_rescue_zone
 
+
 # Delete a flora rescue zone
-
-
 async def delete_flora_rescue_zone(
         db: AsyncSession,
         flora_rescue_zone_id: int
@@ -144,11 +138,11 @@ CRUD FOR FLORA RELOCATION ZONE
 """
 
 
+# Get if flora relocation zone exists
 async def get_flora_relocation_zone(
         db: AsyncSession,
         flora_relocation_zone_name: str
         ) -> FloraRelocationZone | None:
-    """Get if flora relocation zone exists"""""
     relocation_zone_db = await db.execute(
             select(FloraRelocationZone).filter(
                 FloraRelocationZone.name == flora_relocation_zone_name
@@ -157,11 +151,11 @@ async def get_flora_relocation_zone(
     return relocation_zone_db.scalars().first()
 
 
+# Get flora relocation zone by id
 async def get_flora_relocation_zone_by_id(
         db: AsyncSession,
         flora_relocation_zone_id: int
         ) -> FloraRelocationZone | None:
-    """Get flora relocation zone by id"""""
     relocation_zone_db = await db.execute(
             select(FloraRelocationZone).filter(
                 FloraRelocationZone.id == flora_relocation_zone_id
@@ -170,19 +164,19 @@ async def get_flora_relocation_zone_by_id(
     return relocation_zone_db.scalars().first()
 
 
+# Get all flora relocation zones
 async def get_all_flora_relocation_zones(
         db: AsyncSession
         ) -> List[FloraRelocationZone]:
-    """Get all flora relocation zones"""
     relocation_zones_db = await db.execute(select(FloraRelocationZone))
     return list(relocation_zones_db.scalars().all())
 
 
+# Create a new flora relocation zone
 async def create_flora_relocation_zone(
         db: AsyncSession,
         flora_relocation_zone: FloraRelocationZoneBase
         ) -> FloraRelocationZone:
-    """Create a new flora relocation zone"""
     db_flora_relocation_zone = FloraRelocationZone(
             name=flora_relocation_zone.name,
             )
@@ -192,12 +186,12 @@ async def create_flora_relocation_zone(
     return db_flora_relocation_zone
 
 
+# Update a flora relocation zone
 async def update_flora_relocation_zone(
         db: AsyncSession,
         flora_relocation_zone_id: int,
         flora_relocation_zone: FloraRelocationZoneBase
         ) -> FloraRelocationZone:
-    """Update a flora relocation zone"""
     result = await db.execute(
             select(FloraRelocationZone).filter(
                 FloraRelocationZone.id == flora_relocation_zone_id
@@ -215,11 +209,11 @@ async def update_flora_relocation_zone(
     return db_flora_relocation_zone
 
 
+# Delete a flora relocation zone
 async def delete_flora_relocation_zone(
         db: AsyncSession,
         flora_relocation_zone_id: int
         ) -> FloraRelocationZone | None:
-    """Delete a flora relocation zone"""
     result = await db.execute(
             select(FloraRelocationZone).filter(
                 FloraRelocationZone.id == flora_relocation_zone_id
@@ -244,11 +238,11 @@ CRUD FOR FLORA RESCUE
 """
 
 
+# Get if flora rescue exists
 async def get_flora_rescue(
         db: AsyncSession,
         flora_rescue_epiphyte_number: str
        ) -> FloraRescue | None:
-    """Get if flora rescue exists"""
     flora_resuce_db = await db.execute(
             select(FloraRescue).filter(
                 FloraRescue.epiphyte_number == flora_rescue_epiphyte_number
@@ -257,28 +251,28 @@ async def get_flora_rescue(
     return flora_resuce_db.scalars().first()
 
 
+# Get flora rescue by id
 async def get_flora_rescue_by_id(
         db: AsyncSession,
         flora_rescue_id: int
         ) -> FloraRescue | None:
-    """Get flora rescue by id"""
     flora_rescue_db = await db.execute(
             select(FloraRescue).filter(FloraRescue.id == flora_rescue_id)
             )
     return flora_rescue_db.scalars().first()
 
 
+# Get all flora rescues
 async def get_all_flora_rescues(db: AsyncSession) -> List[FloraRescue]:
-    """Get all flora rescues"""
     flora_rescues_db = await db.execute(select(FloraRescue))
     return list(flora_rescues_db.scalars().all())
 
 
+# Create a new flora rescue
 async def create_flora_rescue(
         db: AsyncSession,
         flora_rescue: FloraRescueBase
         ) -> FloraRescue:
-    """Create a new flora rescue"""
     db_flora_rescue = FloraRescue(
             epiphyte_number=flora_rescue.epiphyte_number,
             rescue_date=flora_rescue.rescue_date,
@@ -309,12 +303,12 @@ async def create_flora_rescue(
     return db_flora_rescue
 
 
+# Update a flora rescue
 async def update_flora_rescue(
         db: AsyncSession,
         flora_rescue_id: int,
         flora_rescue: FloraRescueBase
         ) -> FloraRescue:
-    """Update a flora rescue"""
     db_flora_rescue = await get_flora_rescue_by_id(db, flora_rescue_id)
 
     if not db_flora_rescue:
@@ -346,11 +340,11 @@ async def update_flora_rescue(
     return db_flora_rescue
 
 
+# Delete a flora rescue
 async def delete_flora_rescue(
         db: AsyncSession,
         flora_rescue_id: int
         ) -> FloraRescue | None:
-    """Delete a flora rescue"""
     db_flora_rescue = await get_flora_rescue_by_id(db, flora_rescue_id)
     if not db_flora_rescue:
         raise HTTPException(status_code=404, detail="Flora rescue not found")
@@ -366,23 +360,42 @@ async def delete_flora_rescue(
 PLANT NURSERY CRUD
 """
 
-#get if plant nursery exists by cod_reg
-async def get_plant_nursery(db: AsyncSession, plant_nursery_cod_reg:str) -> PlantNursery | None:
-    plant_nursery_db = await db.execute(select(PlantNursery).where(PlantNursery.cod_reg == plant_nursery_cod_reg))
+
+# get if plant nursery exists by cod_reg
+async def get_plant_nursery(
+        db: AsyncSession,
+        plant_nursery_cod_reg: str
+        ) -> PlantNursery | None:
+    plant_nursery_db = await db.execute(
+            select(PlantNursery).where(
+                PlantNursery.cod_reg == plant_nursery_cod_reg)
+            )
     return plant_nursery_db.scalars().first()
 
+
 # Get plant nursery by id
-async def get_plant_nursery_by_id(db: AsyncSession, plant_nursery_id: int) -> PlantNursery | None:
-    plant_nursery_db = await db.execute(select(PlantNursery).where(PlantNursery.id == plant_nursery_id))
+async def get_plant_nursery_by_id(
+        db: AsyncSession,
+        plant_nursery_id: int
+        ) -> PlantNursery | None:
+    plant_nursery_db = await db.execute(
+            select(PlantNursery).where(
+                PlantNursery.id == plant_nursery_id)
+            )
     return plant_nursery_db.scalars().first()
+
 
 # Get all plant nurseries
 async def get_all_plant_nurseries(db: AsyncSession) -> List[PlantNursery]:
     plant_nurseres_db = await db.execute(select(PlantNursery))
     return list(plant_nurseres_db.scalars())
 
+
 # Create a new plant nursery
-async def create_plant_nursery(db: AsyncSession, plant_nursery: PlantNurseryBase) -> PlantNursery:
+async def create_plant_nursery(
+        db: AsyncSession,
+        plant_nursery: PlantNurseryBase
+        ) -> PlantNursery:
     db_plant_nursery = PlantNursery(
             entry_date = plant_nursery.entry_date,
             cod_reg = plant_nursery.cod_reg,
@@ -401,9 +414,14 @@ async def create_plant_nursery(db: AsyncSession, plant_nursery: PlantNurseryBase
     await db.refresh(db_plant_nursery)
     return db_plant_nursery
 
+
 # Update a plant nursery
-async def update_plant_nursery(db: AsyncSession, plant_nursery_id: int, plant_nursery: PlantNurseryBase) -> PlantNursery:
-    db_plant_nursery =  await get_plant_nursery_by_id(db, plant_nursery_id)
+async def update_plant_nursery(
+        db: AsyncSession,
+        plant_nursery_id: int,
+        plant_nursery: PlantNurseryBase
+        ) -> PlantNursery:
+    db_plant_nursery = await get_plant_nursery_by_id(db, plant_nursery_id)
     if not db_plant_nursery:
         raise HTTPException(status_code=404, detail="Plant nursery not found")
     db_plant_nursery.entry_date = plant_nursery.entry_date
@@ -421,12 +439,19 @@ async def update_plant_nursery(db: AsyncSession, plant_nursery_id: int, plant_nu
     await db.refresh(db_plant_nursery)
     return db_plant_nursery
 
+
 # Delete a plant nursery
-async def delete_plant_nursery(db: AsyncSession, plant_nursery_id: int) -> PlantNursery:
-    db_plant_nursery =  await get_plant_nursery_by_id(db, plant_nursery_id)
+async def delete_plant_nursery(
+        db: AsyncSession,
+        plant_nursery_id: int
+        ) -> PlantNursery:
+    db_plant_nursery = await get_plant_nursery_by_id(db, plant_nursery_id)
     if not db_plant_nursery:
         raise HTTPException(status_code=404, detail="Plant nursery not found")
-    await db.execute(delete(PlantNursery).where(PlantNursery.id == plant_nursery_id))
+    await db.execute(
+            delete(PlantNursery).where(
+                PlantNursery.id == plant_nursery_id)
+            )
     await db.commit()
     return db_plant_nursery
 
@@ -434,54 +459,85 @@ async def delete_plant_nursery(db: AsyncSession, plant_nursery_id: int) -> Plant
 FLORA RELOCATION CRUD
 """
 
+
 # Get if flora relocation exists
-async def get_flora_relocation(db: AsyncSession, flora_relocation_number: str) -> FloraRelocation | None:
-    flora_relocation_db = await db.execute(select(FloraRelocation).where(FloraRelocation.relocation_number == flora_relocation_number))
+async def get_flora_relocation(
+        db: AsyncSession,
+        flora_relocation_number: str
+        ) -> FloraRelocation | None:
+    flora_relocation_db = await db.execute(
+            select(FloraRelocation).where(
+                FloraRelocation.relocation_number == flora_relocation_number)
+            )
     return flora_relocation_db.scalars().first()
 
+
 # Get flora relocation by id
-async def get_flora_relocation_by_id(db: AsyncSession, flora_relocation_id: int) -> FloraRelocation | None:
-    flora_relocation_db = await db.execute(select(FloraRelocation).where(FloraRelocation.id == flora_relocation_id))
+async def get_flora_relocation_by_id(
+        db: AsyncSession,
+        flora_relocation_id: int
+        ) -> FloraRelocation | None:
+    flora_relocation_db = await db.execute(
+            select(FloraRelocation).where(
+                FloraRelocation.id == flora_relocation_id)
+            )
     return flora_relocation_db.scalars().first()
+
 
 # Get all flora relocations
 async def get_all_flora_relocations(db: AsyncSession) -> List[FloraRelocation]:
     flora_relocations_db = await db.execute(select(FloraRelocation))
     return list(flora_relocations_db.scalars())
 
+
 # Create a new flora relocation
-async def create_flora_relocation(db: AsyncSession, flora_relocation: FloraRelocationBase) -> FloraRelocation:
+async def create_flora_relocation(
+        db: AsyncSession,
+        flora_relocation: FloraRelocationBase
+        ) -> FloraRelocation:
     db_flora_relocation = FloraRelocation(
-            relocation_date = flora_relocation.relocation_date,
-            relocation_number = flora_relocation.relocation_number,
-            size = flora_relocation.size,
-            epiphyte_phenology = flora_relocation.epiphyte_phenology,
-            johanson_zone = flora_relocation.johanson_zone,
-            relocation_position_latitude = flora_relocation.relocation_position_latitude,
-            relocation_position_longitude = flora_relocation.relocation_position_longitude,
-            relocation_position_altitude = flora_relocation.relocation_position_altitude,
-            bryophyte_number = flora_relocation.bryophyte_number,
-            dap_bryophyte = flora_relocation.dap_bryophyte,
-            height_bryophyte = flora_relocation.height_bryophyte,
-            bark_type = flora_relocation.bark_type,
-            infested_lianas = flora_relocation.infested_lianas,
-            other_observations = flora_relocation.other_observations,
-            flora_rescue_id = flora_relocation.flora_rescue_id,
-            specie_bryophyte_id = flora_relocation.specie_bryophyte_id,
-            genus_bryophyte_id = flora_relocation.genus_bryophyte_id,
-            family_bryophyte_id = flora_relocation.family_bryophyte_id,
-            relocation_zone_id = flora_relocation.relocation_zone_id,
+            relocation_date=flora_relocation.relocation_date,
+            relocation_number=flora_relocation.relocation_number,
+            size=flora_relocation.size,
+            epiphyte_phenology=flora_relocation.epiphyte_phenology,
+            johanson_zone=flora_relocation.johanson_zone,
+            relocation_position_latitude=flora_relocation.relocation_position_latitude,
+            relocation_position_longitude=flora_relocation.relocation_position_longitude,
+            relocation_position_altitude=flora_relocation.relocation_position_altitude,
+            bryophyte_number=flora_relocation.bryophyte_number,
+            dap_bryophyte=flora_relocation.dap_bryophyte,
+            height_bryophyte=flora_relocation.height_bryophyte,
+            bark_type=flora_relocation.bark_type,
+            infested_lianas=flora_relocation.infested_lianas,
+            other_observations=flora_relocation.other_observations,
+            is_bryophyte_confirmed=flora_relocation.is_bryophyte_confirmed,
+            flora_rescue_id=flora_relocation.flora_rescue_id,
+            specie_bryophyte_id=flora_relocation.specie_bryophyte_id,
+            genus_bryophyte_id=flora_relocation.genus_bryophyte_id,
+            family_bryophyte_id=flora_relocation.family_bryophyte_id,
+            relocation_zone_id=flora_relocation.relocation_zone_id,
             )
     db.add(db_flora_relocation)
     await db.commit()
     await db.refresh(db_flora_relocation)
     return db_flora_relocation
 
+
 # Update a flora relocation
-async def update_flora_relocation(db: AsyncSession, flora_relocation_id: int, flora_relocation: FloraRelocationBase) -> FloraRelocation:
-    db_flora_relocation = await get_flora_relocation_by_id(db, flora_relocation_id)
+async def update_flora_relocation(
+        db: AsyncSession,
+        flora_relocation_id: int,
+        flora_relocation: FloraRelocationBase
+        ) -> FloraRelocation:
+    db_flora_relocation = await get_flora_relocation_by_id(
+            db,
+            flora_relocation_id
+            )
     if not db_flora_relocation:
-        raise HTTPException(status_code=404, detail="Flora relocation not found")
+        raise HTTPException(
+                status_code=404,
+                detail="Flora relocation not found"
+                )
 
     db_flora_relocation.relocation_date = flora_relocation.relocation_date
     db_flora_relocation.relocation_number = flora_relocation.relocation_number
@@ -497,6 +553,7 @@ async def update_flora_relocation(db: AsyncSession, flora_relocation_id: int, fl
     db_flora_relocation.bark_type = flora_relocation.bark_type
     db_flora_relocation.infested_lianas = flora_relocation.infested_lianas
     db_flora_relocation.other_observations = flora_relocation.other_observations
+    db_flora_relocation.is_bryophyte_confirmed = flora_relocation.is_bryophyte_confirmed
     db_flora_relocation.flora_rescue_id = flora_relocation.flora_rescue_id
     db_flora_relocation.specie_bryophyte_id = flora_relocation.specie_bryophyte_id
     db_flora_relocation.genus_bryophyte_id = flora_relocation.genus_bryophyte_id
@@ -506,23 +563,40 @@ async def update_flora_relocation(db: AsyncSession, flora_relocation_id: int, fl
     await db.refresh(db_flora_relocation)
     return db_flora_relocation
 
+
 # Delete a flora relocation
-async def delete_flora_relocation(db: AsyncSession, flora_relocation_id: int) -> FloraRelocation:
-    db_flora_relocation = await get_flora_relocation_by_id(db, flora_relocation_id)
+async def delete_flora_relocation(
+        db: AsyncSession,
+        flora_relocation_id: int
+        ) -> FloraRelocation:
+    db_flora_relocation = await get_flora_relocation_by_id(
+            db,
+            flora_relocation_id
+            )
     if not db_flora_relocation:
-        raise HTTPException(status_code=404, detail="Flora relocation not found")
-    await db.execute(delete(FloraRelocation).where(FloraRelocation.id == flora_relocation_id))
+        raise HTTPException(
+                status_code=404,
+                detail="Flora relocation not found"
+                )
+    await db.execute(
+            delete(FloraRelocation).where(
+                FloraRelocation.id == flora_relocation_id)
+            )
     await db.commit()
     return db_flora_relocation
 
 """
 CRUD RESCUE FLORA WITH SPECIE
 """
+
+
 # Get rescue flora with specie, genus and family name
-async def get_rescue_flora_with_specie(db: AsyncSession) -> List[FloraRescueSpecies]:
+async def get_rescue_flora_with_specie(
+        db: AsyncSession
+        ) -> List[FloraRescueSpecies]:
     rescues: list[FloraRescue] = await get_all_flora_rescues(db)
 
-    result= []
+    result = []
 
     for rescue in rescues:
         specie_db = await get_specie_by_id(db, rescue.specie_epiphyte_id)
@@ -555,12 +629,19 @@ async def get_rescue_flora_with_specie(db: AsyncSession) -> List[FloraRescueSpec
 
     return result
 
-#Get rescue flora with specie, genus and family name by specie id
-async def get_rescue_flora_with_specie_by_specie_id(db: AsyncSession, specie_id: int) -> List[FloraRescueSpecies]:
-    rescues = await db.execute(select(FloraRescue).filter(FloraRescue.specie_epiphyte_id == specie_id))
+
+# Get rescue flora with specie, genus and family name by specie id
+async def get_rescue_flora_with_specie_by_specie_id(
+        db: AsyncSession,
+        specie_id: int
+        ) -> List[FloraRescueSpecies]:
+    rescues = await db.execute(
+            select(FloraRescue).filter(
+                FloraRescue.specie_epiphyte_id == specie_id)
+            )
     rescues_db = rescues.scalars().all()
 
-    result= []
+    result = []
 
     for rescue in rescues_db:
         specie_db = await get_specie_by_id(db, rescue.specie_epiphyte_id)
@@ -592,11 +673,3 @@ async def get_rescue_flora_with_specie_by_specie_id(db: AsyncSession, specie_id:
             ))
 
     return result
-
-
-
-
-
-
-
-

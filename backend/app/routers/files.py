@@ -1,13 +1,12 @@
 from fastapi import APIRouter, File, UploadFile, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List, Union
 from fastapi.responses import JSONResponse
 import pandas as pd
 
 
 from app.api.deps import PermissonsChecker, get_db
 
-#CRUD
+# CRUD
 from app.crud.rescue_flora import (
     create_plant_nursery,
     create_flora_relocation,
@@ -18,7 +17,7 @@ from app.crud.rescue_flora import (
     )
 from app.crud.tower import create_tower, get_tower_by_number
 
-from app.crud.rescue_herpetofauna import(
+from app.crud.rescue_herpetofauna import (
     create_transect_herpetofauna,
     get_transect_herpetofauna_by_number,
     create_rescue_herpetofauna,
@@ -36,14 +35,12 @@ from app.crud.rescue_herpetofauna import(
 from app.crud.rescue_mammals import (
         create_rescue_mammal,
         get_rescue_mammal_cod,
-        create_site_release_mammal,
-        get_site_release_mammal_name,
         create_release_mammal,
         get_release_mammal_cod
     )
 
 
-#Schemas
+# Schemas
 from app.schemas.rescue_flora import (
     PlantNurseryBase,
     FloraRelocationBase,
@@ -63,7 +60,6 @@ from app.schemas.rescue_mammals import (
     )
 
 from app.schemas.towers import TowerBase
-from app.schemas.services import UTMData
 
 from app.services.files import (
     convert_to_datetime,
@@ -71,7 +67,6 @@ from app.services.files import (
     none_value,
     insertGEOData,
     addIdSpecieByName,
-    addIdGenusByName,
     addIdFamilyByName,
     addBooleanByGender,
     addMarkIdByNumber,
@@ -93,15 +88,15 @@ from app.services.files import (
 
 router = APIRouter()
 
-# Upload flora rescue excel file
+
 @router.post(
     path="/upload/flora_rescue",
-    response_model= None,
+    response_model=None,
     summary="Upload flora rescue excel file",
     tags=["Upload"],
 )
 async def upload_flora_rescue(
-    file: UploadFile=File(...),
+    file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
 ):
@@ -115,7 +110,7 @@ async def upload_flora_rescue(
         date_columns = ['rescue_date']
         df = convert_to_datetime(df, date_columns)
 
-        #change coordinate system
+        # change coordinate system
         UTM_columns = {
             'easting': 'este',
             'northing': 'sur',
@@ -123,19 +118,33 @@ async def upload_flora_rescue(
             'zone_letter': 'zona_letra',
         }
 
-        #Names of columns geodata columns to in transect
+        # Names of columns geodata columns to in transect
         nameLatitude = 'latitude'
         nameLongitude = 'longitude'
 
         # Insert columns lat y lon to df
         df = insertGEOData(df, UTM_columns, nameLatitude, nameLongitude)
 
-        #convert specie, genus and family bryophyte to id
-        df, specieListWithOutNameB =  await addIdSpecieByName(db, df, "especie_forofito", "specie_bryophyte_id")
-        df, genusListWithOutNameB = await addIdGenusByName(db, df, "genero_forofito", "genus_bryophyte_id")
-        df, familyListWithOutNameB = await addIdFamilyByName(db, df, "familia_forofito", "family_bryophyte_id")
+        # convert specie, genus and family bryophyte to id
+        df, specieListWithOutNameB = await addIdSpecieByName(
+                db,
+                df,
+                "especie_forofito",
+                "specie_bryophyte_id"
+                )
+        df, genusListWithOutNameB = await addIdGenusByName(
+                db,
+                df,
+                "genero_forofito",
+                "genus_bryophyte_id")
+        df, familyListWithOutNameB = await addIdFamilyByName(
+                db,
+                df,
+                "familia_forofito",
+                "family_bryophyte_id"
+                )
 
-        #convert specie, genus and family epiphyte to id
+        # convert specie, genus and family epiphyte to id
         df, specieListWithOutNameE = await addIdSpecieByName(db, df, "especie_epifito", "specie_epiphyte_id")
         df, genusListWithOutNameE = await addIdGenusByName(db, df, "genero_epifito", "genus_epiphyte_id")
         df, familyListWithOutNameE = await addIdFamilyByName(db, df, "familia_epifito", "family_epiphyte_id")
@@ -208,6 +217,7 @@ async def upload_flora_rescue(
             detail="File must be an excel file",
         )
 
+
 # Upload plant nursery excel file
 @router.post(
     path="/upload/plant_nursery",
@@ -216,7 +226,7 @@ async def upload_flora_rescue(
     tags=["Upload"],
 )
 async def upload_plant_nursery(
-    file: UploadFile=File(...),
+    file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
 ):
@@ -237,12 +247,16 @@ async def upload_plant_nursery(
         date_columns = ['fecha_ingreso', 'fecha_floracion', 'fecha_salida']
         df = convert_to_datetime(df, date_columns)
 
-        #add boolean column for is_phytosanitary_treatment and is_pruned
+        # add boolean column for is_phytosanitary_treatment and is_pruned
         df = addBooleanByCheck(df, "poda")
         df = addBooleanByCheck(df, "tratamiento_fitosanitario")
 
-        #add id for flora rescue
-        df, floraRescueListWithOutName = await addRescueFloraIdByNumber(db, df, "cod")
+        # add id for flora rescue
+        df, floraRescueListWithOutName = await addRescueFloraIdByNumber(
+                db,
+                df,
+                "cod"
+                )
 
         numberExistList = []
 
@@ -285,15 +299,16 @@ async def upload_plant_nursery(
             detail="File must be an excel file",
         )
 
-# Upload flora relocation excel file
+
+# Upload rescue mammals excel file
 @router.post(
     path="/upload/flora_relocation",
-    response_model= None,
+    response_model=None,
     summary="Upload flora relocation excel file",
     tags=["Upload"],
 )
 async def upload_flora_relocation(
-    file: UploadFile=File(...),
+    file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
 ):
@@ -304,10 +319,10 @@ async def upload_flora_relocation(
         df = remplace_nan_with_none(df)
 
         # Convert date columns to datetime objects
-        date_columns = ['fecha' ]
+        date_columns = ['fecha']
         df = convert_to_datetime(df, date_columns)
 
-        #change coordinate system
+        # change coordinate system
         UTM_columns = {
             'easting': 'este',
             'northing': 'sur',
@@ -315,35 +330,56 @@ async def upload_flora_relocation(
             'zone_letter': 'zona_letra',
         }
 
-        #Names of columns geodata columns to in transect
+        # Names of columns geodata columns to in transect
         nameLatitude = 'latitude'
         nameLongitude = 'longitude'
 
         # Insert columns lat y lon to df
         df = insertGEOData(df, UTM_columns, nameLatitude, nameLongitude)
 
-        #add id for flora rescue
-        df, floraRescueListWithOutName = await addRescueFloraIdByNumber(db, df, "number_rescue")
+        # add id for flora rescue
+        df, floraRescueListWithOutName = await addRescueFloraIdByNumber(
+                db,
+                df,
+                "number_rescue"
+                )
 
-       #add id for zone relocation
-        df, zoneRelocationListWithOutName = await addRelocationZoneIdByNumber(db, df, "zona_rescate")
+        # add id for zone relocation
+        df, zoneRelocationListWithOutName = await addRelocationZoneIdByNumber(
+                db,
+                df,
+                "zona_relocalizacion"
+                )
 
-        #add id specie by name
-        df, specieListWithOutName = await addIdGenusByName(db, df, "especie_b", "specie_bryophyte_id")
+        # add id specie by name
+        df, specieListWithOutName = await addIdSpecieByName(
+                db,
+                df,
+                "especie_b",
+                "specie_bryophyte_id"
+                )
 
-        #add id genus by name
-        df, genusListWithOutName = await addIdGenusByName(db, df, "genero_b", "genus_bryophyte_id")
+        # add id genus by name
+        df, genusListWithOutName = await addIdGenusByName(
+                db,
+                df,
+                "genero_b",
+                "genus_bryophyte_id"
+                )
 
-        #add family id by name
-        df, familyListWithOutName = await addIdFamilyByName(db, df, "familia_b", "family_bryophyte_id")
+        # add family id by name
+        df, familyListWithOutName = await addIdFamilyByName(
+                db, df, "familia_b", "family_bryophyte_id")
 
         df["zona_johanson"] = df["zona_johanson"].astype(str)
+
+        # Add id boolean column by check
+        df = addBooleanByCheck(df, "forofito_confirmado")
 
         # Replace NaN with None
         df = remplace_nan_with_none(df)
 
         numberExistList = []
-        
 
         for _, row in df.iterrows():
             try:
@@ -356,12 +392,13 @@ async def upload_flora_relocation(
                     relocation_position_latitude=row['latitude'],
                     relocation_position_longitude=row['longitude'],
                     relocation_position_altitude=row['altitud'],
-                    bryophyte_number=row['numero_epifito'],
+                    bryophyte_number=row['numero_forofito'],
                     dap_bryophyte=row['dap'],
                     height_bryophyte=row['altura'],
                     bark_type=row['corteza'],
                     infested_lianas=row['lianas'],
                     other_observations=none_value(row['observaciones']),
+                    is_bryophyte_confirmed=row['boolean_forofito_confirmado'],
                     flora_rescue_id=row['idRescue'],
                     specie_bryophyte_id=none_value(row['specie_bryophyte_id']),
                     genus_bryophyte_id=none_value(row['genus_bryophyte_id']),
@@ -373,7 +410,9 @@ async def upload_flora_relocation(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=f"Error in row {row['number']}: {e}"
                 )
-            if await get_flora_relocation(db, new_flora_relocation.relocation_number):
+            if await get_flora_relocation(
+                    db,
+                    new_flora_relocation.relocation_number):
                 numberExistList.append(new_flora_relocation.relocation_number)
                 continue
             else:
@@ -392,15 +431,15 @@ async def upload_flora_relocation(
             detail="File must be an excel file",
         )
 
-#upload tower excel file
+
 @router.post(
     path="/upload/tower",
-    response_model= None,
+    response_model=None,
     summary="Upload tower excel file",
     tags=["Upload"],
 )
 async def upload_tower(
-    file: UploadFile=File(...),
+    file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
 ):
@@ -444,7 +483,7 @@ async def upload_tower(
 @router.post(
     path="/upload/transect_herpetofauna",
     summary="Upload transect herpetofauna excel file",
-    response_model= None,
+    response_model=None,
     tags=["Upload"],
 )
 async def upload_transect_herpetofauna(
@@ -478,11 +517,11 @@ async def upload_transect_herpetofauna(
             'zone_letter': 'zona_letra',
         }
 
-        #Names of columns geodata columns to in transect
+        # Names of columns geodata columns to in transect
         nameLatitude_in = 'latitude_in'
         nameLongitude_in = 'longitude_in'
 
-        #Names of columns geodata columns to out transect
+        # Names of columns geodata columns to out transect
         nameLatitude_out = 'latitude_out'
         nameLongitude_out = 'longitude_out'
 
@@ -514,14 +553,21 @@ async def upload_transect_herpetofauna(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=f"Error: {e}",
                 )
-            if await get_transect_herpetofauna_by_number(db, new_transect_herpetofauna.number):
+            if await get_transect_herpetofauna_by_number(
+                    db,
+                    new_transect_herpetofauna.number):
                 numberExistList.append(new_transect_herpetofauna.number)
                 continue
             else:
-                await  create_transect_herpetofauna(db, new_transect_herpetofauna)
+                await create_transect_herpetofauna(
+                        db,
+                        new_transect_herpetofauna
+                        )
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
-            content={"message": "Flora relocation excel file uploaded successfully", "Not upload numbers because repeate": numberExistList},
+            content={
+                "message": "Flora relocation excel file uploaded successfully",
+                "Not upload numbers because repeate": numberExistList},
         )
     else:
         raise HTTPException(
@@ -529,15 +575,16 @@ async def upload_transect_herpetofauna(
             detail="File must be an excel file",
         )
 
+
 # Upload rescue herpetofauna excel file
 @router.post(
     path="/upload/rescue_herpetofauna",
     summary="Upload rescue herpetofauna excel file",
-    response_model= None,
+    response_model=None,
     tags=["Upload"],
 )
 async def upload_rescue_herpetofauna(
-    file: UploadFile=File(...),
+    file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
 ) -> JSONResponse | HTTPException:
@@ -547,11 +594,24 @@ async def upload_rescue_herpetofauna(
         # Replace NaN with None
         df = remplace_nan_with_none(df)
 
-        df, specieListWithOutName = await addIdSpecieByName(db, df, "especie", "idSpecie")
-        df, genderListWithOutName = addBooleanByGender(df, "sexo",("Macho", "Hembra"))
-        df, ageGroupListWithOutName = await addAgeGroupIdByName(db, df, "clase_etaria")
+        df, specieListWithOutName = await addIdSpecieByName(
+                db,
+                df,
+                "especie",
+                "idSpecie"
+                )
+        df, genderListWithOutName = addBooleanByGender(
+                df,
+                "sexo",
+                ("Macho", "Hembra")
+                )
+        df, ageGroupListWithOutName = await addAgeGroupIdByName(
+                db,
+                df,
+                "clase_etaria"
+                )
         df = await addTransectIdByNumber(db, df, "num_t")
-        df = addNumRescueHerpeto(df, "num_t" )
+        df = addNumRescueHerpeto(df, "num_t")
         df = remplace_nan_with_none(df)
 
         numberExistList = []
@@ -573,10 +633,15 @@ async def upload_rescue_herpetofauna(
                         status_code=status.HTTP_400_BAD_REQUEST,
                         detail=f"Error: {e} in row {row['numRescue']}",
                     )
-                if await get_rescue_herpetofauna_by_number(db, new_rescue_herpetofauna.number):
+                if await get_rescue_herpetofauna_by_number(
+                        db,
+                        new_rescue_herpetofauna.number):
                     numberExistList.append(new_rescue_herpetofauna.number)
                 else:
-                    await create_rescue_herpetofauna (db, new_rescue_herpetofauna)
+                    await create_rescue_herpetofauna(
+                            db,
+                            new_rescue_herpetofauna
+                            )
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
             content={
@@ -593,15 +658,16 @@ async def upload_rescue_herpetofauna(
             detail="File must be an excel file",
         )
 
+
 # Upload mark herpetofauna excel file
 @router.post(
     path="/upload/mark_herpetofauna",
     summary="Upload mark herpetofauna excel file",
-    response_model= None,
+    response_model=None,
     tags=["Upload"],
 )
 async def upload_mark_herpetofauna(
-    file: UploadFile=File(...),
+    file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
 ) -> JSONResponse | HTTPException:
@@ -639,14 +705,19 @@ async def upload_mark_herpetofauna(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=f"Error: {e}",
                 )
-            if await get_mark_herpetofauna_by_number(db, new_mark_herpetofauna.number):
+            if await get_mark_herpetofauna_by_number(
+                    db, new_mark_herpetofauna.number
+                    ):
                 numberExistList.append(new_mark_herpetofauna.number)
                 continue
             else:
                 await create_mark_herpetofauna(db, new_mark_herpetofauna)
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
-            content={"message": "Flora relocation excel file uploaded successfully", "Not upload numbers because repeate": numberExistList},
+            content={
+                "message": "Flora relocation excel file uploaded successfully",
+                "Not upload numbers because repeate": numberExistList
+                },
         )
     else:
         raise HTTPException(
@@ -654,18 +725,19 @@ async def upload_mark_herpetofauna(
             detail="File must be an excel file",
         )
 
-#Upload transect herpetofauna translocation
+
+# Upload transect herpetofauna translocation
 @router.post(
     path="/upload/transect_herpetofauna_translocation",
     summary="Upload transect herpetofauna translocation excel file",
-    response_model= None,
+    response_model=None,
     tags=["Upload"],
 )
 async def upload_transect_herpetofauna_translocation(
-    file: UploadFile=File(...),
+    file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
-) -> JSONResponse|HTTPException:
+) -> JSONResponse | HTTPException:
     if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
         df = pd.read_excel(file.file)
 
@@ -678,7 +750,7 @@ async def upload_transect_herpetofauna_translocation(
         ]
         df = convert_to_datetime(df, date_columns)
 
-        #change coordinate system
+        # change coordinate system
         UTM_columns_in = {
             'easting': 'este_in',
             'northing': 'sur_in',
@@ -692,45 +764,66 @@ async def upload_transect_herpetofauna_translocation(
             'zone_letter': 'zona_letra',
         }
 
-        #Names of columns geodata columns to in transect
+        # Names of columns geodata columns to in transect
         nameLatitude_in = 'latitude_in'
         nameLongitude_in = 'longitude_in'
 
-        #Names of columns geodata columns to out transect
+        # Names of columns geodata columns to out transect
         nameLatitude_out = 'latitude_out'
         nameLongitude_out = 'longitude_out'
 
         # Insert columns lat y lon to df
-        df = insertGEOData(df, UTM_columns_in, nameLatitude_in, nameLongitude_in)
-        df = insertGEOData(df, UTM_columns_out, nameLatitude_out, nameLongitude_out)
+        df = insertGEOData(
+                df,
+                UTM_columns_in,
+                nameLatitude_in,
+                nameLongitude_in
+                )
+        df = insertGEOData(
+                df,
+                UTM_columns_out,
+                nameLatitude_out,
+                nameLongitude_out
+                )
 
         numberExistList = []
 
         for _, row in df.iterrows():
             try:
                 new_transect_herpetofauna_translocation = TransectHerpetofaunaTranslocationCreate(
-                    cod = row["cod"],
-                    date = row["date"],
-                    latitude_in= row["latitude_in"],
-                    longitude_in= row["longitude_in"],
-                    altitude_in= row["altitud_in"],
-                    latitude_out= row["latitude_out"],
-                    longitude_out= row["longitude_out"],
-                    altitude_out= row["altitud_out"]
+                    cod=row["cod"],
+                    date=row["date"],
+                    latitude_in=row["latitude_in"],
+                    longitude_in=row["longitude_in"],
+                    altitude_in=row["altitud_in"],
+                    latitude_out=row["latitude_out"],
+                    longitude_out=row["longitude_out"],
+                    altitude_out=row["altitud_out"]
                 )
             except Exception as e:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=f"Error: {e}",
                 )
-            if await get_transect_herpetofauna_translocation_by_cod(db, new_transect_herpetofauna_translocation.cod):
-                numberExistList.append(new_transect_herpetofauna_translocation.cod)
+            if await get_transect_herpetofauna_translocation_by_cod(
+                    db,
+                    new_transect_herpetofauna_translocation.cod
+                    ):
+                numberExistList.append(
+                        new_transect_herpetofauna_translocation.cod
+                        )
                 continue
             else:
-                await create_transect_herpetofauna_translocation(db, new_transect_herpetofauna_translocation)
+                await create_transect_herpetofauna_translocation(
+                        db,
+                        new_transect_herpetofauna_translocation
+                        )
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
-            content={"message": "The file was upload", "Not upload numbers because repeate": numberExistList},
+            content={
+                "message": "The file was upload",
+                "Not upload numbers because repeate": numberExistList
+                },
         )
     else:
         raise HTTPException(
@@ -738,18 +831,19 @@ async def upload_transect_herpetofauna_translocation(
             detail="File must be an excel file",
         )
 
-#Upload point herpetofauna translocation
+
+# Upload point herpetofauna translocation
 @router.post(
     path="/upload/point_herpetofauna_translocation",
     summary="Upload point herpetofauna translocation excel file",
-    response_model= None,
+    response_model=None,
     tags=["Upload"],
 )
 async def upload_point_herpetofaun_location(
-    file: UploadFile=File(...),
+    file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
-) -> JSONResponse|HTTPException:
+) -> JSONResponse | HTTPException:
     if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
         df = pd.read_excel(file.file)
 
@@ -762,7 +856,7 @@ async def upload_point_herpetofaun_location(
         ]
         df = convert_to_datetime(df, date_columns)
 
-        #change coordinate system
+        # change coordinate system
         UTM_columns = {
             'easting': 'este',
             'northing': 'sur',
@@ -770,7 +864,7 @@ async def upload_point_herpetofaun_location(
             'zone_letter': 'zona_letra',
         }
 
-        #Names of columns geodata columns to in transect
+        # Names of columns geodata columns to in transect
         nameLatitude = 'latitude'
         nameLongitude = 'longitude'
 
@@ -782,25 +876,36 @@ async def upload_point_herpetofaun_location(
         for _, row in df.iterrows():
             try:
                 new_point_herpetofauna_translocation = PointHerpetofaunaTranslocationCreate(
-                    cod = row["cod"],
-                    date = row["date"],
-                    latitude= row["latitude"],
-                    longitude= row["longitude"],
-                    altitude= row["altitud"],
+                    cod=row["cod"],
+                    date=row["date"],
+                    latitude=row["latitude"],
+                    longitude=row["longitude"],
+                    altitude=row["altitud"],
                 )
             except Exception as e:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=f"Error to create data: {e}",
                 )
-            if await get_point_herpetofauna_translocation_by_cod(db, new_point_herpetofauna_translocation.cod):
-                numberExistList.append(new_point_herpetofauna_translocation.cod)
+            if await get_point_herpetofauna_translocation_by_cod(
+                    db,
+                    new_point_herpetofauna_translocation.cod
+                    ):
+                numberExistList.append(
+                        new_point_herpetofauna_translocation.cod
+                        )
                 continue
             else:
-                await create_point_herpetofauna_translocation(db, new_point_herpetofauna_translocation)
+                await create_point_herpetofauna_translocation(
+                        db,
+                        new_point_herpetofauna_translocation
+                        )
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
-            content={"message": "The file was upload", "Not upload numbers because repeate": numberExistList},
+            content={
+                "message": "The file was upload",
+                "Not upload numbers because repeate": numberExistList
+                },
         )
     else:
         raise HTTPException(
@@ -808,18 +913,19 @@ async def upload_point_herpetofaun_location(
             detail="File must be an excel file",
         )
 
-#Upload translocation herpetofauna
+
+# Upload translocation herpetofauna
 @router.post(
     path="/upload/translocation_herpetofauna",
     summary="Upload translocation herpetofauna excel file",
-    response_model= None,
+    response_model=None,
     tags=["Upload"],
 )
 async def upload_translocation_herpetofauna(
-    file: UploadFile=File(...),
+    file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
-) -> JSONResponse|HTTPException:
+) -> JSONResponse | HTTPException:
     if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
         df = pd.read_excel(file.file)
 
@@ -827,7 +933,12 @@ async def upload_translocation_herpetofauna(
         df = remplace_nan_with_none(df)
 
         # Add id specie by scientific name
-        df, specieListWithOutName = await addIdSpecieByName(db, df, "especie", "idSpecie")
+        df, specieListWithOutName = await addIdSpecieByName(
+                db,
+                df,
+                "especie",
+                "idSpecie"
+                )
 
         # Add id transect herpetofauna translocation by cod
         df = await addTransectTranslocationIdByCod(db, df, "cod_transect")
@@ -836,7 +947,11 @@ async def upload_translocation_herpetofauna(
         df = await addPointTranslocationByCod(db, df, "cod_point")
 
         # Add id mark herpetofauna by number
-        df, markListWithOutNumber = await addMarkIdByNumber(db, df, "number_mark")
+        df, markListWithOutNumber = await addMarkIdByNumber(
+                db,
+                df,
+                "number_mark"
+                )
 
         # Replace NaN with None
         df = remplace_nan_with_none(df)
@@ -846,10 +961,10 @@ async def upload_translocation_herpetofauna(
         for _, row in df.iterrows():
             try:
                 new_point_herpetofauna_translocation =  TranslocationHerpetofaunaCreate(
-                    cod = row["cod"],
-                    transect_herpetofauna_translocation_id = none_value(row["idTransect"]),
-                    point_herpetofauna_translocation_id = none_value(row["idPoint"]),
-                    specie_id = row["idSpecie"],
+                    cod=row["cod"],
+                    transect_herpetofauna_translocation_id=none_value(row["idTransect"]),
+                    point_herpetofauna_translocation_id=none_value(row["idPoint"]),
+                    specie_id=row["idSpecie"],
                     mark_herpetofauna_id=none_value(row["idMark"]),
                 )
             except Exception as e:
@@ -857,14 +972,27 @@ async def upload_translocation_herpetofauna(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=f"Error to create data: {e} in row {row['cod']}",
                 )
-            if await get_translocation_herpetofauna_by_cod(db, new_point_herpetofauna_translocation.cod):
-                numberExistList.append(new_point_herpetofauna_translocation.cod)
+            if await get_translocation_herpetofauna_by_cod(
+                    db,
+                    new_point_herpetofauna_translocation.cod
+                    ):
+                numberExistList.append(
+                        new_point_herpetofauna_translocation.cod
+                        )
                 continue
             else:
-                await create_translocation_herpetofauna(db, new_point_herpetofauna_translocation)
+                await create_translocation_herpetofauna(
+                        db,
+                        new_point_herpetofauna_translocation
+                        )
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
-            content={"message": "The file was upload", "Not upload numbers because repeate": numberExistList, "Some species not found": specieListWithOutName, "Some marks not found": markListWithOutNumber},
+            content={
+                "message": "The file was upload",
+                "Not upload numbers because repeate": numberExistList,
+                "Some species not found": specieListWithOutName,
+                "Some marks not found": markListWithOutNumber
+                },
         )
     else:
         raise HTTPException(
@@ -872,18 +1000,19 @@ async def upload_translocation_herpetofauna(
             detail="File must be an excel file",
         )
 
-#Upload Rescue Mammals 
+
+# Upload Rescue Mammals 
 @router.post(
     path="/upload/rescue_mammals",
     summary="Upload rescue mammals excel file",
-    response_model= None,
+    response_model=None,
     tags=["Upload"],
 )
 async def upload_rescue_mammals(
-    file: UploadFile=File(...),
+    file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
-) -> JSONResponse|HTTPException:
+) -> JSONResponse | HTTPException:
     if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
         df = pd.read_excel(file.file)
 
@@ -896,7 +1025,7 @@ async def upload_rescue_mammals(
         ]
         df = convert_to_datetime(df, date_columns)
 
-        #change coordinate system
+        # change coordinate system
         UTM_columns = {
             'easting': 'este',
             'northing': 'sur',
@@ -904,7 +1033,7 @@ async def upload_rescue_mammals(
             'zone_letter': 'zona_letra',
         }
 
-        #Names of columns geodata columns to in transect
+        # Names of columns geodata columns to in transect
         nameLatitude = 'latitude'
         nameLongitude = 'longitude'
 
@@ -912,48 +1041,64 @@ async def upload_rescue_mammals(
         df = insertGEOData(df, UTM_columns, nameLatitude, nameLongitude)
 
         # Add boolean column for gender
-        df, ListOffRowWithGender  = addBooleanByGender(df, "sexo", ("macho", "hembra"))
+        df, ListOffRowWithGender = addBooleanByGender(
+                df,
+                "sexo",
+                ("macho", "hembra")
+                )
 
         # Add id habitat column by name
-        df, habitatListWithOutName = await addHabitatIdByName(db, df, "habitat")
+        df, habitatListWithOutName = await addHabitatIdByName(
+                db,
+                df,
+                "habitat"
+                )
 
         # Add id age group column by name
         df, ageGroupListWithOutName = await addAgeGroupIdByName(db, df, "edad")
 
         # Add id specie column by scientific name
-        df, specieListWithOutName = await addIdSpecieByName(db, df, "especie", "idSpecie")
+        df, specieListWithOutName = await addIdSpecieByName(
+                db,
+                df,
+                "especie",
+                "idSpecie"
+                )
 
         # Add id genus column by name
-        df, genusListWithOutName = await addIdGenusByName(db, df, "genero", "idGenus")
+        df, genusListWithOutName = await addIdGenusByName(
+                db,
+                df,
+                "genero", "idGenus"
+                )
 
         # Add id boolean column by check
         df = addBooleanByCheck(df, "especie_confirmada")
-
 
         numberExistList = []
 
         for _, row in df.iterrows():
             try:
-                new_rescue_mammals =  RescueMammalsCreate(
-                    cod = row["cod"],
-                    date = row["date"],
-                    mark = row["marca"],
-                    latitude = row["latitude"],
-                    longitude = row["longitude"],
-                    altitude = row["altitud"],
-                    gender = none_value(row["booleanGender"]),
-                    LT = none_value(row["LT"]),
-                    LC = none_value(row["LC"]),
-                    LP = none_value(row["LP"]),
-                    LO = none_value(row["LO"]),
-                    LA = none_value(row["LA"]),
+                new_rescue_mammals = RescueMammalsCreate(
+                    cod=row["cod"],
+                    date=row["date"],
+                    mark=row["marca"],
+                    latitude=row["latitude"],
+                    longitude=row["longitude"],
+                    altitude=row["altitud"],
+                    gender=none_value(row["booleanGender"]),
+                    LT=none_value(row["LT"]),
+                    LC=none_value(row["LC"]),
+                    LP=none_value(row["LP"]),
+                    LO=none_value(row["LO"]),
+                    LA=none_value(row["LA"]),
                     weight=none_value(row["peso"]),
                     observation=none_value(row["observaciones"]),
-                    is_specie_confirmed = row["boolean_especie_confirmada"],
-                    habitat_id = (row["idHabitat"]),
-                    age_group_id = none_value(row["idAgeGroup"]),
-                    specie_id = none_value(row["idSpecie"]),
-                    genus_id = none_value(row["idGenus"]),
+                    is_specie_confirmed=row["boolean_especie_confirmada"],
+                    habitat_id=(row["idHabitat"]),
+                    age_group_id=none_value(row["idAgeGroup"]),
+                    specie_id=none_value(row["idSpecie"]),
+                    genus_id=none_value(row["idGenus"]),
                 )
             except Exception as e:
                 raise HTTPException(
@@ -982,23 +1127,23 @@ async def upload_rescue_mammals(
             detail="File must be an excel file",
         )
 
+
 # Uploas release mammals
 @router.post(
     path="/upload/release_mammals",
     summary="Upload release mammals excel file",
-    response_model= None,
+    response_model=None,
     tags=["Upload"],
 )
 async def upload_release_mammals(
-    file: UploadFile=File(...),
+    file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     permissions: str = Depends(PermissonsChecker(["admin"])),
-) -> JSONResponse|HTTPException:
+) -> JSONResponse | HTTPException:
     if file.filename.endswith('.xlsx') or file.filename.endswith('.xls'):
         df = pd.read_excel(file.file)
 
-
-        #change coordinate system
+        # change coordinate system
         UTM_columns = {
             'easting': 'este',
             'northing': 'sur',
@@ -1006,31 +1151,37 @@ async def upload_release_mammals(
             'zone_letter': 'zona_letra',
         }
 
-        #Names of columns geodata columns to in transect
+        # Names of columns geodata columns to in transect
         nameLatitude = 'latitude'
         nameLongitude = 'longitude'
-
-
 
         # Insert columns lat y lon to df
         df = insertGEOData(df, UTM_columns, nameLatitude, nameLongitude)
         # Replace NaN with None
         df = remplace_nan_with_none(df)
-        df, siteReleaseWithOutName = await addSiteReleaseMammalIdByName(db, df, "sitio")
-        df, rescueMammalListWithOutName = await addRescueMammalIdByCode(db, df, "cod")
+        df, siteReleaseWithOutName = await addSiteReleaseMammalIdByName(
+                db,
+                df,
+                "sitio"
+                )
+        df, rescueMammalListWithOutName = await addRescueMammalIdByCode(
+                db,
+                df,
+                "cod"
+                )
 
         numberExistList = []
 
         for _, row in df.iterrows():
             try:
-                new_release_mammals =  ReleaseMammalsCreate(
-                    cod = row["cod"],
-                    longitude = none_value(row["longitude"]),
-                    latitude = none_value(row["latitude"]),
-                    altitude = none_value(row["altitud"]),
-                    sustrate = none_value(row["sustrato"]),
-                    site_release_mammals_id = none_value(row["idSiteReleaseMammal"]),
-                    rescue_mammals_id = row["idRescueMammal"],
+                new_release_mammals = ReleaseMammalsCreate(
+                    cod=row["cod"],
+                    longitude=none_value(row["longitude"]),
+                    latitude=none_value(row["latitude"]),
+                    altitude=none_value(row["altitud"]),
+                    sustrate=none_value(row["sustrato"]),
+                    site_release_mammals_id=none_value(row["idSiteReleaseMammal"]),
+                    rescue_mammals_id=row["idRescueMammal"],
                 )
             except Exception as e:
                 raise HTTPException(
@@ -1055,6 +1206,4 @@ async def upload_release_mammals(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="File must be an excel file",
-    )
-
-
+            )

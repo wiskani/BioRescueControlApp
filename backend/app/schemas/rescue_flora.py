@@ -116,8 +116,9 @@ class FloraRescueBase(BaseModel):
             raise HTTPException(
                 status_code=400,
                 detail="specie, genus or family epiphyte must be not null"
-            )   
+            )
         return self
+
 
 class FloraRescueResponse(FloraRescueBase):
     id: int
@@ -125,21 +126,23 @@ class FloraRescueResponse(FloraRescueBase):
     class Config:
         from_attributes = True
 
+
 class PlantNurseryBase(BaseModel):
     entry_date: datetime = Field(...)
     cod_reg: str
-    health_status_epiphyte: str|None = Field( max_length=50)
-    vegetative_state: str|None = Field( max_length=50)
-    flowering_date: datetime|None
-    treatment_product: str|None = Field( max_length=50, examples=["1,2,3"])
+    health_status_epiphyte: str | None = Field(max_length=50)
+    vegetative_state: str | None = Field(max_length=50)
+    flowering_date: datetime | None
+    treatment_product: str | None = Field(max_length=50, examples=["1,2,3"])
     is_pruned: bool
-    is_phytosanitary_treatment:bool
-    substrate: str|None = Field( max_length=50)
+    is_phytosanitary_treatment: bool
+    substrate: str | None = Field(max_length=50)
     departure_date: datetime | None
     flora_rescue_id: int
 
     class Config:
         from_attributes = True
+
 
 class PlantNurseryResponse(PlantNurseryBase):
     id: int
@@ -147,11 +150,12 @@ class PlantNurseryResponse(PlantNurseryBase):
     class Config:
         from_attributes = True
 
+
 class FloraRelocationBase(BaseModel):
     relocation_date: datetime = Field(...)
-    relocation_number: str= Field(...)
+    relocation_number: str = Field(...)
     size: float
-    epiphyte_phenology: str = Field( max_length=50, examples=["Esteril"])
+    epiphyte_phenology: str = Field(max_length=50, examples=["Esteril"])
     johanson_zone: str | None = Field(max_length=50)
     relocation_position_latitude: float
     relocation_position_longitude: float
@@ -159,11 +163,12 @@ class FloraRelocationBase(BaseModel):
     bryophyte_number: int = Field(...)
     dap_bryophyte: float | None
     height_bryophyte: float | None
-    bark_type:  str | None  = Field(max_length=50)
+    bark_type:  str | None = Field(max_length=50)
     infested_lianas: str | None = Field(examples=["Poco"])
     other_observations:  str | None = Field(max_length=100)
+    is_bryophyte_confirmed: bool = Field(...)
     flora_rescue_id: int
-    specie_bryophyte_id: int | None  = Field(default=None)
+    specie_bryophyte_id: int | None = Field(default=None)
     genus_bryophyte_id: int | None = Field(default=None)
     family_bryophyte_id:  int | None = Field(default=None)
     relocation_zone_id:  int
@@ -193,6 +198,7 @@ class FloraRelocationBase(BaseModel):
                 )
         return self
 
+
 class FloraRelocationResponse(FloraRelocationBase):
     id: int
 
@@ -203,11 +209,11 @@ class FloraRelocationResponse(FloraRelocationBase):
 class FloraRescueSpecies(BaseModel):
     epiphyte_number: str = Field(...)
     rescue_date: datetime = Field(...)
-    rescue_area_latitude: float = Field(examples= [-17.444])
-    rescue_area_longitude: float= Field(examples= [-66.444])
+    rescue_area_latitude: float = Field(examples=[-17.444])
+    rescue_area_longitude: float = Field(examples=[-66.444])
     specie_name: str | None
     genus_name: str | None
-    family_name: str| None
+    family_name: str | None
+
     class Config:
         from_attributes = True
-

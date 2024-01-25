@@ -21,65 +21,57 @@ from app.models.images import Image
 
 # Purpose: CRUD operations for Species
 
-# Get if specie exists
-
 
 async def get_specie_by_name(
         db: AsyncSession,
         scientific_name: str
         ) -> Specie | None:
+    """Get a specie by its scientific name"""
     specie_db = await db.execute(
             select(Specie)
             .where(Specie.scientific_name == scientific_name)
             )
     return specie_db.scalars().first()
 
-# Get if specie exists
-
 
 async def get_specie_by_name_epithet(
         db: AsyncSession,
         name: str
         ) -> Specie | None:
+    """Get a specie by its specific epithet"""
     specie_db = await db.execute(
             select(Specie)
             .where(Specie.specific_epithet == name)
             )
     return specie_db.scalars().first()
 
-# Create a specie
-
 
 async def create_specie(db: AsyncSession, specie: SpeciesCreate) -> Specie:
+    """Create a new specie"""
     db_specie = Specie(
         scientific_name=specie.scientific_name,
         specific_epithet=specie.specific_epithet,
         key_gbif=specie.key_gbif,
         status_id=specie.status_id,
         genus_id=specie.genus_id
-
     )
     db.add(db_specie)
     await db.commit()
     await db.refresh(db_specie)
     return db_specie
 
-# Get all species
-
 
 async def get_all_species(db: AsyncSession) -> List[Specie]:
+    """Get all species"""
     species_db = await db.execute(select(Specie))
     return list(species_db.scalars().all())
-
-# Get specie by id
 
 
 async def get_specie_by_id(
         db: AsyncSession, specie_id: int) -> Union[Specie, None]:
+    """Get a specie by its id"""
     specie_db = await db.execute(select(Specie).filter(Specie.id == specie_id))
     return specie_db.scalars().first()
-
-# Update specie
 
 
 async def update_specie(
@@ -87,6 +79,7 @@ async def update_specie(
         specie_id: int,
         specie: SpeciesCreate
         ) -> Specie:
+    """Update a specie"""
     db_specie = await get_specie_by_id(db, specie_id)
     if not db_specie:
         raise HTTPException(status_code=404, detail="Specie not found")
@@ -99,10 +92,9 @@ async def update_specie(
     await db.refresh(db_specie)
     return db_specie
 
-# Delete specie
-
 
 async def delete_specie(db: AsyncSession, specie_id: int) -> Specie:
+    """Delete a specie"""
     db_specie = await get_specie_by_id(db, specie_id)
     if not db_specie:
         raise HTTPException(status_code=404, detail="Specie not found")
@@ -110,10 +102,9 @@ async def delete_specie(db: AsyncSession, specie_id: int) -> Specie:
     await db.commit()
     return db_specie
 
-# Create a genus
-
 
 async def create_genus(db: AsyncSession, genus: GenusesCreate) -> Genus:
+    """Create a new genus"""
     db_genus = Genus(
         genus_name=genus.genus_name,
         key_gbif=genus.key_gbif,
@@ -124,31 +115,26 @@ async def create_genus(db: AsyncSession, genus: GenusesCreate) -> Genus:
     await db.refresh(db_genus)
     return db_genus
 
-# Get all genuses
-
 
 async def get_all_genuses(db: AsyncSession) -> List[Genus]:
+    """Get all genuses"""
     genuses_db = await db.execute(select(Genus))
     return list(genuses_db.scalars().all())
 
-# Get genus by id
-
 
 async def get_genus_by_id(db: AsyncSession, genus_id: int) -> Genus | None:
+    """Get a genus by its id"""
     genus_db = await db.execute(select(Genus).filter(Genus.id == genus_id))
     return genus_db.scalars().first()
 
-# Get genus by name
-
 
 async def get_genus_by_name(db: AsyncSession, genus_name: str) -> Genus | None:
+    """Get a genus by its name"""
     genus_db = await db.execute(
             select(Genus)
             .filter(Genus.genus_name == genus_name)
             )
     return genus_db.scalars().first()
-
-# Update genus
 
 
 async def update_genus(
@@ -156,6 +142,7 @@ async def update_genus(
         genus_id: int,
         genus: GenusesCreate
         ) -> Genus:
+    """Update a genus"""
     db_genus = await get_genus_by_id(db, genus_id)
     if not db_genus:
         raise HTTPException(status_code=404, detail="Genus not found")
@@ -166,10 +153,9 @@ async def update_genus(
     await db.refresh(db_genus)
     return db_genus
 
-# Delete genus
-
 
 async def delete_genus(db: AsyncSession, genus_id: int) -> Genus:
+    """Delete a genus"""
     db_genus = await get_genus_by_id(db, genus_id)
     if not db_genus:
         raise HTTPException(status_code=404, detail="Genus not found")
@@ -177,10 +163,9 @@ async def delete_genus(db: AsyncSession, genus_id: int) -> Genus:
     await db.commit()
     return db_genus
 
-# Create a family
-
 
 async def create_family(db: AsyncSession, family: FamiliesCreate) -> Family:
+    """Create a new family"""
     db_family = Family(
         family_name=family.family_name,
         key_gbif=family.key_gbif,
@@ -191,33 +176,28 @@ async def create_family(db: AsyncSession, family: FamiliesCreate) -> Family:
     await db.refresh(db_family)
     return db_family
 
-# Get all families
-
 
 async def get_all_families(db: AsyncSession) -> List[Family]:
+    """Get all families"""
     families_db = await db.execute(select(Family))
     return list(families_db.scalars().all())
 
-# Get family by id
-
 
 async def get_family_by_id(db: AsyncSession, family_id: int) -> Family | None:
+    """Get a family by its id"""
     family_db = await db.execute(select(Family).filter(Family.id == family_id))
     return family_db.scalars().first()
-
-# Get family by name
 
 
 async def get_family_by_name(
         db: AsyncSession,
         family_name: str
         ) -> Family | None:
+    """Get a family by its name"""
     family_db = await db.execute(
             select(Family).filter(Family.family_name == family_name)
             )
     return family_db.scalars().first()
-
-# Update family
 
 
 async def update_family(
@@ -225,6 +205,7 @@ async def update_family(
         family_id: int,
         family: FamiliesCreate
         ) -> Family:
+    """Update a family"""
     db_family = await get_family_by_id(db, family_id)
     if not db_family:
         raise HTTPException(status_code=404, detail="Family not found")
@@ -235,10 +216,9 @@ async def update_family(
     await db.refresh(db_family)
     return db_family
 
-# Delete family
-
 
 async def delete_family(db: AsyncSession, family_id: int) -> Family:
+    """Delete a family"""
     db_family = await get_family_by_id(db, family_id)
     if not db_family:
         raise HTTPException(status_code=404, detail="Family not found")
@@ -246,10 +226,9 @@ async def delete_family(db: AsyncSession, family_id: int) -> Family:
     await db.commit()
     return db_family
 
-# Create an order
-
 
 async def create_order(db: AsyncSession, order: OrdersCreate) -> Order:
+    """Create a new order"""
     db_order = Order(
         order_name=order.order_name,
         key_gbif=order.key_gbif,
@@ -260,30 +239,25 @@ async def create_order(db: AsyncSession, order: OrdersCreate) -> Order:
     await db.refresh(db_order)
     return db_order
 
-# Get all orders
-
 
 async def get_all_orders(db: AsyncSession) -> List[Order]:
+    """Get all orders"""
     orders_db = await db.execute(select(Order))
     return list(orders_db.scalars().all())
 
-# Get order by id
-
 
 async def get_order_by_id(db: AsyncSession, order_id: int) -> Order | None:
+    """Get a order by its id"""
     order_db = await db.execute(select(Order).filter(Order.id == order_id))
     return order_db.scalars().first()
 
-# Get order by name
-
 
 async def get_order_by_name(db: AsyncSession, order_name: str) -> Order | None:
+    """Get a order by its name"""
     order_db = await db.execute(
             select(Order).filter(Order.order_name == order_name)
             )
     return order_db.scalars().first()
-
-# Update order
 
 
 async def update_order(
@@ -291,6 +265,7 @@ async def update_order(
         order_id: int,
         order: OrdersCreate
         ) -> Order:
+    """Update a order"""
     db_order = await get_order_by_id(db, order_id)
     if not db_order:
         raise HTTPException(status_code=404, detail="Order not found")
@@ -301,10 +276,9 @@ async def update_order(
     await db.refresh(db_order)
     return db_order
 
-# Delete order
-
 
 async def delete_order(db: AsyncSession, order_id: int) -> Order:
+    """Delete a order"""
     db_order = await get_order_by_id(db, order_id)
     if not db_order:
         raise HTTPException(status_code=404, detail="Order not found")
@@ -312,10 +286,9 @@ async def delete_order(db: AsyncSession, order_id: int) -> Order:
     await db.commit()
     return db_order
 
-# Create a class
-
 
 async def create_class(db: AsyncSession, class_: ClassesCreate) -> Class_:
+    """Create a new class"""
     db_class = Class_(
         class_name=class_.class_name,
         key_gbif=class_.key_gbif,
@@ -325,33 +298,28 @@ async def create_class(db: AsyncSession, class_: ClassesCreate) -> Class_:
     await db.refresh(db_class)
     return db_class
 
-# Get all classes
-
 
 async def get_all_classes(db: AsyncSession) -> List[Class_]:
+    """Get all classes"""
     classes_db = await db.execute(select(Class_))
     return list(classes_db.scalars().all())
 
-# Get class by id
-
 
 async def get_class_by_id(db: AsyncSession, class_id: int) -> Class_ | None:
+    """Get a class by its id"""
     class_db = await db.execute(select(Class_).filter(Class_.id == class_id))
     return class_db.scalars().first()
-
-# Get class by name
 
 
 async def get_class_by_name(
         db: AsyncSession,
         class_name: str
         ) -> Class_ | None:
+    """Get a class by its name"""
     class_db = await db.execute(
             select(Class_).filter(Class_.class_name == class_name)
             )
     return class_db.scalars().first()
-
-# Update class
 
 
 async def update_class(
@@ -359,6 +327,7 @@ async def update_class(
         class_id: int,
         class_: ClassesCreate
         ) -> Class_:
+    """Update a class"""
     db_class = await get_class_by_id(db, class_id)
     if not db_class:
         raise HTTPException(status_code=404, detail="Class not found")
@@ -368,10 +337,9 @@ async def update_class(
     await db.refresh(db_class)
     return db_class
 
-# Delete class
-
 
 async def delete_class(db: AsyncSession, class_id: int) -> Class_:
+    """Delete a class"""
     db_class = await get_class_by_id(db, class_id)
     if not db_class:
         raise HTTPException(status_code=404, detail="Class not found")
@@ -379,25 +347,23 @@ async def delete_class(db: AsyncSession, class_id: int) -> Class_:
     await db.commit()
     return db_class
 
-# Get if status exists
-
 
 async def get_status_by_name(
         db: AsyncSession,
         status_name: str
         ) -> Status | None:
+    """Get a status by its name"""
     status_db = await db.execute(
             select(Status).filter(Status.status_name == status_name)
             )
     return status_db.scalars().first()
-
-# Create a status
 
 
 async def create_status(
         db: AsyncSession,
         status: StatusBase
         ) -> Status:
+    """Create a new status"""
     db_status = Status(
         status_name=status.status_name,
     )
@@ -406,21 +372,17 @@ async def create_status(
     await db.refresh(db_status)
     return db_status
 
-# Get all status
-
 
 async def get_all_status(db: AsyncSession) -> List[Status]:
+    """Get all status"""
     status_db = await db.execute(select(Status))
     return list(status_db.scalars().all())
 
-# Get status by id
-
 
 async def get_status_by_id(db: AsyncSession, status_id: int) -> Status | None:
+    """Get a status by its id"""
     status_db = await db.execute(select(Status).filter(Status.id == status_id))
     return status_db.scalars().first()
-
-# Update status
 
 
 async def update_status(
@@ -428,6 +390,7 @@ async def update_status(
         status_id: int,
         status: StatusBase
         ) -> Status:
+    """Update a status"""
     db_status = await get_status_by_id(db, status_id)
     if not db_status:
         raise HTTPException(status_code=404, detail="Status not found")
@@ -436,10 +399,9 @@ async def update_status(
     await db.refresh(db_status)
     return db_status
 
-# Delete status
-
 
 async def delete_status(db: AsyncSession, status_id: int) -> Status:
+    """Delete a status"""
     db_status = await get_status_by_id(db, status_id)
     if not db_status:
         raise HTTPException(status_code=404, detail="Status not found")
@@ -448,10 +410,8 @@ async def delete_status(db: AsyncSession, status_id: int) -> Status:
     return db_status
 
 
-# Make a join species and all other tables
-
-
 async def get_all_species_join_(db: AsyncSession) -> List[SpeciesJoin]:
+    """Get all species join with all other tables"""
     species_result = await db.execute(select(Specie))
     species = species_result.scalars().all()
 
@@ -491,9 +451,9 @@ async def get_all_species_join_(db: AsyncSession) -> List[SpeciesJoin]:
 
         if not class_:
             raise HTTPException(status_code=404, detail="Class not found")
-        if class_.class_name == "Magnoliopsida" or class_.class_name == "Pinopsida":
+        if class_.class_name in ("Magnoliopsida", "Pinopsida"):
             pass
-        else:
+        elif total_rescues > 0:
             db_specie = SpeciesJoin(
                 id=specie.id,
                 scientific_name=specie.scientific_name,

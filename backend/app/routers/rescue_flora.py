@@ -21,15 +21,11 @@ from app.schemas.rescue_flora import (
         FloraRescueSpecies
         )
 from app.models.rescue_flora import (
-    FloraRescueZone,
-    FloraRelocationZone,
-    FloraRescue,
     PlantNursery,
-    FloraRelocation
 )
 
 from app.crud.rescue_flora import (
-        # Rescue Zone 
+        # Rescue Zone
         get_flora_rescue_zone,
         get_flora_rescue_zone_by_id,
         get_all_flora_rescue_zones,
@@ -75,13 +71,14 @@ from app.crud.rescue_flora import (
 
 from app.api.deps import PermissonsChecker, get_db
 
-router:APIRouter = APIRouter()
+router: APIRouter = APIRouter()
 
 """
 ENDPOINTS FOR RESCUE ZONE
 """
 
-#Create a rescue zone endpoint
+
+# Create a rescue zone endpoint
 @router.post(
         path="/api/rescue_flora/rescue_zone",
         response_model=FloraRescueZoneResponse,
@@ -90,10 +87,10 @@ ENDPOINTS FOR RESCUE ZONE
         summary="Create a rescue zone",
 )
 async def create_a_new_rescue_zone(
-        rescue_zone:FloraRescueZoneBase,
-        db:AsyncSession=Depends(get_db),
+        rescue_zone: FloraRescueZoneBase,
+        db: AsyncSession = Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Union[FloraRescueZoneResponse, HTTPException]:
+        ) -> Union[FloraRescueZoneResponse, HTTPException]:
 
     db_rescue_zone = await get_flora_rescue_zone(db, rescue_zone.name)
     if db_rescue_zone:
@@ -101,9 +98,18 @@ async def create_a_new_rescue_zone(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Rescue zone already exists",
                 )
-    return await create_flora_rescue_zone(db, rescue_zone)
+    rescue_zona_new = await create_flora_rescue_zone(db, rescue_zone)
 
-#Get all rescue zones endpoint
+    rescue_zone_new_db = FloraRescueZoneResponse(
+            id=rescue_zona_new.id,
+            name=rescue_zona_new.name,
+            description=rescue_zona_new.description,
+            )
+
+    return rescue_zone_new_db
+
+
+# Get all rescue zones endpoint
 @router.get(
         path="/api/rescue_flora/rescue_zone",
         response_model=List[FloraRescueZoneResponse],
@@ -112,12 +118,13 @@ async def create_a_new_rescue_zone(
         summary="Get all rescue zones",
 )
 async def get_all_rescue_zones_(
-        db:AsyncSession=Depends(get_db),
+        db: AsyncSession = Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Union[List[FloraRescueZoneResponse], HTTPException]:
+        ) -> Union[List[FloraRescueZoneResponse], HTTPException]:
     return await get_all_flora_rescue_zones(db)
 
-#Get a rescue zone by id endpoint
+
+# Get a rescue zone by id endpoint
 @router.get(
         path="/api/rescue_flora/rescue_zone/{rescue_zone_id}",
         response_model=FloraRescueZoneResponse,
@@ -126,19 +133,25 @@ async def get_all_rescue_zones_(
         summary="Get a rescue zone by id",
 )
 async def get_a_rescue_zone_by_id(
-        rescue_zone_id:int,
-        db:AsyncSession=Depends(get_db),
+        rescue_zone_id: int,
+        db: AsyncSession = Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Union[FloraRescueZoneResponse, HTTPException]:
+        ) -> Union[FloraRescueZoneResponse, HTTPException]:
     db_rescue_zone = await get_flora_rescue_zone_by_id(db, rescue_zone_id)
     if not db_rescue_zone:
         raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Rescue zone not found",
                 )
+    db_rescue_zone = FloraRescueZoneResponse(
+            id=db_rescue_zone.id,
+            name=db_rescue_zone.name,
+            description=db_rescue_zone.description,
+            )
     return db_rescue_zone
 
-#Update a rescue zone endpoint
+
+# Update a rescue zone endpoint
 @router.put(
         path="/api/rescue_flora/rescue_zone/{rescue_zone_id}",
         response_model=FloraRescueZoneResponse,
@@ -147,11 +160,11 @@ async def get_a_rescue_zone_by_id(
         summary="Update a rescue zone",
 )
 async def update_a_rescue_zone(
-        rescue_zone_id:int,
-        rescue_zone:FloraRescueZoneBase,
-        db:AsyncSession=Depends(get_db),
+        rescue_zone_id: int,
+        rescue_zone: FloraRescueZoneBase,
+        db: AsyncSession = Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Union[FloraRescueZoneResponse, HTTPException]:
+        ) -> Union[FloraRescueZoneResponse, HTTPException]:
     db_rescue_zone = await get_flora_rescue_zone_by_id(db, rescue_zone_id)
     if not db_rescue_zone:
         raise HTTPException(
@@ -160,7 +173,8 @@ async def update_a_rescue_zone(
                 )
     return await update_flora_rescue_zone(db, rescue_zone_id, rescue_zone)
 
-#Delete a rescue zone endpoint
+
+# Delete a rescue zone endpoint
 @router.delete(
         path="/api/rescue_flora/rescue_zone/{rescue_zone_id}",
         status_code=status.HTTP_200_OK,
@@ -168,10 +182,10 @@ async def update_a_rescue_zone(
         summary="Delete a rescue zone",
 )
 async def delete_a_rescue_zone(
-        rescue_zone_id:int,
-        db:AsyncSession=Depends(get_db),
+        rescue_zone_id: int,
+        db: AsyncSession = Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Dict:
+        ) -> Dict:
     db_rescue_zone = await get_flora_rescue_zone_by_id(db, rescue_zone_id)
     if not db_rescue_zone:
         raise HTTPException(
@@ -179,13 +193,14 @@ async def delete_a_rescue_zone(
                 detail="Rescue zone not found",
                 )
     await delete_flora_rescue_zone(db, rescue_zone_id)
-    return {"detail":"Rescue zone deleted"}
+    return {"detail": "Rescue zone deleted"}
 
 """
 ENDPOINTS FOR RELOCATION ZONE
 """
 
-#Create a relocation zone endpoint
+
+# Create a relocation zone endpoint
 @router.post(
         path="/api/rescue_flora/relocation_zone",
         response_model=FloraRelocationZoneResponse,
@@ -194,10 +209,10 @@ ENDPOINTS FOR RELOCATION ZONE
         summary="Create a relocation zone",
 )
 async def create_a_new_relocation_zone(
-        relocation_zone:FloraRelocationZoneBase,
-        db:AsyncSession=Depends(get_db),
+        relocation_zone: FloraRelocationZoneBase,
+        db: AsyncSession = Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Union[FloraRelocationZoneResponse, HTTPException]:
+        ) -> Union[FloraRelocationZoneResponse, HTTPException]:
 
     db_relocation_zone = await get_flora_relocation_zone(db, relocation_zone.name)
     if db_relocation_zone:
@@ -207,7 +222,8 @@ async def create_a_new_relocation_zone(
                 )
     return await create_flora_relocation_zone(db, relocation_zone)
 
-#Get all relocation zones endpoint
+
+# Get all relocation zones endpoint
 @router.get(
         path="/api/rescue_flora/relocation_zone",
         response_model=List[FloraRelocationZoneResponse],

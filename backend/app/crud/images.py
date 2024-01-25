@@ -12,6 +12,7 @@ async def get_image_by_url(db: AsyncSession,  url: str) -> Image | None:
     image_db = await db.execute(select(Image).filter(Image.url == url))
     return image_db.scalars().first()
 
+
 async def create_image(db: AsyncSession, image: ImageBase) -> Image:
     """Create a image"""
     db_image = Image(
@@ -23,6 +24,7 @@ async def create_image(db: AsyncSession, image: ImageBase) -> Image:
     await db.commit()
     await db.refresh(db_image)
     return db_image
+
 
 async def get_all_images(db: AsyncSession) -> List[Image]:
     """Get all images"""

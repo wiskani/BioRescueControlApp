@@ -1,12 +1,11 @@
 import pytz
 import pandas as pd
-import numpy as np
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 from typing import List, Any
 
 from app.services.system_coordinate import utm_to_latlong
-from app.schemas.services import  UTMData
+from app.schemas.services import UTMData
 
 from app.crud.species import (
     get_specie_by_name,
@@ -15,7 +14,6 @@ from app.crud.species import (
     )
 from app.crud.rescue_herpetofauna import (
     get_mark_herpetofauna_by_number,
-    get_age_group_name,
     get_all_age_groups,
     get_transect_herpetofauna_by_number,
     get_rescue_herpetofauna_by_number,
@@ -29,14 +27,14 @@ from app.crud.rescue_flora import (
     get_flora_relocation_zone
 )
 
-from app.crud.rescue_mammals import (	
+from app.crud.rescue_mammals import (
     get_habitat_name,
     get_site_release_mammal_name,
     get_rescue_mammal_cod
 )
 
 
-def convert_to_datetime(df:pd.DataFrame, cols:List[str]) -> pd.DataFrame:
+def convert_to_datetime(df: pd.DataFrame, cols: List[str]) -> pd.DataFrame:
     """
     Converts a column in a dataframe to datetime format
 
@@ -58,7 +56,8 @@ def convert_to_datetime(df:pd.DataFrame, cols:List[str]) -> pd.DataFrame:
             raise Exception(f"Error converting column {col} to datetime")
     return df
 
-def remplace_nan_with_none(df:pd.DataFrame) -> pd.DataFrame:
+
+def remplace_nan_with_none(df: pd.DataFrame) -> pd.DataFrame:
     """
     Replaces NaN values with None
 
@@ -81,6 +80,7 @@ def remplace_nan_with_none(df:pd.DataFrame) -> pd.DataFrame:
         )
     return df
 
+
 def none_value(value) -> Any | None:
     """
     Replaces 'None' string with None
@@ -98,7 +98,8 @@ def none_value(value) -> Any | None:
     else:
         return value
 
-def generateUTMData(df:pd.DataFrame, cols:dict) -> list[UTMData|None]:
+
+def generateUTMData(df: pd.DataFrame, cols: dict) -> list[UTMData | None]:
     """
     Generates a list of UTMData objects
 
@@ -111,15 +112,15 @@ def generateUTMData(df:pd.DataFrame, cols:dict) -> list[UTMData|None]:
     -------
     utmData : list of UTMData objects
     """
-    #Change columns types
+    # Change columns types
     # print dataframe columns: easting, northing, zone_number, zone_letter
     try:
         df = df.astype({
-        cols["easting"]: 'float64',
-        cols["northing"]: 'float64',
-        cols["zone_number"]: 'Int64',  
-        cols["zone_letter"]: 'str'
-    })
+            cols["easting"]: 'float64',
+            cols["northing"]: 'float64',
+            cols["zone_number"]: 'Int64',
+            cols["zone_letter"]: 'str'
+            })
     except Exception as e:
         raise Exception(f"Error changing columns types: {e}")
     utmData = []
@@ -135,7 +136,9 @@ def generateUTMData(df:pd.DataFrame, cols:dict) -> list[UTMData|None]:
                     zone_letter=row[cols["zone_letter"]]
                 ))
             except Exception as e:
-                raise Exception(f"Error of data on number row:  {row[0]} to UTM {e}")
+                raise Exception(
+                        f"Error of data on number row:  {row[0]} to UTM {e}"
+                        )
     return utmData
 
 
@@ -183,6 +186,7 @@ def insertGEOData(
 
     return df
 
+
 async def addIdSpecieByName(
     db: AsyncSession,
     df: pd.DataFrame,
@@ -216,6 +220,7 @@ async def addIdSpecieByName(
     df[colId] = colunmId
 
     return df, listNameSpecieNumberRow
+
 
 async def addIdGenusByName(
     db: AsyncSession,
@@ -251,6 +256,7 @@ async def addIdGenusByName(
 
     return df, listNameGenusNumberRow
 
+
 async def addIdFamilyByName(
     db: AsyncSession,
     df: pd.DataFrame,
@@ -284,6 +290,7 @@ async def addIdFamilyByName(
     df[colId] = colunmId
 
     return df, listNameFamilyNumberRow
+
 
 async def addMarkIdByNumber(
     db: AsyncSession,
@@ -321,6 +328,7 @@ async def addMarkIdByNumber(
     df['idMark'] = colunmId
 
     return df, listMarkNumberRow
+
 
 async def addAgeGroupIdByName(
         db: AsyncSession,
@@ -360,6 +368,7 @@ async def addAgeGroupIdByName(
 
     return df, listAgeGroupNameRow
 
+
 async def addFloraRescueZoneIdByName(
         db: AsyncSession,
         df: pd.DataFrame,
@@ -398,7 +407,7 @@ def addBooleanByGender(
     df: pd.DataFrame,
     col: str,
     genderEqual: tuple[str, str]
-) -> tuple[pd.DataFrame, list[tuple[int, str|None]]]:
+) -> tuple[pd.DataFrame, list[tuple[int, str | None]]]:
     """
     Adds the id of with a boolean column to a dataframe
     male = True
@@ -410,14 +419,13 @@ def addBooleanByGender(
     col: str with name of column with gender
     genderEqual:  tuple for a name of  male an female
     """
-    listGenderNameRow: list[tuple[int, str|None]] = []
+    listGenderNameRow: list[tuple[int, str | None]] = []
     colunmId: list[bool | None] = []
     male, female = genderEqual
 
-
     for _, row in df.iterrows():
-        gender:str|None = row[col]
-        gender_lower: str|None = gender.lower() if gender is not None else None
+        gender: str | None = row[col]
+        gender_lower: str | None = gender.lower() if gender is not None else None
         if gender_lower == male.lower():
             colunmId.append(True)
         elif gender_lower == female.lower():
@@ -429,6 +437,7 @@ def addBooleanByGender(
     df['booleanGender'] = colunmId
 
     return df, listGenderNameRow
+
 
 async def addTransectIdByNumber(
         db: AsyncSession,
@@ -448,16 +457,19 @@ async def addTransectIdByNumber(
     colunmId: list[int | None] = []
 
     for _, row in df.iterrows():
-        #conver row[col] to int
+        # conver row[col] to int
         transect = await get_transect_herpetofauna_by_number(db, row[col])
         if transect is None:
-            raise Exception(f"Error converting transect number not exist  in row {row[0]}")
+            raise Exception(
+                    f"Error converting transect number not exist in row {row[0]}"
+                    )
         else:
             colunmId.append(transect.id)
 
     df['idTransect'] = colunmId
 
     return df
+
 
 def addNumRescueHerpeto(
         df: pd.DataFrame,
@@ -488,7 +500,7 @@ def addNumRescueHerpeto(
                 if j == len(df)-1:
                     listNum.append(df[col].iloc[j])
                     j += 1
-            k=1
+            k = 1
             if j < len(df)-1:
                 listNum.append(df[col].iloc[j])
                 j += 1
@@ -505,6 +517,7 @@ def addNumRescueHerpeto(
 
     df["numRescue"] = newCol
     return df
+
 
 def addBooleanByCheck(
         df: pd.DataFrame,
@@ -532,6 +545,7 @@ def addBooleanByCheck(
     df[f"boolean_{col}"] = newCol
     return df
 
+
 async def addRescueIdByNumber(
         db: AsyncSession,
         df: pd.DataFrame,
@@ -549,7 +563,7 @@ async def addRescueIdByNumber(
     colunmId: list[int | None] = []
 
     for _, row in df.iterrows():
-        #conver row[col] to int
+        # conver row[col] to int
         rescue = await get_rescue_herpetofauna_by_number(db, row[col])
         if rescue is None:
             raise Exception(f"Error get rescue id in row {row[0]}")
@@ -559,6 +573,7 @@ async def addRescueIdByNumber(
     df['idRescue'] = colunmId
 
     return df
+
 
 async def addTransectTranslocationIdByCod(
         db: AsyncSession,
@@ -578,7 +593,7 @@ async def addTransectTranslocationIdByCod(
     colunmId: list[int | None] = []
 
     for _, row in df.iterrows():
-        #conver row[col] to int
+        # conver row[col] to int
         transect = await get_transect_herpetofauna_translocation_by_cod(db, row[col])
         if transect is None:
             colunmId.append(None)
@@ -588,8 +603,6 @@ async def addTransectTranslocationIdByCod(
     df['idTransect'] = colunmId
 
     return df
-
-
 
 
 async def addPointTranslocationByCod(
@@ -621,11 +634,12 @@ async def addPointTranslocationByCod(
 
     return df
 
+
 async def addRescueFloraIdByNumber(
         db: AsyncSession,
         df: pd.DataFrame,
         col: str,
-        )-> pd.DataFrame:
+        ) -> pd.DataFrame:
     """
     Adds the id of a rescue to a dataframe
 
@@ -650,11 +664,12 @@ async def addRescueFloraIdByNumber(
 
     return df, listRescueNumberRow
 
+
 async def addRelocationZoneIdByNumber(
         db: AsyncSession,
         df: pd.DataFrame,
         col: str,
-        )-> pd.DataFrame:
+        ) -> pd.DataFrame:
     """
     Adds the id of a relozation zone to a dataframe
 
@@ -679,11 +694,12 @@ async def addRelocationZoneIdByNumber(
 
     return df, listRelocationZoneNumberRow
 
+
 async def addHabitatIdByName(
         db: AsyncSession,
         df: pd.DataFrame,
         col: str,
-        )-> pd.DataFrame:
+        ) -> pd.DataFrame:
     """
     Adds the id of a habitat to a dataframe
 
@@ -708,11 +724,12 @@ async def addHabitatIdByName(
 
     return df, listHabitatNameRow
 
+
 async def addSiteReleaseMammalIdByName(
         db: AsyncSession,
         df: pd.DataFrame,
         col: str,
-        )-> pd.DataFrame:
+        ) -> pd.DataFrame:
     """
     Adds the id of a site release mammal to a dataframe
 
@@ -737,11 +754,12 @@ async def addSiteReleaseMammalIdByName(
 
     return df, listSiteReleaseMammalNameRow
 
+
 async def addRescueMammalIdByCode(
         db: AsyncSession,
         df: pd.DataFrame,
         col: str,
-        )-> tuple[pd.DataFrame, list[tuple[int, str]]]:
+        ) -> tuple[pd.DataFrame, list[tuple[int, str]]]:
     """
     Adds the id of a rescue mammal to a dataframe
 
@@ -765,8 +783,3 @@ async def addRescueMammalIdByCode(
     df['idRescueMammal'] = colunmId
 
     return df, listRescueMammalCodeRow
-
-
-
-
-
