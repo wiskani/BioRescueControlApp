@@ -5,6 +5,7 @@ from fastapi import HTTPException
 
 from app.schemas.rescue_flora import (
         # Flora rescue zone
+        FloraRelocationWithSpecie,
         FloraRescueZoneBase,
 
         # Flora relocation zone
@@ -20,7 +21,10 @@ from app.schemas.rescue_flora import (
         FloraRelocationBase,
 
         # Flora rescue with specie
-        FloraRescueSpecies
+        FloraRescueSpecies,
+
+        # Flora relocation with specie
+        FloraRelocationWithSpecie
         )
 
 from app.crud.species import (
@@ -618,13 +622,13 @@ async def get_rescue_flora_with_specie(
             family = None
 
         result.append(FloraRescueSpecies(
-            epiphyte_number = rescue.epiphyte_number,
-            rescue_date = rescue.rescue_date,
-            rescue_area_latitude = rescue.rescue_area_latitude,
-            rescue_area_longitude = rescue.rescue_area_longitude,
-            specie_name = specie,
-            genus_name = genus,
-            family_name = family,
+            epiphyte_number=rescue.epiphyte_number,
+            rescue_date=rescue.rescue_date,
+            rescue_area_latitude=rescue.rescue_area_latitude,
+            rescue_area_longitude=rescue.rescue_area_longitude,
+            specie_name=specie,
+            genus_name=genus,
+            family_name=family,
             ))
 
     return result
@@ -663,13 +667,103 @@ async def get_rescue_flora_with_specie_by_specie_id(
             family = None
 
         result.append(FloraRescueSpecies(
-            epiphyte_number = rescue.epiphyte_number,
-            rescue_date = rescue.rescue_date,
-            rescue_area_latitude = rescue.rescue_area_latitude,
-            rescue_area_longitude = rescue.rescue_area_longitude,
-            specie_name = specie,
-            genus_name = genus,
-            family_name = family,
+            epiphyte_number=rescue.epiphyte_number,
+            rescue_date=rescue.rescue_date,
+            rescue_area_latitude=rescue.rescue_area_latitude,
+            rescue_area_longitude=rescue.rescue_area_longitude,
+            specie_name=specie,
+            genus_name=genus,
+            family_name=family,
             ))
 
     return result
+
+
+# Get all translocation with specie and other data
+async def get_all_translocation_with_specie(
+        db: AsyncSession
+        ) -> List[FloraRelocationWithSpecie] | HTTPException:
+    relocations = await get_all_flora_relocations(db)
+    if not relocations:
+        raise HTTPException(status_code=404, detail="Relocations not found")
+    relocation_result = []
+
+    for relocation in relocations:
+        rescue_db = await get_flora_rescue_by_id(
+                db,
+                relocation.flora_rescue_id
+                )
+        if not rescue_db:
+            raise HTTPException(status_code=404, detail="Rescue not found")
+        specie_db = await get_specie_by_id(db, rescue_db.specie_epiphyte_id)
+        if specie_db:
+            specie_epiphyte = specie_db.specific_epithet
+        else:
+            specie_epiphyte = None
+
+        genus_db = await get_genus_by_id(db, rescue_db.genus_epiphyte_id)
+        if genus_db:
+            genus_epiphyte = genus_db.genus_name
+        else:
+            genus_epiphyte = None
+
+        family_db = await get_family_by_id(db, rescue_db.family_epiphyte_id)
+        if family_db:
+            family_epiphyte = family_db.family_name
+        else:
+            family_epiphyte = None
+
+        specie_db = await get_specie_by_id(db, relocation.specie_bryophyte_id)
+        if specie_db:
+            specie_bryophyte = specie_db.specific_epithet
+        else:
+            specie_bryophyte = None
+
+        genus_db = await get_genus_by_id(db, relocation.genus_bryophyte_id)
+        if genus_db:
+            genus_bryophyte = genus_db.genus_name
+        else:
+            genus_bryophyte = None
+
+        family_db = await get_family_by_id(db, relocation.family_bryophyte_id)
+        if family_db:
+            family_bryophyte = family_db.family_name
+        else:
+            family_bryophyte = None
+
+        relocation_zone_db = await get_flora_relocation_zone_by_id(
+                db,
+                relocation.relocation_zone_id
+                )
+        if not relocation_zone_db:
+            raise HTTPException(
+                    status_code=404,
+                    detail="Relocation zone not found"
+                    )
+        else:
+            relocation_zone = relocation_zone_db.name
+
+        relocation_result.append(FloraRelocationWithSpecie(
+            relocation_date=relocation.relocation_date,
+            flora_rescue=rescue_db.epiphyte_number,
+            specie_name_epiphyte=specie_epiphyte,
+            genus_name_epiphyte=genus_epiphyte,
+            family_name_epiphyte=family_epiphyte,
+            size=relocation.size,
+            epiphyte_phenology=relocation.epiphyte_phenology,
+            johanson_zone=relocation.johanson_zone,
+            relocation_position_latitude=relocation.relocation_position_latitude,
+            relocation_position_longitude=relocation.relocation_position_longitude,
+            relocation_position_altitude=relocation.relocation_position_altitude,
+            dap_bryophyte=relocation.dap_bryophyte,
+            height_bryophyte=relocation.height_bryophyte,
+            bark_type=relocation.bark_type,
+            infested_lianas=relocation.infested_lianas,
+            other_observations=relocation.other_observations,
+            specie_name_bryophyte=specie_bryophyte,
+            genus_name_bryophyte=genus_bryophyte,
+            family_name_bryophyte=family_bryophyte,
+            relocation_zone=relocation_zone
+            ))
+
+    return relocation_result

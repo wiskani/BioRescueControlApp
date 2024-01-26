@@ -142,7 +142,3 @@ async def upload_image(
     if await get_image_by_url(db, f"/static/images/species/{image.filename}"):
         raise HTTPException(status_code=400, detail="Image already exists")
     return await create_image(db, db_image)
-
-
-
-

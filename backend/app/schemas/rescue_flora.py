@@ -217,3 +217,26 @@ class FloraRescueSpecies(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class FloraRelocationWithSpecie (BaseModel):
+    relocation_date: datetime
+    flora_rescue: str
+    specie_name_epiphyte: str | None
+    genus_name_epiphyte: str | None
+    family_name_epiphyte: str | None
+    size: float
+    epiphyte_phenology: str
+    johanson_zone: str | None
+    relocation_position_latitude: float
+    relocation_position_longitude: float
+    relocation_position_altitude: int
+    dap_bryophyte: float | None
+    height_bryophyte: float | None
+    bark_type:  str | None
+    infested_lianas: str | None
+    other_observations:  str | None
+    specie_name_bryophyte: str | None
+    genus_name_bryophyte: str | None
+    family_name_bryophyte: str | None
+    relocation_zone: str

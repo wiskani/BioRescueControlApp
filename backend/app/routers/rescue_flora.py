@@ -18,7 +18,8 @@ from app.schemas.rescue_flora import (
         FloraRelocationBase,
         FloraRelocationResponse,
 
-        FloraRescueSpecies
+        FloraRescueSpecies,
+        FloraRelocationWithSpecie
         )
 from app.models.rescue_flora import (
     PlantNursery,
@@ -66,7 +67,10 @@ from app.crud.rescue_flora import (
         delete_flora_relocation,
 
         # Rescue with species
-        get_rescue_flora_with_specie
+        get_rescue_flora_with_specie,
+
+        # Relocation with species
+        get_all_translocation_with_specie
 )
 
 from app.api.deps import PermissonsChecker, get_db
@@ -571,7 +575,8 @@ async def get_a_flora_relocation_by_id(
                 )
     return db_flora_relocation
 
-#Update a flora relocation endpoint
+
+# Update a flora relocation endpoint
 @router.put(
         path="/api/flora_relocation/{flora_relocation_id}",
         response_model=FloraRelocationResponse,
@@ -580,12 +585,15 @@ async def get_a_flora_relocation_by_id(
         summary="Update a flora relocation",
 )
 async def update_a_flora_relocation(
-        flora_relocation_id:int,
-        flora_relocation:FloraRelocationBase,
-        db:AsyncSession=Depends(get_db),
+        flora_relocation_id: int,
+        flora_relocation: FloraRelocationBase,
+        db: AsyncSession = Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Union[FloraRelocationResponse, HTTPException]:
-    db_flora_relocation = await get_flora_relocation_by_id(db, flora_relocation_id)
+        ) -> Union[FloraRelocationResponse, HTTPException]:
+    db_flora_relocation = await get_flora_relocation_by_id(
+            db,
+            flora_relocation_id
+            )
     if not db_flora_relocation:
         raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -593,7 +601,8 @@ async def update_a_flora_relocation(
                 )
     return await update_flora_relocation(db, flora_relocation_id, flora_relocation)
 
-#Delete a flora relocation endpoint
+
+# Delete a flora relocation endpoint
 @router.delete(
         path="/api/flora_relocation/{flora_relocation_id}",
         status_code=status.HTTP_200_OK,
@@ -601,20 +610,24 @@ async def update_a_flora_relocation(
         summary="Delete a flora relocation",
 )
 async def delete_a_flora_relocation(
-        flora_relocation_id:int,
-        db:AsyncSession=Depends(get_db),
+        flora_relocation_id: int,
+        db: AsyncSession = Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Dict:
-    db_flora_relocation = await get_flora_relocation_by_id(db, flora_relocation_id)
+        ) -> Dict:
+    db_flora_relocation = await get_flora_relocation_by_id(
+            db,
+            flora_relocation_id
+            )
     if not db_flora_relocation:
         raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Flora relocation not found",
                 )
     await delete_flora_relocation(db, flora_relocation_id)
-    return {"detail":"Flora relocation deleted"}
+    return {"detail": "Flora relocation deleted"}
 
-#Get all flora rescues with species, genus and family endpoint
+
+# Get all flora rescues with species, genus and family endpoint
 @router.get(
         path="/api/flora_rescue_species",
         response_model=List[FloraRescueSpecies],
@@ -625,26 +638,20 @@ async def delete_a_flora_relocation(
 async def get_all_flora_rescue_species(
         db: AsyncSession = Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )-> List[FloraRescueSpecies]:
+        ) -> List[FloraRescueSpecies]:
     return await get_rescue_flora_with_specie(db)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Get all translocation with species and extra data
+@router.get(
+        path="/api/flora_relocation_with_specie",
+        response_model=List[FloraRelocationWithSpecie],
+        status_code=status.HTTP_200_OK,
+        tags=["Flora Relocation"],
+        summary="Get all flora relocations with species and extra data",
+)
+async def get_all_flora_relocation_with_specie(
+        db: AsyncSession = Depends(get_db),
+        autorized: bool = Depends(PermissonsChecker(["admin"])),
+        ) -> List[FloraRelocationWithSpecie] | HTTPException:
+    return await get_all_translocation_with_specie(db)

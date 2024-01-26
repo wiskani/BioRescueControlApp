@@ -642,7 +642,8 @@ async def get_all_status_(
 ) -> List[Status]:
     return await get_all_status(db)
 
-#Get status by id
+
+# Get status by id
 @router.get(
     path="/api/specie/status/{status_id}",
     response_model=StatusResponse,
@@ -663,7 +664,8 @@ async def get_a_status_by_id(
         )
     return db_status
 
-#Update status
+
+# Update status
 @router.put(
     path="/api/specie/status/{status_id}",
     response_model=StatusResponse,
@@ -685,7 +687,8 @@ async def update_a_status(
         )
     return await update_status(db, status_id, status_)
 
-#Delete status
+
+# Delete status
 @router.delete(
     path="/api/specie/status/{status_id}",
     response_model=StatusResponse,
@@ -707,10 +710,10 @@ async def delete_a_status(
     return await delete_status(db, status_id)
 
 
-#Get rescues by specie name
+# Get rescues by specie name
 @router.get(
     path="/api/specie/rescues/{specie_id}",
-    response_model=List[FloraRescueSpecies]| List[RescueMammalsWithSpecie]| List[TransectHerpetoWithSpecies],
+    response_model=List[FloraRescueSpecies] | List[RescueMammalsWithSpecie] | List[TransectHerpetoWithSpecies],
     status_code=status.HTTP_200_OK,
     tags=["Species"],
     summary="Get all rescues by specie name",
@@ -719,8 +722,8 @@ async def get_all_rescues_by_specie_name(
     specie_id: int,
     db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
-) -> List[FloraRescueSpecies] | List[RescueMammalsWithSpecie] | List[TransectHerpetoWithSpecies] | HTTPException:
-    #Check if specie exists
+) -> List[FloraRescueSpecies] | List[RescueMammalsWithSpecie] | List[TransectHerpetoWithSpecies]| HTTPException:
+    # Check if specie exists
     db_specie = await get_specie_by_id(db, specie_id)
     if not db_specie:
         raise HTTPException(
@@ -728,33 +731,32 @@ async def get_all_rescues_by_specie_name(
             detail="Specie not found",
         )
 
-    #get class_ by specie id 
+    # get class_ by specie id 
     db_class = await get_class_id_and_name_by_specie_id(db, specie_id)
 
-    if not db_class:
+    if db_class is HTTPException:
         return db_class
 
     if db_class.class_name == "Mammalia":
-        return await get_rescue_mammal_list_with_specie_by_specie_id(db, specie_id)
+        return await get_rescue_mammal_list_with_specie_by_specie_id(
+                db,
+                specie_id
+                )
 
-    if db_class.class_name == "Liliopsida" or db_class.class_name == "Polypodiopsida ":
+    if (
+            db_class.class_name == "Liliopsida"
+            ) or (
+                    db_class.class_name == "Polypodiopsida "
+                    ):
         return await get_rescue_flora_with_specie_by_specie_id(db, specie_id)
 
     if db_class.class_name == "Amphibia" or db_class.class_name == "Reptilia":
-        return await get_transect_herpetofauna_with_rescues_and_species_by_specie_id(db, specie_id)
+        return await get_transect_herpetofauna_with_rescues_and_species_by_specie_id(
+                db,
+                specie_id
+                )
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="This specie does not have rescues"
         )
-    
-
-
-
-
-
-
-
-
-
-

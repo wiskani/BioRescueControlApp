@@ -597,9 +597,13 @@ async def count_mammal_rescue_by_family(db: AsyncSession, family_id:int) -> int 
 
     return total 
 
-#Get class_ id and class_ name by specie id
-async def get_class_id_and_name_by_specie_id(db: AsyncSession, specie_id: int) -> Class_ | HTTPException:
-    specie = await get_specie_by_id(db, specie_id) 
+
+# Get class_ id and class_ name by specie id
+async def get_class_id_and_name_by_specie_id(
+        db: AsyncSession,
+        specie_id: int
+        ) -> Class_ | HTTPException:
+    specie = await get_specie_by_id(db, specie_id)
     if not specie:
         return HTTPException(status_code=404, detail="Specie not found")
     genus = await get_genus_by_id(db, specie.genus_id)
