@@ -15,11 +15,12 @@ const Tooltip = dynamic(
 
 interface FloraRelocationSpecieMapProps {
     data: FloraRelocationWithSpecieData[]; 
+    radius?: number;
 }
 
-const FloraRelocationSpecieMap: React.FC<FloraRelocationSpecieMapProps> = ({data}) => {
+const FloraRelocationSpecieMap: React.FC<FloraRelocationSpecieMapProps> = ({data, radius}) => {
     const lineOptions = {
-        color: 'green',
+        color: 'purple',
         weight:2,
     };
 
@@ -29,7 +30,7 @@ const FloraRelocationSpecieMap: React.FC<FloraRelocationSpecieMapProps> = ({data
                 <Circle
                     key={index}
                     pathOptions={lineOptions}
-                    radius={10}
+                    radius={radius? radius: 10}
                     center={[
                         relocation.relocation_position_latitude,
                         relocation.relocation_position_longitude

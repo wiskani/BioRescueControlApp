@@ -22,29 +22,29 @@ import { LineProyect } from '../components/Map/lineProyect';
 
 //import with dynamic
 const MapContainer = dynamic(
-        async () => (await import('react-leaflet')).MapContainer,
-        { ssr: false }
+    async () => (await import('react-leaflet')).MapContainer,
+    { ssr: false }
 )
 
 const TileLayer = dynamic(
-        async () => (await import('react-leaflet')).TileLayer,
-        { ssr: false }
+    async () => (await import('react-leaflet')).TileLayer,
+    { ssr: false }
 )
 
 
 const Polyline = dynamic(
-        async () => (await import('react-leaflet')).Polyline,
-        { ssr: false }
+    async () => (await import('react-leaflet')).Polyline,
+    { ssr: false }
 )
 
 const Tooltip = dynamic(
-        async () => (await import('react-leaflet')).Tooltip,
-        { ssr: false }
+    async () => (await import('react-leaflet')).Tooltip,
+    { ssr: false }
 )
 
 const Legend = dynamic(
-        () => (import('../components/Map/Legend')),
-        { ssr: false }
+    () => (import('../components/Map/Legend')),
+    { ssr: false }
 )
 
 const FloraRescueSpecieMap = dynamic(
@@ -57,8 +57,6 @@ const FloraRelocationSpecieMap = dynamic(
     { ssr: false }
 )
 
-
-
 export default function Flora() {
     const { data: session } = useSession();
     const [rescueFloraData, setRescueFloraData] = useState<FloraRescueSpeciesData[]>([]);
@@ -67,13 +65,13 @@ export default function Flora() {
     const user = session?.user;
 
     const rescueDataFlora = useCallback(async (): Promise<FloraRescueSpeciesData[]>=>{
-      if (user){
-       const data= await GetRescueFloraSpecie({token: user?.token})
-       return data
-      }
-      else{
-        return []
-      }
+        if (user){
+            const data= await GetRescueFloraSpecie({token: user?.token})
+            return data
+        }
+        else{
+            return []
+        }
     }, [user])
 
     const relocationDataFlora = useCallback(async (): Promise<FloraRelocationWithSpecieData[]>=>{
@@ -104,7 +102,7 @@ export default function Flora() {
 
     const lineOptions = { color: 'red' }
 
-    const legedColors = ['green','blue', 'red' ]
+    const legedColors = ['purple','blue', 'red' ]
     const legendLabels = [
         'Puntos de relocalización de Flora',
         'Puntos Rescates de Flora',
@@ -184,7 +182,7 @@ export default function Flora() {
                             </Tooltip>
                         </Polyline>
                         <FloraRescueSpecieMap data={rescueFloraData}/>
-                        <FloraRelocationSpecieMap data={relocationFloraData}/>
+                        <FloraRelocationSpecieMap data={relocationFloraData} radius={12}/>
                         <Legend colors={legedColors} labels={legendLabels} />
                     </MapContainer>
                 </div>

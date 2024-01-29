@@ -2,51 +2,63 @@
 import dynamic from 'next/dynamic'
 //import { Circle, Tooltip } from "react-leaflet";
 const Circle = dynamic(
-        async () => (await import('react-leaflet')).Circle,
-        { ssr: false }
+    async () => (await import('react-leaflet')).Circle,
+    { ssr: false }
 )
 
 const Tooltip = dynamic(
-        async () => (await import('react-leaflet')).Tooltip,
-        { ssr: false }
+    async () => (await import('react-leaflet')).Tooltip,
+    { ssr: false }
 )
 
 interface RescueMammalsWithSpecieMapProps {
-        data: RescueMammalsWithSpecieData[]; 
-        }
+    data: RescueMammalsWithSpecieData[]; 
+}
 
 const RescueMammalsSpecieMap: React.FC<RescueMammalsWithSpecieMapProps> = ({data}) => {
-        const lineOptions = {
-                color: 'brown',
-                weight:2,
-                };
+    const lineOptions = {
+        color: 'brown',
+        weight:2,
+    };
 
-        return (
+    return (
         <>
-                {data.map((rescue, index) =>(
-                        <Circle
-                                key={index}
-                                pathOptions={lineOptions}
-                                radius={10}
-                                center={[
-                                        rescue.latitude, rescue.longitude
-                                ]}
-                        >
-                                <Tooltip>
-                                        <div>
-                                                <h4>Punto de rescate de mastozoología</h4>
-                                                <p>Código: {rescue.cod}</p>
-                                                {rescue.specie_name? <p>Especie recatada: {rescue.specie_name}</p>: <p>Especie recatada: No se ha identificado la especie</p>}
-                                                {!rescue.specie_name ? <p> Género identificado: {rescue.genus_name}</p>: null}
-                                        </div>
-                                </Tooltip>
-                        </Circle>
+            {data.map((rescue, index) =>(
+                <Circle
+                    key={index}
+                    pathOptions={lineOptions}
+                    radius={10}
+                    center={[
+                        rescue.latitude, rescue.longitude
+                    ]}
+                >
+                    <Tooltip>
+                        <div>
+                            <h4>
+                                Punto de rescate de mastozoología
+                            </h4>
+                            <p>Código: {rescue.cod}</p>
+                            {
+                                rescue.specie_name?
+                                    <p>Especie recatada: {
+                                        rescue.specie_name
+                                    }</p>:
+                                    <p>Especie recatada: No se ha identificado la especie</p>
+                            }
+                            {
+                                !rescue.specie_name ?
+                                    <p> Género identificado: {rescue.genus_name}</p>:
+                                    null
+                            }
+                        </div>
+                    </Tooltip>
+                </Circle>
 
-                        ))}
+            ))}
         </>
 
-        )
+    )
 
-        }
+}
 
 export default RescueMammalsSpecieMap
