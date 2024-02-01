@@ -151,8 +151,8 @@ const Header = () => {
                             <li>
                                 {
                                     user?.permissions.includes("admin")  ? (
-                                        <a
-                                            href="#"
+                                        <Link
+                                            href="/users"
                                             className="
                                             block
                                             py-2
@@ -170,7 +170,7 @@ const Header = () => {
                                             "
                                         >
                                             Personal
-                                        </a>
+                                        </Link>
                                     ) : (
                                             <>  </>
                                         )
