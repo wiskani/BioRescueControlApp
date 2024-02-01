@@ -1,7 +1,7 @@
 import json
 from sqlalchemy import select, delete
-from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import SQLAlchemyError
 from typing import Union
 from passlib.hash import bcrypt
 from pydantic import EmailStr
@@ -11,10 +11,18 @@ from app.schemas.users import UsersCreate, Users
 
 # Purpose: CRUD operations for users
 
-#Get if user exists
+
+# Get if user exists
 async def get_first_user(db: AsyncSession) -> User | None:
     result = await db.execute(select(User).limit(1))
     return result.scalars().first()
+
+
+# Get all users
+async def get_all_users(db: AsyncSession) -> list[User]:
+    result = await db.execute(select(User))
+    return list(result.scalars().all())
+
 
 # Get a user by email
 async def get_user_by_email(db: AsyncSession, email: EmailStr) -> User | None:
@@ -30,16 +38,27 @@ async def get_user_by_email(db: AsyncSession, email: EmailStr) -> User | None:
         return db_user
     return None
 
+
 # Get a user by id
-async def get_user_by_id(db: AsyncSession, user_id: int) -> User| None:
+async def get_user_by_id(
+        db: AsyncSession,
+        user_id: int
+        ) -> User | None:
     result = await db.execute(select(User).filter(User.id == user_id))
     return result.scalars().first()
 
-#Create a user
-async def create_user(db: AsyncSession, user: UsersCreate) -> User | HTTPException:
+
+# Create a user
+async def create_user(
+        db: AsyncSession,
+        user: UsersCreate
+        ) -> User | HTTPException:
     db_user = await get_user_by_email(db, user.email)
     if db_user is not None:
-        return HTTPException(status_code=400, detail="Email already registered")
+        return HTTPException(
+                status_code=400,
+                detail="Email already registered"
+                )
     else:
         db_user = User(
             email=user.email,
@@ -53,8 +72,13 @@ async def create_user(db: AsyncSession, user: UsersCreate) -> User | HTTPExcepti
         await db.refresh(db_user)
         return db_user
 
-#Update a user by id
-async def update_user(db: AsyncSession , user_id: int, user: Users) -> Union[User, HTTPException]:
+
+# Update a user by id
+async def update_user(
+        db: AsyncSession,
+        user_id: int,
+        user: Users
+        ) -> Union[User, HTTPException]:
     db_user = await get_user_by_id(db, user_id)
     if db_user:
         db_user.email = user.email
@@ -68,14 +92,19 @@ async def update_user(db: AsyncSession , user_id: int, user: Users) -> Union[Use
     else:
         return HTTPException(status_code=400, detail="User does not exist")
 
-#Delete a user by id
-async def delete_user(db:AsyncSession , user_id: int) -> Union[User, HTTPException]:
+
+# Delete a user by id
+async def delete_user(
+        db: AsyncSession,
+        user_id: int
+        ) -> Union[User, HTTPException]:
     try:
         db_user = await get_user_by_id(db, user_id)
         await db.execute(delete(User).where(User.id == user_id))
         await db.commit()
         return db_user
-    except:
-        return HTTPException(status_code=400, detail="User does not exist")
-
-
+    except SQLAlchemyError as e:
+        return HTTPException(
+                status_code=400,
+                detail=f'User does not exist: {e}'
+                )

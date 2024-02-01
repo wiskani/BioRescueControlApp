@@ -5,7 +5,7 @@ from typing import Dict, Any, Union
 import pytest
 
 from app.tests.utils.users import *
-from app.tests.conftest import async_client
+from app.tests.conftest import *
 
 
 # test for user creation
@@ -20,13 +20,13 @@ async def test_create_user(
     password: str = random_password()
     id_number: int = random_int_user()
 
-    response: Response  = await async_client.post(
+    response: Response = await async_client.post(
         "/api/users", json={
             "id": id_number,
             "email": mail,
             "name": name,
             "last_name": last_name,
-            "permissions":["admin"],
+            "permissions": ["admin"],
             "hashed_password": password,
         },
     )
@@ -37,6 +37,7 @@ async def test_create_user(
     assert "hashed_password" not in data
     user_id: Union[int, str] = data["id"]
     assert user_id is not None
+
 
 # test for user creation with invalid email
 @pytest.mark.asyncio
@@ -123,7 +124,8 @@ async def test_update_user(
     assert user_id is not None
     assert data["permissions"] == ["user-write"]
 
-    # test for update user with invalid id 
+
+# test for update user with invalid id 
 @pytest.mark.asyncio
 async def test_update_user_invalid_email(
     async_client: AsyncClient,
@@ -164,7 +166,8 @@ async def test_update_user_invalid_email(
     data: Dict[str, Any] = response.json()
     assert data["detail"] == "Something went wrong, maybe the user does not exist."
 
-    # test for delete user
+
+# test for delete user
 @pytest.mark.asyncio
 async def test_delete_user(
     async_client: AsyncClient,
@@ -224,5 +227,3 @@ async def test_delete_user_invalid_email(
     assert response.status_code == 400, response.text
     data: Dict[str, Any] = response.json()
     assert data["detail"] == "Something went wrong, maybe the user does not exist."
-
-

@@ -22,11 +22,11 @@ from app.models.images import Image
 # Purpose: CRUD operations for Species
 
 
+# Get a specie by its scientific name
 async def get_specie_by_name(
         db: AsyncSession,
         scientific_name: str
         ) -> Specie | None:
-    """Get a specie by its scientific name"""
     specie_db = await db.execute(
             select(Specie)
             .where(Specie.scientific_name == scientific_name)
@@ -34,11 +34,11 @@ async def get_specie_by_name(
     return specie_db.scalars().first()
 
 
+# Get a specie by its specific epithet
 async def get_specie_by_name_epithet(
         db: AsyncSession,
         name: str
         ) -> Specie | None:
-    """Get a specie by its specific epithet"""
     specie_db = await db.execute(
             select(Specie)
             .where(Specie.specific_epithet == name)
@@ -46,8 +46,8 @@ async def get_specie_by_name_epithet(
     return specie_db.scalars().first()
 
 
+# Get a specie by its gbif key
 async def create_specie(db: AsyncSession, specie: SpeciesCreate) -> Specie:
-    """Create a new specie"""
     db_specie = Specie(
         scientific_name=specie.scientific_name,
         specific_epithet=specie.specific_epithet,
@@ -61,8 +61,8 @@ async def create_specie(db: AsyncSession, specie: SpeciesCreate) -> Specie:
     return db_specie
 
 
+# Get all species
 async def get_all_species(db: AsyncSession) -> List[Specie]:
-    """Get all species"""
     species_db = await db.execute(select(Specie))
     return list(species_db.scalars().all())
 

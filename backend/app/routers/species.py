@@ -24,15 +24,14 @@ from app.schemas.species import(
     #jois
     SpeciesJoin,
 )
-from app.schemas.rescue_flora import  FloraRescueSpecies
+from app.schemas.rescue_flora import FloraRescueSpecies
 from app.schemas.rescue_mammals import RescueMammalsWithSpecie
 from app.schemas.rescue_herpetofauna import TransectHerpetoWithSpecies
-from app.models.species import Specie, Genus, Family, Order, Class_, Status
+from app.models.species import Family, Order, Class_, Status
 from app.crud.species import (
     # Species
     get_class_id_and_name_by_specie_id,
     get_specie_by_name,
-    get_specie_by_name_epithet,
     get_specie_by_id,
     create_specie,
     get_all_species,
@@ -95,7 +94,8 @@ from app.api.deps import PermissonsChecker, get_db
 
 router: APIRouter = APIRouter()
 
-#Create specie
+
+# Create specie
 @router.post(
     path="/api/species",
     response_model=SpeciesResponse,
@@ -116,7 +116,8 @@ async def create_a_new_specie(
         )
     return await create_specie(db, new_specie)
 
-#Get all species
+
+# Get all species
 @router.get(
     path="/api/species",
     response_model=List[SpeciesResponse],
