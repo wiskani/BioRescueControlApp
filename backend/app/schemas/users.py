@@ -25,3 +25,14 @@ class UsersResponse(BaseModel):
     permissions: List[str]
     name: str
     last_name: str
+
+
+class UsersAuth(BaseModel):
+    id: int
+    email: EmailStr = Field(...)
+    permissions: List[str] = Field(...)
+    name: str = Field(...)
+    last_name: str
+
+    class Config:
+        from_attributes: bool = True
