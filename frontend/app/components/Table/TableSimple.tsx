@@ -7,7 +7,7 @@ import {
 
 interface TableProps<T> {
         data: T[];
-        columns: ColumnDef<T>[];
+        columns: ColumnDef<any, any>[];
 }
 
 export function  TableSimple <T>({ data, columns }: TableProps<T>) { 

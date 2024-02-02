@@ -159,12 +159,26 @@ export default function Flora() {
                 sm:mb-0
                 justify-center"
             >
-                <div className="h-96 p-0 z-50 md:w-1/2 p-4 md:h-[16rem] sd:h-[6rem]">
+                <div className="
+                    h-96
+                    p-0
+                    z-50
+                    md:w-1/2
+                    p-4 md:h-[16rem]
+                    sd:h-[6rem]
+                    "
+                >
                     <MapContainer
                         center={[-17.489, -65.271]}
                         zoom={12}
                         scrollWheelZoom={false}
-                        className='h-80 w-full 2xl:h-[40rem] xl:h-[40rem] lg:h-[35rem]'
+                        className='
+                        h-80
+                        w-full
+                        2xl:h-[40rem]
+                        xl:h-[40rem]
+                        lg:h-[35rem]
+                        '
                     >
                         <TileLayer
 

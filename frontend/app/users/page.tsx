@@ -6,10 +6,26 @@ import { redirect } from 'next/navigation';
 import dynamic from 'next/dynamic'
 
 //React imports
-import React, { useEffect, useState, useCallback } from "react"
+import React, {
+    useEffect,
+    useState,
+    useCallback,
+} from "react"
 
 //Api imports
 import { GetAllUsers } from '../libs/users/ApiUsers';
+
+//Table imports
+import { createColumnHelper } from '@tanstack/react-table';
+
+//Componest imports
+import { TableSimple } from '@/app/components/Table/TableSimple';
+
+//Types
+interface UsersColumns extends UsersResponseData {
+    editar: string;
+    borrar:string;
+}
 
 export default function Users(){
     const { data: session } = useSession();
@@ -17,7 +33,67 @@ export default function Users(){
 
     const user = session?.user;
 
-    const usersData = useCallback(async (): Promise<UsersResponseData[]> => {
+    //make columns
+    const columnHelper = createColumnHelper<UsersColumns>();
+
+    const columnsUsers = [
+        columnHelper.accessor('email', {
+                        header: 'Correo electrónico',
+                        footer: info => info.column.id,
+                }),
+        columnHelper.accessor('permissions', {
+                        header: 'Rol(es)',
+                        footer: info => info.column.id,
+                }),
+        columnHelper.accessor('name', {
+                        header: 'Nombre',
+                        footer: info => info.column.id,
+                }),
+        columnHelper.accessor('last_name', {
+                        header: 'Apellido',
+                        footer: info => info.column.id,
+                }),
+        columnHelper.accessor("editar", {
+            header: () => <span></span>,
+            cell:() => (
+                <button
+                    className="
+                    bg-yellow-500
+                    hover:bg-yellow-700
+                    text-white
+                    font-bold
+                    py-2 px-4
+                    rounded"
+                >
+                    Editar
+                </button>
+            ),
+        }
+
+        ),
+        columnHelper.accessor("borrar", {
+            header: () => <span></span>,
+            cell:() => (
+                <button
+                    className="
+                    bg-red-500
+                    hover:bg-red-700
+                    text-white
+                    font-bold
+                    py-2 px-4
+                    rounded"
+                >
+                   Borrar 
+                </button>
+            ),
+        }
+
+        )
+    ]
+
+
+    const usersData = useCallback(
+        async (): Promise<UsersResponseData[]> => {
         if (user) {
             const data = await GetAllUsers({token: user?.token});
             return data;
@@ -39,6 +115,8 @@ export default function Users(){
     }, [session, usersData]);
 
 
+
+
     return (
         <div>
             <h1
@@ -52,6 +130,28 @@ export default function Users(){
             >
                 Manejo de usuarios
             </h1>
+
+            <div>
+                <button
+                    className="
+                    m-4
+                    bg-blue-500
+                    hover:bg-blue-700
+                    text-white
+                    font-bold
+                    rounded-full
+                    w-8
+                    h-8
+                    "
+                >
+                   + 
+                </button>
+            </div>
+
+            <TableSimple<UsersResponseData>
+                columns={columnsUsers}
+                data={users}
+            /> 
 
         </div>
     )

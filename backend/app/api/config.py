@@ -1,11 +1,12 @@
 from pydantic_settings import BaseSettings
+from pydantic import EmailStr
 
 
 class Settings(BaseSettings):
-    DEFAULT_VAR: str ="some default string value" # default value if env variable does not exist
+    DEFAULT_VAR: str = "some default string value"
     SECRET_KEY: str
     APP_MAX: int = 100
-    FIRST_USER_MAIL: str
+    FIRST_USER_MAIL: EmailStr
     FIRST_USER_PASSWORD: str
     POSTGRES_DB: str
     POSTGRES_USER: str
@@ -14,7 +15,6 @@ class Settings(BaseSettings):
     DATABASE_URL_TEST: str
     NEXTJS_URL: str
 
-
     class Config:
-        env_file: str  = ".env" # default .env file
+        env_file: str = ".env"
 

@@ -3,7 +3,6 @@ from typing import List
 
 
 class Users(BaseModel):
-    id: int
     email: EmailStr = Field(...)
     permissions: List[str] = Field(...)
     name: str = Field(...)

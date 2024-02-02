@@ -57,15 +57,21 @@ type RescuesSpecieData =
         | RescueMammalsWithSpecieData 
 
 //predicados fuctions
-function isFloraRescueSpeciesData(data: RescuesSpecieData): data is FloraRescueSpeciesData {
+function isFloraRescueSpeciesData(
+    data: RescuesSpecieData
+): data is FloraRescueSpeciesData {
     return  data && "epiphyte_number" in data;
 }
 
-function isTransectHerpetoWithSpeciesData(data: RescuesSpecieData): data is TransectHerpetoWithSpeciesData {
+function isTransectHerpetoWithSpeciesData(
+    data: RescuesSpecieData
+): data is TransectHerpetoWithSpeciesData {
     return  data && "number" in data;
 }
 
-function isRescueMammalsWithSpecieData(data: RescuesSpecieData): data is RescueMammalsWithSpecieData {
+function isRescueMammalsWithSpecieData(
+    data: RescuesSpecieData
+): data is RescueMammalsWithSpecieData {
     return  data && "cod" in data;
 }
         
@@ -93,23 +99,37 @@ export default function Page({ params} : { params: { specieId: number } }) {
 
     const legendLabels: () => string[] = () => {
         if (isFloraRescueSpeciesData(rescues[0])) {
-            return ['puntos rescates de flora', 'proyecto 230 kv mizque - sehuencas']
+            return [
+                'puntos rescates de flora',
+                'proyecto 230 kv mizque - sehuencas'
+            ]
         }
         if (isTransectHerpetoWithSpeciesData(rescues[0])) {
-            return ['transcetors herpetofauna', 'proyecto 230 kv mizque - sehuencas']
+            return [
+                'transcetors herpetofauna',
+                'proyecto 230 kv mizque - sehuencas'
+            ]
         }
         if (isRescueMammalsWithSpecieData(rescues[0])) {
-            return ['puntos rescate de mamiferos', 'proyecto 230 kv mizque - sehuencas']
+            return [
+                'puntos rescate de mamiferos',
+                'proyecto 230 kv mizque - sehuencas'
+            ]
         }
         return ['proyecto 230 kv mizque - sehuencas']
         }
 
 
     //Obtain data from api
-    const rescuesData = useCallback(async (): Promise<RescuesSpecieData[]> => {
+    const rescuesData = useCallback(
+        async (): Promise<RescuesSpecieData[]> => {
             if (user) {
                     try {
-                        const data = await GetRescuesSpecie({ token: user?.token, specie_id: params.specieId });
+                        const data = await GetRescuesSpecie(
+                        {
+                            token: user?.token, specie_id: params.specieId
+                        }
+                    );
                         return data;
                     } catch (error) {
                             if (error instanceof Error) {
