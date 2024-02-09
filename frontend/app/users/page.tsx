@@ -3,6 +3,7 @@
 //Next imports
 import { useSession  } from 'next-auth/react'
 import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic'
 
 //React imports
@@ -30,6 +31,7 @@ interface UsersColumns extends UsersResponseData {
 export default function Users(){
     const { data: session } = useSession();
     const [users, setUsers] = useState<UsersResponseData[]>([]);
+    const router = useRouter();
 
     const user = session?.user;
 
@@ -143,6 +145,7 @@ export default function Users(){
                     w-8
                     h-8
                     "
+                    onClick={() => router.push('/users/create')}
                 >
                    + 
                 </button>

@@ -33,7 +33,7 @@ export const GetAllUsers = async (
     }
 }
 
-export const CreateUser = async (
+export const PostUser = async (
     props: CreateUserProps
 ): Promise<UsersResponseData> => {
     try {
