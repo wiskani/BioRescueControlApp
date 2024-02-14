@@ -84,6 +84,9 @@ export default function Users(){
                     font-bold
                     py-2 px-4
                     rounded"
+                    onClick={() => {
+                        router.push(`/users/delete/${Headers.id}`)
+                    }}
                 >
                    Borrar 
                 </button>

@@ -125,11 +125,10 @@ export default function Page({ params} : { params: { specieId: number } }) {
         async (): Promise<RescuesSpecieData[]> => {
             if (user) {
                     try {
-                        const data = await GetRescuesSpecie(
-                        {
-                            token: user?.token, specie_id: params.specieId
-                        }
-                    );
+                        const data = await GetRescuesSpecie({
+                        token: user?.token,
+                        specie_id: params.specieId
+                    });
                         return data;
                     } catch (error) {
                             if (error instanceof Error) {

@@ -7,7 +7,6 @@ import dynamic from 'next/dynamic'
 
 import banner from '../../public/images/banner.gif'
 
-
 //React imports
 import React,{useEffect, useState, useCallback}  from 'react';
 

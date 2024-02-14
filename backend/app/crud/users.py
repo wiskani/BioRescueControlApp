@@ -41,9 +41,7 @@ async def get_user_by_email(db: AsyncSession, email: EmailStr) -> User | None:
 
 # Get a user by id
 async def get_user_by_id(
-        db: AsyncSession,
-        user_id: int
-        ) -> User | None:
+        db: AsyncSession, user_id: int) -> User | None:
     result = await db.execute(select(User).filter(User.id == user_id))
     return result.scalars().first()
 
@@ -97,14 +95,11 @@ async def update_user(
 async def delete_user(
         db: AsyncSession,
         user_id: int
-        ) -> Union[User, HTTPException]:
-    try:
-        db_user = await get_user_by_id(db, user_id)
+        ) -> dict | HTTPException:
+    db_user = await get_user_by_id(db, user_id)
+    if not db_user:
+        return HTTPException(status_code=400, detail="User does not exist")
+    else:
         await db.execute(delete(User).where(User.id == user_id))
         await db.commit()
-        return db_user
-    except SQLAlchemyError as e:
-        return HTTPException(
-                status_code=400,
-                detail=f'User does not exist: {e}'
-                )
+        return {"message": "User deleted"}
