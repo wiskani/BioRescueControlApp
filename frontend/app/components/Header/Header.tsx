@@ -18,8 +18,23 @@ const Header = () => {
 
     return(
         <header>
-            <nav className="bg-emerald-900 border-gray-200 px-4 lg:px-6 py-2.5">
-                <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
+            <nav className="
+                bg-emerald-900
+                border-gray-200
+                px-4
+                lg:px-6
+                py-2.5
+                "
+            >
+                <div className="
+                    flex
+                    flex-wrap
+                    justify-between
+                    items-center
+                    mx-auto
+                    max-w-screen-xl
+                    "
+                >
                     <a href="#" className="flex items-center">
                         <Image
                             src="/images/logo_white.png"
@@ -42,12 +57,45 @@ const Header = () => {
                             viewBox="0 0 16 16"
                         >
                             <path
-                                fill-rule="evenodd"
-                                d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"
+                                fillRule="evenodd"
+                                d="
+                                M2
+                                13.5V7h1v6.5a.5.5
+                                0
+                                0
+                                0
+                                .5.5h9a.5.5
+                                0 0 0
+                                .5-.5V7h1v6.5a1.5
+                                1.5 0 0
+                                1-1.5
+                                1.5h-9A1.5
+                                1.5 0 0 1 2
+                                13.5zm11-11V6l-2-2V2.5a.5.5
+                                0 0 1
+                                .5-.5h1a.5.5 0 0 1
+                                .5.5z
+                                "
                             />
                             <path
-                                fill-rule="evenodd"
-                                d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>
+                                fillRule="evenodd"
+                                d="
+                                M7.293
+                                1.5a1
+                                1 0 0 1
+                                1.414
+                                0l6.647
+                                6.646a.5.5
+                                0 0
+                                1-.708.708L8
+                                2.207
+                                1.354
+                                8.854a.5.5
+                                0 1
+                                1-.708-.708L7.293
+                                1.5z
+                                "
+                            />
                         </svg>
                     </button>
                     <div className="flex items-center lg:order-2">
@@ -124,7 +172,29 @@ const Header = () => {
                             >
                                 <path
                                     fillRule="evenodd"
-                                    d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                                    d="
+                                    M3
+                                    5a1
+                                    1 0
+                                    011-1h12a1
+                                    1 0
+                                    110
+                                    2H4a1
+                                    1 0
+                                    01-1-1zM3
+                                    10a1 1 0
+                                    011-1h12a1
+                                    1 0 110
+                                    2H4a1
+                                    1 0
+                                    01-1-1zM3
+                                    15a1 1 0
+                                    011-1h12a1
+                                    1 0
+                                    110
+                                    2H4a1
+                                    1 0 01-1-1z
+                                    "
                                     clipRule="evenodd"
                                 >
                                 </path>
@@ -136,7 +206,31 @@ const Header = () => {
                             >
                                 <path
                                     fillRule="evenodd"
-                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                    d="
+                                    M4.293
+                                    4.293a1
+                                    1 0
+                                    011.414
+                                    0L10
+                                    8.586l4.293-4.293a1
+                                    1 0
+                                    111.414
+                                    1.414L11.414
+                                    10l4.293
+                                    4.293a1
+                                    1 0
+                                    01-1.414
+                                    1.414L10
+                                    11.414l-4.293
+                                    4.293a1
+                                    1 0
+                                    01-1.414-1.414L8.586
+                                    10
+                                    4.293
+                                    5.707a1
+                                    1 0
+                                    010-1.414z
+                                    "
                                     clipRule="evenodd"
                                 >
                                 </path>
@@ -144,10 +238,21 @@ const Header = () => {
                         </button>
                     </div>
                     <div
-                        className={`${isOpen ? '' : 'hidden'} justify-between items-center w-full lg:flex lg:w-auto lg:order-1`}
+                        className={
+                            `${isOpen ? '' : 'hidden'} justify-between items-center w-full lg:flex lg:w-auto lg:order-1`
+                        }
                         id="mobile-menu-2"
                     >
-                        <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+                        <ul className="
+                            flex
+                            flex-col
+                            mt-4
+                            font-medium
+                            lg:flex-row
+                            lg:space-x-8
+                            lg:mt-0
+                            "
+                        >
                             <li>
                                 {
                                     user?.permissions.includes("admin")  ? (

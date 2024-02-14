@@ -55,9 +55,10 @@ export default function Users(){
                         header: 'Apellido',
                         footer: info => info.column.id,
                 }),
-        columnHelper.accessor("editar", {
+        columnHelper.accessor("id", {
             header: () => <span></span>,
-            cell:() => (
+            cell: info => (
+                <div className='flex space-x-4'>
                 <button
                     className="
                     bg-yellow-500
@@ -69,13 +70,6 @@ export default function Users(){
                 >
                     Editar
                 </button>
-            ),
-        }
-
-        ),
-        columnHelper.accessor("borrar", {
-            header: () => <span></span>,
-            cell:() => (
                 <button
                     className="
                     bg-red-500
@@ -85,11 +79,13 @@ export default function Users(){
                     py-2 px-4
                     rounded"
                     onClick={() => {
-                        router.push(`/users/delete/${Headers.id}`)
+                        router.push(`/users/delete/${info.getValue()}`)
                     }}
                 >
                    Borrar 
                 </button>
+
+                </div>
             ),
         }
 

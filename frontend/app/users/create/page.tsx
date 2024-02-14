@@ -59,8 +59,25 @@ export default function CreateUser(){
     }, [session]);
 
     return (
-    <div>
-        <h1>Create User</h1>
+        <div
+            className="
+            flex
+            flex-col
+            justify-center
+            items-center
+            "
+        >
+            <h1
+                className="
+                m-6
+                text-xl
+                font-bold
+                text-center
+                text-emerald-900
+                "
+            >
+                Crear usuario
+            </h1>
         <div>
                 <form
                     onSubmit={onSubmit}
@@ -281,6 +298,32 @@ export default function CreateUser(){
                     </div>
                 </form>
         </div>
+            <button
+                className='group'
+                onClick={() => router.push('/users')}
+            >
+                <svg
+                    className="
+                    m-6
+                    w-8 h-8
+                    text-emerald-700
+                    group-hover:text-emerald-900
+                    dark:text-white
+                    "
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M3 9h13a5 5 0 0 1 0 10H7M3 9l4-4M3 9l4 4"/>
+                </svg>
+
+            </button>
     </div>
     )
 
