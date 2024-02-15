@@ -67,6 +67,9 @@ export default function Users(){
                     font-bold
                     py-2 px-4
                     rounded"
+                    onClick={() => {
+                        router.push(`/users/edit/${info.getValue()}`)
+                    }}
                 >
                     Editar
                 </button>

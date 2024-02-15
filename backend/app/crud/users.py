@@ -76,7 +76,7 @@ async def update_user(
         db: AsyncSession,
         user_id: int,
         user: Users
-        ) -> Union[User, HTTPException]:
+        ) -> User:
     db_user = await get_user_by_id(db, user_id)
     if db_user:
         db_user.email = user.email
@@ -88,7 +88,7 @@ async def update_user(
         await db.refresh(db_user)
         return db_user
     else:
-        return HTTPException(status_code=400, detail="User does not exist")
+        raise HTTPException(status_code=400, detail="User does not exist")
 
 
 # Delete a user by id

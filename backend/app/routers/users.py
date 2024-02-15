@@ -107,10 +107,23 @@ async def update_user_by_id(
     user: UsersCreate,
     db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"]))
-) -> Union[Users, HTTPException]:
+) -> UsersResponse | HTTPException:
     db_user: Union[User, None] = await get_user_by_id(db=db, user_id=user_id)
     if db_user:
-        return await update_user(db=db, user_id=user_id, user=user)
+        db_user_update = await update_user(db=db, user_id=user_id, user=user)
+        if db_user_update:
+            return UsersResponse(
+                id=db_user_update.id,
+                email=db_user_update.email,
+                permissions=db_user_update.permissions,
+                name=db_user_update.name,
+                last_name=db_user_update.last_name
+                )
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail="Something went wrong, maybe the user does not exist."
+                )
     else:
         raise HTTPException(
                 status_code=400,
