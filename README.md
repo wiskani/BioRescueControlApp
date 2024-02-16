@@ -1,5 +1,5 @@
 
-# Mi Aplicación Web
+# Aplicación para Base de Datos de los Planes de Rescate de Flora y Fauna
 
 Este repositorio contiene los archivos de configuración de Docker para desplegar una aplicación web utilizando Next.js, FastAPI y PostgreSQL en un entorno de producción y desarrollo.
 
