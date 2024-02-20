@@ -7,26 +7,42 @@ import app.models.images
 import app.models.rescue_herpetofauna
 import app.models.rescue_mammals
 
+
 class Status(_database.Base):
-    __tablename__:str = "status"
+    __tablename__: str = "status"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     status_name: Mapped[str] = mapped_column(String, unique=True, index=True)
-    create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    abbreviation: Mapped[str] = mapped_column(String, unique=True, index=True)
+    create_at: Mapped[datetime] = mapped_column(
+            DateTime,
+            default=datetime.utcnow
+            )
 
     # Relationships with specie
     species = relationship("Specie", back_populates="status")
 
 
 class Specie(_database.Base):
-    __tablename__:str = "species"
+    __tablename__: str = "species"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    scientific_name: Mapped[str] = mapped_column(String, unique=True, index=True)
+    scientific_name: Mapped[str] = mapped_column(
+            String,
+            unique=True,
+            index=True
+            )
     specific_epithet: Mapped[str] = mapped_column(String, index=True)
     key_gbif: Mapped[int] = mapped_column(Integer, unique=True, nullable=True)
-    create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    create_at: Mapped[datetime] = mapped_column(
+            DateTime,
+            default=datetime.utcnow
+            )
 
     # Relationships with status
-    status_id: Mapped[int] = mapped_column(Integer, ForeignKey("status.id"), nullable=True)
+    status_id: Mapped[int] = mapped_column(
+            Integer,
+            ForeignKey("status.id"),
+            nullable=True
+            )
     status = relationship("Status", back_populates="species")
 
     # Relationships with genus
@@ -34,32 +50,54 @@ class Specie(_database.Base):
     genus = relationship("Genus", back_populates="species")
 
     # Relationships with flora_rescue
-    flora_rescue_bryophyte = relationship("FloraRescue", back_populates="specie_bryophyte", foreign_keys="FloraRescue.specie_bryophyte_id")
-    flora_rescue_epiphyte = relationship("FloraRescue", back_populates="specie_epiphyte", foreign_keys="FloraRescue.specie_epiphyte_id")
+    flora_rescue_bryophyte = relationship(
+            "FloraRescue",
+            back_populates="specie_bryophyte",
+            foreign_keys="FloraRescue.specie_bryophyte_id"
+            )
+    flora_rescue_epiphyte = relationship(
+            "FloraRescue",
+            back_populates="specie_epiphyte",
+            foreign_keys="FloraRescue.specie_epiphyte_id"
+            )
 
     # Relationships with flora_relocation
-    flora_relocation_bryophyte = relationship("FloraRelocation", back_populates="specie_bryophyte")
+    flora_relocation_bryophyte = relationship(
+            "FloraRelocation",
+            back_populates="specie_bryophyte"
+            )
 
     # Relationships with images
-    images = relationship("Image", back_populates="species")
+    images = relationship(
+            "Image",
+            back_populates="species"
+            )
 
     # Relationships with rescue_herpetofauna
-    rescue_herpetofauna = relationship("RescueHerpetofauna", back_populates="specie")
+    rescue_herpetofauna = relationship(
+            "RescueHerpetofauna",
+            back_populates="specie"
+            )
 
     # Relationships with translocation_herpetofauna
-    translocation_herpetofauna = relationship("TranslocationHerpetofauna", back_populates="specie")
+    translocation_herpetofauna = relationship(
+            "TranslocationHerpetofauna",
+            back_populates="specie"
+            )
 
     # Relationships with rescue_mammals
     rescue_mammals = relationship("RescueMammals", back_populates="specie")
 
 
-
 class Genus(_database.Base):
-    __tablename__:str = "genus"
+    __tablename__: str = "genus"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     genus_name: Mapped[str] = mapped_column(String, unique=True, index=True)
     key_gbif: Mapped[int] = mapped_column(Integer, unique=True, nullable=True)
-    create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    create_at: Mapped[datetime] = mapped_column(
+            DateTime,
+            default=datetime.utcnow
+            )
 
     # Relationships specie and family
     family_id: Mapped[int] = mapped_column(Integer, ForeignKey("family.id"))
@@ -67,24 +105,36 @@ class Genus(_database.Base):
     species = relationship("Specie", back_populates="genus")
 
     # Relationships with flora_rescue
-    flora_rescue_bryophyte = relationship("FloraRescue", back_populates="genus_bryophyte", foreign_keys="FloraRescue.genus_bryophyte_id")
-    flora_rescue_epiphyte = relationship("FloraRescue", back_populates="genus_epiphyte", foreign_keys="FloraRescue.genus_epiphyte_id")
+    flora_rescue_bryophyte = relationship(
+            "FloraRescue",
+            back_populates="genus_bryophyte",
+            foreign_keys="FloraRescue.genus_bryophyte_id"
+            )
+    flora_rescue_epiphyte = relationship(
+            "FloraRescue",
+            back_populates="genus_epiphyte",
+            foreign_keys="FloraRescue.genus_epiphyte_id"
+            )
 
     # Relationships with flora_relocation
-    flora_relocation_bryophyte = relationship("FloraRelocation", back_populates="genus_bryophyte")
+    flora_relocation_bryophyte = relationship(
+            "FloraRelocation",
+            back_populates="genus_bryophyte"
+            )
 
     # Relationships with rescue_mammals
     rescue_mammals = relationship("RescueMammals", back_populates="genus")
 
 
-
-
 class Family(_database.Base):
-    __tablename__:str = "family"
+    __tablename__: str = "family"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     family_name: Mapped[str] = mapped_column(String, unique=True, index=True)
     key_gbif: Mapped[int] = mapped_column(Integer, unique=True, nullable=True)
-    create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    create_at: Mapped[datetime] = mapped_column(
+            DateTime,
+            default=datetime.utcnow
+            )
 
     # Relationships order and genus
     order_id: Mapped[int] = mapped_column(Integer, ForeignKey("order.id"))
@@ -92,18 +142,33 @@ class Family(_database.Base):
     genus = relationship("Genus", back_populates="family")
 
     # Relationships with flora_rescue
-    flora_rescue_bryophyte = relationship("FloraRescue", back_populates="family_bryophyte", foreign_keys="FloraRescue.family_bryophyte_id")
-    flora_rescue_epiphyte = relationship("FloraRescue", back_populates="family_epiphyte", foreign_keys="FloraRescue.family_epiphyte_id")
+    flora_rescue_bryophyte = relationship(
+            "FloraRescue",
+            back_populates="family_bryophyte",
+            foreign_keys="FloraRescue.family_bryophyte_id"
+            )
+    flora_rescue_epiphyte = relationship(
+            "FloraRescue",
+            back_populates="family_epiphyte",
+            foreign_keys="FloraRescue.family_epiphyte_id"
+            )
 
     # Relationships with flora_relocation
-    flora_relocation_bryophyte = relationship("FloraRelocation", back_populates="family_bryophyte")
+    flora_relocation_bryophyte = relationship(
+            "FloraRelocation",
+            back_populates="family_bryophyte"
+            )
+
 
 class Order(_database.Base):
-    __tablename__:str = "order"
+    __tablename__: str = "order"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     order_name: Mapped[str] = mapped_column(String, unique=True, index=True)
     key_gbif: Mapped[int] = mapped_column(Integer, unique=True, nullable=True)
-    create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    create_at: Mapped[datetime] = mapped_column(
+            DateTime,
+            default=datetime.utcnow
+            )
 
     # Relationships
     class__id: Mapped[int] = mapped_column(Integer, ForeignKey("class_.id"))
@@ -112,11 +177,14 @@ class Order(_database.Base):
 
 
 class Class_(_database.Base):
-    __tablename__:str = "class_"
+    __tablename__: str = "class_"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     class_name: Mapped[str] = mapped_column(String, unique=True, index=True)
     key_gbif: Mapped[int] = mapped_column(Integer, unique=True, nullable=True)
-    create_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    create_at: Mapped[datetime] = mapped_column(
+            DateTime,
+            default=datetime.utcnow
+            )
 
     # Relationships
     order = relationship("Order", back_populates="class_")

@@ -1,11 +1,12 @@
-from typing import List, Optional, Union
-from pydantic import BaseModel, Field, model_validator
+from typing import List, Union
+from pydantic import BaseModel, Field
 
 from app.schemas.images import ImageBase
 
 
 class StatusBase (BaseModel):
-    status_name: str = Field(..., examples=["Rescue"])
+    status_name: str = Field(..., examples=["Casi amenazada"])
+    abbreviation: str = Field(examples=["NT"])
 
     class Config:
         orm_mode: bool = True

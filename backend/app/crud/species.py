@@ -359,13 +359,14 @@ async def get_status_by_name(
     return status_db.scalars().first()
 
 
+# Create a new status
 async def create_status(
         db: AsyncSession,
         status: StatusBase
         ) -> Status:
-    """Create a new status"""
     db_status = Status(
         status_name=status.status_name,
+        abbreviation=status.abbreviation
     )
     db.add(db_status)
     await db.commit()
@@ -373,35 +374,36 @@ async def create_status(
     return db_status
 
 
+# Get all status
 async def get_all_status(db: AsyncSession) -> List[Status]:
-    """Get all status"""
     status_db = await db.execute(select(Status))
     return list(status_db.scalars().all())
 
 
+# Get a status by its id
 async def get_status_by_id(db: AsyncSession, status_id: int) -> Status | None:
-    """Get a status by its id"""
     status_db = await db.execute(select(Status).filter(Status.id == status_id))
     return status_db.scalars().first()
 
 
+# Update a status
 async def update_status(
         db: AsyncSession,
         status_id: int,
         status: StatusBase
         ) -> Status:
-    """Update a status"""
     db_status = await get_status_by_id(db, status_id)
     if not db_status:
         raise HTTPException(status_code=404, detail="Status not found")
     db_status.status_name = status.status_name
+    db_status.abbreviation = status.abbreviation
     await db.commit()
     await db.refresh(db_status)
     return db_status
 
 
+# Delete a status
 async def delete_status(db: AsyncSession, status_id: int) -> Status:
-    """Delete a status"""
     db_status = await get_status_by_id(db, status_id)
     if not db_status:
         raise HTTPException(status_code=404, detail="Status not found")
@@ -410,8 +412,8 @@ async def delete_status(db: AsyncSession, status_id: int) -> Status:
     return db_status
 
 
+# Get all species join with all other tables
 async def get_all_species_join_(db: AsyncSession) -> List[SpeciesJoin]:
-    """Get all species join with all other tables"""
     species_result = await db.execute(select(Specie))
     species = species_result.scalars().all()
 
@@ -468,9 +470,8 @@ async def get_all_species_join_(db: AsyncSession) -> List[SpeciesJoin]:
             result.append(db_specie)
     return result
 
+
 # Count flora_rescue by specie
-
-
 async def count_flora_rescue_by_specie(
         db: AsyncSession,
         specie_id: int
@@ -492,9 +493,8 @@ async def count_flora_rescue_by_specie(
 
     return total
 
+
 # Count herpetofauna rescue by specie
-
-
 async def count_herpetofauna_rescue_by_specie(
         db: AsyncSession,
         specie_id: int
@@ -516,9 +516,8 @@ async def count_herpetofauna_rescue_by_specie(
 
     return total
 
+
 # Count mammal rescue by specie
-
-
 async def count_mammal_rescue_by_specie(
         db: AsyncSession,
         specie_id: int
@@ -540,9 +539,8 @@ async def count_mammal_rescue_by_specie(
 
     return total
 
+
 # List of species by family
-
-
 async def get_species_by_family(db: AsyncSession, family_id: int) -> List[int]:
     genus_result = await db.execute(
             select(Genus).where(Genus.family_id == family_id)
@@ -558,9 +556,8 @@ async def get_species_by_family(db: AsyncSession, family_id: int) -> List[int]:
             result.append(specie.id)
     return result
 
+
 # Count herpetofauna rescue by family
-
-
 async def count_herpetofauna_rescue_by_family(
         db: AsyncSession,
         family_id: int
@@ -575,27 +572,31 @@ async def count_herpetofauna_rescue_by_family(
 
     result = await db.execute(stmt)
 
-    total= result.scalar()
+    total = result.scalar()
 
     if total is None:
         return 0
 
     return total
 
-#count mammal rescue by family
-async def count_mammal_rescue_by_family(db: AsyncSession, family_id:int) -> int :
+
+# count mammal rescue by family
+async def count_mammal_rescue_by_family(
+        db: AsyncSession,
+        family_id: int
+        ) -> int:
     if not family_id:
         return 0
     stmt = select(func.count(RescueMammals.id)).where(RescueMammals.family_id == family_id)
 
     result = await db.execute(stmt)
 
-    total= result.scalar()
+    total = result.scalar()
 
     if total is None:
         return 0
 
-    return total 
+    return total
 
 
 # Get class_ id and class_ name by specie id
@@ -619,12 +620,3 @@ async def get_class_id_and_name_by_specie_id(
     if not class_:
         return HTTPException(status_code=404, detail="Class not found")
     return class_
-
-
-
-
-
-
-
-
-

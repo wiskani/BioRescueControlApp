@@ -9,7 +9,9 @@ from app.tests.conftest import async_client
 
 
 """TESTS FOR CLASSES"""
-#test create class
+
+
+# test create class
 @pytest.mark.asyncio
 async def test_create_class(
     async_client: AsyncClient,
@@ -29,7 +31,8 @@ async def test_create_class(
     assert data["key_gbif"] == 10
     assert "id" in data
 
-#test create class with invalid name
+
+# test create class with invalid name
 @pytest.mark.asyncio
 async def test_create_class_invalid_name(
     async_client: AsyncClient,
@@ -51,7 +54,8 @@ async def test_create_class_invalid_name(
     )
     assert response.status_code == 409, response.text
 
-#test update class
+
+# test update class
 @pytest.mark.asyncio
 async def test_update_class(
     async_client: AsyncClient,
@@ -79,7 +83,8 @@ async def test_update_class(
     )
     assert response.status_code == 200, response.text
 
-#test get all classes
+
+# test get all classes
 @pytest.mark.asyncio
 async def test_get_all_classes(
     async_client: AsyncClient,
@@ -109,7 +114,8 @@ async def test_get_all_classes(
     data: Dict[str, Any] = response.json()
     assert len(data) >= 2
 
-#test get class by id
+
+# test get class by id
 @pytest.mark.asyncio
 async def test_get_class_by_id(
     async_client: AsyncClient,
@@ -132,7 +138,8 @@ async def test_get_class_by_id(
     )
     assert response.status_code == 200, response.text
 
-#test delete class
+
+# test delete class
 @pytest.mark.asyncio
 async def test_delete_class(
     async_client: AsyncClient,
@@ -156,7 +163,9 @@ async def test_delete_class(
     assert response.status_code == 200, response.text
 
 """Test for orders"""
-#test create order
+
+
+# test create order
 @pytest.mark.asyncio
 async def test_create_order(
     async_client: AsyncClient,
@@ -177,7 +186,8 @@ async def test_create_order(
     assert data["key_gbif"] == 10
     assert "id" in data
 
-#test create order with invalid name
+
+# test create order with invalid name
 @pytest.mark.asyncio
 async def test_create_order_invalid_name(
     async_client: AsyncClient,
@@ -202,7 +212,8 @@ async def test_create_order_invalid_name(
     )
     assert response.status_code == 409, response.text
 
-#test update order
+
+# test update order
 @pytest.mark.asyncio
 async def test_update_order(
     async_client: AsyncClient,
@@ -233,7 +244,8 @@ async def test_update_order(
     )
     assert response.status_code == 200, response.text
 
-#test get all orders
+
+# test get all orders
 @pytest.mark.asyncio
 async def test_get_all_orders(
     async_client: AsyncClient,
@@ -268,7 +280,8 @@ async def test_get_all_orders(
     data: Dict[str, Any] = response.json()
     assert len(data) >= 2
 
-#test get order by id
+
+# test get order by id
 @pytest.mark.asyncio
 async def test_get_order_by_id(
     async_client: AsyncClient,
@@ -294,7 +307,8 @@ async def test_get_order_by_id(
     )
     assert response.status_code == 200, response.text
 
-#test delete order
+
+# test delete order
 @pytest.mark.asyncio
 async def test_delete_order(
     async_client: AsyncClient,
@@ -321,7 +335,9 @@ async def test_delete_order(
     assert response.status_code == 200, response.text
 
 """TESTS FOR FAMILY"""""
-#test create family
+
+
+# test create family
 @pytest.mark.asyncio
 async def test_create_family(
     async_client: AsyncClient,
@@ -343,7 +359,8 @@ async def test_create_family(
     assert data["key_gbif"] == 10
     assert "id" in data
 
-#test create family with invalid name
+
+# test create family with invalid name
 @pytest.mark.asyncio
 async def test_create_family_invalid_name(
     async_client: AsyncClient,
@@ -368,7 +385,8 @@ async def test_create_family_invalid_name(
     )
     assert response.status_code == 409, response.text
 
-#test update family
+
+# test update family
 @pytest.mark.asyncio
 async def test_update_family(
     async_client: AsyncClient,
@@ -403,7 +421,8 @@ async def test_update_family(
     assert data["family_name"] == name_family
     assert data["key_gbif"] == 10
 
-#test get all families
+
+# test get all families
 @pytest.mark.asyncio
 async def test_get_all_families(
     async_client: AsyncClient,
