@@ -2,9 +2,13 @@
 
 import { useRouter } from 'next/navigation';
 
+import { useState } from 'react';
+
 const SpecieItem = (props: SpecieItemData) => {
     const imageUrl = props.images && props.images.length > 0 ? `${process.env.NEXT_PUBLIC_API_URL}:8080${props.images[0].url}` : `${process.env.NEXT_PUBLIC_API_URL}:8080/static/images/species/no_imagen.svg`;
     const imageTitle = props.images && props.images.length > 0 ? props.images[0].atribute : 'No hay imagen';
+    
+    const [statusColor, setStatusColor] = useState('bg-green-600');
 
     const router = useRouter();
 
@@ -81,6 +85,21 @@ const SpecieItem = (props: SpecieItemData) => {
                         >
                             Clase: {props.class_name}
                         </h3>
+                        {
+                            props.status_name?
+                            <h3
+                                className="
+                                text-xs
+                                title-font
+                                text-gray-500
+                                tracking-widest
+                                "
+                            >
+                                Estado de Conservación: {props.status_name}
+                            </h3>
+                            : null
+
+                        }
                         <div
                             className="
                             flex

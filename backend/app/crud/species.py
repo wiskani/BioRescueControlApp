@@ -424,6 +424,7 @@ async def get_all_species_join_(db: AsyncSession) -> List[SpeciesJoin]:
         family = await db.get(Family, genus.family_id) if genus else None
         order = await db.get(Order, family.order_id) if family else None
         class_ = await db.get(Class_, order.class__id) if order else None
+        status = await db.get(Status, specie.status_id) if specie.status_id else None
 
         # Cargar imágenes de manera individual
         images_result = await db.execute(
@@ -464,6 +465,7 @@ async def get_all_species_join_(db: AsyncSession) -> List[SpeciesJoin]:
                 family_name=family.family_name if family else None,
                 order_name=order.order_name if order else None,
                 class_name=class_.class_name if class_ else None,
+                status_name=status.status_name if status else None,
                 images=image_list,
                 total_rescues=total_rescues
             )
@@ -587,7 +589,9 @@ async def count_mammal_rescue_by_family(
         ) -> int:
     if not family_id:
         return 0
-    stmt = select(func.count(RescueMammals.id)).where(RescueMammals.family_id == family_id)
+    stmt = select(func.count(RescueMammals.id)).where(
+            RescueMammals.family_id == family_id
+            )
 
     result = await db.execute(stmt)
 

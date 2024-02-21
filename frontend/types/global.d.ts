@@ -81,6 +81,7 @@ declare global {
                 family_name: string;
                 order_name: string;
                 class_name: string;
+                status_name: string;
                 images: ImageSpecieData[];
                 total_rescues:number;
         }

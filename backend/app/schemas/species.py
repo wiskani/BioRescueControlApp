@@ -140,6 +140,7 @@ class SpeciesJoin (BaseModel):
     family_name: str | None = Field(examples=["Ursidae"])
     order_name: str | None = Field(examples=["Carnivora"])
     class_name: str | None = Field(examples=["Mammalia"])
+    status_name: str | None = Field(examples=["Casi amenazada"])
     images: List[ImageBase]
     total_rescues: int = Field(examples=[1])
 
