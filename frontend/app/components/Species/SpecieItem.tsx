@@ -2,13 +2,37 @@
 
 import { useRouter } from 'next/navigation';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const SpecieItem = (props: SpecieItemData) => {
     const imageUrl = props.images && props.images.length > 0 ? `${process.env.NEXT_PUBLIC_API_URL}:8080${props.images[0].url}` : `${process.env.NEXT_PUBLIC_API_URL}:8080/static/images/species/no_imagen.svg`;
     const imageTitle = props.images && props.images.length > 0 ? props.images[0].atribute : 'No hay imagen';
     
     const [statusColor, setStatusColor] = useState('bg-green-600');
+
+    useEffect(() => {
+        switch (props.status_name) {
+            case 'Preocupación menor':
+                setStatusColor('text-green-600');
+                break;
+            case 'Casi amenazada':
+                setStatusColor('text-yellow-600');
+                break;
+            case 'Vulnerable':
+                setStatusColor('text-orange-500');
+                break;
+            case 'En peligro':
+                setStatusColor('text-red-600');
+                break;
+            default:
+                setStatusColor('text-gray-500');
+                break;
+        }
+
+    }
+    , [props.status_name]);
+        
+
 
     const router = useRouter();
 
@@ -88,15 +112,23 @@ const SpecieItem = (props: SpecieItemData) => {
                         {
                             props.status_name?
                             <h3
-                                className="
+                                className='
                                 text-xs
                                 title-font
                                 text-gray-500
                                 tracking-widest
-                                "
+                                '
                             >
-                                Estado de Conservación: {props.status_name}
-                            </h3>
+                                Estado de Conservación: 
+                                    <p
+                                        className={`
+                                            ${statusColor}
+                                            italic
+                                        `}
+                                    >
+                                        {props.status_name}
+                                    </p>
+                                </h3>
                             : null
 
                         }

@@ -229,8 +229,21 @@ export default function Page({ params} : { params: { specieId: number } }) {
                 }),
         columnHelper.accessor('specie_names', {
                         header: 'especies',
+                        cell: info =>{
+                            const species  = info.getValue() as string[];
+                            return( 
+                                <>
+                                    {
+                                        species.length > 0 ?
+                                        species[0] :
+                                        null
+                                    }
+                                </>
+                )
+            },
                         footer: info => info.column.id,
-                }),
+        }
+        ),
         columnHelper.accessor('total_rescue', {
                         header: 'Cantidad de rescates',
                         footer: info => info.column.id,

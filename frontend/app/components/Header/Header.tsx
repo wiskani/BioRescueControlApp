@@ -239,7 +239,16 @@ const Header = () => {
                     </div>
                     <div
                         className={
-                            `${isOpen ? '' : 'hidden'} justify-between items-center w-full lg:flex lg:w-auto lg:order-1`
+                            `${
+                                isOpen ? '' : 'hidden'
+                            }
+                            justify-between
+                            items-center
+                            w-full
+                            lg:flex
+                            lg:w-auto
+                            lg:order-1
+                            `
                         }
                         id="mobile-menu-2"
                     >
@@ -306,7 +315,7 @@ const Header = () => {
                             </li>
                             <li>
                                 <a
-                                    href="#"
+                                    href="/herpetofauna"
                                     className="
                                     block
                                     py-2
@@ -328,7 +337,7 @@ const Header = () => {
                             </li>
                             <li>
                                 <a
-                                    href="#"
+                                    href="/mammals"
                                     className="
                                     block
                                     py-2
