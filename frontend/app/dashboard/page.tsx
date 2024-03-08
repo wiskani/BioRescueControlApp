@@ -25,6 +25,8 @@ import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import SpecieList from '../components/Species/SpecieList';
 import { LineProyect } from '../components/Map/lineProyect';
 import SunburstFamily from '../components/Nivo/SunBurstFamily';
+import Loading from './loading';
+
 
 //import with dynamic
 const MapContainer = dynamic(
@@ -76,8 +78,15 @@ export default function Dashboard() {
     const [specieData, setSpecieData] = useState<SpecieItemData[]>([])
     const [transectData, setTransectData] = useState<TransectHerpetoWithSpecies[]>([])
     const [rescueMammalsData, setRescueMammalsData] = useState<RescueMammalsWithSpecieData[]>([])
-    const [sunburstData, setSunburstData] = useState<SunBurstFamilyData>({name: "root", color: "hsl(0, 0%, 100%)", loc: 0, children: []}
+    const [sunburstData, setSunburstData] = useState<SunBurstFamilyData>(
+        {
+            name: "root",
+            color: "hsl(0, 0%, 100%)",
+            loc: 0, children: []
+        }
 )
+    const [loadingSunBurst, setLoadingSunBurst] = useState(true)
+    const [loadingSpeciesItem, setLoadingSpeciesItem] = useState(true)
 
     const user = session?.user;
 
@@ -144,6 +153,7 @@ export default function Dashboard() {
             })
             speciesData().then((data)=>{
                 setSpecieData(data)
+                setLoadingSpeciesItem(false)
             })
             transectDataHerpeto().then((data)=>{
                 setTransectData(data)
@@ -154,6 +164,7 @@ export default function Dashboard() {
 
             sunburstDataApi().then((data)=>{
                 setSunburstData(data)
+                setLoadingSunBurst(false)
             })
 
         }
@@ -260,10 +271,16 @@ export default function Dashboard() {
                     sm:h-80
                     '
                 >
-                    <SunburstFamily data={sunburstData} />
+                    {
+                        loadingSunBurst ? <Loading/> :
+                        <SunburstFamily data={sunburstData} />
+                    }
                 </div>
             </div>
-            <SpecieList species={specieData}  />
+            {
+                loadingSpeciesItem ?<div><Loading/></div> :
+                <SpecieList species={specieData}  />
+            }
 
         </div>
     )
