@@ -1,15 +1,15 @@
 interface CreateUserProps {
-    token: Token;
+        token: string;
     dataUser: UsersCreateData;
 }
 
 interface UsersIdProps {
-    token: Token;
+    token: string;
     id: number;
 }
 
 interface UpdateUserProps {
-    token: Token;
+    token: string;
     id: number;
     dataUser: UsersCreateData;
 }
