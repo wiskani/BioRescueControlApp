@@ -11,7 +11,8 @@ import dynamic from 'next/dynamic'
 import React, { useEffect, useState, useCallback } from "react"
 
 //Apis imports
-import { GetRescueFloraSpecie, GetRelocationFloraSpecie } from "../libs/rescue_flora/ApiRescueFlora";
+import { GetTransectHerpetofaunaWithSpecies } from '../libs/rescue_herpetofaina/ApiRescueHerpetofauna';
+import { GetRescueFloraSpecie } from "../libs/rescue_flora/ApiRescueFlora";
 
 //Leaflet imports
 import 'leaflet/dist/leaflet.css'
@@ -47,39 +48,65 @@ const Legend = dynamic(
     { ssr: false }
 )
 
-const FloraRescueSpecieMap = dynamic(
-    () => (import('../components/RescueFlora/rescueFloraSpecieMap')),
-    { ssr: false }
+const TransectHerpetofaunaSpecieMap = dynamic(
+        () => (import('../components/Transectors/TransectoSpecieMap')),
+        { ssr: false }
 )
 
-const FloraRelocationSpecieMap = dynamic(
-    () => (import('../components/RescueFlora/relocationFloraSpecieMap')),
-    { ssr: false }
-)
 
-export default function Flora() {
+export default function HerpetoFauna() {
     const { data: session } = useSession();
+    const [rescueFloraData, setRescueFloraData] = useState<FloraRescueSpeciesData[]>([]);
+    const [transectData, setTransectData] = useState<TransectHerpetoWithSpecies[]>([])
 
     const user = session?.user;
 
+    const transectDataHerpeto = useCallback(async (): Promise<TransectHerpetoWithSpecies[]>=>{
+        if (user){
+            const data= await GetTransectHerpetofaunaWithSpecies({token: user?.token})
+            return data
+        }
+        else{
+            return []
+        }
+    }, [user])
+
+    const rescueDataFlora = useCallback(async (): Promise<FloraRescueSpeciesData[]>=>{
+        if (user){
+            const data= await GetRescueFloraSpecie({token: user?.token})
+            return data
+        }
+        else{
+            return []
+        }
+    }, [user])
 
     useEffect(() => {
-        console.log(user)
-        /*if (!user) {
-            redirect('/')
+        let cont = 0
+        if (!session?.user) {
+            if (cont <= 0){
+                cont++
+            }
+            else{
+                redirect('/')
+            }
         }
-        else {
-        }*/
-
-    }, [user])
+        else{
+            rescueDataFlora().then((data)=>{
+                setRescueFloraData(data)
+            })
+            transectDataHerpeto().then((data)=>{
+                setTransectData(data)
+            })
+        }
+    }, [session, transectDataHerpeto, rescueDataFlora])
 
 
     const lineOptions = { color: 'red' }
 
-    const legedColors = ['purple','blue', 'red' ]
+    const legedColors = ['green', 'red' ]
     const legendLabels = [
-        'Puntos de relocalización de Flora',
-        'Puntos Rescates de Flora',
+        'Transcetors Herpetofauna',
         'Proyecto 230 kV Mizque - Sehuencas'
     ]
 
@@ -142,7 +169,7 @@ export default function Flora() {
                     sd:h-[6rem]
                     "
                 >
-               {/*     <MapContainer
+                    <MapContainer
                         center={[-17.489, -65.271]}
                         zoom={12}
                         scrollWheelZoom={false}
@@ -161,18 +188,17 @@ export default function Flora() {
                             }
                             attribution='Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>'
                         />
+                        <TransectHerpetofaunaSpecieMap data={transectData}/>
                         <Polyline pathOptions={lineOptions} positions={LineProyect} >
-                            <Tooltip>
+                           <Tooltip>
                                 <div>
                                     <h4>Detalles</h4>
                                     <p>Proyecto 230 kV Mizque - Sehuencas</p>
                                 </div>
                             </Tooltip>
                         </Polyline>
-                        <FloraRescueSpecieMap data={rescueFloraData}/>
-                        <FloraRelocationSpecieMap data={relocationFloraData} radius={12}/>
                         <Legend colors={legedColors} labels={legendLabels} />
-                    </MapContainer> */}
+                    </MapContainer> 
                     
                 </div>
             </div>
