@@ -48,15 +48,15 @@ const Legend = dynamic(
 )
 
 const TransectHerpetofaunaSpecieMap = dynamic(
-    () => (import('../components/Transectors/TransectoSpecieMap')),
-    { ssr: false }
+        () => (import('../components/Transectors/TransectoSpecieMap')),
+        { ssr: false }
 )
 
 
 export default function HerpetoFauna() {
     const { data: session } = useSession();
     const [transectData, setTransectData] = useState<TransectHerpetoWithSpecies[]>([])
-
+    
 
     const user = session?.user;
 
@@ -72,8 +72,9 @@ export default function HerpetoFauna() {
 
     useEffect(() => {
         if (!session?.user) {
-            redirect('/')
-        }
+                redirect('/')
+            }
+
         else{
             transectDataHerpeto().then((data)=>{
                 setTransectData(data)
@@ -121,7 +122,7 @@ export default function HerpetoFauna() {
                             Rescate de <
                                 span className="text-emerald-400"
                             >
-                                Herpetofauna 
+                               Herpetofauna 
                             </span>
                         </h1>
                     </div>
@@ -171,7 +172,7 @@ export default function HerpetoFauna() {
                         />
                         <TransectHerpetofaunaSpecieMap data={transectData}/>
                         <Polyline pathOptions={lineOptions} positions={LineProyect} >
-                            <Tooltip>
+                           <Tooltip>
                                 <div>
                                     <h4>Detalles</h4>
                                     <p>Proyecto 230 kV Mizque - Sehuencas</p>
@@ -180,7 +181,7 @@ export default function HerpetoFauna() {
                         </Polyline>
                         <Legend colors={legedColors} labels={legendLabels} />
                     </MapContainer> 
-
+                    
                 </div>
             </div>
         </div>

@@ -314,7 +314,7 @@ const Header = () => {
                                 </Link>
                             </li>
                             <li>
-                                <a
+                                <Link
                                     href="/herpetofauna"
                                     className="
                                     block
@@ -333,10 +333,10 @@ const Header = () => {
                                     "
                                 >
                                     Herpetofauna
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a
+                                <Link
                                     href="/mammals"
                                     className="
                                     block
@@ -355,7 +355,7 @@ const Header = () => {
                                     "
                                 >
                                     Mastozoología 
-                                </a>
+                                </Link>
                             </li>
                         </ul>
                     </div>

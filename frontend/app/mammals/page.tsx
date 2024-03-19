@@ -64,12 +64,12 @@ export default function Flora() {
 
 
     useEffect(() => {
-        console.log(user)
-        /*if (!user) {
+        if (!user) {
             redirect('/')
         }
         else {
-        }*/
+            console.log("user", user)
+        }
 
     }, [user])
 
