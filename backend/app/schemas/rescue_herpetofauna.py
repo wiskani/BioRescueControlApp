@@ -182,3 +182,16 @@ class TransectHerpetoWithSpecies(BaseModel):
 
     class Config:
         orm_mode: bool = True
+
+
+class TransectHerpetoTransWithSpecies(BaseModel):
+    cod: str
+    date: datetime
+    latitude_in: float
+    longitude_in: float
+    altitude_in: int
+    latitude_out: float
+    longitude_out: float
+    altitude_out: int
+    specie_names: List[str]
+    total_translocation: int

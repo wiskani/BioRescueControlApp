@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List, Union, Dict
+from typing import List, Dict
 
 from app.schemas.rescue_herpetofauna import (
     # AgeGroup
@@ -117,7 +117,8 @@ from app.api.deps import PermissonsChecker, get_db
 
 router: APIRouter = APIRouter()
 
-#Create age group
+
+# Create age group
 @router.post(
     path="/api/age_group",
     response_model=AgeGroupResponse,
@@ -129,13 +130,16 @@ async def create_age_group_api(
     new_age_group: AgeGroupCreate,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> AgeGroup|HTTPException:
+) -> AgeGroup | HTTPException:
     age_group_db = await get_age_group_name(db, new_age_group.name)
     if age_group_db:
-        raise HTTPException(status_code=400, detail="Age group name already exists")
+        raise HTTPException(
+                status_code=400, detail="Age group name already exists"
+                )
     return await create_age_group(db, new_age_group)
 
-#Get all age groups
+
+# Get all age groups
 @router.get(
     path="/api/age_group",
     response_model=List[AgeGroupResponse],
@@ -149,7 +153,8 @@ async def get_all_age_groups_api(
 ) -> List[AgeGroup]:
     return await get_all_age_groups(db)
 
-#Get age group by id
+
+# Get age group by id
 @router.get(
     path="/api/age_group/{age_group_id}",
     response_model=AgeGroupResponse,
@@ -161,13 +166,14 @@ async def get_age_group_by_id_api(
     age_group_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> AgeGroup|HTTPException:
+) -> AgeGroup | HTTPException:
     age_group_db = await get_age_group_by_id(db, age_group_id)
     if not age_group_db:
         raise HTTPException(status_code=404, detail="Age group not found")
     return age_group_db
 
-#Update age group
+
+# Update age group
 @router.put(
     path="/api/age_group/{age_group_id}",
     response_model=AgeGroupResponse,
@@ -180,10 +186,11 @@ async def update_age_group_api(
     age_group_update: AgeGroupBase,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> AgeGroup|HTTPException:
+) -> AgeGroup | HTTPException:
     return await update_age_group(db, age_group_id, age_group_update)
 
-#Delete age group
+
+# Delete age group
 @router.delete(
     path="/api/age_group/{age_group_id}",
     response_model=None,
@@ -195,14 +202,15 @@ async def delete_age_group_api(
     age_group_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> Dict|HTTPException:
+) -> Dict | HTTPException:
     db_age_group = await get_age_group_by_id(db, age_group_id)
     if not db_age_group:
         raise HTTPException(status_code=404, detail="Age group not found")
     await delete_age_group(db, age_group_id)
     return {"detail": "Age group deleted successfully"}
 
-#Create transect herpetofauna
+
+# Create transect herpetofauna
 @router.post(
     path="/api/transect_herpetofauna",
     response_model=TransectHerpetofaunaResponse,
@@ -214,13 +222,14 @@ async def create_transect_herpetofauna_api(
     new_transect_herpetofauna: TransectHerpetofaunaCreate,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> TransectHerpetofauna|HTTPException:
+) -> TransectHerpetofauna | HTTPException:
     transect_herpetofauna_db = await get_transect_herpetofauna_by_number(db, new_transect_herpetofauna.number)
     if transect_herpetofauna_db:
         raise HTTPException(status_code=400, detail="Transect herpetofauna number already exists")
     return await create_transect_herpetofauna(db, new_transect_herpetofauna)
 
-#Get all transect herpetofauna
+
+# Get all transect herpetofauna
 @router.get(
     path="/api/transect_herpetofauna",
     response_model=List[TransectHerpetofaunaResponse],
@@ -234,7 +243,8 @@ async def get_all_transect_herpetofauna_api(
 ) -> List[TransectHerpetofauna]:
     return await get_all_transect_herpetofauna(db)
 
-#Get transect herpetofauna by id
+
+# Get transect herpetofauna by id
 @router.get(
     path="/api/transect_herpetofauna/{transect_herpetofauna_id}",
     response_model=TransectHerpetofaunaResponse,
@@ -246,13 +256,18 @@ async def get_transect_herpetofauna_by_id_api(
     transect_herpetofauna_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> TransectHerpetofauna|HTTPException:
-    transect_herpetofauna_db = await get_transect_herpetofauna_by_id(db, transect_herpetofauna_id)
+) -> TransectHerpetofauna | HTTPException:
+    transect_herpetofauna_db = await get_transect_herpetofauna_by_id(
+            db, transect_herpetofauna_id
+            )
     if not transect_herpetofauna_db:
-        raise HTTPException(status_code=404, detail="Transect herpetofauna not found")
+        raise HTTPException(
+                status_code=404, detail="Transect herpetofauna not found"
+                )
     return transect_herpetofauna_db
 
-#Update transect herpetofauna
+
+# Update transect herpetofauna
 @router.put(
     path="/api/transect_herpetofauna/{transect_herpetofauna_id}",
     response_model=TransectHerpetofaunaResponse,
@@ -265,10 +280,11 @@ async def update_transect_herpetofauna_api(
     transect_herpetofauna_update: TransectHerpetofaunaBase,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> TransectHerpetofauna|HTTPException:
+) -> TransectHerpetofauna | HTTPException:
     return await update_transect_herpetofauna(db, transect_herpetofauna_id, transect_herpetofauna_update)
 
-#Delete transect herpetofauna
+
+# Delete transect herpetofauna
 @router.delete(
     path="/api/transect_herpetofauna/{transect_herpetofauna_id}",
     response_model=None,
@@ -280,7 +296,7 @@ async def delete_transect_herpetofauna_api(
     transect_herpetofauna_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> Dict|HTTPException:
+) -> Dict | HTTPException:
     db_transect_herpetofauna = await get_transect_herpetofauna_by_id(db, transect_herpetofauna_id)
     if not db_transect_herpetofauna:
         raise HTTPException(status_code=404, detail="Transect herpetofauna not found")
@@ -288,7 +304,7 @@ async def delete_transect_herpetofauna_api(
     return {"detail": "Transect herpetofauna deleted successfully"}
 
 
-#Create mark herpetofauna
+# Create mark herpetofauna
 @router.post(
     path="/api/mark_herpetofauna",
     response_model=MarkHerpetofaunaResponse,
@@ -300,13 +316,14 @@ async def create_mark_herpetofauna_api(
     new_mark_herpetofauna: MarkHerpetofaunaCreate,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> MarkHerpetofauna|HTTPException:
+) -> MarkHerpetofauna | HTTPException:
     mark_herpetofauna_db = await get_mark_herpetofauna_by_number(db, new_mark_herpetofauna.number)
     if mark_herpetofauna_db:
         raise HTTPException(status_code=400, detail="Mark herpetofauna number already exists")
     return await create_mark_herpetofauna(db, new_mark_herpetofauna)
 
-#Get all mark herpetofauna
+
+# Get all mark herpetofauna
 @router.get(
     path="/api/mark_herpetofauna",
     response_model=List[MarkHerpetofaunaResponse],
@@ -320,7 +337,8 @@ async def get_all_mark_herpetofauna_api(
 ) -> List[MarkHerpetofauna]:
     return await get_all_mark_herpetofauna(db)
 
-#Get mark herpetofauna by id
+
+# Get mark herpetofauna by id
 @router.get(
     path="/api/mark_herpetofauna/{mark_herpetofauna_id}",
     response_model=MarkHerpetofaunaResponse,
@@ -332,13 +350,18 @@ async def get_mark_herpetofauna_by_id_api(
     mark_herpetofauna_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> MarkHerpetofauna|HTTPException:
-    mark_herpetofauna_db = await get_mark_herpetofauna_by_id(db, mark_herpetofauna_id)
+) -> MarkHerpetofauna | HTTPException:
+    mark_herpetofauna_db = await get_mark_herpetofauna_by_id(
+            db, mark_herpetofauna_id
+            )
     if not mark_herpetofauna_db:
-        raise HTTPException(status_code=404, detail="Mark herpetofauna not found")
+        raise HTTPException(
+                status_code=404, detail="Mark herpetofauna not found"
+                )
     return mark_herpetofauna_db
 
-#Update mark herpetofauna
+
+# Update mark herpetofauna
 @router.put(
     path="/api/mark_herpetofauna/{mark_herpetofauna_id}",
     response_model=MarkHerpetofaunaResponse,
@@ -351,10 +374,11 @@ async def update_mark_herpetofauna_api(
     mark_herpetofauna_update: MarkHerpetofaunaBase,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> MarkHerpetofauna|HTTPException:
+) -> MarkHerpetofauna | HTTPException:
     return await update_mark_herpetofauna(db, mark_herpetofauna_id, mark_herpetofauna_update)
 
-#Delete mark herpetofauna
+
+# Delete mark herpetofauna
 @router.delete(
     path="/api/mark_herpetofauna/{mark_herpetofauna_id}",
     response_model=None,
@@ -366,14 +390,15 @@ async def delete_mark_herpetofauna_api(
     mark_herpetofauna_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> Dict|HTTPException:
+) -> Dict | HTTPException:
     db_mark_herpetofauna = await get_mark_herpetofauna_by_id(db, mark_herpetofauna_id)
     if not db_mark_herpetofauna:
         raise HTTPException(status_code=404, detail="Mark herpetofauna not found")
     await delete_mark_herpetofauna(db, mark_herpetofauna_id)
     return {"detail": "Mark herpetofauna deleted successfully"}
 
-#Create rescue herpetofauna
+
+# Create rescue herpetofauna
 @router.post(
     path="/api/rescue_herpetofauna",
     response_model=RescueHerpetofaunaResponse,
@@ -385,13 +410,14 @@ async def create_rescue_herpetofauna_api(
     new_rescue_herpetofauna: RescueHerpetofaunaCreate,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> RescueHerpetofauna|HTTPException:
+) -> RescueHerpetofauna | HTTPException:
     rescue_herpetofauna_db = await get_rescue_herpetofauna_by_number(db, new_rescue_herpetofauna.number)
     if rescue_herpetofauna_db:
         raise HTTPException(status_code=400, detail="Rescue herpetofauna number already exists")
     return await create_rescue_herpetofauna(db, new_rescue_herpetofauna)
 
-#Get all rescue herpetofauna
+
+# Get all rescue herpetofauna
 @router.get(
     path="/api/rescue_herpetofauna",
     response_model=List[RescueHerpetofaunaResponse],
@@ -405,7 +431,8 @@ async def get_all_rescue_herpetofauna_api(
 ) -> List[RescueHerpetofauna]:
     return await get_all_rescue_herpetofauna(db)
 
-#Get rescue herpetofauna by id
+
+# Get rescue herpetofauna by id
 @router.get(
     path="/api/rescue_herpetofauna/{rescue_herpetofauna_id}",
     response_model=RescueHerpetofaunaResponse,
@@ -417,13 +444,18 @@ async def get_rescue_herpetofauna_by_id_api(
     rescue_herpetofauna_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> RescueHerpetofauna|HTTPException:
-    rescue_herpetofauna_db = await get_rescue_herpetofauna_by_id(db, rescue_herpetofauna_id)
+) -> RescueHerpetofauna | HTTPException:
+    rescue_herpetofauna_db = await get_rescue_herpetofauna_by_id(
+            db, rescue_herpetofauna_id
+            )
     if not rescue_herpetofauna_db:
-        raise HTTPException(status_code=404, detail="Rescue herpetofauna not found")
+        raise HTTPException(
+                status_code=404, detail="Rescue herpetofauna not found"
+                )
     return rescue_herpetofauna_db
 
-#Update rescue herpetofauna
+
+# Update rescue herpetofauna
 @router.put(
     path="/api/rescue_herpetofauna/{rescue_herpetofauna_id}",
     response_model=RescueHerpetofaunaResponse,
@@ -436,10 +468,15 @@ async def update_rescue_herpetofauna_api(
     rescue_herpetofauna_update: RescueHerpetofaunaBase,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> RescueHerpetofauna|HTTPException:
-    return await update_rescue_herpetofauna(db, rescue_herpetofauna_id, rescue_herpetofauna_update)
+) -> RescueHerpetofauna | HTTPException:
+    return await update_rescue_herpetofauna(
+            db,
+            rescue_herpetofauna_id,
+            rescue_herpetofauna_update
+            )
 
-#Delete rescue herpetofauna
+
+# Delete rescue herpetofauna
 @router.delete(
     path="/api/rescue_herpetofauna/{rescue_herpetofauna_id}",
     response_model=None,
@@ -451,14 +488,21 @@ async def delete_rescue_herpetofauna_api(
     rescue_herpetofauna_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> Dict|HTTPException:
-    db_rescue_herpetofauna = await get_rescue_herpetofauna_by_id(db, rescue_herpetofauna_id)
+) -> Dict | HTTPException:
+    db_rescue_herpetofauna = await get_rescue_herpetofauna_by_id(
+            db,
+            rescue_herpetofauna_id
+            )
     if not db_rescue_herpetofauna:
-        raise HTTPException(status_code=404, detail="Rescue herpetofauna not found")
+        raise HTTPException(
+                status_code=404,
+                detail="Rescue herpetofauna not found"
+                )
     await delete_rescue_herpetofauna(db, rescue_herpetofauna_id)
     return {"detail": "Rescue herpetofauna deleted successfully"}
 
-#Create transect herpetofauna translocation
+
+# Create transect herpetofauna translocation
 @router.post(
     path="/api/transect_herpetofauna_translocation",
     response_model=TransectHerpetofaunaTranslocationResponse,
@@ -470,13 +514,20 @@ async def create_transect_herpetofauna_translocation_api(
     new_transect_herpetofauna_translocation: TransectHerpetofaunaTranslocationCreate,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> TransectHerpetofaunaTranslocation|HTTPException:
+) -> TransectHerpetofaunaTranslocation | HTTPException:
     transect_herpeto_fauna_translocation_db = await get_transect_herpetofauna_translocation_by_cod(db, new_transect_herpetofauna_translocation.cod)
     if transect_herpeto_fauna_translocation_db:
-        raise HTTPException(status_code=400, detail="Transect herpetofauna translocation cod already exists")
-    return await create_transect_herpetofauna_translocation(db, new_transect_herpetofauna_translocation)
+        raise HTTPException(
+                status_code=400,
+                detail="Transect herpetofauna translocation cod already exists"
+                )
+    return await create_transect_herpetofauna_translocation(
+            db,
+            new_transect_herpetofauna_translocation
+            )
 
-#Get all transect herpetofauna translocation
+
+# Get all transect herpetofauna translocation
 @router.get(
     path="/api/transect_herpetofauna_translocation",
     response_model=List[TransectHerpetofaunaTranslocationResponse],
@@ -490,7 +541,8 @@ async def get_all_transect_herpetofauna_translocation_api(
 ) -> List[TransectHerpetofaunaTranslocation]:
     return await get_all_transect_herpetofauna_translocation(db)
 
-#Get transect herpetofauna translocation by id
+
+# Get transect herpetofauna translocation by id
 @router.get(
     path="/api/transect_herpetofauna_translocation/{transect_herpetofauna_translocation_id}",
     response_model=TransectHerpetofaunaTranslocationResponse,
@@ -498,17 +550,18 @@ async def get_all_transect_herpetofauna_translocation_api(
     tags=["Transect Herpetofauna Translocation"],
     summary="Get transect herpetofauna translocation by id",
 )
-async def get_transect_herpetofauna_by_id_api(
+async def get_transect_herpetofauna_translocation_by_id_api(
     transect_herpetofauna_translocation_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> TransectHerpetofaunaTranslocation|HTTPException:
+) -> TransectHerpetofaunaTranslocation | HTTPException:
     transect_herpetofauna_translocation_db = await get_transect_herpetofauna_translocation_by_id(db, transect_herpetofauna_translocation_id)    
     if not transect_herpetofauna_translocation_db:
         raise HTTPException(status_code=404, detail="Transect herpetofauna translocation not found")
     return transect_herpetofauna_translocation_db
 
-#Update transect herpetofauna translocation
+
+# Update transect herpetofauna translocation
 @router.put(
     path="/api/transect_herpetofauna_translocation/{transect_herpetofauna_translocation_id}",
     response_model=TransectHerpetofaunaTranslocationResponse,
@@ -521,29 +574,44 @@ async def update_transect_herpetofauna_translocation_api(
     transect_herpetofauna_translocation_update: TransectHerpetofaunaTranslocationBase,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> TransectHerpetofaunaTranslocation|HTTPException:
-    return await update_transect_herpetofauna_translocation(db, transect_herpetofauna_translocation_id, transect_herpetofauna_translocation_update)
+) -> TransectHerpetofaunaTranslocation | HTTPException:
+    return await update_transect_herpetofauna_translocation(
+            db,
+            transect_herpetofauna_translocation_id,
+            transect_herpetofauna_translocation_update
+            )
 
-#Delete transect herpetofauna translocation
+
+# Delete transect herpetofauna translocation
 @router.delete(
-    path = "/api/transect_herpetofauna_translocation/{transect_herpetofauna_translocation_id}",
+    path="/api/transect_herpetofauna_translocation/{transect_herpetofauna_translocation_id}",
     response_model=None,
     status_code=status.HTTP_200_OK,
-    tags=["Transect Herpetofauna Translocation"],\
+    tags=["Transect Herpetofauna Translocation"],
     summary="Delete transect herpetofauna translocation",
 )
 async def delete_transect_herpetofauna_translocation_api(
     transect_herpetofauna_translocation_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> Dict|HTTPException:
-    transect_herpetofauna_translocation_db = await get_transect_herpetofauna_translocation_by_id(db, transect_herpetofauna_translocation_id)
+) -> Dict | HTTPException:
+    transect_herpetofauna_translocation_db = await get_transect_herpetofauna_translocation_by_id(
+            db,
+            transect_herpetofauna_translocation_id
+            )
     if not transect_herpetofauna_translocation_db:
-        raise HTTPException(status_code=404, detail="Transect herpetofauna translocation not found")
-    await delete_transect_herpetofauna_translocation(db, transect_herpetofauna_translocation_id)
+        raise HTTPException(
+                status_code=404,
+                detail="Transect herpetofauna translocation not found"
+                )
+    await delete_transect_herpetofauna_translocation(
+            db,
+            transect_herpetofauna_translocation_id
+            )
     return {"detail": "Transect herpetofauna translocation deleted successfully"}
 
-#Create point herpetofauna translocation
+
+# Create point herpetofauna translocation
 @router.post(
     path="/api/point_herpetofauna_translocation",
     response_model=PointHerpetofaunaTranslocationResponse,
@@ -555,13 +623,23 @@ async def create_point_herpetofauna_translocation_api(
     new_point_herpetofauna_translocation: PointHerpetofaunaTranslocationCreate,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> PointHerpetofaunaTranslocation|HTTPException:
-    point_herpetofauna_translocation_db = await get_point_herpetofauna_translocation_by_cod(db, new_point_herpetofauna_translocation.cod)
+) -> PointHerpetofaunaTranslocation | HTTPException:
+    point_herpetofauna_translocation_db = await get_point_herpetofauna_translocation_by_cod(
+            db,
+            new_point_herpetofauna_translocation.cod
+            )
     if point_herpetofauna_translocation_db:
-        raise HTTPException(status_code=400, detail="Point herpetofauna translocation cod already exists")
-    return await create_point_herpetofauna_translocation(db, new_point_herpetofauna_translocation)
+        raise HTTPException(
+                status_code=400,
+                detail="Point herpetofauna translocation cod already exists"
+                )
+    return await create_point_herpetofauna_translocation(
+            db,
+            new_point_herpetofauna_translocation
+            )
 
-#Get all point herpetofauna translocation
+
+# Get all point herpetofauna translocation
 @router.get(
     path="/api/point_herpetofauna_translocation",
     response_model=List[PointHerpetofaunaTranslocationResponse],
@@ -575,9 +653,10 @@ async def get_all_point_herpetofauna_translocation_api(
 ) -> List[PointHerpetofaunaTranslocation]:
     return await get_all_point_herpetofauna_translocation(db)
 
-#Get point herpetofauna translocation by id
+
+# Get point herpetofauna translocation by id
 @router.get(
-    path = "/api/point_herpetofauna_translocation/{point_herpetofauna_translocation_id}",
+    path="/api/point_herpetofauna_translocation/{point_herpetofauna_translocation_id}",
     response_model=PointHerpetofaunaTranslocationResponse,
     status_code=status.HTTP_200_OK,
     tags=["Point Herpetofauna Translocation"],
@@ -587,15 +666,16 @@ async def get_point_herpetofauna_translocation_by_id_api(
     point_herpetofauna_translocation_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> PointHerpetofaunaTranslocation|HTTPException:
+) -> PointHerpetofaunaTranslocation | HTTPException:
     point_herpetofauna_translocation_db = await get_point_herpetofauna_translocation_by_id(db, point_herpetofauna_translocation_id)
     if not point_herpetofauna_translocation_db:
         raise HTTPException(status_code=404, detail="Point herpetofauna translocation not found")
     return point_herpetofauna_translocation_db
 
-#Update point herpetofauna translocation
+
+# Update point herpetofauna translocation
 @router.put(
-    path = "/api/point_herpetofauna_translocation/{point_herpetofauna_translocation_id}",
+    path="/api/point_herpetofauna_translocation/{point_herpetofauna_translocation_id}",
     response_model=PointHerpetofaunaTranslocationResponse,
     status_code=status.HTTP_200_OK,
     tags=["Point Herpetofauna Translocation"],
@@ -606,12 +686,13 @@ async def update_point_herpetofauna_translocation_api(
     point_herpetofauna_translocation_update: PointHerpetofaunaTranslocationBase,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> PointHerpetofaunaTranslocation|HTTPException:
+) -> PointHerpetofaunaTranslocation | HTTPException:
     return await update_point_herpetofauna_translocation(db, point_herpetofauna_translocation_id, point_herpetofauna_translocation_update)
 
-#Delete point herpetofauna translocation
+
+# Delete point herpetofauna translocation
 @router.delete(
-    path = "/api/point_herpetofauna_translocation/{point_herpetofauna_translocation_id}",
+    path="/api/point_herpetofauna_translocation/{point_herpetofauna_translocation_id}",
     response_model=None,
     status_code=status.HTTP_200_OK,
     tags=["Point Herpetofauna Translocation"],
@@ -621,16 +702,26 @@ async def delete_point_herpetofauna_translocation_api(
     point_herpetofauna_translocation_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> Dict|HTTPException:
-    point_herpetofauna_translocation_db = await get_point_herpetofauna_translocation_by_id(db, point_herpetofauna_translocation_id)
+) -> Dict | HTTPException:
+    point_herpetofauna_translocation_db = await get_point_herpetofauna_translocation_by_id(
+            db,
+            point_herpetofauna_translocation_id
+            )
     if not point_herpetofauna_translocation_db:
-        raise HTTPException(status_code=404, detail="Point herpetofauna translocation not found")
-    await delete_point_herpetofauna_translocation(db, point_herpetofauna_translocation_id)
+        raise HTTPException(
+                status_code=404,
+                detail="Point herpetofauna translocation not found"
+                )
+    await delete_point_herpetofauna_translocation(
+            db,
+            point_herpetofauna_translocation_id
+            )
     return {"detail": "Point herpetofauna translocation deleted successfully"}
 
-#Create translocation herpetofauna
+
+# Create translocation herpetofauna
 @router.post(
-    path = "/api/translocation_herpetofauna",
+    path="/api/translocation_herpetofauna",
     response_model=TranslocationHerpetofaunaResponse,
     status_code=status.HTTP_201_CREATED,
     tags=["Translocation Herpetofauna"],
@@ -640,15 +731,25 @@ async def create_translocation_herpetofauna_api(
     new_translocation_herpetofauna: TranslocationHerpetofaunaCreate,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> TranslocationHerpetofauna | HTTPException :
-    translocation_herpetofauna_db = await get_translocation_herpetofauna_by_cod(db, new_translocation_herpetofauna.cod)
+) -> TranslocationHerpetofauna | HTTPException:
+    translocation_herpetofauna_db = await get_translocation_herpetofauna_by_cod(
+            db,
+            new_translocation_herpetofauna.cod
+            )
     if translocation_herpetofauna_db:
-        raise HTTPException(status_code=400, detail="Translocation herpetofauna cod already exists")
-    return await create_translocation_herpetofauna(db, new_translocation_herpetofauna)
+        raise HTTPException(
+                status_code=400,
+                detail="Translocation herpetofauna cod already exists"
+                )
+    return await create_translocation_herpetofauna(
+            db,
+            new_translocation_herpetofauna
+            )
 
-#Get all translocation herpetofauna
+
+# Get all translocation herpetofauna
 @router.get(
-    path = "/api/translocation_herpetofauna",
+    path="/api/translocation_herpetofauna",
     response_model=List[TranslocationHerpetofaunaResponse],
     status_code=status.HTTP_200_OK,
     tags=["Translocation Herpetofauna"],
@@ -660,9 +761,10 @@ async def get_all_translocation_herpetofauna_api(
 ) -> List[TranslocationHerpetofauna]:
     return await get_all_translocation_herpetofauna(db)
 
-#Get translocation herpetofauna by id
+
+# Get translocation herpetofauna by id
 @router.get(
-    path = "/api/translocation_herpetofauna/{translocation_herpetofauna_id}",
+    path="/api/translocation_herpetofauna/{translocation_herpetofauna_id}",
     response_model=TranslocationHerpetofaunaResponse,
     status_code=status.HTTP_200_OK,
     tags=["Translocation Herpetofauna"],
@@ -673,14 +775,21 @@ async def get_translocation_herpetofauna_by_id_api(
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> TranslocationHerpetofauna | HTTPException:
-    translocation_herpetofauna_db = await get_translocation_herpetofauna_by_id(db, translocation_herpetofauna_id)
+    translocation_herpetofauna_db = await get_translocation_herpetofauna_by_id(
+            db,
+            translocation_herpetofauna_id
+            )
     if not translocation_herpetofauna_db:
-        raise HTTPException(status_code=404, detail="Translocation herpetofauna not found")
+        raise HTTPException(
+                status_code=404,
+                detail="Translocation herpetofauna not found"
+                )
     return translocation_herpetofauna_db
 
-#Update translocation herpetofauna
+
+# Update translocation herpetofauna
 @router.put(
-    path = "/api/translocation_herpetofauna/{translocation_herpetofauna_id}",
+    path="/api/translocation_herpetofauna/{translocation_herpetofauna_id}",
     response_model=TranslocationHerpetofaunaResponse,
     status_code=status.HTTP_200_OK,
     tags=["Translocation Herpetofauna"],
@@ -692,11 +801,16 @@ async def update_translocation_herpetofauna_api(
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> TranslocationHerpetofauna | HTTPException:
-    return await update_translocation_herpetofauna(db, translocation_herpetofauna_id, translocation_herpetofauna_update)
+    return await update_translocation_herpetofauna(
+            db,
+            translocation_herpetofauna_id,
+            translocation_herpetofauna_update
+            )
 
-#Delete translocation herpetofauna
+
+# Delete translocation herpetofauna
 @router.delete(
-    path = "/api/translocation_herpetofauna/{translocation_herpetofauna_id}",
+    path="/api/translocation_herpetofauna/{translocation_herpetofauna_id}",
     response_model=None,
     status_code=status.HTTP_200_OK,
     tags=["Translocation Herpetofauna"],
@@ -706,16 +820,23 @@ async def delete_translocation_herpetofauna_api(
     translocation_herpetofauna_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> Dict|HTTPException:
-    translocation_herpetofauna_db = await get_translocation_herpetofauna_by_id(db, translocation_herpetofauna_id)
+) -> Dict | HTTPException:
+    translocation_herpetofauna_db = await get_translocation_herpetofauna_by_id(
+            db,
+            translocation_herpetofauna_id
+            )
     if not translocation_herpetofauna_db:
-        raise HTTPException(status_code=404, detail="Translocation herpetofauna not found")
+        raise HTTPException(
+                status_code=404,
+                detail="Translocation herpetofauna not found"
+                )
     await delete_translocation_herpetofauna(db, translocation_herpetofauna_id)
     return {"detail": "Translocation herpetofauna deleted successfully"}
 
-#Get transect herpetofauna with species and count rescate
+
+# Get transect herpetofauna with species and count rescate
 @router.get(
-    path = "/api/transect_herpetofauna_with_species_and_count",
+    path="/api/transect_herpetofauna_with_species_and_count",
     response_model=List[TransectHerpetoWithSpecies],
     status_code=status.HTTP_200_OK,
     tags=["Transect Herpetofauna"],
@@ -726,10 +847,3 @@ async def get_transect_herpetofauna_with_species_and_count_api(
     authorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> List[TransectHerpetoWithSpecies]:
     return await get_transect_herpetofauna_with_species_and_count_by_name(db)
-
-
-    
-
-
-
-    
