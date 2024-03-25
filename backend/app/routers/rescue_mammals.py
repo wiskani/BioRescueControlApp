@@ -3,36 +3,35 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Union, Dict
 
 from app.schemas.rescue_mammals import (
-    #Habitat
+    # Habitat
     HabitatCreate,
     HabitatResponse,
 
-    #Rescue Mammals
+    # Rescue Mammals
     RescueMammalsCreate,
     RescueMammalsResponse,
 
-    #Site Release
+    # Site Release
     SiteReleaseMammalsCreate,
     SiteReleaseMammalsResponse,
 
-    #Release Mammals
+    # Release Mammals
     ReleaseMammalsCreate,
     ReleaseMammalsResponse,
 
-    #Rescue Mammals with species
+    # Rescue Mammals with species
     RescueMammalsWithSpecie
 )
 
-from  app.models.rescue_mammals import (
+from app.models.rescue_mammals import (
     Habitat,
     RescueMammals,
     SiteReleaseMammals,
     ReleaseMammals,
-    
 )
 
 from app.crud.rescue_mammals import (
-    #Habitat
+    # Habitat
     get_habitat_name,
     get_habitat_id,
     get_habitats,
@@ -40,7 +39,7 @@ from app.crud.rescue_mammals import (
     update_habitat,
     delete_habitat,
 
-    #Rescue Mammals
+    # Rescue Mammals
     get_rescue_mammal_cod,
     get_rescue_mammal_id,
     get_rescue_mammals,
@@ -48,7 +47,7 @@ from app.crud.rescue_mammals import (
     update_rescue_mammal,
     delete_rescue_mammal,
 
-    #Site Release
+    # Site Release
     get_site_release_mammal_name,
     get_site_release_mammal_id,
     get_site_release_mammals,
@@ -56,7 +55,7 @@ from app.crud.rescue_mammals import (
     update_site_release_mammal,
     delete_site_release_mammal,
 
-    #Release Mammals
+    # Release Mammals
     get_release_mammal_cod,
     get_release_mammal_id,
     get_release_mammals,
@@ -64,7 +63,7 @@ from app.crud.rescue_mammals import (
     update_release_mammal,
     delete_release_mammal,
 
-    #Rescue Mammals with species
+    # Rescue Mammals with species
     get_rescue_mammals_with_specie
 )
 
@@ -72,7 +71,8 @@ from app.api.deps import PermissonsChecker, get_db
 
 router: APIRouter = APIRouter()
 
-#Create Habitat 
+
+# Create Habitat
 @router.post(
     path="/api/habitat",
     response_model=HabitatResponse,
@@ -81,10 +81,10 @@ router: APIRouter = APIRouter()
     summary="Create Habitat",
 )
 async def create_habitat_api(
-    new_habitat : HabitatCreate,
-    db : AsyncSession = Depends(get_db),
+    new_habitat: HabitatCreate,
+    db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> Habitat|HTTPException:
+) -> Habitat | HTTPException:
     habitat_db = await get_habitat_name(db, new_habitat.name)
     if habitat_db:
         raise HTTPException(
@@ -93,7 +93,8 @@ async def create_habitat_api(
         )
     return await create_habitat(db, new_habitat)
 
-#Get all habitats
+
+# Get all habitats
 @router.get(
     path="/api/habitat",
     response_model=List[HabitatResponse],
@@ -107,7 +108,8 @@ async def get_habitats_api(
 ) -> List[Habitat]:
     return await get_habitats(db)
 
-#Get habitat by id
+
+# Get habitat by id
 @router.get(
     path="/api/habitat/{habitat_id}",
     response_model=HabitatResponse,
@@ -119,7 +121,7 @@ async def get_habitat_by_id_api(
     habitat_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
-) -> Habitat|HTTPException:
+) -> Habitat | HTTPException:
     habitat_db = await get_habitat_id(db, habitat_id)
     if not habitat_db:
         raise HTTPException(
@@ -128,7 +130,8 @@ async def get_habitat_by_id_api(
         )
     return habitat_db
 
-#Update habitat
+
+# Update habitat
 @router.put(
     path="/api/habitat/{habitat_id}",
     response_model=HabitatResponse,
@@ -141,10 +144,11 @@ async def update_habitat_api(
     habitat_update: HabitatCreate,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> Habitat|HTTPException:
+) -> Habitat | HTTPException:
     return await update_habitat(db, habitat_id, habitat_update)
 
-#Delete habitat
+
+# Delete habitat
 @router.delete(
     path="/api/habitat/{habitat_id}",
     response_model= None,

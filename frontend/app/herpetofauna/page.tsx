@@ -11,7 +11,10 @@ import dynamic from 'next/dynamic'
 import React, { useEffect, useState, useCallback } from "react"
 
 //Apis imports
-import { GetTransectHerpetofaunaWithSpecies } from '../libs/rescue_herpetofaina/ApiRescueHerpetofauna';
+import {
+    GetTransectHerpetofaunaWithSpecies,
+    GetTransectTransHerpetofaunaWithSpecies
+} from '../libs/rescue_herpetofaina/ApiRescueHerpetofauna';
 
 //Leaflet imports
 import 'leaflet/dist/leaflet.css'
@@ -56,6 +59,7 @@ const TransectHerpetofaunaSpecieMap = dynamic(
 export default function HerpetoFauna() {
     const { data: session } = useSession();
     const [transectData, setTransectData] = useState<TransectHerpetoWithSpecies[]>([])
+    const [transectTransData, setTransectTransData] = useState<TransectHerpetoTransWithSpeciesData[]>([])
     
 
     const user = session?.user;
@@ -63,6 +67,16 @@ export default function HerpetoFauna() {
     const transectDataHerpeto = useCallback(async (): Promise<TransectHerpetoWithSpecies[]>=>{
         if (user){
             const data= await GetTransectHerpetofaunaWithSpecies({token: user?.token})
+            return data
+        }
+        else{
+            return []
+        }
+    }, [user])
+
+    const transectTransDataHerpeto = useCallback(async (): Promise<TransectHerpetoTransWithSpeciesData[]>=>{
+        if (user){
+            const data= await GetTransectTransHerpetofaunaWithSpecies({token: user?.token})
             return data
         }
         else{
@@ -79,9 +93,12 @@ export default function HerpetoFauna() {
             transectDataHerpeto().then((data)=>{
                 setTransectData(data)
             })
+            transectTransDataHerpeto().then((data)=>{
+                setTransectTransData(data)
+            })
         }
 
-    }, [session, transectDataHerpeto])
+    }, [session, transectDataHerpeto, transectTransDataHerpeto])
 
 
     const lineOptions = { color: 'red' }

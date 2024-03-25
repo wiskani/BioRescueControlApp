@@ -40,6 +40,7 @@ from app.schemas.rescue_herpetofauna import (
 
     # TransectHerpetofaunaWithSpecies
     TransectHerpetoWithSpecies,
+    TransectHerpetoTransWithSpecies
 )
 
 from app.models.rescue_herpetofauna import (
@@ -111,6 +112,7 @@ from app.crud.rescue_herpetofauna import (
 
     # TransectHerpetofaunaWithSpecies
     get_transect_herpetofauna_with_species_and_count_by_name,
+    getTransectRelocationWithSpeciesAndCountOfTranslocation
 )
 
 from app.api.deps import PermissonsChecker, get_db
@@ -847,3 +849,20 @@ async def get_transect_herpetofauna_with_species_and_count_api(
     authorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> List[TransectHerpetoWithSpecies]:
     return await get_transect_herpetofauna_with_species_and_count_by_name(db)
+
+
+# Get transect translocation herpetofauna with species and count translocation
+@router.get(
+    path="/api/transect_relocation_with_species_and_count",
+    response_model=List[TransectHerpetoTransWithSpecies],
+    status_code=status.HTTP_200_OK,
+    tags=["Transect Herpetofauna"],
+    summary="Get transect relocation with species and count",
+)
+async def get_transect_relocation_with_species_and_count_api(
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> List[TransectHerpetoTransWithSpecies]:
+    return await getTransectRelocationWithSpeciesAndCountOfTranslocation(db)
+
+

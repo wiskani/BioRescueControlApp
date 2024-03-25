@@ -1,7 +1,6 @@
 "use client"
 import dynamic from 'next/dynamic'
-//import {Polyline, Tooltip} from 'react-leaflet';
-//
+
 const Polyline = dynamic(
         async () => (await import('react-leaflet')).Polyline,
         { ssr: false }

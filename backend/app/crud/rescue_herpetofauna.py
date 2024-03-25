@@ -874,7 +874,7 @@ async def get_transect_herpetofauna_with_rescues_and_species_by_specie_id(
 
 
 # Get all transect of relocation with species
-async def get_transect_relocation_with_species_and_count_by_name(
+async def getTransectRelocationWithSpeciesAndCountOfTranslocation(
         db: AsyncSession
         ) -> List[TransectHerpetoTransWithSpecies]:
     transectors = await get_all_transect_herpetofauna_translocation(db)
@@ -884,28 +884,29 @@ async def get_transect_relocation_with_species_and_count_by_name(
     for transect in transectors:
         # get rescue id
         result_db = await db.execute(
-                select(RescueHerpetofauna)
+                select(TranslocationHerpetofauna)
                 .where(
-                    RescueHerpetofauna.transect_herpetofauna_id == transect.id
+                    TranslocationHerpetofauna.transect_herpetofauna_translocation_id == transect.id
                     ))
-        rescue_list = list(result_db.scalars().all())
+        translocation_list = list(result_db.scalars().all())
         species = []
-        total_rescue = 0
-        for rescue in rescue_list:
-            specie_id = rescue.specie_id
+        total_translocation = 0
+        for translocation in translocation_list:
+            specie_id = translocation.specie_id
             specie = await get_specie_by_id(db, specie_id)
             if specie:
                 species.append(specie.specific_epithet)
-            total_rescue += 1
-        result.append(TransectHerpetoWithSpecies(
-            number=transect.number,
-            date_in=transect.date_in,
-            date_out=transect.date_out,
+            total_translocation += 1
+        result.append(TransectHerpetoTransWithSpecies(
+            cod=transect.cod,
+            date=transect.date,
             latitude_in=transect.latitude_in,
             longitude_in=transect.longitude_in,
+            altitude_in=transect.altitude_in,
             latitude_out=transect.latitude_out,
             longitude_out=transect.longitude_out,
+            altitude_out=transect.altitude_out,
             specie_names=species,
-            total_rescue=total_rescue
+            total_translocation=total_translocation
         ))
     return result

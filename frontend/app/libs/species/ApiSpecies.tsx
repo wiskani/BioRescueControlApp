@@ -23,7 +23,9 @@ export const GetSpeciesItem = async (props:Token): Promise<SpecieItemData[]> => 
   return data;
 }
 
-export const GetRescuesSpecie = async (props: TokenWithSpecieName): Promise<RescuesSpecieData[]> => {
+export const GetRescuesSpecie = async (
+    props: TokenWithSpecieName
+): Promise<RescuesSpecieData[]> => {
     try {
         const requestOptions = {
             method: 'GET',
