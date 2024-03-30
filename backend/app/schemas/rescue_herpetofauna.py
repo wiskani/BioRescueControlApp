@@ -4,7 +4,11 @@ from datetime import datetime
 
 
 class AgeGroupBase(BaseModel):
-    name: str = Field(..., examples=["Adulto", "Subadulto", "Juvenil"], max_length=50)
+    name: str = Field(
+            ...,
+            examples=["Adulto", "Subadulto", "Juvenil"],
+            max_length=50
+            )
 
     class Config:
         orm_mode: bool = True
@@ -180,9 +184,6 @@ class TransectHerpetoWithSpecies(BaseModel):
     specie_names: List[str]
     total_rescue: int
 
-    class Config:
-        orm_mode: bool = True
-
 
 class TransectHerpetoTransWithSpecies(BaseModel):
     cod: str
@@ -193,5 +194,15 @@ class TransectHerpetoTransWithSpecies(BaseModel):
     latitude_out: float
     longitude_out: float
     altitude_out: int
+    specie_names: List[str]
+    total_translocation: int
+
+
+class PointHerpetoTransloWithSpecies(BaseModel):
+    cod: str
+    date: datetime
+    latitude: float
+    longitude: float
+    altitude: int
     specie_names: List[str]
     total_translocation: int

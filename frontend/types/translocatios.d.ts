@@ -36,4 +36,13 @@ declare global {
         family_name_bryophyte: string | null;
         relocation_zone: string;
     }
+    interface PointHerpetoTransloWithSpeciesData{
+        cod: string;
+        date: Date;
+        latitude: number; 
+        longitude: number; 
+        altitude: number; 
+        specie_names: string[];
+        total_translocation: number; 
+    }
 }

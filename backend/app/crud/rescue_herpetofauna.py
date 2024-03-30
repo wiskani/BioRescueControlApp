@@ -36,7 +36,7 @@ from app.schemas.rescue_herpetofauna import (
     # Transect_herpetofauna_with_species
     TransectHerpetoWithSpecies,
     TransectHerpetoTransWithSpecies,
-
+    PointHerpetoTransloWithSpecies,
 )
 
 from app.models.rescue_herpetofauna import (
@@ -906,6 +906,42 @@ async def getTransectRelocationWithSpeciesAndCountOfTranslocation(
             latitude_out=transect.latitude_out,
             longitude_out=transect.longitude_out,
             altitude_out=transect.altitude_out,
+            specie_names=species,
+            total_translocation=total_translocation
+        ))
+    return result
+
+
+# Get all point translocation with species
+async def getPointRelocaWithSpecies(
+        db: AsyncSession
+            ) -> List[PointHerpetoTransloWithSpecies]:
+    points = await get_all_point_herpetofauna_translocation(db)
+
+    result = []
+
+    for point in points:
+        # get rescue id
+        result_db = await db.execute(
+                select(TranslocationHerpetofauna)
+                .where(
+                    TranslocationHerpetofauna.point_herpetofauna_translocation_id == point.id
+                    ))
+        translocation_list = list(result_db.scalars().all())
+        species = []
+        total_translocation = 0
+        for translocation in translocation_list:
+            specie_id = translocation.specie_id
+            specie = await get_specie_by_id(db, specie_id)
+            if specie:
+                species.append(specie.specific_epithet)
+            total_translocation += 1
+        result.append(PointHerpetoTransloWithSpecies(
+            cod=point.cod,
+            date=point.date,
+            latitude=point.latitude,
+            longitude=point.longitude,
+            altitude=point.altitude,
             specie_names=species,
             total_translocation=total_translocation
         ))

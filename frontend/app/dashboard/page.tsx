@@ -61,7 +61,7 @@ const FloraRescueSpecieMap = dynamic(
 )
 
 const TransectHerpetofaunaSpecieMap = dynamic(
-        () => (import('../components/Transectors/TransectoSpecieMap')),
+        () => (import('../components/HerpetoFauna/TransectoSpecieMap')),
         { ssr: false }
 )
 const RescueMammalsSpecieMap = dynamic(

@@ -8,12 +8,17 @@ import { redirect } from 'next/navigation';
 import dynamic from 'next/dynamic'
 
 //React imports
-import React, { useEffect, useState, useCallback } from "react"
+import React, {
+    useEffect,
+    useState,
+    useCallback
+} from "react"
 
 //Apis imports
 import {
     GetTransectHerpetofaunaWithSpecies,
-    GetTransectTransHerpetofaunaWithSpecies
+    GetTransectTransHerpetofaunaWithSpecies,
+    GetPointsTransHerpetofaunaWithSpecies
 } from '../libs/rescue_herpetofaina/ApiRescueHerpetofauna';
 
 //Leaflet imports
@@ -51,7 +56,16 @@ const Legend = dynamic(
 )
 
 const TransectHerpetofaunaSpecieMap = dynamic(
-        () => (import('../components/Transectors/TransectoSpecieMap')),
+        () => (import('../components/HerpetoFauna/TransectoSpecieMap')),
+        { ssr: false }
+)
+
+const TransectTransloHerpetofaunaSpecieMap = dynamic(
+        () => (import('../components/HerpetoFauna/TransectoTransloSpecieMap')),
+        { ssr: false }
+)
+const PointTransloHerpetofaunaSpecieMap = dynamic(
+        () => (import('../components/HerpetoFauna/PointTransloSpecieMap')),
         { ssr: false }
 )
 
@@ -60,6 +74,7 @@ export default function HerpetoFauna() {
     const { data: session } = useSession();
     const [transectData, setTransectData] = useState<TransectHerpetoWithSpecies[]>([])
     const [transectTransData, setTransectTransData] = useState<TransectHerpetoTransWithSpeciesData[]>([])
+    const [pointTransData, setPointTransData] = useState<PointHerpetoTransloWithSpeciesData[]>([])
     
 
     const user = session?.user;
@@ -84,6 +99,16 @@ export default function HerpetoFauna() {
         }
     }, [user])
 
+    const pointTransDataHerpeto = useCallback(async (): Promise<PointHerpetoTransloWithSpeciesData[]>=>{
+        if (user){
+            const data= await GetPointsTransHerpetofaunaWithSpecies({token: user?.token})
+            return data
+        }
+        else{
+            return []
+        }
+    }, [user])
+
     useEffect(() => {
         if (!session?.user) {
                 redirect('/')
@@ -96,16 +121,21 @@ export default function HerpetoFauna() {
             transectTransDataHerpeto().then((data)=>{
                 setTransectTransData(data)
             })
+            pointTransDataHerpeto().then((data)=>{
+                setPointTransData(data)
+            })
         }
 
-    }, [session, transectDataHerpeto, transectTransDataHerpeto])
+    }, [session, transectDataHerpeto, transectTransDataHerpeto, pointTransDataHerpeto])
 
 
     const lineOptions = { color: 'red' }
 
-    const legedColors = ['green', 'red' ]
+    const legedColors = ['brown', 'blue' ,'green', 'red' ]
     const legendLabels = [
-        'Transcetors Herpetofauna',
+        'Puntos de liberación',
+        'Transectors de liberación',
+        'Transcetors de rescate',
         'Proyecto 230 kV Mizque - Sehuencas'
     ]
 
@@ -187,7 +217,9 @@ export default function HerpetoFauna() {
                             }
                             attribution='Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>'
                         />
+                        <PointTransloHerpetofaunaSpecieMap data={pointTransData} />
                         <TransectHerpetofaunaSpecieMap data={transectData}/>
+                        <TransectTransloHerpetofaunaSpecieMap data={transectTransData} />
                         <Polyline pathOptions={lineOptions} positions={LineProyect} >
                            <Tooltip>
                                 <div>
