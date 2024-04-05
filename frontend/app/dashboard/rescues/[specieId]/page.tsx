@@ -20,7 +20,7 @@ import { TableSimple } from '@/app/components/Table/TableSimple';
 import { LineProyect } from '@/app/components/Map/lineProyect';
 import Legend from '@/app/components/Map/Legend';
 import FloraRescueSpecieMap from '@/app/components/RescueFlora/rescueFloraSpecieMap'; 
-import TransectHerpetofaunaSpecieMap from '@/app/components/Transectors/TransectoSpecieMap';
+import TransectHerpetofaunaSpecieMap from '@/app/components/HerpetoFauna/TransectoSpecieMap';
 import RescueMammalsSpecieMap from '@/app/components/RescueMammals/RescueMammalsSpecieMap';
 
 //Leaflet dynamic imports
