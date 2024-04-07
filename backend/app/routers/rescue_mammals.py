@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List, Union, Dict
+from typing import List
 
 from app.schemas.rescue_mammals import (
     # Habitat
@@ -20,7 +20,8 @@ from app.schemas.rescue_mammals import (
     ReleaseMammalsResponse,
 
     # Rescue Mammals with species
-    RescueMammalsWithSpecie
+    RescueMammalsWithSpecie,
+    ReleaseMammalsWithSpecie
 )
 
 from app.models.rescue_mammals import (
@@ -64,7 +65,8 @@ from app.crud.rescue_mammals import (
     delete_release_mammal,
 
     # Rescue Mammals with species
-    get_rescue_mammals_with_specie
+    get_rescue_mammals_with_specie,
+    get_release_mammals_with_specie
 )
 
 from app.api.deps import PermissonsChecker, get_db
@@ -151,7 +153,7 @@ async def update_habitat_api(
 # Delete habitat
 @router.delete(
     path="/api/habitat/{habitat_id}",
-    response_model= None,
+    response_model=None,
     status_code=status.HTTP_200_OK,
     tags=["Habitat"],
     summary="Delete habitat",
@@ -160,7 +162,7 @@ async def delete_habitat_api(
     habitat_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> Habitat|HTTPException:
+) -> Habitat | HTTPException:
     habitat_db = await get_habitat_id(db, habitat_id)
     if not habitat_db:
         raise HTTPException(
@@ -170,7 +172,8 @@ async def delete_habitat_api(
     await delete_habitat(db, habitat_id)
     return {"detail": "Habitat deleted successfully"}
 
-#Create Rescue Mammals
+
+# Create Rescue Mammals
 @router.post(
     path="/api/rescue_mammals",
     response_model=RescueMammalsResponse,
@@ -179,10 +182,10 @@ async def delete_habitat_api(
     summary="Create Rescue Mammals",
 )
 async def create_rescue_mammals_api(
-    new_rescue_mammals : RescueMammalsCreate,
-    db : AsyncSession = Depends(get_db),
+    new_rescue_mammals: RescueMammalsCreate,
+    db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> RescueMammals|HTTPException:
+) -> RescueMammals | HTTPException:
     rescue_mammals_db = await get_rescue_mammal_cod(db, new_rescue_mammals.cod)
     if rescue_mammals_db:
         raise HTTPException(
@@ -191,7 +194,8 @@ async def create_rescue_mammals_api(
         )
     return await create_rescue_mammal(db, new_rescue_mammals)
 
-#Get all Rescue Mammals
+
+# Get all Rescue Mammals
 @router.get(
     path="/api/rescue_mammals",
     response_model=List[RescueMammalsResponse],
@@ -205,7 +209,8 @@ async def get_rescue_mammals_api(
 ) -> List[RescueMammals]:
     return await get_rescue_mammals(db)
 
-#Get Rescue Mammals by id
+
+# Get Rescue Mammals by id
 @router.get(
     path="/api/rescue_mammals/{rescue_mammals_id}",
     response_model=RescueMammalsResponse,
@@ -217,7 +222,7 @@ async def get_rescue_mammals_by_id_api(
     rescue_mammals_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
-) -> RescueMammals|HTTPException:
+) -> RescueMammals | HTTPException:
     rescue_mammals_db = await get_rescue_mammal_id(db, rescue_mammals_id)
     if not rescue_mammals_db:
         raise HTTPException(
@@ -226,7 +231,8 @@ async def get_rescue_mammals_by_id_api(
         )
     return rescue_mammals_db
 
-#Update Rescue Mammals
+
+# Update Rescue Mammals
 @router.put(
     path="/api/rescue_mammals/{rescue_mammals_id}",
     response_model=RescueMammalsResponse,
@@ -239,13 +245,18 @@ async def update_rescue_mammals_api(
     rescue_mammals_update: RescueMammalsCreate,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> RescueMammals|HTTPException:
-    return await update_rescue_mammal(db, rescue_mammals_id, rescue_mammals_update)
+) -> RescueMammals | HTTPException:
+    return await update_rescue_mammal(
+            db,
+            rescue_mammals_id,
+            rescue_mammals_update
+            )
 
-#Delete Rescue Mammals
+
+# Delete Rescue Mammals
 @router.delete(
     path="/api/rescue_mammals/{rescue_mammals_id}",
-    response_model= None,
+    response_model=None,
     status_code=status.HTTP_200_OK,
     tags=["Rescue Mammals"],
     summary="Delete Rescue Mammals",
@@ -254,7 +265,7 @@ async def delete_rescue_mammals_api(
     rescue_mammals_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> RescueMammals|HTTPException:
+) -> RescueMammals | HTTPException:
     rescue_mammals_db = await get_rescue_mammal_id(db, rescue_mammals_id)
     if not rescue_mammals_db:
         raise HTTPException(
@@ -264,7 +275,8 @@ async def delete_rescue_mammals_api(
     await delete_rescue_mammal(db, rescue_mammals_id)
     return {"detail": "Rescue Mammals deleted successfully"}
 
-#Create site release mammals
+
+# Create site release mammals
 @router.post(
     path="/api/site_release_mammals",
     response_model=SiteReleaseMammalsResponse,
@@ -273,11 +285,14 @@ async def delete_rescue_mammals_api(
     summary="Create Site Release Mammals",
 )
 async def create_site_release_mammals_api(
-    new_site_release_mammals : SiteReleaseMammalsCreate,
-    db : AsyncSession = Depends(get_db),
+    new_site_release_mammals: SiteReleaseMammalsCreate,
+    db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> SiteReleaseMammals|HTTPException:
-    site_release_mammals_db = await get_site_release_mammal_name(db, new_site_release_mammals.name)
+) -> SiteReleaseMammals | HTTPException:
+    site_release_mammals_db = await get_site_release_mammal_name(
+            db,
+            new_site_release_mammals.name
+            )
     if site_release_mammals_db:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -285,7 +300,8 @@ async def create_site_release_mammals_api(
         )
     return await create_site_release_mammal(db, new_site_release_mammals)
 
-#Get all Site Release Mammals
+
+# Get all Site Release Mammals
 @router.get(
     path="/api/site_release_mammals",
     response_model=List[SiteReleaseMammalsResponse],
@@ -299,7 +315,8 @@ async def get_site_release_mammals_api(
 ) -> List[SiteReleaseMammals]:
     return await get_site_release_mammals(db)
 
-#Get Site Release Mammals by id
+
+# Get Site Release Mammals by id
 @router.get(
     path="/api/site_release_mammals/{site_release_mammals_id}",
     response_model=SiteReleaseMammalsResponse,
@@ -311,8 +328,11 @@ async def get_site_release_mammals_by_id_api(
     site_release_mammals_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
-) -> SiteReleaseMammals|HTTPException:
-    site_release_mammals_db = await get_site_release_mammal_id(db, site_release_mammals_id)
+) -> SiteReleaseMammals | HTTPException:
+    site_release_mammals_db = await get_site_release_mammal_id(
+            db,
+            site_release_mammals_id
+            )
     if not site_release_mammals_db:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -320,7 +340,8 @@ async def get_site_release_mammals_by_id_api(
         )
     return site_release_mammals_db
 
-#Update Site Release Mammals
+
+# Update Site Release Mammals
 @router.put(
     path="/api/site_release_mammals/{site_release_mammals_id}",
     response_model=SiteReleaseMammalsResponse,
@@ -333,13 +354,18 @@ async def update_site_release_mammals_api(
     site_release_mammals_update: SiteReleaseMammalsCreate,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> SiteReleaseMammals|HTTPException:
-    return await update_site_release_mammal(db, site_release_mammals_id, site_release_mammals_update)
+) -> SiteReleaseMammals | HTTPException:
+    return await update_site_release_mammal(
+            db,
+            site_release_mammals_id,
+            site_release_mammals_update
+            )
 
-#Delete Site Release Mammals
+
+# Delete Site Release Mammals
 @router.delete(
     path="/api/site_release_mammals/{site_release_mammals_id}",
-    response_model= None,
+    response_model=None,
     status_code=status.HTTP_200_OK,
     tags=["Site Release Mammals"],
     summary="Delete Site Release Mammals",
@@ -348,8 +374,11 @@ async def delete_site_release_mammals_api(
     site_release_mammals_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> SiteReleaseMammals|HTTPException:
-    site_release_mammals_db = await get_site_release_mammal_id(db, site_release_mammals_id)
+) -> SiteReleaseMammals | HTTPException:
+    site_release_mammals_db = await get_site_release_mammal_id(
+            db,
+            site_release_mammals_id
+            )
     if not site_release_mammals_db:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -358,7 +387,8 @@ async def delete_site_release_mammals_api(
     await delete_site_release_mammal(db, site_release_mammals_id)
     return {"detail": "Site Release Mammals deleted successfully"}
 
-#Create site mammals
+
+# Create site mammals
 @router.post(
     path="/api/release_mammals",
     response_model=ReleaseMammalsResponse,
@@ -367,11 +397,14 @@ async def delete_site_release_mammals_api(
     summary="Create Release Mammals",
 )
 async def create_release_mammals_api(
-    new_release_mammals : ReleaseMammalsCreate,
-    db : AsyncSession = Depends(get_db),
+    new_release_mammals: ReleaseMammalsCreate,
+    db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> ReleaseMammals|HTTPException:
-    release_mammals_db = await get_release_mammal_cod(db, new_release_mammals.cod)
+) -> ReleaseMammals | HTTPException:
+    release_mammals_db = await get_release_mammal_cod(
+            db,
+            new_release_mammals.cod
+            )
     if release_mammals_db:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -379,7 +412,8 @@ async def create_release_mammals_api(
         )
     return await create_release_mammal(db, new_release_mammals)
 
-#Get all Release Mammals
+
+# Get all Release Mammals
 @router.get(
     path="/api/release_mammals",
     response_model=List[ReleaseMammalsResponse],
@@ -393,7 +427,8 @@ async def get_release_mammals_api(
 ) -> List[ReleaseMammals]:
     return await get_release_mammals(db)
 
-#Get Release Mammals by id
+
+# Get Release Mammals by id
 @router.get(
     path="/api/release_mammals/{release_mammals_id}",
     response_model=ReleaseMammalsResponse,
@@ -405,7 +440,7 @@ async def get_release_mammals_by_id_api(
     release_mammals_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
-) -> ReleaseMammals|HTTPException:
+) -> ReleaseMammals | HTTPException:
     release_mammals_db = await get_release_mammal_id(db, release_mammals_id)
     if not release_mammals_db:
         raise HTTPException(
@@ -414,7 +449,8 @@ async def get_release_mammals_by_id_api(
         )
     return release_mammals_db
 
-#Update Release Mammals
+
+# Update Release Mammals
 @router.put(
     path="/api/release_mammals/{release_mammals_id}",
     response_model=ReleaseMammalsResponse,
@@ -427,13 +463,18 @@ async def update_release_mammals_api(
     release_mammals_update: ReleaseMammalsCreate,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> ReleaseMammals|HTTPException:
-    return await update_release_mammal(db, release_mammals_id, release_mammals_update)
+) -> ReleaseMammals | HTTPException:
+    return await update_release_mammal(
+            db,
+            release_mammals_id,
+            release_mammals_update
+            )
 
-#Delete Release Mammals
+
+# Delete Release Mammals
 @router.delete(
     path="/api/release_mammals/{release_mammals_id}",
-    response_model= None,
+    response_model=None,
     status_code=status.HTTP_200_OK,
     tags=["Release Mammals"],
     summary="Delete Release Mammals",
@@ -442,7 +483,7 @@ async def delete_release_mammals_api(
     release_mammals_id: int,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> ReleaseMammals|HTTPException:
+) -> ReleaseMammals | HTTPException:
     release_mammals_db = await get_release_mammal_id(db, release_mammals_id)
     if not release_mammals_db:
         raise HTTPException(
@@ -452,7 +493,8 @@ async def delete_release_mammals_api(
     await delete_release_mammal(db, release_mammals_id)
     return {"detail": "Release Mammals deleted successfully"}
 
-#Get all rescue mammals with species
+
+# Get all rescue mammals with species
 @router.get(
     path="/api/rescue_mammals_species",
     response_model=List[RescueMammalsWithSpecie],
@@ -467,27 +509,16 @@ async def get_rescue_mammals_with_species_api(
     return await get_rescue_mammals_with_specie(db)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Get all release mammals with species
+@router.get(
+    path="/api/release_mammals_species",
+    response_model=List[ReleaseMammalsWithSpecie],
+    status_code=status.HTTP_200_OK,
+    tags=["Release Mammals"],
+    summary="Get all release mammals with species",
+    )
+async def get_release_mammals_with_species_api(
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> List[ReleaseMammalsWithSpecie]:
+    return await get_release_mammals_with_specie(db)
