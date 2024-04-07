@@ -11,7 +11,10 @@ import dynamic from 'next/dynamic'
 import React, { useEffect, useState, useCallback } from "react"
 
 //Apis imports
-import { GetRescueFloraSpecie, GetRelocationFloraSpecie } from "../libs/rescue_flora/ApiRescueFlora";
+import {
+    GetRescueMammalsWithSpecies,
+    GetRealeaseMammalsWithSpecies
+} from "../libs/rescue_mammals/ApiRescueMammalsWithSpecies";
 
 //Leaflet imports
 import 'leaflet/dist/leaflet.css'
@@ -47,39 +50,67 @@ const Legend = dynamic(
     { ssr: false }
 )
 
-const FloraRescueSpecieMap = dynamic(
-    () => (import('../components/RescueFlora/rescueFloraSpecieMap')),
+const RescueMammalSpecieMap = dynamic(
+    () => (import('../components/RescueMammals/RescueMammalsSpecieMap')),
     { ssr: false }
 )
 
-const FloraRelocationSpecieMap = dynamic(
-    () => (import('../components/RescueFlora/relocationFloraSpecieMap')),
+const RealeaseMammalSpecieMap = dynamic(
+    () => (import('../components/RescueMammals/RealeaseMammalsSpecieMap')),
     { ssr: false }
 )
+
 
 export default function Flora() {
     const { data: session } = useSession();
+    const [rescueMammals, setRescueMammals] = useState<RescueMammalsWithSpecieData[]>([]);
+    const [realeaseMammals, setRealeaseMammals] = useState<ReleaseMammalsWithSpecieData[]>([]);
 
     const user = session?.user;
 
+    const rescueDataMammals = useCallback(async (): Promise<RescueMammalsWithSpecieData[]>=>{
+        if (user){
+            const data= await GetRescueMammalsWithSpecies({token: user?.token})
+            return data
+        }
+        else{
+            return []
+        }
+    }, [user])
+
+    const realeaseDataMammals = useCallback(async (): Promise<ReleaseMammalsWithSpecieData[]>=>{
+        if (user){
+            const data= await GetRealeaseMammalsWithSpecies({token: user?.token})
+            return data
+        }
+        else{
+            return []
+        }
+    }, [user])
+
 
     useEffect(() => {
-        if (!user) {
+        if (!session?.user) {
             redirect('/')
         }
         else {
-            console.log("user", user)
+            rescueDataMammals().then((data) => {
+                setRescueMammals(data)
+            })
+            realeaseDataMammals().then((data) => {
+                setRealeaseMammals(data)
+            })
         }
 
-    }, [user])
+    }, [session, rescueDataMammals, realeaseDataMammals])
 
 
     const lineOptions = { color: 'red' }
 
-    const legedColors = ['purple','blue', 'red' ]
+    const legedColors = ['purple','brown', 'red' ]
     const legendLabels = [
-        'Puntos de relocalización de Flora',
-        'Puntos Rescates de Flora',
+        'Puntos de liberación de Mamiferos',
+        'Puntos rescates de mamiferos',
         'Proyecto 230 kV Mizque - Sehuencas'
     ]
 
@@ -142,7 +173,7 @@ export default function Flora() {
                     sd:h-[6rem]
                     "
                 >
-               {/*     <MapContainer
+                    <MapContainer
                         center={[-17.489, -65.271]}
                         zoom={12}
                         scrollWheelZoom={false}
@@ -169,10 +200,10 @@ export default function Flora() {
                                 </div>
                             </Tooltip>
                         </Polyline>
-                        <FloraRescueSpecieMap data={rescueFloraData}/>
-                        <FloraRelocationSpecieMap data={relocationFloraData} radius={12}/>
+                        <RescueMammalSpecieMap data={rescueMammals} />
+                        <RealeaseMammalSpecieMap data={realeaseMammals} />
                         <Legend colors={legedColors} labels={legendLabels} />
-                    </MapContainer> */}
+                    </MapContainer> 
                     
                 </div>
             </div>

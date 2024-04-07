@@ -11,7 +11,10 @@ import dynamic from 'next/dynamic'
 import React, { useEffect, useState, useCallback } from "react"
 
 //Apis imports
-import { GetRescueFloraSpecie, GetRelocationFloraSpecie } from "../libs/rescue_flora/ApiRescueFlora";
+import {
+    GetRescueFloraSpecie,
+    GetRelocationFloraSpecie
+} from "../libs/rescue_flora/ApiRescueFlora";
 
 //Leaflet imports
 import 'leaflet/dist/leaflet.css'
