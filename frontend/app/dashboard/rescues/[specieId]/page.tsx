@@ -23,6 +23,9 @@ import FloraRescueSpecieMap from '@/app/components/RescueFlora/rescueFloraSpecie
 import TransectHerpetofaunaSpecieMap from '@/app/components/HerpetoFauna/TransectoSpecieMap';
 import RescueMammalsSpecieMap from '@/app/components/RescueMammals/RescueMammalsSpecieMap';
 
+//service imports
+import { dateFormat } from '@/app/services/dateFormat';
+
 //Leaflet dynamic imports
 const MapContainer = dynamic(
         async () => (await import('react-leaflet')).MapContainer,
@@ -199,6 +202,7 @@ export default function Page({ params} : { params: { specieId: number } }) {
                 }),
         columnHelper.accessor('rescue_date', {
                         header: 'Fecha de rescate',
+                        cell: info => dateFormat(info.getValue() as Date),
                         footer: info => info.column.id,
                 }),
         columnHelper.accessor('specie_name', {
@@ -221,10 +225,12 @@ export default function Page({ params} : { params: { specieId: number } }) {
                 }),
         columnHelper.accessor('date_in', {
                         header: 'Fecha de entrada',
+                        cell: info => dateFormat(info.getValue() as Date),
                         footer: info => info.column.id,
                 }),
         columnHelper.accessor('date_out', {
                         header: 'fecha de salida',
+                        cell: info => dateFormat(info.getValue() as Date),
                         footer: info => info.column.id,
                 }),
         columnHelper.accessor('specie_names', {
@@ -256,6 +262,7 @@ export default function Page({ params} : { params: { specieId: number } }) {
         }),
         columnHelper.accessor('date', {
                 header: 'Fecha',
+                cell: info => dateFormat(info.getValue() as Date),
                 footer: info => info.column.id,
         }),
         columnHelper.accessor('specie_name', {
