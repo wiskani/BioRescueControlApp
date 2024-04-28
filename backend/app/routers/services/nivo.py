@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.services.nivo.sunburst import (
@@ -14,6 +14,7 @@ from app.schemas.nivo import SunburstBase
 
 router = APIRouter()
 
+
 # Get Sunburst data for all rescues
 @router.get(
         path="/api/nivo/sunburst",
@@ -25,7 +26,7 @@ router = APIRouter()
 async def get_sunburst_data(
         db: AsyncSession = Depends(get_db),
         authorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->SunburstBase:
+        ) -> SunburstBase:
     # get list of families
     flora_families = await get_flora_families(db)
     herpetofauna_families = await get_herpetofauna_families(db)
@@ -39,4 +40,3 @@ async def get_sunburst_data(
             )
 
     return sunburst_data
-

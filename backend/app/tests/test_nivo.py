@@ -21,8 +21,9 @@ from app.services.nivo.sunburst import (
         create_sunburst_data,
         )
 
-#test for create_sunburst_base_children
-def test_create_sunburst_base_children()-> None:
+
+# test for create_sunburst_base_children
+def test_create_sunburst_base_children() -> None:
 
     # Create list of names
     names: List[str] = [
@@ -39,10 +40,9 @@ def test_create_sunburst_base_children()-> None:
 
     color = "hsl(0, 100%, 50%)"
 
-
     # Create base children
 
-    base_children= create_sunburst_base_children(
+    base_children = create_sunburst_base_children(
             name=name,
             children=names,
             color=color
@@ -58,18 +58,18 @@ def test_create_sunburst_base_children()-> None:
 
     assert base_children == expected_result
 
-#test for get_flora_families
+
+# test for get_flora_families
 @pytest.mark.asyncio
 async def test_get_flora_families(
         async_client: AsyncClient,
         async_session: AsyncSession
-        )-> None:
+        ) -> None:
 
     # Create families
     specie1, genus1, family1, specieId1, genusId1, familyId1 = await create_specieWithFamily(async_client)
     specie2, genus2, family2, specieId2, genusId2, familyId2 = await create_specieWithFamily(async_client)
     specie3, genus3, family3, specieId3, genusId3, familyId3 = await create_specieWithFamily(async_client)
-
 
     RESCUE_ZONE_ID = await create_random_rescue_zone_id(async_client)
 
@@ -90,6 +90,8 @@ async def test_get_flora_families(
             "health_status_epiphyte": "test_health_status_epiphyte",
             "microhabitat": "test_microhabitat",
             "other_observations": "test_other_observations",
+            "is_epiphyte_confirmed": True,
+            "is_bryophyte_confirmed": True,
             "specie_bryophyte_id": specieId1,
             "genus_bryophyte_id": None,
             "family_bryophyte_id": None,
@@ -100,9 +102,11 @@ async def test_get_flora_families(
         },
     )
 
-    response =await async_client.post(
+    assert response.status_code == 201
+
+    response = await async_client.post(
         "/api/rescue_flora", json={
-            "epiphyte_number": "2" ,
+            "epiphyte_number": "2",
             "rescue_date": "2021-10-10T00:00:00",
             "rescue_area_latitude": "1.0",
             "rescue_area_longitude": "1.0",
@@ -115,6 +119,8 @@ async def test_get_flora_families(
             "health_status_epiphyte": "test_health_status_epiphyte",
             "microhabitat": "test_microhabitat",
             "other_observations": "test_other_observations",
+            "is_epiphyte_confirmed": True,
+            "is_bryophyte_confirmed": True,
             "specie_bryophyte_id": None,
             "genus_bryophyte_id": genusId2,
             "family_bryophyte_id": None,
@@ -124,10 +130,11 @@ async def test_get_flora_families(
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )
+    assert response.status_code == 201
 
-    response =await async_client.post(
+    response = await async_client.post(
         "/api/rescue_flora", json={
-            "epiphyte_number": "3" ,
+            "epiphyte_number": "3",
             "rescue_date": "2021-10-10T00:00:00",
             "rescue_area_latitude": "1.0",
             "rescue_area_longitude": "1.0",
@@ -140,6 +147,8 @@ async def test_get_flora_families(
             "health_status_epiphyte": "test_health_status_epiphyte",
             "microhabitat": "test_microhabitat",
             "other_observations": "test_other_observations",
+            "is_epiphyte_confirmed": True,
+            "is_bryophyte_confirmed": True,
             "specie_bryophyte_id": None,
             "genus_bryophyte_id": None,
             "family_bryophyte_id": familyId3,
@@ -149,6 +158,7 @@ async def test_get_flora_families(
             "rescue_zone_id": RESCUE_ZONE_ID,
         },
     )
+    assert response.status_code == 201
 
     # Get flora families
     flora_families = await get_flora_families(async_session)
@@ -156,23 +166,23 @@ async def test_get_flora_families(
     # Expected result
     expected_result = [family1, family2, family3]
 
-
     assert flora_families == expected_result
 
-#test for get_herpetofauna_families
+
+# test for get_herpetofauna_families
 @pytest.mark.asyncio
 async def test_get_herpetofauna_families(
         async_client: AsyncClient,
         async_session: AsyncSession
-        )-> None:
+        ) -> None:
 
     # Create families
     specie1, genus1, family1, specieId1, genusId1, familyId1 = await create_specieWithFamily(async_client)
     specie2, genus2, family2, specieId2, genusId2, familyId2 = await create_specieWithFamily(async_client)
     specie3, genus3, family3, specieId3, genusId3, familyId3 = await create_specieWithFamily(async_client)
 
-    transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
-    age_group_id:int = await create_age_group(async_client)
+    transect_herpetofauna_id: int = await create_transect_herpetofauna(async_client)
+    age_group_id: int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
         "/api/rescue_herpetofauna", json={
@@ -185,7 +195,6 @@ async def test_get_herpetofauna_families(
     )
     assert response.status_code == 201
 
-
     response: Response = await async_client.post(
         "/api/rescue_herpetofauna", json={
             "number": "2",
@@ -196,7 +205,6 @@ async def test_get_herpetofauna_families(
         },
     )
     assert response.status_code == 201
-
 
     response: Response = await async_client.post(
         "/api/rescue_herpetofauna", json={
@@ -209,7 +217,6 @@ async def test_get_herpetofauna_families(
     )
     assert response.status_code == 201
 
-
     # Get herpetofauna families
     herpetofauna_families = await get_herpetofauna_families(async_session)
 
@@ -219,12 +226,13 @@ async def test_get_herpetofauna_families(
     # Check result
     assert herpetofauna_families == expected_result
 
-#test for get mammals_families
+
+# test for get mammals_families
 @pytest.mark.asyncio
 async def test_get_mammals_families(
         async_client: AsyncClient,
         async_session: AsyncSession
-        )-> None:
+        ) -> None:
 
     # Create families
     specie1, genus1, family1, specieId1, genusId1, familyId1 = await create_specieWithFamily(async_client)
@@ -254,7 +262,7 @@ async def test_get_mammals_families(
             "habitat_id": habitat_id,
             "age_group_id": age_group_id,
             "specie_id": specieId1,
-            "genus_id": None 
+            "genus_id": None
         },
     )
     assert response.status_code == 201
@@ -279,7 +287,7 @@ async def test_get_mammals_families(
             "habitat_id": habitat_id,
             "age_group_id": age_group_id,
             "specie_id": specieId2,
-            "genus_id": None 
+            "genus_id": None
         },
     )
     assert response.status_code == 201
@@ -304,7 +312,7 @@ async def test_get_mammals_families(
             "habitat_id": habitat_id,
             "age_group_id": age_group_id,
             "specie_id": None,
-            "genus_id": genusId3 
+            "genus_id": genusId3
         },
     )
     assert response.status_code == 201
@@ -318,49 +326,99 @@ async def test_get_mammals_families(
     # Check result
     assert mammals_families == expected_result
 
-#test for create_sunburst_data
+
+# test for create_sunburst_data
 def test_create_sunburst_data() -> None:
 
     # Create families
     flora_families = ["familyFlora", "familyFlora", "familyFlora2"]
-    herpetofauna_families = ["familyHerpetofauna", "familyHerpetofauna", "familyHerpetofauna2"]
+    herpetofauna_families = [
+            "familyHerpetofauna",
+            "familyHerpetofauna",
+            "familyHerpetofauna2"
+            ]
     mammals_families = ["familyMammals", "familyMammals", "familyMammals2"]
 
     # create sunburst data
-    sunburst_data = create_sunburst_data(flora_families, herpetofauna_families, mammals_families)
+    sunburst_data = create_sunburst_data(
+            flora_families,
+            herpetofauna_families,
+            mammals_families)
 
     # Expected result
     # Modificación del nodo 'Flora'
     flora_children = [
-    SunburstBase(name="familyFlora", color="hsl(230,45%,45%)", loc=2, children=None),
-    SunburstBase(name="familyFlora2", color="hsl(230,50%,50%)", loc=1, children=None),
-]
-    
+            SunburstBase(
+                name="familyFlora",
+                color="hsl(230,45%,45%)",
+                loc=2, children=None
+                ),
+            SunburstBase(
+                name="familyFlora2",
+                color="hsl(230,50%,50%)",
+                loc=1,
+                children=None
+                ),
+            ]
     # Modificación del nodo 'Herpetofauna'
     herpetofauna_children = [
-        SunburstBase(name="familyHerpetofauna", color="hsl(130,45%,45%)", loc=2, children=None),
-        SunburstBase(name="familyHerpetofauna2", color="hsl(130,50%,50%)", loc=1, children=None),
-    ]
-    
+            SunburstBase(
+                name="familyHerpetofauna",
+                color="hsl(130,45%,45%)",
+                loc=2,
+                children=None
+                ),
+            SunburstBase(
+                name="familyHerpetofauna2",
+                color="hsl(130,50%,50%)",
+                loc=1,
+                children=None
+                ),
+            ]
+
     # Modificación del nodo 'Mamíferos'
     mammals_children = [
-    SunburstBase(name="familyMammals", color="hsl(40,45%,45%)", loc=2, children=None),
-    SunburstBase(name="familyMammals2", color="hsl(40,50%,50%)", loc=1, children=None),
-]
-    
+            SunburstBase(
+                name="familyMammals",
+                color="hsl(40,45%,45%)",
+                loc=2,
+                children=None
+                ),
+            SunburstBase(
+                name="familyMammals2",
+                color="hsl(40,50%,50%)",
+                loc=1,
+                children=None
+                ),
+            ]
+
     # Creando los nodos principales con el orden actualizado
-    flora_node = SunburstBase(name="Flora", color="hsl(230,40%,40%)", loc=3, children=flora_children)
-    herpetofauna_node = SunburstBase(name="Herpetofauna", color="hsl(130,40%,40%)", loc=3, children=herpetofauna_children)
-    mammals_node = SunburstBase(name="Mamíferos", color="hsl(40,40%,40%)", loc=3, children=mammals_children)
-    
+    flora_node = SunburstBase(
+            name="Flora",
+            color="hsl(230,40%,40%)",
+            loc=None,
+            children=flora_children
+            )
+    herpetofauna_node = SunburstBase(
+            name="Herpetofauna",
+            color="hsl(130,40%,40%)",
+            loc=None,
+            children=herpetofauna_children
+            )
+    mammals_node = SunburstBase(
+            name="Mamíferos",
+            color="hsl(40,40%,40%)",
+            loc=None,
+            children=mammals_children
+            )
+
     # Creando el nodo raíz con los nodos actualizados
     expected_result = SunburstBase(
         name="Rescates",
         color="hsl(0,0%,0%)",
-        loc=9,
+        loc=None,
         children=[flora_node, herpetofauna_node, mammals_node]
     )
-    
 
     print(f"sunburst_data: {sunburst_data}")
     print(f"expected_result: {expected_result}")

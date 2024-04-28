@@ -493,7 +493,8 @@ async def update_a_plant_nursery(
                 )
     return await update_plant_nursery(db, plant_nursery_id, plant_nursery)
 
-#Delete a plant nursery endpoint
+
+# Delete a plant nursery endpoint
 @router.delete(
         path="/api/rescue_flora/plant_nursery/{plant_nursery_id}",
         status_code=status.HTTP_200_OK,
@@ -501,10 +502,10 @@ async def update_a_plant_nursery(
         summary="Delete a plant nursery",
 )
 async def delete_a_plant_nursery(
-        plant_nursery_id:int,
-        db:AsyncSession=Depends(get_db),
+        plant_nursery_id: int,
+        db: AsyncSession = Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Dict:
+        ) -> Dict:
     db_plant_nursery = await get_plant_nursery_by_id(db, plant_nursery_id)
     if not db_plant_nursery:
         raise HTTPException(
@@ -512,13 +513,14 @@ async def delete_a_plant_nursery(
                 detail="Plant nursery not found",
                 )
     await delete_plant_nursery(db, plant_nursery_id)
-    return {"detail":"Plant nursery deleted"}
+    return {"detail": "Plant nursery deleted"}
 
 """
 ENDPOINTS FOR FLORA RELOCATION
 """
 
-#Create a new flora relocation endpoint
+
+# Create a new flora relocation endpoint
 @router.post(
         path="/api/flora_relocation",
         response_model=FloraRelocationResponse,
@@ -527,12 +529,15 @@ ENDPOINTS FOR FLORA RELOCATION
         summary="Create a new flora relocation",
 )
 async def create_a_new_flora_relocation(
-        flora_relocation:FloraRelocationBase,
-        db:AsyncSession=Depends(get_db),
+        flora_relocation: FloraRelocationBase,
+        db: AsyncSession = Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Union[FloraRelocationResponse, HTTPException]:
+        ) -> Union[FloraRelocationResponse, HTTPException]:
 
-    db_flora_relocation = await get_flora_relocation(db, flora_relocation.relocation_number)
+    db_flora_relocation = await get_flora_relocation(
+            db,
+            flora_relocation.relocation_number
+            )
     if db_flora_relocation:
         raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -540,7 +545,8 @@ async def create_a_new_flora_relocation(
                 )
     return await create_flora_relocation(db, flora_relocation)
 
-#Get all flora relocations endpoint
+
+# Get all flora relocations endpoint
 @router.get(
         path="/api/flora_relocations",
         response_model=List[FloraRelocationResponse],
@@ -549,12 +555,13 @@ async def create_a_new_flora_relocation(
         summary="Get all flora relocations",
 )
 async def get_all_flora_relocations_(
-        db:AsyncSession=Depends(get_db),
+        db: AsyncSession = Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Union[List[FloraRelocationResponse], HTTPException]:
+        ) -> Union[List[FloraRelocationResponse], HTTPException]:
     return await get_all_flora_relocations(db)
 
-#Get a flora relocation by id endpoint
+
+# Get a flora relocation by id endpoint
 @router.get(
         path="/api/flora_relocation/{flora_relocation_id}",
         response_model=FloraRelocationResponse,
@@ -563,11 +570,14 @@ async def get_all_flora_relocations_(
         summary="Get a flora relocation by id",
 )
 async def get_a_flora_relocation_by_id(
-        flora_relocation_id:int,
-        db:AsyncSession=Depends(get_db),
+        flora_relocation_id: int,
+        db: AsyncSession = Depends(get_db),
         autorized: bool = Depends(PermissonsChecker(["admin"])),
-        )->Union[FloraRelocationResponse, HTTPException]:
-    db_flora_relocation = await get_flora_relocation_by_id(db, flora_relocation_id)
+        ) -> FloraRelocationResponse | HTTPException:
+    db_flora_relocation = await get_flora_relocation_by_id(
+            db,
+            flora_relocation_id
+            )
     if not db_flora_relocation:
         raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -599,7 +609,11 @@ async def update_a_flora_relocation(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Flora relocation not found",
                 )
-    return await update_flora_relocation(db, flora_relocation_id, flora_relocation)
+    return await update_flora_relocation(
+            db,
+            flora_relocation_id,
+            flora_relocation
+            )
 
 
 # Delete a flora relocation endpoint

@@ -5,17 +5,18 @@ from httpx import Response, AsyncClient
 from typing import Dict, Any
 from app.tests.conftest import *
 
-#make a fuction that return a random string of 10 characters
+
+# make a fuction that return a random string of 10 characters
 def random_string() -> str:
     return "".join(random.choices(string.ascii_lowercase, k=10))
 
 
-
-#make a fuction that return a random int between 1 and 1000
+# make a fuction that return a random int between 1 and 1000
 def random_int() -> int:
-    return random.randint(1,1000)
+    return random.randint(1, 1000)
 
-#Create a class
+
+# Create a class
 @pytest.mark.asyncio
 async def create_class(
     async_client: AsyncClient,
@@ -32,7 +33,8 @@ async def create_class(
     class_id = data["id"]
     return class_id
 
-#Create an order
+
+# Create an order
 @pytest.mark.asyncio
 async def create_order(
     async_client: AsyncClient,
@@ -50,7 +52,8 @@ async def create_order(
     order_id = data["id"]
     return order_id
 
-#Create a family with name
+
+# Create a family with name
 @pytest.mark.asyncio
 async def create_familyWithName(
     async_client: AsyncClient,
@@ -69,7 +72,7 @@ async def create_familyWithName(
     return family_id, name_family
 
 
-#Create a family
+# Create a family
 @pytest.mark.asyncio
 async def create_family(
     async_client: AsyncClient,
@@ -87,7 +90,8 @@ async def create_family(
     family_id = data["id"]
     return family_id
 
-#Create a genus with name
+
+# Create a genus with name
 @pytest.mark.asyncio
 async def create_genusWithName(
     async_client: AsyncClient,
@@ -106,7 +110,8 @@ async def create_genusWithName(
     genus_id = data["id"]
     return genus_id, name_genus
 
-#Create a genus
+
+# Create a genus
 @pytest.mark.asyncio
 async def create_genus(
     async_client: AsyncClient,
@@ -123,13 +128,14 @@ async def create_genus(
     data: Dict[str, Any] = response.json()
     genus_id = data["id"]
     return genus_id
-#Create a specie with name
+
+
+# Create a specie with name
 @pytest.mark.asyncio
 async def create_specieWithName(
     async_client: AsyncClient,
 ) -> tuple[int, str]:
     name_specie = random_string()
-
 
     response: Response = await async_client.post(
         "/api/species", json={
@@ -145,13 +151,13 @@ async def create_specieWithName(
     specie_id = data["id"]
     return specie_id, name_specie
 
-#Create a specie
+
+# Create a specie
 @pytest.mark.asyncio
 async def create_specie(
     async_client: AsyncClient,
 ) -> int:
     name_specie = random_string()
-
 
     response: Response = await async_client.post(
         "/api/species", json={
@@ -167,7 +173,8 @@ async def create_specie(
     specie_id = data["id"]
     return specie_id
 
-#Create status specie
+
+# Create status specie
 @pytest.mark.asyncio
 async def create_status_specie(
     async_client: AsyncClient,
@@ -177,19 +184,21 @@ async def create_status_specie(
     response: Response = await async_client.post(
         "/api/specie/status", json={
             "status_name": name_status_specie,
+            "abbreviation": name_status_specie[:3],
         },
     )
     data: Dict[str, Any] = response.json()
     status_specie_id = data["id"]
     return status_specie_id
 
-#Create specie with family
+
+# Create specie with family
 @pytest.mark.asyncio
 async def create_specieWithFamily(
     async_client: AsyncClient,
 ) -> tuple[str, str, str, int, int, int]:
 
-    #Create a family
+    # Create a family
     name_family = random_string()
 
     response: Response = await async_client.post(
@@ -202,7 +211,7 @@ async def create_specieWithFamily(
     data: Dict[str, Any] = response.json()
     family_id = data["id"]
 
-    #Create a genus
+    # Create a genus
     name_genus = random_string()
 
     response: Response = await async_client.post(
@@ -215,7 +224,7 @@ async def create_specieWithFamily(
     data: Dict[str, Any] = response.json()
     genus_id = data["id"]
 
-    #Create a specie
+    # Create a specie
     name_specie = random_string()
 
     response: Response = await async_client.post(
@@ -230,5 +239,4 @@ async def create_specieWithFamily(
     assert response.status_code == 201
     data: Dict[str, Any] = response.json()
     specie_id = data["id"]
-    return  name_specie, name_genus, name_family, specie_id, genus_id, family_id
-
+    return name_specie, name_genus, name_family, specie_id, genus_id, family_id

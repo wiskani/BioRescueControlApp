@@ -7,13 +7,15 @@ from pydantic import (
     field_validator
         )
 
+
 class SunburstBase(BaseModel):
     name: str = Field(..., examples=["nivo"])
     color: str = Field(..., examples=["hsl(335, 70%, 50%)"])
-    loc: int|None
-    children: List["SunburstBase"]|None 
+    loc: int | None
+    children: List["SunburstBase"] | None
 
 SunburstBase.model_rebuild()
+
 
 class ColorHSLBase(BaseModel):
     h: int = Field(..., examples=[335])
@@ -26,7 +28,6 @@ class ColorHSLBase(BaseModel):
         if v < 0 or v > 360:
             raise ValueError("h must be between 0 and 360")
         return v
-
 
     @field_validator("s")
     @classmethod
@@ -43,3 +44,10 @@ class ColorHSLBase(BaseModel):
         return v
 
 
+# Model for bar chart by family
+class BarChartFamily(BaseModel):
+    family_name: str
+    rescue_count: int
+    rescue_color: str
+    relocation_count: int
+    relocation_color: str

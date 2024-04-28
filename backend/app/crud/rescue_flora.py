@@ -5,7 +5,6 @@ from fastapi import HTTPException
 
 from app.schemas.rescue_flora import (
         # Flora rescue zone
-        FloraRelocationWithSpecie,
         FloraRescueZoneBase,
 
         # Flora relocation zone
@@ -26,6 +25,7 @@ from app.schemas.rescue_flora import (
         # Flora relocation with specie
         FloraRelocationWithSpecie
         )
+
 
 from app.crud.species import (
         get_specie_by_id,
