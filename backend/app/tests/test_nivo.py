@@ -15,10 +15,13 @@ from app.schemas.nivo import (
 
 from app.services.nivo.sunburst import (
         create_sunburst_base_children,
-        get_flora_families,
-        get_herpetofauna_families,
-        get_mammals_families,
         create_sunburst_data,
+        )
+
+from app.services.nivo.utils import (
+        get_flora_families_rescues,
+        get_herpetofauna_families_rescues,
+        get_mammals_families_rescues,
         )
 
 
@@ -161,7 +164,7 @@ async def test_get_flora_families(
     assert response.status_code == 201
 
     # Get flora families
-    flora_families = await get_flora_families(async_session)
+    flora_families = await get_flora_families_rescues(async_session)
 
     # Expected result
     expected_result = [family1, family2, family3]
@@ -218,7 +221,9 @@ async def test_get_herpetofauna_families(
     assert response.status_code == 201
 
     # Get herpetofauna families
-    herpetofauna_families = await get_herpetofauna_families(async_session)
+    herpetofauna_families = await get_herpetofauna_families_rescues(
+            async_session
+            )
 
     # Expected result
     expected_result = [family1, family2, family3]
@@ -318,7 +323,7 @@ async def test_get_mammals_families(
     assert response.status_code == 201
 
     # Get mammals families
-    mammals_families = await get_mammals_families(async_session)
+    mammals_families = await get_mammals_families_rescues(async_session)
 
     # Expected result
     expected_result = [family1, family2, family3]

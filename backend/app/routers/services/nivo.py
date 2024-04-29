@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.services.nivo.sunburst import (
-        create_sunburst_data,
-        get_flora_families,
-        get_herpetofauna_families,
-        get_mammals_families,
+from app.services.nivo.utils import (
+        get_flora_families_rescues,
+        get_herpetofauna_families_rescues,
+        get_mammals_families_rescues,
         )
+from app.services.nivo.sunburst import create_sunburst_data
 
 from app.api.deps import PermissonsChecker, get_db
 
@@ -28,9 +28,9 @@ async def get_sunburst_data(
         authorized: bool = Depends(PermissonsChecker(["admin"])),
         ) -> SunburstBase:
     # get list of families
-    flora_families = await get_flora_families(db)
-    herpetofauna_families = await get_herpetofauna_families(db)
-    mammals_families = await get_mammals_families(db)
+    flora_families = await get_flora_families_rescues(db)
+    herpetofauna_families = await get_herpetofauna_families_rescues(db)
+    mammals_families = await get_mammals_families_rescues(db)
 
     # create sunburst data
     sunburst_data = create_sunburst_data(
