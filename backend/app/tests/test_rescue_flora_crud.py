@@ -856,7 +856,8 @@ async def test_delete_flora_rescue_not_found(
 TESTS FOR PLANT NURSERY
 """
 
-#test create a plant nursery
+
+# test create a plant nursery
 @pytest.mark.asyncio
 async def test_create_plant_nursery(
     async_client: AsyncClient,
@@ -894,7 +895,8 @@ async def test_create_plant_nursery(
     assert data["departure_date"] == "2021-12-10T00:00:00Z"
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
 
-#test create a plant nursery that already exists
+
+# test create a plant nursery that already exists
 @pytest.mark.asyncio
 async def test_create_plant_nursery_already_exists(
     async_client: AsyncClient,
@@ -937,7 +939,8 @@ async def test_create_plant_nursery_already_exists(
     )
     assert response.status_code == 400, response.text
 
-#test get all plant nursery
+
+# test get all plant nursery
 @pytest.mark.asyncio
 async def test_read_all_plant_nursery(
     async_client: AsyncClient,
@@ -984,7 +987,8 @@ async def test_read_all_plant_nursery(
     data: List[Dict[str, Any]] = response.json()
     assert len(data) >= 2
 
-#test get a plant nursery by id
+
+# test get a plant nursery by id
 @pytest.mark.asyncio
 async def test_read_plant_nursery(
     async_client: AsyncClient,
@@ -1010,7 +1014,9 @@ async def test_read_plant_nursery(
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     # read a plant nursery by id
-    response =await async_client.get(f"/api/rescue_flora/plant_nursery/{data['id']}")
+    response = await async_client.get(
+            f"/api/rescue_flora/plant_nursery/{data['id']}"
+            )
     assert response.status_code == 200, response.text
     data = response.json()
     assert data["entry_date"] == "2021-12-10T00:00:00Z"
@@ -1024,7 +1030,8 @@ async def test_read_plant_nursery(
     assert data["departure_date"] == "2021-12-10T00:00:00Z"
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
 
-#test update a plant nursery
+
+# test update a plant nursery
 @pytest.mark.asyncio
 async def test_update_plant_nursery(
     async_client: AsyncClient,
@@ -1032,7 +1039,7 @@ async def test_update_plant_nursery(
 ) -> None:
     FLORA_RESCUE_ID = await create_random_flora_rescue_id(async_client)
     # create a plant nursery
-    response =await async_client.post(
+    response = await async_client.post(
         "/api/rescue_flora/plant_nursery", json={
             "entry_date": "2021-12-10T00:00:00",
             "cod_reg": "14",
@@ -1050,7 +1057,7 @@ async def test_update_plant_nursery(
     assert response.status_code == 201, response.text
     data: Dict[str, Any] = response.json()
     # update a plant nursery
-    response =await async_client.put(
+    response = await async_client.put(
         f"/api/rescue_flora/plant_nursery/{data['id']}", json={
             "entry_date": "2021-12-10T00:00:00",
             "cod_reg": "15",
@@ -1073,12 +1080,13 @@ async def test_update_plant_nursery(
     assert data["flowering_date"] == "2021-12-10T00:00:00Z"
     assert data["vegetative_state"] == "test_vegetative_state15"
     assert data["treatment_product"] == "test_treatment_product15"
-    assert data["is_phytosanitary_treatment"] == False
+    assert data["is_phytosanitary_treatment"] is False
     assert data["substrate"] == "test_substrate15"
     assert data["departure_date"] == "2021-12-10T00:00:00Z"
     assert data["flora_rescue_id"] == FLORA_RESCUE_ID
 
-#test delete a plant nursery
+
+# test delete a plant nursery
 @pytest.mark.asyncio
 async def test_delete_plant_nursery(
     async_client: AsyncClient,
@@ -1128,7 +1136,7 @@ async def test_create_relocation_flora(
     FAMILY_ID = await create_family(async_client)
     RELOCATION_ZONE_ID = await create_random_relocation_zone_id(async_client)
     # create relocation flora
-    response =await async_client.post(
+    response = await async_client.post(
         "/api/flora_relocation", json={
             "relocation_date": "2021-12-10T00:00:00",
             "relocation_number": "14",

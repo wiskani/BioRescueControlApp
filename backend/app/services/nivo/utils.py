@@ -8,7 +8,8 @@ from app.crud.species import (
         )
 from app.crud.rescue_flora import (
         get_all_flora_rescues,
-        get_all_flora_relocations
+        get_all_flora_relocations,
+        get_flora_rescue_by_id
         )
 from app.crud.rescue_herpetofauna import (
         get_all_rescue_herpetofauna,
@@ -117,3 +118,64 @@ async def get_mammals_families_rescues(
                 pass
 
     return mammals_families
+
+
+# Get list of families in flora relocations
+async def get_flora_families_relocation(
+        db: AsyncSession,
+        ) -> List[str]:
+    flora_families: List[str] = []
+    flora_relocation_db = await get_all_flora_relocations(db)
+    for relocation in flora_relocation_db:
+        if relocation.flora_rescue_id:
+            rescue = await get_flora_rescue_by_id(
+                    db,
+                    relocation.flora_rescue_id
+                    )
+            if rescue:
+                if rescue.family_epiphyte_id:
+                    family = await get_family_by_id(
+                            db,
+                            rescue.family_epiphyte_id
+                            )
+                    if family:
+                        flora_families.append(family.family_name)
+                    else:
+                        pass
+                if rescue.genus_epiphyte_id:
+                    genus = await get_genus_by_id(
+                            db,
+                            rescue.genus_epiphyte_id
+                            )
+                    if genus:
+                        family = await get_family_by_id(
+                                db,
+                                genus.family_id
+                                )
+                        if family:
+                            flora_families.append(family.family_name)
+                        else:
+                            pass
+                    else:
+                        pass
+                else:
+                    species = await get_specie_by_id(
+                            db,
+                            rescue.specie_epiphyte_id
+                            )
+                    if species:
+                        genus = await get_genus_by_id(db, species.genus_id)
+                        if genus:
+                            family = await get_family_by_id(
+                                    db,
+                                    genus.family_id
+                                    )
+                            if family:
+                                flora_families.append(family.family_name)
+                            else:
+                                pass
+                        else:
+                            pass
+        else:
+            pass
+    return flora_families

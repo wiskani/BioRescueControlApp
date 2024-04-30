@@ -22,6 +22,7 @@ from app.services.nivo.utils import (
         get_flora_families_rescues,
         get_herpetofauna_families_rescues,
         get_mammals_families_rescues,
+        get_flora_families_relocation,
         )
 
 
@@ -64,7 +65,7 @@ def test_create_sunburst_base_children() -> None:
 
 # test for get_flora_families
 @pytest.mark.asyncio
-async def test_get_flora_families(
+async def test_get_flora_families_rescue(
         async_client: AsyncClient,
         async_session: AsyncSession
         ) -> None:
@@ -78,12 +79,12 @@ async def test_get_flora_families(
 
     # create flora rescue
 
-    response =await async_client.post(
+    response = await async_client.post(
         "/api/rescue_flora", json={
-            "epiphyte_number": "1" ,
+            "epiphyte_number": "1",
             "rescue_date": "2021-10-10T00:00:00",
-            "rescue_area_latitude": "1.0", 
-            "rescue_area_longitude": "1.0", 
+            "rescue_area_latitude": "1.0",
+            "rescue_area_longitude": "1.0",
             "substrate": "test_substrate",
             "dap_bryophyte": 1.0,
             "height_bryophyte": 1.0,
@@ -430,3 +431,199 @@ def test_create_sunburst_data() -> None:
 
     # Check result
     assert sunburst_data == expected_result
+
+
+# test for get_flora_families relocation
+@pytest.mark.asyncio
+async def test_get_flora_families_relocation(
+        async_client: AsyncClient,
+        async_session: AsyncSession
+        ) -> None:
+
+    # Create families
+    specie1, genus1, family1, specieId1, genusId1, familyId1 = await create_specieWithFamily(async_client)
+    specie2, genus2, family2, specieId2, genusId2, familyId2 = await create_specieWithFamily(async_client)
+    specie3, genus3, family3, specieId3, genusId3, familyId3 = await create_specieWithFamily(async_client)
+
+    RESCUE_ZONE_ID = await create_random_rescue_zone_id(async_client)
+    RELOCATION_ZONE_ID = await create_random_relocation_zone_id(async_client)
+    specie_id = await create_specie(async_client)
+
+    # create flora rescue
+
+    response = await async_client.post(
+        "/api/rescue_flora", json={
+            "epiphyte_number": "1",
+            "rescue_date": "2021-10-10T00:00:00",
+            "rescue_area_latitude": "1.0",
+            "rescue_area_longitude": "1.0",
+            "substrate": "test_substrate",
+            "dap_bryophyte": 1.0,
+            "height_bryophyte": 1.0,
+            "bryophyte_position": 1,
+            "growth_habit": "test_growth_habit",
+            "epiphyte_phenology": "test_epiphyte_phenology",
+            "health_status_epiphyte": "test_health_status_epiphyte",
+            "microhabitat": "test_microhabitat",
+            "other_observations": "test_other_observations",
+            "is_epiphyte_confirmed": True,
+            "is_bryophyte_confirmed": True,
+            "specie_bryophyte_id": specieId1,
+            "genus_bryophyte_id": None,
+            "family_bryophyte_id": None,
+            "specie_epiphyte_id": specieId1,
+            "genus_epiphyte_id": None,
+            "family_epiphyte_id": None,
+            "rescue_zone_id": RESCUE_ZONE_ID,
+        },
+    )
+
+    assert response.status_code == 201
+    id_rescue_flora1 = response.json()["id"]
+
+    response = await async_client.post(
+        "/api/rescue_flora", json={
+            "epiphyte_number": "2",
+            "rescue_date": "2021-10-10T00:00:00",
+            "rescue_area_latitude": "1.0",
+            "rescue_area_longitude": "1.0",
+            "substrate": "test_substrate",
+            "dap_bryophyte": 1.0,
+            "height_bryophyte": 1.0,
+            "bryophyte_position": 1,
+            "growth_habit": "test_growth_habit",
+            "epiphyte_phenology": "test_epiphyte_phenology",
+            "health_status_epiphyte": "test_health_status_epiphyte",
+            "microhabitat": "test_microhabitat",
+            "other_observations": "test_other_observations",
+            "is_epiphyte_confirmed": True,
+            "is_bryophyte_confirmed": True,
+            "specie_bryophyte_id": None,
+            "genus_bryophyte_id": genusId2,
+            "family_bryophyte_id": None,
+            "specie_epiphyte_id": None,
+            "genus_epiphyte_id": genusId2,
+            "family_epiphyte_id": None,
+            "rescue_zone_id": RESCUE_ZONE_ID,
+        },
+    )
+    assert response.status_code == 201
+    id_rescue_flora2 = response.json()["id"]
+
+    response = await async_client.post(
+        "/api/rescue_flora", json={
+            "epiphyte_number": "3",
+            "rescue_date": "2021-10-10T00:00:00",
+            "rescue_area_latitude": "1.0",
+            "rescue_area_longitude": "1.0",
+            "substrate": "test_substrate",
+            "dap_bryophyte": 1.0,
+            "height_bryophyte": 1.0,
+            "bryophyte_position": 1,
+            "growth_habit": "test_growth_habit",
+            "epiphyte_phenology": "test_epiphyte_phenology",
+            "health_status_epiphyte": "test_health_status_epiphyte",
+            "microhabitat": "test_microhabitat",
+            "other_observations": "test_other_observations",
+            "is_epiphyte_confirmed": True,
+            "is_bryophyte_confirmed": True,
+            "specie_bryophyte_id": None,
+            "genus_bryophyte_id": None,
+            "family_bryophyte_id": familyId3,
+            "specie_epiphyte_id": None,
+            "genus_epiphyte_id": None,
+            "family_epiphyte_id": familyId3,
+            "rescue_zone_id": RESCUE_ZONE_ID,
+        },
+    )
+    assert response.status_code == 201
+    id_rescue_flora3 = response.json()["id"]
+
+    # create flora relocations 1
+    response = await async_client.post(
+        "/api/flora_relocation", json={
+            "relocation_date": "2021-12-10T00:00:00",
+            "relocation_number": "14",
+            "size": 1.0,
+            "epiphyte_phenology": "test_epiphyte_phenology14",
+            "johanson_zone": "test_johanson_zone14",
+            "relocation_position_latitude": create_latitude(),
+            "relocation_position_longitude": create_longitude(),
+            "relocation_position_altitude": 14.0,
+            "bryophyte_number": 14,
+            "dap_bryophyte": 14.0,
+            "height_bryophyte": 14.0,
+            "bark_type": "test_bark_type14",
+            "infested_lianas": "Poco",
+            "other_observations": "test_other_observations14",
+            "is_bryophyte_confirmed": True,
+            "flora_rescue_id": id_rescue_flora1,
+            "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": None,
+            "family_bryophyte_id": None,
+            "relocation_zone_id": RELOCATION_ZONE_ID,
+        },
+    )
+    assert response.status_code == 201, response.text
+
+    # create flora relocations 2
+    response = await async_client.post(
+        "/api/flora_relocation", json={
+            "relocation_date": "2021-12-10T00:00:00",
+            "relocation_number": "15",
+            "size": 1.0,
+            "epiphyte_phenology": "test_epiphyte_phenology14",
+            "johanson_zone": "test_johanson_zone14",
+            "relocation_position_latitude": create_latitude(),
+            "relocation_position_longitude": create_longitude(),
+            "relocation_position_altitude": 14.0,
+            "bryophyte_number": 14,
+            "dap_bryophyte": 14.0,
+            "height_bryophyte": 14.0,
+            "bark_type": "test_bark_type14",
+            "infested_lianas": "Poco",
+            "other_observations": "test_other_observations14",
+            "is_bryophyte_confirmed": True,
+            "flora_rescue_id": id_rescue_flora2,
+            "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": None,
+            "family_bryophyte_id": None,
+            "relocation_zone_id": RELOCATION_ZONE_ID,
+        },
+    )
+    assert response.status_code == 201, response.text
+
+    # create flora relocations 3
+    response = await async_client.post(
+        "/api/flora_relocation", json={
+            "relocation_date": "2021-12-10T00:00:00",
+            "relocation_number": "16",
+            "size": 1.0,
+            "epiphyte_phenology": "test_epiphyte_phenology14",
+            "johanson_zone": "test_johanson_zone14",
+            "relocation_position_latitude": create_latitude(),
+            "relocation_position_longitude": create_longitude(),
+            "relocation_position_altitude": 14.0,
+            "bryophyte_number": 14,
+            "dap_bryophyte": 14.0,
+            "height_bryophyte": 14.0,
+            "bark_type": "test_bark_type14",
+            "infested_lianas": "Poco",
+            "other_observations": "test_other_observations14",
+            "is_bryophyte_confirmed": True,
+            "flora_rescue_id": id_rescue_flora3,
+            "specie_bryophyte_id": specie_id,
+            "genus_bryophyte_id": None,
+            "family_bryophyte_id": None,
+            "relocation_zone_id": RELOCATION_ZONE_ID,
+        },
+    )
+    assert response.status_code == 201, response.text
+
+    # Get flora families relocation
+    flora_families = await get_flora_families_relocation(async_session)
+
+    # Expected result
+    expected_result = [family1, family2, family3]
+
+    assert flora_families == expected_result
