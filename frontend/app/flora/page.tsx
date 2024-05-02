@@ -63,6 +63,11 @@ const FloraRelocationSpecieMap = dynamic(
     { ssr: false }
 )
 
+interface BarChartFamilyDataFlex extends BarChartFamilyData {
+    [key: string]: any;
+}
+
+
 export default function Flora() {
     const { data: session } = useSession();
     const [rescueFloraData, setRescueFloraData] = useState<FloraRescueSpeciesData[]>([]);
@@ -247,9 +252,10 @@ export default function Flora() {
                     sm:h-80
                     '
                 >
+
                     {
                         loadingBarChart ? <Loading/> :
-                            <BarChartFamily data={barChartData} />
+                            <BarChartFamily data={barChartData as BarChartFamilyDataFlex[]} />
                     }
                 </div>
             </div>
