@@ -1,6 +1,6 @@
-export const GetSunburstByFamily= async (
+export const GetBarChartFloraByFamily= async (
     props: Token
-): Promise<SunBurstFamilyData> => {
+): Promise<BarChartFamilyData[]> => {
     try {
         const requestOptions = {
             method: 'GET',
@@ -10,7 +10,7 @@ export const GetSunburstByFamily= async (
             },
         };
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}:8080/api/nivo/sunburst`,
+            `${process.env.NEXT_PUBLIC_API_URL}:8080/api/nivo/barchart/flora`,
             requestOptions
         );
 

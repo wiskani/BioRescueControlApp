@@ -78,7 +78,7 @@ def create_sunburst_data(
         if addColor < 80:
             addColor += 5
         else:
-            pass
+            addColor = 5
         # create children
         children = create_sunburst_base_children(
                 family,

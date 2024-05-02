@@ -15,6 +15,7 @@ import {
     GetRescueFloraSpecie,
     GetRelocationFloraSpecie
 } from "../libs/rescue_flora/ApiRescueFlora";
+import { GetBarChartFloraByFamily } from "../libs/nivo/ApiBarChartFamily";
 
 //Leaflet imports
 import 'leaflet/dist/leaflet.css'
@@ -22,6 +23,8 @@ import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 
 //Components imports
 import { LineProyect } from '../components/Map/lineProyect';
+import BarChartFamily from '../components/Nivo/BarChartFamily';
+import Loading from './loading';
 
 //import with dynamic
 const MapContainer = dynamic(
@@ -64,6 +67,20 @@ export default function Flora() {
     const { data: session } = useSession();
     const [rescueFloraData, setRescueFloraData] = useState<FloraRescueSpeciesData[]>([]);
     const [relocationFloraData, setRelocationFloraData] = useState<FloraRelocationWithSpecieData[]>([]);
+    const [barChartData, setBarChartData] = useState<BarChartFamilyData[]>(
+        [
+        {
+            family_name: "sin datos",
+            rescue_count: 0,
+            rescue_color: "hsl(0, 100%, 50%)",
+            relocation_count: 0,
+            relocation_color: "hsl(0, 100%, 50%)"
+
+        },
+        ]
+    )
+
+    const [loadingBarChart, setLoadingBarChart] = useState(true)
 
     const user = session?.user;
 
@@ -87,6 +104,17 @@ export default function Flora() {
         }
     }, [user])
 
+    const barChartFloraData = useCallback(async (): Promise<BarChartFamilyData[]>=>{
+        if (user){
+            const data= await GetBarChartFloraByFamily({token: user?.token})
+            return data
+        }
+        else{
+            return []
+        }
+    }, [user])
+
+
 
     useEffect(() => {
         if (!session?.user) {
@@ -99,8 +127,12 @@ export default function Flora() {
             relocationDataFlora().then((data)=>{
                 setRelocationFloraData(data)
             })
+            barChartFloraData().then((data)=>{
+                setBarChartData(data)
+                setLoadingBarChart(false)
+            })
         }
-    }, [session, rescueDataFlora, relocationDataFlora])
+    }, [session, rescueDataFlora, relocationDataFlora, barChartFloraData])
 
 
     const lineOptions = { color: 'red' }
@@ -202,6 +234,23 @@ export default function Flora() {
                         <FloraRelocationSpecieMap data={relocationFloraData} radius={12}/>
                         <Legend colors={legedColors} labels={legendLabels} />
                     </MapContainer>
+                </div>
+                <div className='
+                    md:w-1/2
+                    p-4 h-144
+                    flex
+                    justify-center
+                    items-center
+                    2xl:h-144
+                    xl:h-128
+                    md:h-96
+                    sm:h-80
+                    '
+                >
+                    {
+                        loadingBarChart ? <Loading/> :
+                            <BarChartFamily data={barChartData} />
+                    }
                 </div>
             </div>
         </div>

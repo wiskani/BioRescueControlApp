@@ -9,7 +9,9 @@ interface SunBurstFamilyProps {
         data: SunburstSvgProps<SunBurstFamilyData>["data"];
 }
 
-const ResponsiveSunburst = dynamic(()=>import('@nivo/sunburst').then((mod)=>mod.ResponsiveSunburst), {ssr: false})
+const ResponsiveSunburst = dynamic(
+    ()=>import('@nivo/sunburst').then((mod)=>mod.ResponsiveSunburst), {ssr: false}
+)
 
 const SunburstFamily = ({ data}: SunBurstFamilyProps) => (
     <ResponsiveSunburst

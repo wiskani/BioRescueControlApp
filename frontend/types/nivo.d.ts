@@ -9,10 +9,10 @@ declare global {
     }
 
     interface BarChartFamilyData {
-        family: string
-        rescue_count: number
-        rescue_color: string
-        relocation_count: number
-        relocation_color: string
+        family_name: string;
+        rescue_count: number;
+        rescue_color: string;
+        relocation_count: number;
+        relocation_color: string;
     }
 }

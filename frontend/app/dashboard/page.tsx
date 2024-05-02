@@ -30,43 +30,43 @@ import Loading from './loading';
 
 //import with dynamic
 const MapContainer = dynamic(
-        async () => (await import('react-leaflet')).MapContainer,
-        { ssr: false }
+    async () => (await import('react-leaflet')).MapContainer,
+    { ssr: false }
 )
 
 const TileLayer = dynamic(
-        async () => (await import('react-leaflet')).TileLayer,
-        { ssr: false }
+    async () => (await import('react-leaflet')).TileLayer,
+    { ssr: false }
 )
 
 
 const Polyline = dynamic(
-        async () => (await import('react-leaflet')).Polyline,
-        { ssr: false }
+    async () => (await import('react-leaflet')).Polyline,
+    { ssr: false }
 )
 
 const Tooltip = dynamic(
-        async () => (await import('react-leaflet')).Tooltip,
-        { ssr: false }
+    async () => (await import('react-leaflet')).Tooltip,
+    { ssr: false }
 )
 
 const Legend = dynamic(
-        () => (import('../components/Map/Legend')),
-        { ssr: false }
+    () => (import('../components/Map/Legend')),
+    { ssr: false }
 )
 
 const FloraRescueSpecieMap = dynamic(
-        () => (import('../components/RescueFlora/rescueFloraSpecieMap')),
-        { ssr: false }
+    () => (import('../components/RescueFlora/rescueFloraSpecieMap')),
+    { ssr: false }
 )
 
 const TransectHerpetofaunaSpecieMap = dynamic(
-        () => (import('../components/HerpetoFauna/TransectoSpecieMap')),
-        { ssr: false }
+    () => (import('../components/HerpetoFauna/TransectoSpecieMap')),
+    { ssr: false }
 )
 const RescueMammalsSpecieMap = dynamic(
-        () => (import('../components/RescueMammals/RescueMammalsSpecieMap')),
-        { ssr: false }
+    () => (import('../components/RescueMammals/RescueMammalsSpecieMap')),
+    { ssr: false }
 )
 
 
@@ -84,22 +84,22 @@ export default function Dashboard() {
             color: "hsl(0, 0%, 100%)",
             loc: 0, children: []
         }
-)
+    )
     const [loadingSunBurst, setLoadingSunBurst] = useState(true)
     const [loadingSpeciesItem, setLoadingSpeciesItem] = useState(true)
 
     const user = session?.user;
 
     const rescueDataFlora = useCallback(async (): Promise<FloraRescueSpeciesData[]>=>{
-      if (user){
-       const data= await GetRescueFloraSpecie({token: user?.token})
-       return data
-      }
-      else{
-        return []
-      }
+        if (user){
+            const data= await GetRescueFloraSpecie({token: user?.token})
+            return data
+        }
+        else{
+            return []
+        }
     }, [user])
-    
+
     const speciesData = useCallback(async (): Promise<SpecieItemData[]>=>{
         if (user){
             const data= await GetSpeciesItem({token: user?.token})
@@ -132,13 +132,13 @@ export default function Dashboard() {
 
     const sunburstDataApi = useCallback(async (): Promise<SunBurstFamilyData>=>{
         if (user){
-                const data= await GetSunburstByFamily({token: user?.token})
-                return data
+            const data= await GetSunburstByFamily({token: user?.token})
+            return data
         }
         else{
-                return  {name: "root", color: "hsl(0, 0%, 100%)", loc: 0, children: []}
+            return  {name: "root", color: "hsl(0, 0%, 100%)", loc: 0, children: []}
         }
-        }, [user])
+    }, [user])
 
 
 
@@ -231,7 +231,16 @@ export default function Dashboard() {
                 sm:mb-0
                 justify-center"
             >
-                <div className="h-96 p-0 z-50 md:w-1/2 p-4 md:h-[16rem] sd:h-[6rem]">
+                <div className="
+                    h-96
+                    p-0
+                    z-50
+                    md:w-1/2
+                    p-4
+                    md:h-[16rem]
+                    sd:h-[6rem]
+                    "
+                >
                     <MapContainer
                         center={[-17.489, -65.271]}
                         zoom={12}
@@ -273,13 +282,13 @@ export default function Dashboard() {
                 >
                     {
                         loadingSunBurst ? <Loading/> :
-                        <SunburstFamily data={sunburstData} />
+                            <SunburstFamily data={sunburstData} />
                     }
                 </div>
             </div>
             {
                 loadingSpeciesItem ?<div><Loading/></div> :
-                <SpecieList species={specieData}  />
+                    <SpecieList species={specieData}  />
             }
 
         </div>
