@@ -15,4 +15,11 @@ declare global {
         relocation_count: number;
         relocation_color: string;
     }
+    interface BarChartFamilyDataSpa {
+        Familia: string;
+        Rescates: number;
+        color_rescate: string;
+        Liberaciones: number;
+        color_reubicacion: string;
+    }
 }

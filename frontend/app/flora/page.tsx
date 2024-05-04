@@ -63,7 +63,7 @@ const FloraRelocationSpecieMap = dynamic(
     { ssr: false }
 )
 
-interface BarChartFamilyDataFlex extends BarChartFamilyData {
+interface BarChartFamilyDataFlex extends BarChartFamilyDataSpa {
     [key: string]: any;
 }
 
@@ -72,14 +72,14 @@ export default function Flora() {
     const { data: session } = useSession();
     const [rescueFloraData, setRescueFloraData] = useState<FloraRescueSpeciesData[]>([]);
     const [relocationFloraData, setRelocationFloraData] = useState<FloraRelocationWithSpecieData[]>([]);
-    const [barChartData, setBarChartData] = useState<BarChartFamilyData[]>(
+    const [barChartData, setBarChartData] = useState<BarChartFamilyDataSpa[]>(
         [
         {
-            family_name: "sin datos",
-            rescue_count: 0,
-            rescue_color: "hsl(0, 100%, 50%)",
-            relocation_count: 0,
-            relocation_color: "hsl(0, 100%, 50%)"
+            Familia: "sin datos",
+            Rescates: 0,
+            color_rescate: "hsl(0, 100%, 50%)",
+            Liberaciones: 0,
+            color_reubicacion: "hsl(0, 100%, 50%)"
 
         },
         ]
@@ -88,6 +88,18 @@ export default function Flora() {
     const [loadingBarChart, setLoadingBarChart] = useState(true)
 
     const user = session?.user;
+
+    const trasformedData = (data: BarChartFamilyData[]): BarChartFamilyDataSpa[] => {
+        return data.map((item) => {
+            return {
+                Familia: item.family_name,
+                Rescates: item.rescue_count,
+                color_rescate: item.rescue_color,
+                Liberaciones: item.relocation_count,
+                color_reubicacion: item.relocation_color
+            }
+        })
+    }
 
     const rescueDataFlora = useCallback(async (): Promise<FloraRescueSpeciesData[]>=>{
         if (user){
@@ -133,7 +145,7 @@ export default function Flora() {
                 setRelocationFloraData(data)
             })
             barChartFloraData().then((data)=>{
-                setBarChartData(data)
+                setBarChartData(trasformedData(data))
                 setLoadingBarChart(false)
             })
         }
