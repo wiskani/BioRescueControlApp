@@ -16,7 +16,9 @@ from app.crud.rescue_herpetofauna import (
 """
 TEST CRUD FOR AGE GROUP
 """
-#test create age group
+
+
+# test create age group
 @pytest.mark.asyncio
 async def test_create_age_group(
     async_client: AsyncClient,
@@ -34,7 +36,8 @@ async def test_create_age_group(
     assert data["name"] == name_age
     assert "id" in data
 
-#test create age group with name already exists
+
+# test create age group with name already exists
 @pytest.mark.asyncio
 async def test_create_age_group_name_already_exists(
     async_client: AsyncClient,
@@ -61,7 +64,8 @@ async def test_create_age_group_name_already_exists(
     data = response.json()
     assert data["detail"] == "Age group name already exists"
 
-#test get all age groups
+
+# test get all age groups
 @pytest.mark.asyncio
 async def test_get_all_age_groups(
     async_client: AsyncClient,
@@ -86,7 +90,8 @@ async def test_get_all_age_groups(
     data = response.json()
     assert len(data) == 1
 
-#test get age group by id
+
+# test get age group by id
 @pytest.mark.asyncio
 async def test_get_age_group_by_id(
     async_client: AsyncClient,
@@ -112,7 +117,8 @@ async def test_get_age_group_by_id(
     assert data["name"] == name_age
     assert "id" in data
 
-#test get age group by id not found
+
+# test get age group by id not found
 @pytest.mark.asyncio
 async def test_get_age_group_by_id_not_found(
     async_client: AsyncClient,
@@ -125,7 +131,8 @@ async def test_get_age_group_by_id_not_found(
     data = response.json()
     assert data["detail"] == "Age group not found"
 
-#test update age group by id
+
+# test update age group by id
 @pytest.mark.asyncio
 async def test_update_age_group_by_id(
     async_client: AsyncClient,
@@ -154,7 +161,8 @@ async def test_update_age_group_by_id(
     assert data["name"] == new_name_age
     assert "id" in data
 
-#test update age group by id not found
+
+# test update age group by id not found
 @pytest.mark.asyncio
 async def test_update_age_group_by_id_not_found(
     async_client: AsyncClient,
@@ -169,7 +177,8 @@ async def test_update_age_group_by_id_not_found(
     data = response.json()
     assert data["detail"] == "Age group not found"
 
-#test delete age group by id
+
+# test delete age group by id
 @pytest.mark.asyncio
 async def test_delete_age_group_by_id(
     async_client: AsyncClient,
@@ -198,7 +207,8 @@ async def test_delete_age_group_by_id(
 TEST CRUD FOR TRANSECT HERPETOFAUNA
 """
 
-#test create transect herpetofauna
+
+# test create transect herpetofauna
 @pytest.mark.asyncio
 async def test_create_transect_herpetofauna(
     async_client: AsyncClient,
@@ -234,7 +244,8 @@ async def test_create_transect_herpetofauna(
     assert data["longitude_out"] == longitude_out
     assert "id" in data
 
-#test get create transect herpetofauna with invalid number
+
+# test get create transect herpetofauna with invalid number
 @pytest.mark.asyncio
 async def test_create_transect_herpetofauna_with_invalid_number(
     async_client: AsyncClient,
@@ -281,7 +292,8 @@ async def test_create_transect_herpetofauna_with_invalid_number(
     data = response.json()
     assert data["detail"] == "Transect herpetofauna number already exists"
 
-#test get transect herpetofauna by id
+
+# test get transect herpetofauna by id
 @pytest.mark.asyncio
 async def test_get_transect_herpetofauna_by_id(
     async_client: AsyncClient,
@@ -324,7 +336,8 @@ async def test_get_transect_herpetofauna_by_id(
     assert data["longitude_out"] == longitude_out
     assert data["tower_id"] == tower_id
 
-#test get transect herpetofauna by id with invalid id
+
+# test get transect herpetofauna by id with invalid id
 @pytest.mark.asyncio
 async def test_get_transect_herpetofauna_by_id_with_invalid_id(
     async_client: AsyncClient,
@@ -337,7 +350,8 @@ async def test_get_transect_herpetofauna_by_id_with_invalid_id(
     data = response.json()
     assert data["detail"] == "Transect herpetofauna not found"
 
-#test get all transect herpetofauna
+
+# test get all transect herpetofauna
 @pytest.mark.asyncio
 async def test_get_all_transect_herpetofauna(
     async_client: AsyncClient,
@@ -396,7 +410,8 @@ async def test_get_all_transect_herpetofauna(
     data = response.json()
     assert len(data) == 2
 
-#test update transect herpetofauna
+
+# test update transect herpetofauna
 @pytest.mark.asyncio
 async def test_update_transect_herpetofauna(
     async_client: AsyncClient,
@@ -457,7 +472,8 @@ async def test_update_transect_herpetofauna(
     assert data["longitude_out"] == longitude_out_2
     assert data["tower_id"] == tower_id_2
 
-#test delete transect herpetofauna
+
+# test delete transect herpetofauna
 @pytest.mark.asyncio
 async def test_delete_transect_herpetofauna(
     async_client: AsyncClient,
@@ -496,16 +512,12 @@ async def test_delete_transect_herpetofauna(
     assert data["detail"] == "Transect herpetofauna deleted successfully"
 
 
-
-
-
-
-
 """
 TEST CRUD FOR MARK HERPETOFAUNA
 """
 
-#test create mark herpetofauna
+
+# test create mark herpetofauna
 @pytest.mark.asyncio
 async def test_create_mark_herpetofauna(
     async_client: AsyncClient,
@@ -531,7 +543,8 @@ async def test_create_mark_herpetofauna(
     assert data["number"] == number_mark
     assert "id" in data
 
-#test create mark herpetofauna with tower not found
+
+# test create mark herpetofauna with tower not found
 @pytest.mark.asyncio
 async def test_create_mark_herpetofauna_with_tower_not_found(
     async_client: AsyncClient,
@@ -573,7 +586,8 @@ async def test_create_mark_herpetofauna_with_tower_not_found(
     data = response.json()
     assert data["detail"] == "Mark herpetofauna number already exists"
 
-#test get all mark herpetofauna
+
+# test get all mark herpetofauna
 @pytest.mark.asyncio
 async def test_get_all_mark_herpetofauna(
     async_client: AsyncClient,
@@ -621,7 +635,8 @@ async def test_get_all_mark_herpetofauna(
     data = response.json()
     assert len(data) == 2
 
-#test get mark herpetofauna by id
+
+# test get mark herpetofauna by id
 @pytest.mark.asyncio
 async def test_get_mark_herpetofauna_by_id(
     async_client: AsyncClient,
@@ -653,7 +668,8 @@ async def test_get_mark_herpetofauna_by_id(
     data = response.json()
     assert data["number"] == number_mark
 
-#test get mark herpetofauna by id not found
+
+# test get mark herpetofauna by id not found
 @pytest.mark.asyncio
 async def test_get_mark_herpetofauna_by_id_not_found(
     async_client: AsyncClient,
@@ -666,7 +682,8 @@ async def test_get_mark_herpetofauna_by_id_not_found(
     data = response.json()
     assert data["detail"] == "Mark herpetofauna not found"
 
-#test update mark herpetofauna
+
+# test update mark herpetofauna
 @pytest.mark.asyncio
 async def test_update_mark_herpetofauna(
     async_client: AsyncClient,
@@ -710,7 +727,8 @@ async def test_update_mark_herpetofauna(
     data = response.json()
     assert data["number"] == number_mark_2
 
-#test for delete mark herpetofauna
+
+# test for delete mark herpetofauna
 @pytest.mark.asyncio
 async def test_delete_mark_herpetofauna(
     async_client: AsyncClient,
@@ -746,7 +764,8 @@ async def test_delete_mark_herpetofauna(
 TEST FOR CRUD RESCUE HERPETOFAUNA
 """
 
-#test create rescue herpetofauna
+
+# test create rescue herpetofauna
 @pytest.mark.asyncio
 async def test_create_rescue_herpetofauna(
     async_client: AsyncClient,
@@ -774,7 +793,8 @@ async def test_create_rescue_herpetofauna(
     assert data["transect_herpetofauna_id"] == transect_herpetofauna_id
     assert data["age_group_id"] == age_group_id
 
-#test get rescue herpetofauna by id
+
+# test get rescue herpetofauna by id
 @pytest.mark.asyncio
 async def test_get_rescue_herpetofauna_by_id(
     async_client: AsyncClient,
@@ -809,7 +829,8 @@ async def test_get_rescue_herpetofauna_by_id(
     assert data["transect_herpetofauna_id"] == transect_herpetofauna_id
     assert data["age_group_id"] == age_group_id
 
-#test for create rescue herpetofauna with wrong number
+
+# test for create rescue herpetofauna with wrong number
 @pytest.mark.asyncio
 async def test_create_rescue_herpetofauna_with_wrong_number(
     async_client: AsyncClient,
@@ -845,16 +866,17 @@ async def test_create_rescue_herpetofauna_with_wrong_number(
     data = response.json()
     assert data["detail"] == "Rescue herpetofauna number already exists"
 
-#test for get all rescue herpetofauna
+
+# test for get all rescue herpetofauna
 @pytest.mark.asyncio
 async def test_get_all_rescue_herpetofauna(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    number_rescue: int = random_string()
-    specie_id:int = await create_specie(async_client)
+    number_rescue: str = random_string()
+    specie_id: int = await create_specie(async_client)
     transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
-    age_group_id:int = await create_age_group(async_client)
+    age_group_id: int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
         "/api/rescue_herpetofauna", json={
@@ -875,7 +897,8 @@ async def test_get_all_rescue_herpetofauna(
     data = response.json()
     assert len(data) > 0
 
-#test for update rescue herpetofauna
+
+# test for update rescue herpetofauna
 @pytest.mark.asyncio
 async def test_update_rescue_herpetofauna(
     async_client: AsyncClient,
@@ -921,7 +944,8 @@ async def test_update_rescue_herpetofauna(
     assert data["transect_herpetofauna_id"] == transect_herpetofauna_id
     assert data["age_group_id"] == age_group_id_update
 
-#test for delete rescue herpetofauna
+
+# test for delete rescue herpetofauna
 @pytest.mark.asyncio
 async def test_delete_rescue_herpetofauna(
     async_client: AsyncClient,
@@ -929,8 +953,8 @@ async def test_delete_rescue_herpetofauna(
 ) -> None:
     number_rescue: str = random_string()
     specie_id:int = await create_specie(async_client)
-    transect_herpetofauna_id:int = await create_transect_herpetofauna(async_client)
-    age_group_id:int = await create_age_group(async_client)
+    transect_herpetofauna_id: int = await create_transect_herpetofauna(async_client)
+    age_group_id: int = await create_age_group(async_client)
 
     response: Response = await async_client.post(
         "/api/rescue_herpetofauna", json={
@@ -956,7 +980,8 @@ async def test_delete_rescue_herpetofauna(
 TESTS FOR CRUD TRANSECT HERPETOFAUNA TRANSLOCATION
 """
 
-#test for create transect herpetofauna translocation
+
+# test for create transect herpetofauna translocation
 @pytest.mark.asyncio
 async def test_create_transect_herpetofauna_translocation(
     async_client: AsyncClient,
@@ -989,7 +1014,8 @@ async def test_create_transect_herpetofauna_translocation(
     assert data["longitude_out"] == 1.5
     assert data["altitude_out"] == 15
 
-#Test for get all transect herpetofauna translocation
+
+# Test for get all transect herpetofauna translocation
 @pytest.mark.asyncio
 async def test_get_all_transect_herpetofauna_translocation(
     async_client: AsyncClient,
@@ -1030,7 +1056,7 @@ async def test_get_all_transect_herpetofauna_translocation(
 
     assert response.status_code == 201
 
-    #Get two transect herpetofauna translocation
+    # Get two transect herpetofauna translocation
     response: Response = await async_client.get(
         "/api/transect_herpetofauna_translocation",
     )
@@ -1038,7 +1064,8 @@ async def test_get_all_transect_herpetofauna_translocation(
     data = response.json()
     assert len(data) == 2
 
-#Test for get transect herpetofauna translocation by id
+
+# Test for get transect herpetofauna translocation by id
 @pytest.mark.asyncio
 async def test_get_transect_herpetofauna_translocation_by_id(
     async_client: AsyncClient,
@@ -1072,7 +1099,8 @@ async def test_get_transect_herpetofauna_translocation_by_id(
     data = response.json()
     assert data["cod"] == code
 
-#Test for update transect herpetofauna translocation
+
+# Test for update transect herpetofauna translocation
 @pytest.mark.asyncio
 async def test_update_transect_herpetofauna_translocation(
     async_client: AsyncClient,
@@ -1121,13 +1149,14 @@ async def test_update_transect_herpetofauna_translocation(
     assert response.status_code == 200
     assert data["cod"] == code_update
 
-#Test for delete transect herpetofauna translocation
+
+# Test for delete transect herpetofauna translocation
 @pytest.mark.asyncio
 async def test_delete_transect_herpetofauna_translocation(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    #Create transect herpetofauna translocation
+    # Create transect herpetofauna translocation
     code = random_string()
 
     response: Response = await async_client.post(
@@ -1147,7 +1176,7 @@ async def test_delete_transect_herpetofauna_translocation(
     data = response.json()
     transect_herpetofauna_translocation_id = data["id"]
 
-    #delete transect herpetofauna translocation
+    # delete transect herpetofauna translocation
     response: Response = await async_client.delete(
         f"/api/transect_herpetofauna_translocation/{transect_herpetofauna_translocation_id}",
     )
@@ -1159,7 +1188,8 @@ async def test_delete_transect_herpetofauna_translocation(
 TESTS FOR CRUD POINT HERPETOFAUNA TRANSLOCATION
 """
 
-#Test for create point herpetofauna translocation
+
+# Test for create point herpetofauna translocation
 @pytest.mark.asyncio
 async def test_create_point_herpetofauna_translocation(
     async_client: AsyncClient,
@@ -1186,7 +1216,8 @@ async def test_create_point_herpetofauna_translocation(
         assert data["longitude"] == 1.5
         assert data["altitude"] == 15
 
-#Test for get all point herpetofauna translocation
+
+# Test for get all point herpetofauna translocation
 @pytest.mark.asyncio
 async def test_get_all_point_herpetofauna_translocation(
     async_client: AsyncClient,
@@ -1218,7 +1249,7 @@ async def test_get_all_point_herpetofauna_translocation(
     )
     assert response.status_code == 201
 
-    #Get two point herpetofauna translocation
+    # Get two point herpetofauna translocation
     response: Response = await async_client.get(
         "/api/point_herpetofauna_translocation",
     )
@@ -1226,13 +1257,14 @@ async def test_get_all_point_herpetofauna_translocation(
     data = response.json()
     assert len(data) == 2
 
-#Test for get point herpetofauna translocation by id
+
+# Test for get point herpetofauna translocation by id
 @pytest.mark.asyncio
 async def test_get_point_herpetofauna_translocation_by_id(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    #Create point herpetofauna translocation
+    # Create point herpetofauna translocation
     code = random_string()
 
     response: Response = await async_client.post(
@@ -1248,7 +1280,7 @@ async def test_get_point_herpetofauna_translocation_by_id(
     data = response.json()
     point_herpetofauna_translocation_id = data["id"]
 
-    #Get point herpetofauna translocation by id
+    # Get point herpetofauna translocation by id
     response: Response = await async_client.get(
         f"/api/point_herpetofauna_translocation/{point_herpetofauna_translocation_id}",
     )
@@ -1256,13 +1288,14 @@ async def test_get_point_herpetofauna_translocation_by_id(
     data = response.json()
     assert data["cod"] == code
 
-#Update point herpetofauna translocation
+
+# Update point herpetofauna translocation
 @pytest.mark.asyncio
 async def test_update_point_herpetofauna_translocation(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    #Create point herpetofauna translocation
+    # Create point herpetofauna translocation
     code = random_string()
 
     response: Response = await async_client.post(
@@ -1278,7 +1311,7 @@ async def test_update_point_herpetofauna_translocation(
     data = response.json()
     point_herpetofauna_translocation_id = data["id"]
 
-    #Update point herpetofauna translocation
+    # Update point herpetofauna translocation
     code_update = random_string()
 
     response: Response = await async_client.put(
@@ -1294,7 +1327,8 @@ async def test_update_point_herpetofauna_translocation(
     assert response.status_code == 200
     assert data["cod"] == code_update
 
-#Test delete point herpetofauna translocation
+
+# Test delete point herpetofauna translocation
 @pytest.mark.asyncio
 async def test_delete_point_herpetofauna_translocation(
     async_client: AsyncClient,
@@ -1316,7 +1350,7 @@ async def test_delete_point_herpetofauna_translocation(
     data = response.json()
     point_herpetofauna_translocation_id = data["id"]
 
-    #Delete point herpetofauna translocation
+    # Delete point herpetofauna translocation
     response: Response = await async_client.delete(
         f"/api/point_herpetofauna_translocation/{point_herpetofauna_translocation_id}",
     )
@@ -1328,7 +1362,8 @@ async def test_delete_point_herpetofauna_translocation(
 TESTS FOR CRUD TRANLOCATION HERPETOFAUNA
 """
 
-#Test for create translocation herpetofauna
+
+# Test for create translocation herpetofauna
 @pytest.mark.asyncio
 async def test_create_translocation_herpetofauna(
     async_client: AsyncClient,
@@ -1357,7 +1392,6 @@ async def test_create_translocation_herpetofauna(
     )
 
     data = response.json()
-    print(f"La respuesta es {data}")
     assert response.status_code == 201
     assert data["cod"] == code
     assert data["transect_herpetofauna_translocation_id"]== transect_herpetofauna_translocation_id

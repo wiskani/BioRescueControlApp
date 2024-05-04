@@ -179,3 +179,27 @@ async def get_flora_families_relocation(
         else:
             pass
     return flora_families
+
+
+# Get list of families in herpetofauna relocations
+async def get_herpetofauna_families_relocation(
+        db: AsyncSession,
+        ) -> List[str]:
+    herpetofauna_families: List[str] = []
+    herpetofauna_relocations_db = await get_all_translocation_herpetofauna(db)
+    for relocation in herpetofauna_relocations_db:
+        specie = await get_specie_by_id(db, relocation.specie_id)
+        if specie:
+            genus = await get_genus_by_id(db, specie.genus_id)
+            if genus:
+                family = await get_family_by_id(db, genus.family_id)
+                if family:
+                    herpetofauna_families.append(family.family_name)
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
+
+    return herpetofauna_families

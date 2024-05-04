@@ -1,7 +1,9 @@
 from app.services.nivo.barchart import count_families
 from app.schemas.nivo import BarChartFamily
 
-from app.services.nivo.barchart import create_barchart_family
+from app.services.nivo.barchart import (
+        create_barchart_family_flora
+        )
 
 
 def test_count_families() -> None:
@@ -28,7 +30,7 @@ def test_count_families() -> None:
             }
 
 
-def test_create_barchart_family() -> None:
+def test_create_barchart_family_flora() -> None:
     """
     Test make_barchart function.
     """
@@ -54,7 +56,9 @@ def test_create_barchart_family() -> None:
             "Cactaceae",
             ]
 
-    result = create_barchart_family(families_rescue, families_relocation)
+    result = create_barchart_family_flora(
+            families_rescue, families_relocation
+            )
 
     famili1 = BarChartFamily(
             family_name="Acanthaceae",

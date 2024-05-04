@@ -9,17 +9,16 @@ from app.tests.utils.towers_example import *
 from app.tests.utils.species_example import *
 
 
-
-#make a fuction that return a random string of 10 characters
+# make a fuction that return a random string of 10 characters
 def random_string() -> str:
     return "".join(random.choices(string.ascii_lowercase, k=10))
 
 
-#Create a Age Group with name
+# Create a Age Group with name
 @pytest.mark.asyncio
 async def create_age_groupWithName(
     async_client: AsyncClient,
-) -> tuple[int, str] :
+) -> tuple[int, str]:
     name = random_string()
     response: Response = await async_client.post(
         "/api/age_group", json={
@@ -30,7 +29,8 @@ async def create_age_groupWithName(
     data = response.json()
     return data["id"], name
 
-#Create a Age Group
+
+# Create a Age Group
 @pytest.mark.asyncio
 async def create_age_group(
     async_client: AsyncClient,
@@ -45,13 +45,14 @@ async def create_age_group(
     data = response.json()
     return data["id"]
 
-#Create transect herpetofauna
+
+# Create transect herpetofauna
 @pytest.mark.asyncio
 async def create_transect_herpetofauna(
     async_client: AsyncClient,
 ) -> int:
     number_transect: str = random_string()
-    tower_id: int =  await create_random_tower(async_client)
+    tower_id: int = await create_random_tower(async_client)
     latitude_in: float = random.uniform(-90, 90)
     longitude_in: float = random.uniform(-180, 180)
     latitude_out: float = random.uniform(-90, 90)
@@ -75,13 +76,14 @@ async def create_transect_herpetofauna(
     data = response.json()
     return data["id"]
 
-#Create transect herpetofauna with number
+
+# Create transect herpetofauna with number
 @pytest.mark.asyncio
 async def create_transect_herpetofaunaWithNumber(
     async_client: AsyncClient,
 ) -> tuple[int, str]:
     number_transect: str = random_string()
-    tower_id: int =  await create_random_tower(async_client)
+    tower_id: int = await create_random_tower(async_client)
     latitude_in: float = random.uniform(-90, 90)
     longitude_in: float = random.uniform(-180, 180)
     latitude_out: float = random.uniform(-90, 90)
@@ -105,13 +107,16 @@ async def create_transect_herpetofaunaWithNumber(
     data = response.json()
     return data["id"], number_transect
 
-#Create a mark herpetofauna
+
+# Create a mark herpetofauna
 @pytest.mark.asyncio
 async def create_mark_herpetofauna(
     async_client: AsyncClient,
 ) -> int:
     number_mark: int = random.randint(1, 100)
-    rescue_herpetofauna_id: int = await create_rescue_herpetofauna(async_client)
+    rescue_herpetofauna_id: int = await create_rescue_herpetofauna(
+            async_client
+            )
 
     response: Response = await async_client.post(
         "/api/mark_herpetofauna", json={
@@ -131,7 +136,7 @@ async def create_mark_herpetofauna(
     return data["id"]
 
 
-#Create a mark herpetofauna with number
+# Create a mark herpetofauna with number
 @pytest.mark.asyncio
 async def create_mark_herpetofaunaWithNumber(
     async_client: AsyncClient,
@@ -153,14 +158,15 @@ async def create_mark_herpetofaunaWithNumber(
     data = response.json()
     return data["id"], number_mark
 
-#Create a rescue herpetofauna
+
+# Create a rescue herpetofauna
 @pytest.mark.asyncio
 async def create_rescue_herpetofauna(
     async_client: AsyncClient,
 ) -> int:
 
     transect_id: int = await create_transect_herpetofauna(async_client)
-    number : str = random_string()
+    number: str = random_string()
     specie_id: int = await create_specie(async_client)
     age_group_id: int = await create_age_group(async_client)
 
@@ -177,14 +183,15 @@ async def create_rescue_herpetofauna(
     data = response.json()
     return data["id"]
 
-#Create a rescue herpetofauna with number
+
+# Create a rescue herpetofauna with number
 @pytest.mark.asyncio
 async def create_rescue_herpetofaunaWithNumber(
     async_client: AsyncClient,
 ) -> tuple[int, str]:
 
     transect_id: int = await create_transect_herpetofauna(async_client)
-    number : str = random_string()
+    number: str = random_string()
     specie_id: int = await create_specie(async_client)
     age_group_id: int = await create_age_group(async_client)
 
@@ -201,13 +208,14 @@ async def create_rescue_herpetofaunaWithNumber(
     data = response.json()
     return data["id"], number
 
-#Create a transect herpetofauna translocation
+
+# Create a transect herpetofauna translocation
 @pytest.mark.asyncio
 async def create_transect_herpetofauna_translocation(
     async_client: AsyncClient,
 ) -> int:
 
-    code= random_string()
+    code = random_string()
 
     response: Response = await async_client.post(
         "/api/transect_herpetofauna_translocation", json={
@@ -226,13 +234,14 @@ async def create_transect_herpetofauna_translocation(
     assert response.status_code == 201
     return data["id"]
 
-#Create a transect herpetofauna translocation with code
+
+# Create a transect herpetofauna translocation with code
 @pytest.mark.asyncio
 async def create_transect_herpetofauna_translocationWithCode(
     async_client: AsyncClient,
 ) -> tuple[int, str]:
 
-    code= random_string()
+    code = random_string()
 
     response: Response = await async_client.post(
         "/api/transect_herpetofauna_translocation", json={
@@ -251,55 +260,68 @@ async def create_transect_herpetofauna_translocationWithCode(
     assert response.status_code == 201
     return data["id"], code
 
-#Create point herpetofauna translocation
+
+# Create point herpetofauna translocation
 @pytest.mark.asyncio
 async def create_point_herpetofauna_translocation(
-    async_client: AsyncClient,
-) -> int:
+        async_client: AsyncClient,
+        ) -> int:
 
-        code= random_string()
+    code = random_string()
+    response: Response = await async_client.post(
+                "/api/point_herpetofauna_translocation", json={
+                    "cod": code,
+                    "date": "2021-10-10T00:00:00",
+                    "latitude": 1.5,
+                    "longitude": 1.5,
+                    "altitude": 15,
+                    },
+                )
 
-        response: Response = await async_client.post(
-            "/api/point_herpetofauna_translocation", json={
-                "cod": code,
-                "date": "2021-10-10T00:00:00",
-                "latitude": 1.5,
-                "longitude": 1.5,
-                "altitude": 15,
-            },
-        )
+    data = response.json()
+    assert response.status_code == 201
+    return data["id"]
 
-        data = response.json()
-        assert response.status_code == 201
-        return data["id"]
 
-#Create point herpetofauna translocation with code
+# Create point herpetofauna translocation with code
 @pytest.mark.asyncio
 async def create_point_herpetofauna_translocation_with_code(
     async_client: AsyncClient,
-) -> tuple[int, str]:
+    ) -> tuple[int, str]:
+    code = random_string()
 
-        code= random_string()
-
-        response: Response = await async_client.post(
+    response: Response = await async_client.post(
             "/api/point_herpetofauna_translocation", json={
                 "cod": code,
                 "date": "2021-10-10T00:00:00",
                 "latitude": 1.5,
                 "longitude": 1.5,
                 "altitude": 15,
-            },
-        )
+                },
+            )
 
-        data = response.json()
-        assert response.status_code == 201
-        return data["id"], code
+    data = response.json()
+    assert response.status_code == 201
+    return data["id"], code
 
-#Create a rescue herpetofauna with extra data
+
+# Create a rescue herpetofauna with extra data
 @pytest.mark.asyncio
 async def create_rescue_herpetofaunaWithExtraData(
     async_client: AsyncClient,
-) -> tuple[int, str, datetime, datetime, float, float, int, float, float, int, str]:
+) -> tuple[
+        int,
+        str,
+        datetime,
+        datetime,
+        float,
+        float,
+        int,
+        float,
+        float,
+        int,
+        str
+        ]:
 
     (
             transect_id,
@@ -313,7 +335,7 @@ async def create_rescue_herpetofaunaWithExtraData(
             longitude_out,
 
     ) = await create_transect_herpetofaunaWithExtraData(async_client)
-    number : str = random_string()
+    number: str = random_string()
     specie_id, specie_name = await create_specieWithName(async_client)
     age_group_id: int = await create_age_group(async_client)
 
@@ -342,13 +364,14 @@ async def create_rescue_herpetofaunaWithExtraData(
             specie_name
             )
 
-#Create transect herpetofauna with number
+
+# Create transect herpetofauna with number
 @pytest.mark.asyncio
 async def create_transect_herpetofaunaWithExtraData(
     async_client: AsyncClient,
 ) -> tuple[int, str, datetime, datetime, float, float, int, float, float]:
     number_transect: str = random_string()
-    tower_id: int =  await create_random_tower(async_client)
+    tower_id: int = await create_random_tower(async_client)
     latitude_in: float = random.uniform(-90, 90)
     longitude_in: float = random.uniform(-180, 180)
     latitude_out: float = random.uniform(-90, 90)
@@ -379,8 +402,5 @@ async def create_transect_herpetofaunaWithExtraData(
             longitude_in,
             data["altitude_in"],
             latitude_out,
-            longitude_out 
+            longitude_out
             )
-
-
-

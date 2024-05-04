@@ -23,6 +23,7 @@ from app.services.nivo.utils import (
         get_herpetofauna_families_rescues,
         get_mammals_families_rescues,
         get_flora_families_relocation,
+        get_herpetofauna_families_relocation,
         )
 
 
@@ -173,9 +174,9 @@ async def test_get_flora_families_rescue(
     assert flora_families == expected_result
 
 
-# test for get_herpetofauna_families
+# test for get_herpetofauna_families_rescues
 @pytest.mark.asyncio
-async def test_get_herpetofauna_families(
+async def test_get_herpetofauna_families_rescues(
         async_client: AsyncClient,
         async_session: AsyncSession
         ) -> None:
@@ -627,3 +628,69 @@ async def test_get_flora_families_relocation(
     expected_result = [family1, family2, family3]
 
     assert flora_families == expected_result
+
+# test for get_herpetofauna_families_relocation
+@pytest.mark.asyncio
+async def test_get_herpetofauna_families_relocation(
+        async_client: AsyncClient,
+        async_session: AsyncSession
+        ) -> None:
+
+    # Create families
+    specie1, genus1, family1, specieId1, genusId1, familyId1 = await create_specieWithFamily(async_client)
+    specie2, genus2, family2, specieId2, genusId2, familyId2 = await create_specieWithFamily(async_client)
+    specie3, genus3, family3, specieId3, genusId3, familyId3 = await create_specieWithFamily(async_client)
+
+    # Create transect herpetofauna translocation
+    transect_herpetofauna_translocation_id: int = await create_transect_herpetofauna_translocation(async_client)
+
+    # Create point herpetofauna translocation
+    point_herpetofauna_translocation_id: int = await create_point_herpetofauna_translocation(async_client)
+
+    # Create mark herpetofauna
+    mark_herpetofauna_id: int = await create_mark_herpetofauna(async_client)
+
+    # Create translocations herpetofauna
+    response: Response = await async_client.post(
+        "/api/translocation_herpetofauna", json={
+            "cod": "1",
+            "transect_herpetofauna_translocation_id": transect_herpetofauna_translocation_id,
+            "point_herpetofauna_translocation_id": point_herpetofauna_translocation_id,
+            "specie_id": specieId1,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
+        },
+    )
+    assert response.status_code == 201
+
+    response: Response = await async_client.post(
+        "/api/translocation_herpetofauna", json={
+            "cod": "2",
+            "transect_herpetofauna_translocation_id": transect_herpetofauna_translocation_id,
+            "point_herpetofauna_translocation_id": point_herpetofauna_translocation_id,
+            "specie_id": specieId2,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
+        },
+    )
+    assert response.status_code == 201
+
+    response: Response = await async_client.post(
+        "/api/translocation_herpetofauna", json={
+            "cod": "3",
+            "transect_herpetofauna_translocation_id": transect_herpetofauna_translocation_id,
+            "point_herpetofauna_translocation_id": point_herpetofauna_translocation_id,
+            "specie_id": specieId3,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
+        },
+    )
+    assert response.status_code == 201
+
+    # Get herpetofauna families relocation
+    herpetofauna_families = await get_herpetofauna_families_relocation(
+            async_session
+            )
+
+    # Expected result
+    expected_result = [family1, family2, family3]
+
+    # Check result
+    assert herpetofauna_families == expected_result

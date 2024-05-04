@@ -10,7 +10,9 @@ from app.services.nivo.utils import (
         )
 from app.services.nivo.sunburst import create_sunburst_data
 
-from app.services.nivo.barchart import create_barchart_family
+from app.services.nivo.barchart import (
+        create_barchart_family_flora,
+        )
 
 from app.api.deps import PermissonsChecker, get_db
 
@@ -49,7 +51,7 @@ async def get_sunburst_data(
     return sunburst_data
 
 
-# Get Bar Chart data for all rescues
+# Get Bar Chart data for all rescues flora
 @router.get(
         path="/api/nivo/barchart/flora",
         response_model=List[BarChartFamily],
@@ -66,7 +68,7 @@ async def get_barchart_data_flora(
     flora_families_relocation = await get_flora_families_relocation(db)
 
     # create bar chart data
-    bar_chart_data = create_barchart_family(
+    bar_chart_data = create_barchart_family_flora(
             flora_families_rescues,
             flora_families_relocation,
             )
