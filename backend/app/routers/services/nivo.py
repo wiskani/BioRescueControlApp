@@ -6,12 +6,14 @@ from app.services.nivo.utils import (
         get_flora_families_rescues,
         get_flora_families_relocation,
         get_herpetofauna_families_rescues,
+        get_herpetofauna_families_relocation,
         get_mammals_families_rescues,
+        get_mammals_families_relocation,
         )
 from app.services.nivo.sunburst import create_sunburst_data
 
 from app.services.nivo.barchart import (
-        create_barchart_family_flora,
+        create_barchart_family,
         )
 
 from app.api.deps import PermissonsChecker, get_db
@@ -68,9 +70,59 @@ async def get_barchart_data_flora(
     flora_families_relocation = await get_flora_families_relocation(db)
 
     # create bar chart data
-    bar_chart_data = create_barchart_family_flora(
+    bar_chart_data = create_barchart_family(
             flora_families_rescues,
             flora_families_relocation,
+            )
+
+    return bar_chart_data
+
+
+# Get Bar Chart data for all rescues herpetofauna
+@router.get(
+        path="/api/nivo/barchart/herpetofauna",
+        response_model=List[BarChartFamily],
+        tags=["nivo"],
+        status_code=status.HTTP_200_OK,
+        summary="Get Bar Chart data for all rescues of herpetofauna",
+        )
+async def get_barchart_data_herpetofauna(
+        db: AsyncSession = Depends(get_db),
+        authorized: bool = Depends(PermissonsChecker(["admin"])),
+        ) -> List[BarChartFamily]:
+    # get list of families
+    herpetofauna_families_rescues = await get_herpetofauna_families_rescues(db)
+    herpetofauna_families_relocation = await get_herpetofauna_families_relocation(db)
+
+    # create bar chart data
+    bar_chart_data = create_barchart_family(
+            herpetofauna_families_rescues,
+            herpetofauna_families_relocation,
+            )
+
+    return bar_chart_data
+
+
+# Get Bar Chart data for all rescues mammals
+@router.get(
+        path="/api/nivo/barchart/mammals",
+        response_model=List[BarChartFamily],
+        tags=["nivo"],
+        status_code=status.HTTP_200_OK,
+        summary="Get Bar Chart data for all rescues of mammals",
+        )
+async def get_barchart_data_mammals(
+        db: AsyncSession = Depends(get_db),
+        authorized: bool = Depends(PermissonsChecker(["admin"])),
+        ) -> List[BarChartFamily]:
+    # get list of families
+    mammals_families_rescues = await get_mammals_families_rescues(db)
+    mammals_families_relocation = await get_mammals_families_relocation(db)
+
+    # create bar chart data
+    bar_chart_data = create_barchart_family(
+            mammals_families_rescues,
+            mammals_families_relocation,
             )
 
     return bar_chart_data

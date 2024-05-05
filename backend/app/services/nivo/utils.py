@@ -2,29 +2,30 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
 from app.crud.species import (
-        get_specie_by_id,
-        get_genus_by_id,
-        get_family_by_id,
-        )
+    get_specie_by_id,
+    get_genus_by_id,
+    get_family_by_id,
+)
 from app.crud.rescue_flora import (
-        get_all_flora_rescues,
-        get_all_flora_relocations,
-        get_flora_rescue_by_id
-        )
+    get_all_flora_rescues,
+    get_all_flora_relocations,
+    get_flora_rescue_by_id
+)
 from app.crud.rescue_herpetofauna import (
-        get_all_rescue_herpetofauna,
-        get_all_translocation_herpetofauna
-        )
+    get_all_rescue_herpetofauna,
+    get_all_translocation_herpetofauna
+)
 
 from app.crud.rescue_mammals import (
-        get_rescue_mammals,
-        get_release_mammals
-        )
+    get_rescue_mammal_id,
+    get_rescue_mammals,
+    get_release_mammals
+)
 
 
 # Get list of families in flora rescues
 async def get_flora_families_rescues(
-        db: AsyncSession,
+    db: AsyncSession,
         ) -> List[str]:
     flora_families: List[str] = []
     flora_rescues_db = await get_all_flora_rescues(db)
@@ -63,7 +64,7 @@ async def get_flora_families_rescues(
 
 # Get list of families in herpetofauna rescues
 async def get_herpetofauna_families_rescues(
-        db: AsyncSession,
+    db: AsyncSession,
         ) -> List[str]:
     herpetofauna_families: List[str] = []
     herpetofauna_rescues_db = await get_all_rescue_herpetofauna(db)
@@ -203,3 +204,56 @@ async def get_herpetofauna_families_relocation(
             pass
 
     return herpetofauna_families
+
+
+# Get list of families in mammals relocations
+async def get_mammals_families_relocation(
+        db: AsyncSession,
+        ) -> List[str]:
+    mammals_families: List[str] = []
+    mammals_relocations_db = await get_release_mammals(db)
+    for relocation in mammals_relocations_db:
+        if relocation.rescue_mammals_id:
+            rescue = await get_rescue_mammal_id(
+                    db,
+                    relocation.rescue_mammals_id
+                    )
+            if rescue:
+                if rescue.genus_id:
+                    genus = await get_genus_by_id(
+                            db,
+                            rescue.genus_id
+                            )
+                    if genus:
+                        family = await get_family_by_id(
+                                db,
+                                genus.family_id
+                                )
+                        if family:
+                            mammals_families.append(family.family_name)
+                        else:
+                            pass
+                    else:
+                        pass
+                else:
+                    species = await get_specie_by_id(
+                            db,
+                            rescue.specie_id
+                            )
+                    if species:
+                        genus = await get_genus_by_id(db, species.genus_id)
+                        if genus:
+                            family = await get_family_by_id(
+                                    db,
+                                    genus.family_id
+                                    )
+                            if family:
+                                mammals_families.append(family.family_name)
+                            else:
+                                pass
+                        else:
+                            pass
+        else:
+            pass
+
+    return mammals_families

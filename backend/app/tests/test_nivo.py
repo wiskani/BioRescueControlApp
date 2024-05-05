@@ -24,6 +24,7 @@ from app.services.nivo.utils import (
         get_mammals_families_rescues,
         get_flora_families_relocation,
         get_herpetofauna_families_relocation,
+        get_mammals_families_relocation,
         )
 
 
@@ -629,6 +630,7 @@ async def test_get_flora_families_relocation(
 
     assert flora_families == expected_result
 
+
 # test for get_herpetofauna_families_relocation
 @pytest.mark.asyncio
 async def test_get_herpetofauna_families_relocation(
@@ -694,3 +696,151 @@ async def test_get_herpetofauna_families_relocation(
 
     # Check result
     assert herpetofauna_families == expected_result
+
+
+# test for get_mammals_families_relocation
+@pytest.mark.asyncio
+async def test_get_mammals_families_relocation(
+        async_client: AsyncClient,
+        async_session: AsyncSession
+        ) -> None:
+
+    # Create families
+    specie1, genus1, family1, specieId1, genusId1, familyId1 = await create_specieWithFamily(async_client)
+    specie2, genus2, family2, specieId2, genusId2, familyId2 = await create_specieWithFamily(async_client)
+    specie3, genus3, family3, specieId3, genusId3, familyId3 = await create_specieWithFamily(async_client)
+
+    habitat_id = await create_habitat(async_client)
+    age_group_id = await create_age_group(async_client)
+
+    # Create rescues
+    response = await async_client.post(
+        "api/rescue_mammals", json={
+            "cod": "1",
+            "date": "2021-10-10T00:00:00",
+            "mark": "mark",
+            "longitude": 1.0,
+            "latitude": 1.0,
+            "altitude": 10,
+            "gender": True,
+            "LT": 1.0,
+            "LC": 1.0,
+            "LP": 1.0,
+            "LO": 1.0,
+            "LA": 1.0,
+            "weight": 10,
+            "observation": "observation",
+            "is_specie_confirmed": True,
+            "habitat_id": habitat_id,
+            "age_group_id": age_group_id,
+            "specie_id": specieId1,
+            "genus_id": None
+        },
+    )
+    assert response.status_code == 201
+    rescue_id1 = response.json()["id"]
+
+    response = await async_client.post(
+        "api/rescue_mammals", json={
+            "cod": "2",
+            "date": "2021-10-10T00:00:00",
+            "mark": "mark",
+            "longitude": 1.0,
+            "latitude": 1.0,
+            "altitude": 10,
+            "gender": True,
+            "LT": 1.0,
+            "LC": 1.0,
+            "LP": 1.0,
+            "LO": 1.0,
+            "LA": 1.0,
+            "weight": 10,
+            "observation": "observation",
+            "is_specie_confirmed": True,
+            "habitat_id": habitat_id,
+            "age_group_id": age_group_id,
+            "specie_id": specieId2,
+            "genus_id": None
+        },
+    )
+    assert response.status_code == 201
+    rescue_id2 = response.json()["id"]
+
+    response = await async_client.post(
+        "api/rescue_mammals", json={
+            "cod": "3",
+            "date": "2021-10-10T00:00:00",
+            "mark": "mark",
+            "longitude": 1.0,
+            "latitude": 1.0,
+            "altitude": 10,
+            "gender": True,
+            "LT": 1.0,
+            "LC": 1.0,
+            "LP": 1.0,
+            "LO": 1.0,
+            "LA": 1.0,
+            "weight": 10,
+            "observation": "observation",
+            "is_specie_confirmed": True,
+            "habitat_id": habitat_id,
+            "age_group_id": age_group_id,
+            "specie_id": None,
+            "genus_id": genusId3
+        },
+    )
+    assert response.status_code == 201
+    rescue_id3 = response.json()["id"]
+
+    site_release_mammals_id: int = await create_site_release(async_client)
+
+    # Create mammals relocations
+    response = await async_client.post(
+        "api/release_mammals", json={
+            "cod": "1",
+            "longitude": 1.0,
+            "latitude": 1.0,
+            "altitude": 10,
+            "sustrate": "substrate",
+            "site_release_mammals_id": site_release_mammals_id,
+            "rescue_mammals_id": rescue_id1,
+        }
+    )
+    assert response.status_code == 201
+
+    response = await async_client.post(
+        "api/release_mammals", json={
+            "cod": "2",
+            "longitude": 1.0,
+            "latitude": 1.0,
+            "altitude": 10,
+            "sustrate": "substrate",
+            "site_release_mammals_id": site_release_mammals_id,
+            "rescue_mammals_id": rescue_id2,
+        }
+    )
+
+    assert response.status_code == 201
+
+    response = await async_client.post(
+        "api/release_mammals", json={
+            "cod": "3",
+            "longitude": 1.0,
+            "latitude": 1.0,
+            "altitude": 10,
+            "sustrate": "substrate",
+            "site_release_mammals_id": site_release_mammals_id,
+            "rescue_mammals_id": rescue_id3,
+        }
+    )
+
+    assert response.status_code == 201
+
+    # Get mammals families relocation
+    mammals_families = await get_mammals_families_relocation(async_session)
+
+    # Expected result
+    expected_result = [family1, family2, family3]
+
+    # Check result
+    assert mammals_families == expected_result

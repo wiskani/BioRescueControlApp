@@ -15,6 +15,9 @@ import {
     GetRescueMammalsWithSpecies,
     GetRealeaseMammalsWithSpecies
 } from "../libs/rescue_mammals/ApiRescueMammalsWithSpecies";
+import {
+    GetBarChartMammalsByFamily
+} from "../libs/nivo/ApiBarChartFamily";
 
 //Leaflet imports
 import 'leaflet/dist/leaflet.css'
@@ -22,6 +25,8 @@ import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 
 //Components imports
 import { LineProyect } from '../components/Map/lineProyect';
+import BarChartFamily from '../components/Nivo/BarChartFamily';
+import Loading from './loading';
 
 //import with dynamic
 const MapContainer = dynamic(
@@ -60,13 +65,42 @@ const RealeaseMammalSpecieMap = dynamic(
     { ssr: false }
 )
 
+interface BarChartFamilyDataFlex extends BarChartFamilyDataSpa {
+    [key: string]: any;
+}
 
 export default function Flora() {
     const { data: session } = useSession();
     const [rescueMammals, setRescueMammals] = useState<RescueMammalsWithSpecieData[]>([]);
     const [realeaseMammals, setRealeaseMammals] = useState<ReleaseMammalsWithSpecieData[]>([]);
+    const [barChartData, setBarChartData] = useState<BarChartFamilyDataSpa[]>(
+        [
+        {
+            Familia: "sin datos",
+            Rescates: 0,
+            color_rescate: "hsl(0, 100%, 50%)",
+            Liberaciones: 0,
+            color_reubicacion: "hsl(0, 100%, 50%)"
+
+        },
+        ]
+    )
+
+    const [loadingBarChart, setLoadingBarChart] = useState(true)
 
     const user = session?.user;
+
+    const trasformedData = (data: BarChartFamilyData[]): BarChartFamilyDataSpa[] => {
+        return data.map((item) => {
+            return {
+                Familia: item.family_name,
+                Rescates: item.rescue_count,
+                color_rescate: item.rescue_color,
+                Liberaciones: item.relocation_count,
+                color_reubicacion: item.relocation_color
+            }
+        })
+    }
 
     const rescueDataMammals = useCallback(async (): Promise<RescueMammalsWithSpecieData[]>=>{
         if (user){
@@ -88,6 +122,17 @@ export default function Flora() {
         }
     }, [user])
 
+    const barChartDataMammals = useCallback(async (): Promise<BarChartFamilyData[]>=>{
+        if (user){
+            const data= await GetBarChartMammalsByFamily({token: user?.token})
+            return data
+        }
+        else{
+            return []
+        }
+    }, [user])
+
+
 
     useEffect(() => {
         if (!session?.user) {
@@ -100,9 +145,13 @@ export default function Flora() {
             realeaseDataMammals().then((data) => {
                 setRealeaseMammals(data)
             })
+            barChartDataMammals().then((data) => {
+                setBarChartData(trasformedData(data))
+                setLoadingBarChart(false)
+            })
         }
 
-    }, [session, rescueDataMammals, realeaseDataMammals])
+    }, [session, rescueDataMammals, realeaseDataMammals, barChartDataMammals])
 
 
     const lineOptions = { color: 'red' }
@@ -204,7 +253,24 @@ export default function Flora() {
                         <RealeaseMammalSpecieMap data={realeaseMammals} />
                         <Legend colors={legedColors} labels={legendLabels} />
                     </MapContainer> 
-                    
+                </div>
+                <div className='
+                    md:w-1/2
+                    p-4 h-144
+                    flex
+                    justify-center
+                    items-center
+                    2xl:h-144
+                    xl:h-128
+                    md:h-96
+                    sm:h-80
+                    '
+                >
+
+                    {
+                        loadingBarChart ? <Loading/> :
+                            <BarChartFamily data={barChartData as BarChartFamilyDataFlex[]} />
+                    }
                 </div>
             </div>
         </div>

@@ -17,7 +17,9 @@ from app.crud.rescue_mammals import (
 """
 TEST CRUD HABITAT
 """
-#test create habitat
+
+
+# test create habitat
 @pytest.mark.asyncio
 async def test_create_habitat(
     async_client: AsyncClient,
@@ -35,7 +37,8 @@ async def test_create_habitat(
     assert data["name"] == name_habitat
     assert "id" in data
 
-#test create habitat with name already exists
+
+# test create habitat with name already exists
 @pytest.mark.asyncio
 async def test_create_habitat_name_already_exists(
     async_client: AsyncClient,
@@ -61,13 +64,14 @@ async def test_create_habitat_name_already_exists(
     assert response.status_code == 409
     assert data["detail"] == "Habitat already exists"
 
-#test get all habitats
+
+# test get all habitats
 @pytest.mark.asyncio
 async def test_get_all_habitats(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    #create two habitats
+    # create two habitats
     name_habitat1 = random_string()
     name_habitat2 = random_string()
 
@@ -342,9 +346,7 @@ async def test_create_rescue_mammal_with_specie_and_genus_are_null_same_time(
     assert data["detail"] == "specie or genus must be not null"
 
 
-
-
-#test for create rescue mammal with cod already exists
+# test for create rescue mammal with cod already exists
 @pytest.mark.asyncio
 async def test_create_rescue_mammal_cod_already_exists(
     async_client: AsyncClient,
@@ -409,7 +411,8 @@ async def test_create_rescue_mammal_cod_already_exists(
     assert response.status_code == 409
     assert data["detail"] == "Rescue mammal already exists"
 
-#test for get all rescue mammals
+
+# test for get all rescue mammals
 @pytest.mark.asyncio
 async def test_get_all_rescue_mammals(
     async_client: AsyncClient,
@@ -479,7 +482,8 @@ async def test_get_all_rescue_mammals(
     assert response.status_code == 200
     assert len(data) == 2
 
-#test for get rescue mammal by id
+
+# test for get rescue mammal by id
 @pytest.mark.asyncio
 async def test_get_rescue_mammal_by_id(
     async_client: AsyncClient,
@@ -535,7 +539,8 @@ async def test_get_rescue_mammal_by_id(
     assert data["specie_id"] == specie_id
     assert data["genus_id"] == None
 
-#test for get rescue mammal by id not found
+
+# test for get rescue mammal by id not found
 @pytest.mark.asyncio
 async def test_get_rescue_mammal_by_id_not_found(
     async_client: AsyncClient,
@@ -546,7 +551,8 @@ async def test_get_rescue_mammal_by_id_not_found(
     assert response.status_code == 404
     assert data["detail"] == "Rescue Mammals not found"
 
-#test for update rescue mammal
+
+# test for update rescue mammal
 @pytest.mark.asyncio
 async def test_update_rescue_mammal(
     async_client: AsyncClient,
@@ -629,7 +635,8 @@ async def test_update_rescue_mammal(
     assert data["specie_id"] == None
     assert data["genus_id"] == genus_id
 
-#test for delete rescue mammal
+
+# test for delete rescue mammal
 @pytest.mark.asyncio
 async def test_delete_rescue_mammal(
     async_client: AsyncClient,
@@ -667,13 +674,14 @@ async def test_delete_rescue_mammal(
     data = response.json()
     assert response.status_code == 201
 
-    #delete rescue mammal
+    # delete rescue mammal
     response = await async_client.delete(f"api/rescue_mammals/{data['id']}")
     assert response.status_code == 200
     data = response.json()
     assert data["detail"] == "Rescue Mammals deleted successfully"
 
-#test for delete rescue mammal not found
+
+# test for delete rescue mammal not found
 @pytest.mark.asyncio
 async def test_delete_rescue_mammal_not_found(
     async_client: AsyncClient,
@@ -688,7 +696,7 @@ async def test_delete_rescue_mammal_not_found(
 TEST FOR SITE RELEASE MAMMALS
 """
 
-#test for create site release mammal
+# test for create site release mammal
 @pytest.mark.asyncio
 async def test_create_site_release_mammal(
     async_client: AsyncClient,
@@ -705,7 +713,8 @@ async def test_create_site_release_mammal(
     assert response.status_code == 201
     assert data["name"] == name
 
-#test for get all site release mammals
+
+# test for get all site release mammals
 @pytest.mark.asyncio
 async def test_get_all_site_release_mammals(
     async_client: AsyncClient,
@@ -737,13 +746,14 @@ async def test_get_all_site_release_mammals(
     assert data[0]["name"] == name1
     assert data[1]["name"] == name2
 
-#test for get site release mammal by id
+
+# test for get site release mammal by id
 @pytest.mark.asyncio
 async def test_get_site_release_mammal_by_id(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    #create site release mammal
+    # create site release mammal
     name = random_string()
 
     response = await async_client.post(
@@ -754,13 +764,14 @@ async def test_get_site_release_mammal_by_id(
     data = response.json()
     assert response.status_code == 201
 
-    #get site release mammal by id
+    # get site release mammal by id
     response = await async_client.get(f"api/site_release_mammals/{data['id']}")
     data = response.json()
     assert response.status_code == 200
     assert data["name"] == name
 
-#test for get site release mammal by id not found
+
+# test for get site release mammal by id not found
 @pytest.mark.asyncio
 async def test_get_site_release_mammal_by_id_not_found(
     async_client: AsyncClient,
@@ -771,13 +782,14 @@ async def test_get_site_release_mammal_by_id_not_found(
     assert response.status_code == 404
     assert data["detail"] == "Site Release Mammals not found"
 
-#test for update site release mammal
+
+# test for update site release mammal
 @pytest.mark.asyncio
 async def test_update_site_release_mammal(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    #create site release mammal
+    # create site release mammal
     name = random_string()
 
     response = await async_client.post(
@@ -788,7 +800,7 @@ async def test_update_site_release_mammal(
     data = response.json()
     assert response.status_code == 201
 
-    #update site release mammal
+    # update site release mammal
     response = await async_client.put(
         f"api/site_release_mammals/{data['id']}", json={
             "name": "name2",
@@ -798,7 +810,8 @@ async def test_update_site_release_mammal(
     assert response.status_code == 200
     assert data["name"] == "name2"
 
-#test for update site release mammal not found
+
+# test for update site release mammal not found
 @pytest.mark.asyncio
 async def test_update_site_release_mammal_not_found(
     async_client: AsyncClient,
@@ -813,13 +826,14 @@ async def test_update_site_release_mammal_not_found(
     assert response.status_code == 404
     assert data["detail"] == "Site Release Mammal not found"
 
-#test for delete site release mammal
+
+# test for delete site release mammal
 @pytest.mark.asyncio
 async def test_delete_site_release_mammal(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    #create site release mammal
+    # create site release mammal
     name = random_string()
 
     response = await async_client.post(
@@ -830,7 +844,7 @@ async def test_delete_site_release_mammal(
     data = response.json()
     assert response.status_code == 201
 
-    #delete site release mammal
+    # delete site release mammal
     response = await async_client.delete(f"api/site_release_mammals/{data['id']}")
     assert response.status_code == 200
     data = response.json()
@@ -839,7 +853,9 @@ async def test_delete_site_release_mammal(
 """
 TEST FOR RELEASE MAMMALS
 """
-#test for create release mammal
+
+
+# test for create release mammal
 @pytest.mark.asyncio
 async def test_create_release_mammal(
     async_client: AsyncClient,
@@ -861,7 +877,6 @@ async def test_create_release_mammal(
         }
     )
     data = response.json()
-    print(f"La respuesta es: {data}")
     assert response.status_code == 201
     assert data["cod"] == cod
 

@@ -17,7 +17,7 @@ def count_families(families: List[str]) -> Dict[str, int]:
     return families_dic
 
 
-def create_barchart_family_flora(
+def create_barchart_family(
         flora_families_rescues: List[str],
         flora_families_relocation: List[str],
         ) -> List[BarChartFamily]:
