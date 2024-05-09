@@ -21,9 +21,13 @@ import { GetBarChartFloraByFamily } from "../libs/nivo/ApiBarChartFamily";
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
 
+//Table imports
+import { createColumnHelper } from '@tanstack/react-table';
+
 //Components imports
 import { LineProyect } from '../components/Map/lineProyect';
 import BarChartFamily from '../components/Nivo/BarChartFamily';
+import { TableFilter } from '../components/Table/TableFilter';
 import Loading from './loading';
 
 //import with dynamic
