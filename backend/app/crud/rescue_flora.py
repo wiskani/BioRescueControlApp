@@ -621,6 +621,33 @@ async def get_rescue_flora_with_specie(
         else:
             family = None
 
+        specie_bryophyte_db = await get_specie_by_id(
+                db,
+                rescue.specie_bryophyte_id
+                )
+        if specie_bryophyte_db:
+            specie_bryophyte = specie_bryophyte_db.specific_epithet
+        else:
+            specie_bryophyte = None
+
+        genus_bryophyte_db = await get_genus_by_id(
+                db,
+                rescue.genus_bryophyte_id
+                )
+        if genus_bryophyte_db:
+            genus_bryophyte = genus_bryophyte_db.genus_name
+        else:
+            genus_bryophyte = None
+
+        family_bryophyte_db = await get_family_by_id(
+                db,
+                rescue.family_bryophyte_id
+                )
+        if family_bryophyte_db:
+            family_bryophyte = family_bryophyte_db.family_name
+        else:
+            family_bryophyte = None
+
         result.append(FloraRescueSpecies(
             epiphyte_number=rescue.epiphyte_number,
             rescue_date=rescue.rescue_date,
@@ -629,6 +656,20 @@ async def get_rescue_flora_with_specie(
             specie_name=specie,
             genus_name=genus,
             family_name=family,
+            substrate=rescue.substrate,
+            dap_bryophyte=rescue.dap_bryophyte,
+            height_bryophyte=rescue.height_bryophyte,
+            bryophyte_position=rescue.bryophyte_position,
+            growth_habit=rescue.growth_habit,
+            epiphyte_phenology=rescue.epiphyte_phenology,
+            health_status_epiphyte=rescue.health_status_epiphyte,
+            microhabitat=rescue.microhabitat,
+            other_observations=rescue.other_observations,
+            is_epiphyte_confirmed=rescue.is_epiphyte_confirmed,
+            is_bryophyte_confirmed=rescue.is_bryophyte_confirmed,
+            specie_bryophyte_name=specie_bryophyte,
+            genus_bryophyte_name=genus_bryophyte,
+            family_bryophyte_name=family_bryophyte,
             ))
 
     return result
@@ -666,6 +707,33 @@ async def get_rescue_flora_with_specie_by_specie_id(
         else:
             family = None
 
+        specie_bryophyte_db = await get_specie_by_id(
+                db,
+                rescue.specie_bryophyte_id
+                )
+        if specie_bryophyte_db:
+            specie_bryophyte = specie_bryophyte_db.specific_epithet
+        else:
+            specie_bryophyte = None
+
+        genus_bryophyte_db = await get_genus_by_id(
+                db,
+                rescue.genus_bryophyte_id
+                )
+        if genus_bryophyte_db:
+            genus_bryophyte = genus_bryophyte_db.genus_name
+        else:
+            genus_bryophyte = None
+
+        family_bryophyte_db = await get_family_by_id(
+                db,
+                rescue.family_bryophyte_id
+                )
+        if family_bryophyte_db:
+            family_bryophyte = family_bryophyte_db.family_name
+        else:
+            family_bryophyte = None
+
         result.append(FloraRescueSpecies(
             epiphyte_number=rescue.epiphyte_number,
             rescue_date=rescue.rescue_date,
@@ -674,6 +742,20 @@ async def get_rescue_flora_with_specie_by_specie_id(
             specie_name=specie,
             genus_name=genus,
             family_name=family,
+            substrate=rescue.substrate,
+            dap_bryophyte=rescue.dap_bryophyte,
+            height_bryophyte=rescue.height_bryophyte,
+            bryophyte_position=rescue.bryophyte_position,
+            growth_habit=rescue.growth_habit,
+            epiphyte_phenology=rescue.epiphyte_phenology,
+            health_status_epiphyte=rescue.health_status_epiphyte,
+            microhabitat=rescue.microhabitat,
+            other_observations=rescue.other_observations,
+            is_epiphyte_confirmed=rescue.is_epiphyte_confirmed,
+            is_bryophyte_confirmed=rescue.is_bryophyte_confirmed,
+            specie_bryophyte_name=specie_bryophyte,
+            genus_bryophyte_name=genus_bryophyte,
+            family_bryophyte_name=family_bryophyte,
             ))
 
     return result

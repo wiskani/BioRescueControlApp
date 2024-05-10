@@ -135,7 +135,7 @@ class ReleaseMammalsWithSpecie(BaseModel):
     cod: str
     longitude: float
     latitude: float
-    altitude: int
+    altitude: int | None
     sustrate: str | None
     site_release_mammals: str
     specie_name: str | None

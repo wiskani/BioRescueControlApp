@@ -1532,10 +1532,10 @@ async def test_get_all_rescue_flora_with_species(
     assert response.status_code == 200, response.text
     data = response.json()
     assert len(data) >= 1
-    assert data[0]["epiphyte_number"] == epiphyte_number 
+    assert data[0]["epiphyte_number"] == epiphyte_number
     assert data[0]["specie_name"] == specie
-    assert data[0]["genus_name"] == None 
-    assert data[0]["family_name"] == None
+    assert data[0]["genus_name"] is None
+    assert data[0]["family_name"] is None
 
 """
 TEST FOR SOME FUCTIONS
@@ -1553,7 +1553,7 @@ async def test_get_rescue_flora_with_species_by_specie_id(
         specie_id, specie,
         genus_id, genus,
         family_id, family
-    )= await create_random_flora_rescue_WithSpecieGenusFamily(async_client)
+    ) = await create_random_flora_rescue_WithSpecieGenusFamily(async_client)
 
     rescue_db = await get_rescue_flora_with_specie_by_specie_id(async_session, specie_id)
     for rescue in rescue_db:

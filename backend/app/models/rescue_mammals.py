@@ -79,17 +79,27 @@ class RescueMammals(_database.Base):
     genus = relationship('Genus', back_populates='rescue_mammals')
 
     # relationship with release_mammals
-    release_mammals = relationship('ReleaseMammals', back_populates='rescue_mammals')
+    release_mammals = relationship(
+            'ReleaseMammals',
+            back_populates='rescue_mammals'
+            )
 
 
 class SiteReleaseMammals(_database.Base):
     __tablename__ = 'site_release_mammals'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.now(pytz.timezone('America/La_Paz')))
+    created_at: Mapped[datetime] = mapped_column(
+            DateTime(timezone=True),
+            nullable=False,
+            default=datetime.now(pytz.timezone('America/La_Paz'))
+            )
 
     # relationship with release_mammals
-    release_mammals = relationship('ReleaseMammals', back_populates='site_release_mammals')
+    release_mammals = relationship(
+            'ReleaseMammals',
+            back_populates='site_release_mammals'
+            )
 
 
 class ReleaseMammals(_database.Base):
@@ -98,17 +108,25 @@ class ReleaseMammals(_database.Base):
     cod: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     longitude: Mapped[float] = mapped_column(Float)
     latitude: Mapped[float] = mapped_column(Float)
-    altitude: Mapped[int] = mapped_column(Integer)
+    altitude: Mapped[int] = mapped_column(Integer, nullable=True)
     sustrate: Mapped[str] = mapped_column(String(50), nullable=True)
 
     # relationship with site_release_mammals
-    site_release_mammals_id: Mapped[int] = mapped_column(Integer, ForeignKey('site_release_mammals.id'))
-    site_release_mammals = relationship('SiteReleaseMammals', back_populates='release_mammals')
+    site_release_mammals_id: Mapped[int] = mapped_column(
+            Integer,
+            ForeignKey('site_release_mammals.id')
+            )
+    site_release_mammals = relationship(
+            'SiteReleaseMammals',
+            back_populates='release_mammals'
+            )
 
     # relationship with rescue_mammals
-    rescue_mammals_id: Mapped[int] = mapped_column(Integer, ForeignKey('rescue_mammals.id'))
-    rescue_mammals = relationship('RescueMammals', back_populates='release_mammals')
-
-
-
-
+    rescue_mammals_id: Mapped[int] = mapped_column(
+            Integer,
+            ForeignKey('rescue_mammals.id')
+            )
+    rescue_mammals = relationship(
+            'RescueMammals',
+            back_populates='release_mammals'
+            )

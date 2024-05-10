@@ -29,6 +29,7 @@ import { LineProyect } from '../components/Map/lineProyect';
 import BarChartFamily from '../components/Nivo/BarChartFamily';
 import { TableFilter } from '../components/Table/TableFilter';
 import Loading from './loading';
+import { dateFormat } from "../services/dateFormat";
 
 //import with dynamic
 const MapContainer = dynamic(
@@ -69,6 +70,11 @@ const FloraRelocationSpecieMap = dynamic(
 
 interface BarChartFamilyDataFlex extends BarChartFamilyDataSpa {
     [key: string]: any;
+}
+
+//Types
+interface FloraColumns extends FloraRescueData{
+    ver: string;
 }
 
 
@@ -165,6 +171,66 @@ export default function Flora() {
         'Proyecto 230 kV Mizque - Sehuencas'
     ]
 
+    //make columns
+    const columnHelper = createColumnHelper<FloraColumns>();
+
+    const columnsUsers = [
+        columnHelper.accessor('epiphyte_number', {
+                        header: 'Número de epífito',
+                        footer: info => info.column.id,
+                }),
+        columnHelper.accessor('rescue_date', {
+                        header: 'Fecha de rescate',
+                        cell: info => dateFormat(info.getValue() as Date),
+                        footer: info => info.column.id,
+                }),
+        columnHelper.accessor('substrate', {
+                        header: 'Substrato',
+                        footer: info => info.column.id,
+                }),
+        columnHelper.accessor('last_name', {
+                        header: 'Apellido',
+                        footer: info => info.column.id,
+                }),
+        columnHelper.accessor("id", {
+            header: () => <span></span>,
+            cell: info => (
+                <div className='flex space-x-4'>
+                <button
+                    className="
+                    bg-yellow-500
+                    hover:bg-yellow-700
+                    text-white
+                    font-bold
+                    py-2 px-4
+                    rounded"
+                    onClick={() => {
+                        router.push(`/users/edit/${info.getValue()}`)
+                    }}
+                >
+                    Editar
+                </button>
+                <button
+                    className="
+                    bg-red-500
+                    hover:bg-red-700
+                    text-white
+                    font-bold
+                    py-2 px-4
+                    rounded"
+                    onClick={() => {
+                        router.push(`/users/delete/${info.getValue()}`)
+                    }}
+                >
+                   Borrar 
+                </button>
+
+                </div>
+            ),
+        }
+
+        )
+    ]
     return (
         <div>
             <div

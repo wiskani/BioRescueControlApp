@@ -207,16 +207,27 @@ class FloraRelocationResponse(FloraRelocationBase):
 
 
 class FloraRescueSpecies(BaseModel):
-    epiphyte_number: str = Field(...)
-    rescue_date: datetime = Field(...)
-    rescue_area_latitude: float = Field(examples=[-17.444])
-    rescue_area_longitude: float = Field(examples=[-66.444])
+    epiphyte_number: str
+    rescue_date: datetime
+    rescue_area_latitude: float
+    rescue_area_longitude: float
     specie_name: str | None
     genus_name: str | None
     family_name: str | None
-
-    class Config:
-        from_attributes = True
+    substrate: str | None
+    dap_bryophyte: float | None
+    height_bryophyte: float | None
+    bryophyte_position: int | None
+    growth_habit: str | None
+    epiphyte_phenology: str | None
+    health_status_epiphyte: str | None
+    microhabitat: str | None
+    other_observations: str | None
+    is_epiphyte_confirmed: bool
+    is_bryophyte_confirmed: bool
+    specie_bryophyte_name: str | None
+    genus_bryophyte_name: str | None
+    family_bryophyte_name: str | None
 
 
 class FloraRelocationWithSpecie (BaseModel):
