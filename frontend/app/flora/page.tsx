@@ -73,7 +73,7 @@ interface BarChartFamilyDataFlex extends BarChartFamilyDataSpa {
 }
 
 //Types
-interface FloraColumns extends FloraRescueData{
+interface FloraColumns extends FloraRescueSpeciesData{
     ver: string;
 }
 
@@ -175,13 +175,18 @@ export default function Flora() {
     const columnHelper = createColumnHelper<FloraColumns>();
 
     const columnsUsers = [
+        columnHelper.accessor('rescue_date', {
+                        header: 'Fecha de rescate',
+                        cell: info => dateFormat(info.getValue() as Date),
+                        footer: info => info.column.id,
+                }),
         columnHelper.accessor('epiphyte_number', {
                         header: 'Número de epífito',
                         footer: info => info.column.id,
                 }),
-        columnHelper.accessor('rescue_date', {
-                        header: 'Fecha de rescate',
-                        cell: info => dateFormat(info.getValue() as Date),
+        columnHelper.accessor('specie_name', {
+                        header: 'Especie',
+                        cell: info => <i>info.getValue()</i> || 'Sin datos',
                         footer: info => info.column.id,
                 }),
         columnHelper.accessor('substrate', {

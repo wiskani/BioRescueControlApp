@@ -606,12 +606,18 @@ async def get_rescue_flora_with_specie(
         specie_db = await get_specie_by_id(db, rescue.specie_epiphyte_id)
         if specie_db:
             specie = specie_db.specific_epithet
+            genus_db = await get_genus_by_id(db, specie_db.genus_id)
+            genus = genus_db.genus_name
+            family_db = await get_family_by_id(db, genus_db.family_id)
+            family = family_db.family_name
         else:
             specie = None
 
         genus_db = await get_genus_by_id(db, rescue.genus_epiphyte_id)
         if genus_db:
             genus = genus_db.genus_name
+            family_db = await get_family_by_id(db, genus_db.family_id)
+            family = family_db.family_name
         else:
             genus = None
 
