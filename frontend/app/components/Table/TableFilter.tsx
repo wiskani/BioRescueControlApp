@@ -86,16 +86,16 @@ export function  TableFilter <T>({ data, columns }: TableProps<T>) {
                                                             )
                                                         }
                                                         {{
-                                                            asc: ' 🔼',
-                                                            desc: ' 🔽',
+                                                            asc: '\u2191',
+                                                            desc: '\u2193',
                                                         }[header.column.getIsSorted() as string] ?? null}
                                                     </div>
-                                                    {header.column.getCanFilter() ?(
+                                                    {header.column.getCanFilter() && header.column.columnDef.meta ?(
                                                         <div>
                                                             <DebouncedInput
                                                                 className="w-36 border shadow rounded"
                                                                 onChange={value => header.column.setFilterValue(value)}
-                                                                placeholder={`Search...`}
+                                                                placeholder={`Buscar...`}
                                                                 type="text"
                                                                 value={(header.column.getFilterValue() ?? '') as string}
                                                             />

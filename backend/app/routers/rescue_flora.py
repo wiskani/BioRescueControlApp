@@ -68,9 +68,11 @@ from app.crud.rescue_flora import (
 
         # Rescue with species
         get_rescue_flora_with_specie,
+        get_rescue_flora_with_specie_by_epiphyte_number,
 
         # Relocation with species
-        get_all_translocation_with_specie
+        get_all_translocation_with_specie,
+        get_translocation_with_specie_by_epiphyte_number
 )
 
 from app.api.deps import PermissonsChecker, get_db
@@ -669,3 +671,41 @@ async def get_all_flora_relocation_with_specie(
         autorized: bool = Depends(PermissonsChecker(["admin"])),
         ) -> List[FloraRelocationWithSpecie] | HTTPException:
     return await get_all_translocation_with_specie(db)
+
+
+# Get flora rescues with species, genus and family endpoint by epiphyte number
+@router.get(
+        path="/api/flora_rescue_species/{epiphyte_number}",
+        response_model=FloraRescueSpecies,
+        status_code=status.HTTP_200_OK,
+        tags=["Flora Rescue"],
+        summary="Get flora rescues with species, genus and family by epiphyte number",
+)
+async def get_flora_rescue_species_by_epiphyte_number_api(
+        epiphyte_number: str,
+        db: AsyncSession = Depends(get_db),
+        autorized: bool = Depends(PermissonsChecker(["admin"])),
+        ) -> FloraRescueSpecies | HTTPException:
+    return await get_rescue_flora_with_specie_by_epiphyte_number(
+            db,
+            epiphyte_number
+            )
+
+
+# Get translocation with species and extra data by epiphyte number
+@router.get(
+        path="/api/flora_relocation_with_specie/{epiphyte_number}",
+        response_model=FloraRelocationWithSpecie | dict,
+        status_code=status.HTTP_200_OK,
+        tags=["Flora Relocation"],
+        summary="Get translocation with species and extra data by epiphyte number",
+)
+async def get_flora_relocation_with_specie_by_epiphyte_number_api(
+        epiphyte_number: str,
+        db: AsyncSession = Depends(get_db),
+        autorized: bool = Depends(PermissonsChecker(["admin"])),
+        ) -> FloraRelocationWithSpecie | HTTPException | dict:
+    return await get_translocation_with_specie_by_epiphyte_number(
+            db,
+            epiphyte_number
+            )

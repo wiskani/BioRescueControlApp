@@ -242,11 +242,11 @@ CRUD FOR FLORA RESCUE
 """
 
 
-# Get if flora rescue exists
 async def get_flora_rescue(
         db: AsyncSession,
         flora_rescue_epiphyte_number: str
        ) -> FloraRescue | None:
+    """Get if flora rescue exists by epiphyte number"""
     flora_resuce_db = await db.execute(
             select(FloraRescue).filter(
                 FloraRescue.epiphyte_number == flora_rescue_epiphyte_number
@@ -255,11 +255,11 @@ async def get_flora_rescue(
     return flora_resuce_db.scalars().first()
 
 
-# Get flora rescue by id
 async def get_flora_rescue_by_id(
         db: AsyncSession,
         flora_rescue_id: int
         ) -> FloraRescue | None:
+    """Get flora rescue by id"""
     flora_rescue_db = await db.execute(
             select(FloraRescue).filter(FloraRescue.id == flora_rescue_id)
             )
@@ -401,17 +401,17 @@ async def create_plant_nursery(
         plant_nursery: PlantNurseryBase
         ) -> PlantNursery:
     db_plant_nursery = PlantNursery(
-            entry_date = plant_nursery.entry_date,
-            cod_reg = plant_nursery.cod_reg,
-            health_status_epiphyte = plant_nursery.health_status_epiphyte,
-            vegetative_state = plant_nursery.vegetative_state,
-            flowering_date = plant_nursery.flowering_date,
-            treatment_product = plant_nursery.treatment_product,
-            is_pruned = plant_nursery.is_pruned,
-            is_phytosanitary_treatment = plant_nursery.is_phytosanitary_treatment,
-            substrate = plant_nursery.substrate,
-            departure_date = plant_nursery.departure_date,
-            flora_rescue_id = plant_nursery.flora_rescue_id,
+            entry_date=plant_nursery.entry_date,
+            cod_reg=plant_nursery.cod_reg,
+            health_status_epiphyte=plant_nursery.health_status_epiphyte,
+            vegetative_state=plant_nursery.vegetative_state,
+            flowering_date=plant_nursery.flowering_date,
+            treatment_product=plant_nursery.treatment_product,
+            is_pruned=plant_nursery.is_pruned,
+            is_phytosanitary_treatment=plant_nursery.is_phytosanitary_treatment,
+            substrate=plant_nursery.substrate,
+            departure_date=plant_nursery.departure_date,
+            flora_rescue_id=plant_nursery.flora_rescue_id,
             )
     db.add(db_plant_nursery)
     await db.commit()
@@ -469,6 +469,7 @@ async def get_flora_relocation(
         db: AsyncSession,
         flora_relocation_number: str
         ) -> FloraRelocation | None:
+    """Get if flora relocation exists by relocation number"""
     flora_relocation_db = await db.execute(
             select(FloraRelocation).where(
                 FloraRelocation.relocation_number == flora_relocation_number)
@@ -481,9 +482,23 @@ async def get_flora_relocation_by_id(
         db: AsyncSession,
         flora_relocation_id: int
         ) -> FloraRelocation | None:
+    """Get flora relocation by id"""
     flora_relocation_db = await db.execute(
             select(FloraRelocation).where(
                 FloraRelocation.id == flora_relocation_id)
+            )
+    return flora_relocation_db.scalars().first()
+
+
+# Get flora relocation by rescue id
+async def get_flora_relocation_by_rescue_id(
+        db: AsyncSession,
+        flora_rescue_id: int
+        ) -> FloraRelocation | None:
+    """Get flora relocation by rescue id"""
+    flora_relocation_db = await db.execute(
+            select(FloraRelocation).where(
+                FloraRelocation.flora_rescue_id == flora_rescue_id)
             )
     return flora_relocation_db.scalars().first()
 
@@ -603,38 +618,55 @@ async def get_rescue_flora_with_specie(
     result = []
 
     for rescue in rescues:
+        specie = None
+        genus = None
+        family = None
+
+        specie_bryophyte = None
+        genus_bryophyte = None
+        family_bryophyte = None
+
+        # Construct specie epiphyte
         specie_db = await get_specie_by_id(db, rescue.specie_epiphyte_id)
         if specie_db:
             specie = specie_db.specific_epithet
             genus_db = await get_genus_by_id(db, specie_db.genus_id)
-            genus = genus_db.genus_name
-            family_db = await get_family_by_id(db, genus_db.family_id)
-            family = family_db.family_name
-        else:
-            specie = None
+            if genus_db:
+                genus = genus_db.genus_name
+                family_db = await get_family_by_id(db, genus_db.family_id)
+                if family_db:
+                    family = family_db.family_name
 
         genus_db = await get_genus_by_id(db, rescue.genus_epiphyte_id)
         if genus_db:
             genus = genus_db.genus_name
             family_db = await get_family_by_id(db, genus_db.family_id)
-            family = family_db.family_name
-        else:
-            genus = None
+            if family_db:
+                family = family_db.family_name
 
         family_db = await get_family_by_id(db, rescue.family_epiphyte_id)
         if family_db:
             family = family_db.family_name
-        else:
-            family = None
 
+        # Construct specie bryophyte
         specie_bryophyte_db = await get_specie_by_id(
                 db,
                 rescue.specie_bryophyte_id
                 )
         if specie_bryophyte_db:
             specie_bryophyte = specie_bryophyte_db.specific_epithet
-        else:
-            specie_bryophyte = None
+            genus_bryophyte_db = await get_genus_by_id(
+                    db,
+                    specie_bryophyte_db.genus_id
+                    )
+            if genus_bryophyte_db:
+                genus_bryophyte = genus_bryophyte_db.genus_name
+                family_bryophyte_db = await get_family_by_id(
+                        db,
+                        genus_bryophyte_db.family_id
+                        )
+                if family_bryophyte_db:
+                    family_bryophyte = family_bryophyte_db.family_name
 
         genus_bryophyte_db = await get_genus_by_id(
                 db,
@@ -642,8 +674,12 @@ async def get_rescue_flora_with_specie(
                 )
         if genus_bryophyte_db:
             genus_bryophyte = genus_bryophyte_db.genus_name
-        else:
-            genus_bryophyte = None
+            family_bryophyte_db = await get_family_by_id(
+                    db,
+                    genus_bryophyte_db.family_id
+                    )
+            if family_bryophyte_db:
+                family_bryophyte = family_bryophyte_db.family_name
 
         family_bryophyte_db = await get_family_by_id(
                 db,
@@ -651,8 +687,6 @@ async def get_rescue_flora_with_specie(
                 )
         if family_bryophyte_db:
             family_bryophyte = family_bryophyte_db.family_name
-        else:
-            family_bryophyte = None
 
         result.append(FloraRescueSpecies(
             epiphyte_number=rescue.epiphyte_number,
@@ -855,3 +889,230 @@ async def get_all_translocation_with_specie(
             ))
 
     return relocation_result
+
+
+"""
+CRUD FOR FLORA RESCUE AND RELOCATION BY EPYPHYTE NUMBER
+"""
+
+
+async def get_rescue_flora_with_specie_by_epiphyte_number(
+        db: AsyncSession,
+        epiphyte_number: str
+        ) -> FloraRescueSpecies | HTTPException:
+    """
+    Get rescue flora with specie, genus and family name by epiphyte number
+    """
+    rescue: FloraRescue = await get_flora_rescue(db, epiphyte_number)
+    if not rescue:
+        return HTTPException(status_code=404, detail="Rescue not found")
+
+    specie = None
+    genus = None
+    family = None
+
+    specie_bryophyte = None
+    genus_bryophyte = None
+    family_bryophyte = None
+
+    # Construct specie epiphyte
+    specie_db = await get_specie_by_id(db, rescue.specie_epiphyte_id)
+    if specie_db:
+        specie = specie_db.specific_epithet
+        genus_db = await get_genus_by_id(db, specie_db.genus_id)
+        if genus_db:
+            genus = genus_db.genus_name
+            family_db = await get_family_by_id(db, genus_db.family_id)
+            if family_db:
+                family = family_db.family_name
+
+    genus_db = await get_genus_by_id(db, rescue.genus_epiphyte_id)
+    if genus_db:
+        genus = genus_db.genus_name
+        family_db = await get_family_by_id(db, genus_db.family_id)
+        if family_db:
+            family = family_db.family_name
+
+    family_db = await get_family_by_id(db, rescue.family_epiphyte_id)
+    if family_db:
+        family = family_db.family_name
+
+    # Construct specie bryophyte
+    specie_bryophyte_db = await get_specie_by_id(
+            db,
+            rescue.specie_bryophyte_id
+            )
+    if specie_bryophyte_db:
+        specie_bryophyte = specie_bryophyte_db.specific_epithet
+        genus_bryophyte_db = await get_genus_by_id(
+                db,
+                specie_bryophyte_db.genus_id
+                )
+        if genus_bryophyte_db:
+            genus_bryophyte = genus_bryophyte_db.genus_name
+            family_bryophyte_db = await get_family_by_id(
+                    db,
+                    genus_bryophyte_db.family_id
+                    )
+            if family_bryophyte_db:
+                family_bryophyte = family_bryophyte_db.family_name
+
+    genus_bryophyte_db = await get_genus_by_id(
+            db,
+            rescue.genus_bryophyte_id
+            )
+    if genus_bryophyte_db:
+        genus_bryophyte = genus_bryophyte_db.genus_name
+        family_bryophyte_db = await get_family_by_id(
+                db,
+                genus_bryophyte_db.family_id
+                )
+        if family_bryophyte_db:
+            family_bryophyte = family_bryophyte_db.family_name
+
+    family_bryophyte_db = await get_family_by_id(
+            db,
+            rescue.family_bryophyte_id
+            )
+    if family_bryophyte_db:
+        family_bryophyte = family_bryophyte_db.family_name
+
+    return (FloraRescueSpecies(
+        epiphyte_number=rescue.epiphyte_number,
+        rescue_date=rescue.rescue_date,
+        rescue_area_latitude=rescue.rescue_area_latitude,
+        rescue_area_longitude=rescue.rescue_area_longitude,
+        specie_name=specie,
+        genus_name=genus,
+        family_name=family,
+        substrate=rescue.substrate,
+        dap_bryophyte=rescue.dap_bryophyte,
+        height_bryophyte=rescue.height_bryophyte,
+        bryophyte_position=rescue.bryophyte_position,
+        growth_habit=rescue.growth_habit,
+        epiphyte_phenology=rescue.epiphyte_phenology,
+        health_status_epiphyte=rescue.health_status_epiphyte,
+        microhabitat=rescue.microhabitat,
+        other_observations=rescue.other_observations,
+        is_epiphyte_confirmed=rescue.is_epiphyte_confirmed,
+        is_bryophyte_confirmed=rescue.is_bryophyte_confirmed,
+        specie_bryophyte_name=specie_bryophyte,
+        genus_bryophyte_name=genus_bryophyte,
+        family_bryophyte_name=family_bryophyte,
+        ))
+
+
+async def get_translocation_with_specie_by_epiphyte_number(
+        db: AsyncSession,
+        epiphyte_number: str
+        ) -> FloraRelocationWithSpecie | HTTPException | dict:
+    """
+    Get all translocation with specie and other data by epiphyte number
+    """
+    specie_epiphyte = None
+    genus_epiphyte = None
+    family_epiphyte = None
+
+    specie_bryophyte = None
+    genus_bryophyte = None
+    family_bryophyte = None
+
+    rescue = await get_flora_rescue(db, epiphyte_number)
+    if not rescue:
+        return HTTPException(status_code=404, detail="Rescue not found")
+
+    specie_db = await get_specie_by_id(db, rescue.specie_epiphyte_id)
+    if specie_db:
+        specie_epiphyte = specie_db.specific_epithet
+        genus_db = await get_genus_by_id(db, specie_db.genus_id)
+        if genus_db:
+            genus_epiphyte = genus_db.genus_name
+            family_db = await get_family_by_id(db, genus_db.family_id)
+            if family_db:
+                family_epiphyte = family_db.family_name
+
+    genus_db = await get_genus_by_id(db, rescue.genus_epiphyte_id)
+    if genus_db:
+        genus_epiphyte = genus_db.genus_name
+        family_db = await get_family_by_id(db, genus_db.family_id)
+        if family_db:
+            family_epiphyte = family_db.family_name
+
+    family_db = await get_family_by_id(db, rescue.family_epiphyte_id)
+    if family_db:
+        family_epiphyte = family_db.family_name
+
+    relocation = await get_flora_relocation_by_rescue_id(db, rescue.id)
+    if not relocation:
+        return {"message": "Relocation not found"}
+
+    specie_bryopyte_db = await get_specie_by_id(
+            db, relocation.specie_bryophyte_id
+            )
+    if specie_bryopyte_db:
+        specie_bryophyte = specie_bryopyte_db.specific_epithet
+        genus_bryophyte_db = await get_genus_by_id(
+                db,
+                specie_bryopyte_db.genus_id
+                )
+        if genus_bryophyte_db:
+            genus_bryophyte = genus_bryophyte_db.genus_name
+            family_bryophyte_db = await get_family_by_id(
+                    db,
+                    genus_bryophyte_db.family_id
+                    )
+            if family_bryophyte_db:
+                family_bryophyte = family_bryophyte_db.family_name
+
+    genus_bryophyte_db = await get_genus_by_id(
+            db,
+            relocation.genus_bryophyte_id
+            )
+    if genus_bryophyte_db:
+        genus_bryophyte = genus_bryophyte_db.genus_name
+        family_bryophyte_db = await get_family_by_id(
+                db,
+                genus_bryophyte_db.family_id
+                )
+
+    family_bryophyte_db = await get_family_by_id(
+            db,
+            relocation.family_bryophyte_id
+            )
+    if family_bryophyte_db:
+        family_bryophyte = family_bryophyte_db.family_name
+
+    relocation_zone_db = await get_flora_relocation_zone_by_id(
+            db,
+            relocation.relocation_zone_id
+            )
+    if not relocation_zone_db:
+        raise HTTPException(
+                status_code=404,
+                detail="Relocation zone not found"
+                )
+    else:
+        relocation_zone = relocation_zone_db.name
+
+    return (FloraRelocationWithSpecie(
+        relocation_date=relocation.relocation_date,
+        flora_rescue=rescue.epiphyte_number,
+        specie_name_epiphyte=specie_epiphyte,
+        genus_name_epiphyte=genus_epiphyte,
+        family_name_epiphyte=family_epiphyte,
+        size=relocation.size,
+        epiphyte_phenology=relocation.epiphyte_phenology,
+        johanson_zone=relocation.johanson_zone,
+        relocation_position_latitude=relocation.relocation_position_latitude,
+        relocation_position_longitude=relocation.relocation_position_longitude,
+        relocation_position_altitude=relocation.relocation_position_altitude,
+        dap_bryophyte=relocation.dap_bryophyte,
+        height_bryophyte=relocation.height_bryophyte,
+        bark_type=relocation.bark_type,
+        infested_lianas=relocation.infested_lianas,
+        other_observations=relocation.other_observations,
+        specie_name_bryophyte=specie_bryophyte,
+        genus_name_bryophyte=genus_bryophyte,
+        family_name_bryophyte=family_bryophyte,
+        relocation_zone=relocation_zone
+        ))

@@ -174,30 +174,36 @@ export default function Flora() {
     //make columns
     const columnHelper = createColumnHelper<FloraColumns>();
 
-    const columnsUsers = [
+    const columnsFlora = [
         columnHelper.accessor('rescue_date', {
-                        header: 'Fecha de rescate',
-                        cell: info => dateFormat(info.getValue() as Date),
-                        footer: info => info.column.id,
-                }),
+            header: 'Fecha de rescate',
+            cell: info => dateFormat(info.getValue() as Date),
+            meta: { searchable: true },
+        }),
         columnHelper.accessor('epiphyte_number', {
-                        header: 'Número de epífito',
-                        footer: info => info.column.id,
-                }),
+            header: 'Número de epífito',
+            meta: { searchable: true },
+        }),
         columnHelper.accessor('specie_name', {
-                        header: 'Especie',
-                        cell: info => <i>info.getValue()</i> || 'Sin datos',
-                        footer: info => info.column.id,
-                }),
-        columnHelper.accessor('substrate', {
-                        header: 'Substrato',
-                        footer: info => info.column.id,
-                }),
-        columnHelper.accessor('last_name', {
-                        header: 'Apellido',
-                        footer: info => info.column.id,
-                }),
-        columnHelper.accessor("id", {
+            header: 'Especie',
+            cell: info => <i>{info.getValue()}</i> || 'no identificado',
+            meta: { searchable: true },
+        }),
+        columnHelper.accessor('genus_name', {
+            header: 'Género',
+            cell: info => <i>{info.getValue()}</i> || 'no identificado',
+            meta: { searchable: true },
+        }),
+        columnHelper.accessor('family_name', {
+            header: 'Familia',
+            cell: info => <i>{info.getValue()}</i> || 'no identificado',
+            meta: { searchable: true },
+        }),
+        columnHelper.accessor('other_observations', {
+            header:'Observaciones',
+        }),
+
+        columnHelper.accessor("epiphyte_number", {
             header: () => <span></span>,
             cell: info => (
                 <div className='flex space-x-4'>
@@ -210,26 +216,11 @@ export default function Flora() {
                     py-2 px-4
                     rounded"
                     onClick={() => {
-                        router.push(`/users/edit/${info.getValue()}`)
+                        router.push(`/flora/${info.getValue()}`)
                     }}
                 >
-                    Editar
+                   Ver 
                 </button>
-                <button
-                    className="
-                    bg-red-500
-                    hover:bg-red-700
-                    text-white
-                    font-bold
-                    py-2 px-4
-                    rounded"
-                    onClick={() => {
-                        router.push(`/users/delete/${info.getValue()}`)
-                    }}
-                >
-                   Borrar 
-                </button>
-
                 </div>
             ),
         }
@@ -280,7 +271,7 @@ export default function Flora() {
                 h-full
                 2xl:mb-52
                 xl:mb-52
-                lg:mb-40
+                lg:mb-52
                 md:flex-row
                 md:mb-0
                 sm:mb-0
@@ -346,6 +337,10 @@ export default function Flora() {
                     }
                 </div>
             </div>
+            <TableFilter <FloraRescueSpeciesData>
+                columns = {columnsFlora}
+                data = {rescueFloraData}
+            /> 
         </div>
 
 
