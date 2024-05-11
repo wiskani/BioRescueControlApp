@@ -1,3 +1,6 @@
+interface TokenWithNumberEpiphte extends Token {
+    epiphyte_number:string
+}
 
 export const GetRescueFlora=async(props:Token): Promise <FloraRescueData[]>=> {
   const requestOptions = {
@@ -67,8 +70,7 @@ export const GetRelocationFloraSpecie=async(props:Token): Promise <FloraRelocati
 }
 
 export const GetRescueFloraSpecieByEpiphyteNumber=async(
-    props:Token,
-    epiphyte_number:string
+    props:TokenWithNumberEpiphte
 ): Promise <FloraRescueSpeciesData>=> {
     try{
         const requestOptions = {
@@ -95,9 +97,8 @@ export const GetRescueFloraSpecieByEpiphyteNumber=async(
 }
 
 export const GetRelocationFloraSpecieByEpiphyteNumber=async(
-    props:Token,
-    epiphyte_number:string
-): Promise <FloraRelocationWithSpecieData>=> {
+    props:TokenWithNumberEpiphte
+): Promise <FloraRelocationWithSpecieData | {message : string}>=> {
     try{
         const requestOptions = {
             method: 'GET',
