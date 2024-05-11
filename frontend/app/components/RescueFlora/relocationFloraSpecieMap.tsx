@@ -18,7 +18,10 @@ interface FloraRelocationSpecieMapProps {
     radius?: number;
 }
 
-const FloraRelocationSpecieMap: React.FC<FloraRelocationSpecieMapProps> = ({data, radius}) => {
+const FloraRelocationSpecieMap: React.FC<FloraRelocationSpecieMapProps> = ({
+    data,
+    radius
+}) => {
     const lineOptions = {
         color: 'purple',
         weight:2,

@@ -81,7 +81,7 @@ export const GetRescueFloraSpecieByEpiphyteNumber=async(
             },
         };
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}:8080/api/flora_rescue_species/${epiphyte_number}`,
+            `${process.env.NEXT_PUBLIC_API_URL}:8080/api/flora_rescue_species/${props.epiphyte_number}`,
             requestOptions
         );
         if (!response.ok) {
@@ -108,7 +108,7 @@ export const GetRelocationFloraSpecieByEpiphyteNumber=async(
             },
         };
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}:8080/api/flora_relocation_with_specie/${epiphyte_number}`,
+            `${process.env.NEXT_PUBLIC_API_URL}:8080/api/flora_relocation_with_specie/${props.epiphyte_number}`,
             requestOptions
         );
         if (!response.ok) {

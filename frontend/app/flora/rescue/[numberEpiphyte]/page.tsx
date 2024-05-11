@@ -7,7 +7,11 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation';
 
 //React imports
-import React, { useEffect, useState, useCallback } from "react"
+import React, {
+    useEffect,
+    useState,
+    useCallback
+} from "react"
 
 //Apis imports
 import {
@@ -142,17 +146,39 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
     }, [session, rescueDataFlora, relocationDataFlora])
 
 
+    //predicados fuctions
+    function isFloraRelocationSpeciesData(
+        data: FloraRelocationWithSpecieData | {message: string} | null  
+    ): data is FloraRelocationWithSpecieData {
+        return  data !== null && 'relocation_date' in data;
+    }
     const lineOptions = { color: 'red' }
 
     const legedColors = ['purple','blue', 'red' ]
     const legendLabels = [
-        'Puntos de relocalización de Flora',
-        'Puntos Rescates de Flora',
+        'Punto de relocalización',
+        'Punto de rescate',
         'Proyecto 230 kV Mizque - Sehuencas'
     ]
 
     return (
         <div>
+             <h1
+                 className="
+                        m-4
+                        text-gl
+                        text-center
+                        font-bold
+                        leading-none
+                        tracking-tight
+                        text-gray-600
+                        md:text-xl
+                        lg:text-xl
+                        dark:text-white
+                        "
+                 >Rescate y traslocación para el número de epífita
+                     <span className='italic'> {params.numberEpiphyte}</span>
+              </h1>
             <div
                 className="
                 flex
@@ -170,8 +196,12 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                     h-96
                     p-0
                     z-50
+                    2xl:mb-52
+                    xl:mb-52
+                    lg:mb-40
                     md:w-1/2
-                    p-4 md:h-[16rem]
+                    p-4
+                    md:h-[16rem]
                     sd:h-[6rem]
                     "
                 >
@@ -203,25 +233,17 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                             </Tooltip>
                         </Polyline>
                         {
-                            rescueFloraData? <FloraRescueSpecieMap data={[rescueFloraData]}/> : null
+                            rescueFloraData?
+                                <FloraRescueSpecieMap data={[rescueFloraData]} radius={55}/> :
+                                null
                         }
-                        <FloraRelocationSpecieMap data={relocationFloraData} radius={12}/>
+                        {
+                            isFloraRelocationSpeciesData(relocationFloraData)?
+                                <FloraRelocationSpecieMap data={[relocationFloraData]} radius={55}/> :
+                                null
+                        }
                         <Legend colors={legedColors} labels={legendLabels} />
                     </MapContainer>
-                </div>
-                <div className='
-                    md:w-1/2
-                    p-4 h-144
-                    flex
-                    justify-center
-                    items-center
-                    2xl:h-144
-                    xl:h-128
-                    md:h-96
-                    sm:h-80
-                    '
-                >
-
                 </div>
             </div>
         </div>

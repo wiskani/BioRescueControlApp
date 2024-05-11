@@ -282,7 +282,18 @@ export default function Page({ params} : { params: { specieId: number } }) {
         {
             isFloraRescueSpeciesData(rescues[0])
             ? <h1
-                 className="m-4 text-gl text-center font-bold leading-none tracking-tight text-gray-600 md:text-xl lg:text-xl dark:text-white"
+                 className="
+                        m-4
+                        text-gl
+                        text-center
+                        font-bold
+                        leading-none
+                        tracking-tight
+                        text-gray-600
+                        md:text-xl
+                        lg:text-xl
+                        dark:text-white
+                        "
                  >Rescates para la especie
                      <span className='italic'> {rescues[0].specie_name}</span>
               </h1>
@@ -291,7 +302,18 @@ export default function Page({ params} : { params: { specieId: number } }) {
             {
             isTransectHerpetoWithSpeciesData(rescues[0])
             ? <h1
-                 className="m-4 text-gl text-center font-bold leading-none tracking-tight text-gray-600 md:text-xl lg:text-xl dark:text-white"
+                 className="
+                        m-4
+                        text-gl
+                        text-center
+                        font-bold
+                        leading-none
+                        tracking-tight
+                        text-gray-600
+                        md:text-xl
+                        lg:text-xl
+                        dark:text-white
+                        "
                  >Rescates para la especie 
                       <span className='italic'> {rescues[0].specie_names[0]}</span>
               </h1>
@@ -300,59 +322,102 @@ export default function Page({ params} : { params: { specieId: number } }) {
             {
             isRescueMammalsWithSpecieData(rescues[0])
             ? <h1
-                 className="m-4 text-gl text-center font-bold leading-none tracking-tight text-gray-600 md:text-xl lg:text-xl dark:text-white"
-                 >Rescates para la especie
-                     <span className='italic'> {rescues[0].specie_name}</span>
-              </h1>
-            : null
+                 className="
+                        m-4
+                        text-gl
+                        text-center
+                        font-bold
+                        leading-none
+                        tracking-tight
+                        text-gray-600
+                        md:text-xl
+                        lg:text-xl
+                        dark:text-white
+                        "
+                    >Rescates para la especie
+                        <span className='italic'> {rescues[0].specie_name}</span>
+                    </h1>
+                    : null
             }
-                <div className="flex flex-col h-full 2xl:mb-52 xl:mb-52 lg:mb-40 md:flex-row md:mb-0 sm:mb-0 justify-center">
-                    <div className="h-96 p-0 z-50 2xl:mb-52 xl:mb-52 lg:mb-40 md:w-1/2 p-4 md:h-[16rem] sd:h-[6rem]">
-                        <MapContainer
-                            center={[-17.489, -65.271]}
-                            zoom={12}
-                            scrollWheelZoom={false}
-                            className='h-80 w-full 2xl:h-[40rem] xl:h-[40rem] lg:h-[35rem]'
-                             >
-                                <TileLayer
-                                
-                                url={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`}
-                                attribution='Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>'
-                                />
-                                <Pane name='rescues' style={{zIndex:499}}>
-                                {
-                                    isRescueMammalsWithSpecieData(rescues[0])
+            <div
+                className="
+                flex
+                flex-col
+                h-full
+                2xl:mb-52
+                xl:mb-52
+                lg:mb-40
+                md:flex-row
+                md:mb-0
+                sm:mb-0
+                justify-center
+                "
+            >
+                <div
+                    className="
+                    h-96
+                    p-0
+                    z-50
+                    2xl:mb-52
+                    xl:mb-52
+                    lg:mb-40
+                    md:w-1/2
+                    p-4
+                    md:h-[16rem]
+                    sd:h-[6rem]
+                    "
+                >
+                    <MapContainer
+                        center={[-17.489, -65.271]}
+                        zoom={12}
+                        scrollWheelZoom={false}
+                        className='
+                        h-80
+                        w-full
+                        2xl:h-[40rem]
+                        xl:h-[40rem]
+                        lg:h-[35rem]
+                        '
+                    >
+                        <TileLayer
+
+                            url={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}`}
+                            attribution='Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>'
+                        />
+                        <Pane name='rescues' style={{zIndex:499}}>
+                            {
+                                isRescueMammalsWithSpecieData(rescues[0])
                                     ? <RescueMammalsSpecieMap data={rescues.filter(isRescueMammalsWithSpecieData)}/>
                                     : null
-                                }
-                                {
-                                    isTransectHerpetoWithSpeciesData(rescues[0])
+                            }
+                            {
+                                isTransectHerpetoWithSpeciesData(rescues[0])
                                     ?<TransectHerpetofaunaSpecieMap data={rescues.filter(isTransectHerpetoWithSpeciesData)}/>
                                     : null
-                                }
-                                {
-                                    isFloraRescueSpeciesData(rescues[0])
+                            }
+                            {
+                                isFloraRescueSpeciesData(rescues[0])
                                     ?<FloraRescueSpecieMap data={rescues.filter(isFloraRescueSpeciesData)}/>
                                     : null
-                                }
-                                </Pane>
-                                <Pane name='linea' style={{zIndex:400}}>
-                                <Polyline pathOptions={lineOptions} positions={LineProyect} >
-                                        <Tooltip>
-                                                <div>
-                                                <h4>Detalles</h4>
-                                                <p>Proyecto 230 kV Mizque - Sehuencas</p>
-                                                </div>
-                                        </Tooltip>
-                                </Polyline>
+                            }
+                        </Pane>
+                        <Pane name='linea' style={{zIndex:400}}>
+                            <Polyline pathOptions={lineOptions} positions={LineProyect} >
+                                <Tooltip>
+                                    <div>
+                                        <h4>Detalles</h4>
+                                        <p>Proyecto 230 kV Mizque - Sehuencas</p>
+                                    </div>
+                                </Tooltip>
+                            </Polyline>
 
-                                </Pane>
-                            <Legend colors={legendOptions()} labels={legendLabels()} />
-                        </MapContainer>
-                    </div>
+                        </Pane>
+                        <Legend colors={legendOptions()} labels={legendLabels()} />
+                    </MapContainer>
                 </div>
+            </div>
             <div className="container mx-auto px-4 py-20">
-            {renderTable()}
+                {renderTable()}
             </div>
             <button 
                 type="button"
@@ -362,7 +427,7 @@ export default function Page({ params} : { params: { specieId: number } }) {
                 Volver
             </button>
         </div>
-            
-        )
-        }
+
+    )
+}
 

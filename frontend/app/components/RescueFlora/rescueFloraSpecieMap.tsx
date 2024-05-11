@@ -16,9 +16,13 @@ const Tooltip = dynamic(
 
 interface FloraRescueSpecieMapProps {
         data: FloraRescueSpeciesData[]; 
+        radius?: number;
         }
 
-const FloraRescueSpecieMap: React.FC<FloraRescueSpecieMapProps> = ({data}) => {
+const FloraRescueSpecieMap: React.FC<FloraRescueSpecieMapProps> = ({
+    data,
+    radius
+}) => {
         const lineOptions = {
                 color: 'blue',
                 weight:2,
@@ -30,7 +34,7 @@ const FloraRescueSpecieMap: React.FC<FloraRescueSpecieMapProps> = ({data}) => {
                         <Circle
                                 key={index}
                                 pathOptions={lineOptions}
-                                radius={10}
+                                radius={radius? radius: 10}
                                 center={[
                                         rescue.rescue_area_latitude, rescue.rescue_area_longitude
                                 ]}

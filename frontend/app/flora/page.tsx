@@ -6,6 +6,7 @@ import bannerFlora from "../../public/images/banner-flora.gif"
 import { useSession  } from 'next-auth/react'
 import { redirect } from 'next/navigation';
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation';
 
 //React imports
 import React, { useEffect, useState, useCallback } from "react"
@@ -96,6 +97,7 @@ export default function Flora() {
     )
 
     const [loadingBarChart, setLoadingBarChart] = useState(true)
+    const router = useRouter();
 
     const user = session?.user;
 
@@ -216,7 +218,7 @@ export default function Flora() {
                     py-2 px-4
                     rounded"
                     onClick={() => {
-                        router.push(`/flora/${info.getValue()}`)
+                        router.push(`/flora/rescue/${info.getValue()}`)
                     }}
                 >
                    Ver 
