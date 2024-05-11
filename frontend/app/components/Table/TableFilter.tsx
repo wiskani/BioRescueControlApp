@@ -61,51 +61,52 @@ export function  TableFilter <T>({ data, columns }: TableProps<T>) {
                     >
                         {table.getHeaderGroups().map(headerGroup => (
                             <tr key={headerGroup.id}>
-                                {headerGroup.headers.map(header => (
-                                    <th
-                                        key={header.id}
-                                        colSpan={header.colSpan}
-                                        className="px-6 py-3"
-                                    >
-                                        {header.isPlaceholder
-                                            ? null
-                                            : (
-                                                <>
-                                                    <div
-                                                        {...{
-                                                            className: header.column.getCanSort()
-                                                                ? 'cursor-pointer select-none'
-                                                                : '',
-                                                            onClick: header.column.getToggleSortingHandler()
-                                                        }}
-                                                    >
-                                                        {
-                                                            flexRender(
-                                                                header.column.columnDef.header,
-                                                                header.getContext()
-                                                            )
-                                                        }
-                                                        {{
-                                                            asc: '\u2191',
-                                                            desc: '\u2193',
-                                                        }[header.column.getIsSorted() as string] ?? null}
-                                                    </div>
-                                                    {header.column.getCanFilter() && header.column.columnDef.meta ?(
-                                                        <div>
-                                                            <DebouncedInput
-                                                                className="w-36 border shadow rounded"
-                                                                onChange={value => header.column.setFilterValue(value)}
-                                                                placeholder={`Buscar...`}
-                                                                type="text"
-                                                                value={(header.column.getFilterValue() ?? '') as string}
-                                                            />
+                                {headerGroup.headers.map(header => {
+                                    return (
+                                        <th
+                                            key={header.id}
+                                            colSpan={header.colSpan}
+                                            className="px-6 py-3"
+                                        >
+                                            {header.isPlaceholder
+                                                ? null
+                                                : (
+                                                    <>
+                                                        <div
+                                                            {...{
+                                                                className: header.column.getCanSort()
+                                                                    ? 'cursor-pointer select-none'
+                                                                    : '',
+                                                                onClick: header.column.getToggleSortingHandler(),
+                                                            }}
+                                                        >
+                                                            {
+                                                                flexRender(
+                                                                    header.column.columnDef.header,
+                                                                    header.getContext()
+                                                                )
+                                                            }
+                                                            {{
+                                                                asc: '\u2191',
+                                                                desc: '\u2193',
+                                                            }[header.column.getIsSorted() as string] ?? null}
                                                         </div>
-                                                    ): null}
-                                                </>
-                                            ) 
-                                        }
-                                    </th>
-                                ))}
+                                                        {header.column.getCanFilter() && header.column.columnDef.meta ?(
+                                                            <div>
+                                                                <DebouncedInput
+                                                                    className="w-36 border shadow rounded"
+                                                                    onChange={value => header.column.setFilterValue(value)}
+                                                                    placeholder={`Buscar...`}
+                                                                    type="text"
+                                                                    value={(header.column.getFilterValue() ?? '') as string}
+                                                                />
+                                                            </div>
+                                                        ): null}
+                                                    </>
+                                                )}
+                                        </th>
+                                    )
+                                })}
                             </tr>
                         ))}
                     </thead>
@@ -152,6 +153,7 @@ export function  TableFilter <T>({ data, columns }: TableProps<T>) {
                     <button
                         className="border rounded p-1"
                         onClick={()=> table.previousPage()}
+                        disabled={!table.getCanNextPage()}
                     >
                         {'<'}
                     </button>
@@ -201,8 +203,8 @@ export function  TableFilter <T>({ data, columns }: TableProps<T>) {
                         ))}
                     </select>
                 </div>
-        </div>
-            </>
+            </div>
+        </>
     )
 }
 
