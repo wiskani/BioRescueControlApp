@@ -9,7 +9,12 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation';
 
 //React imports
-import React, { useEffect, useState, useCallback } from "react"
+import React, {
+    useEffect,
+    useState,
+    useCallback,
+    useMemo
+} from "react"
 
 //Apis imports
 import {
@@ -23,7 +28,7 @@ import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
 
 //Table imports
-import { createColumnHelper } from '@tanstack/react-table';
+import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 
 //Components imports
 import { LineProyect } from '../components/Map/lineProyect';
@@ -174,61 +179,76 @@ export default function Flora() {
     ]
 
     //make columns
-    const columnHelper = createColumnHelper<FloraColumns>();
+    const columnsFlora = useMemo<ColumnDef<FloraColumns, any>[]>(
+        () => [
+            {
+                accessorFn: row => row.rescue_date,
+                id: 'rescue_date',
+                cell: info => dateFormat(info.getValue() as Date),
+                header: 'Fecha de rescate',
+                meta: { searchable: true },
+            },
+            {
+                accessorFn: row => row.epiphyte_number,
+                id: 'epiphyte_number',
+                cell: info => info.getValue(),
+                header: 'Número de epífito',
+                meta: { searchable: true },
+            },
+            {
+                accessorFn: row => row.specie_name,
+                id: 'specie_name',
+                cell: info => <i>{info.getValue()}</i> || 'no identificado',
+                header: 'Especie',
+                meta: { searchable: true },
+            },
+            {
+                accessorFn: row => row.genus_name,
+                id: 'genus_name',
+                cell: info => <i>{info.getValue()}</i> || 'no identificado',
+                header: 'Género',
+                meta: { searchable: true },
+            },
+            {
+                accessorFn: row => row.family_name,
+                id: 'family_name',
+                cell: info => <i>{info.getValue()}</i> || 'no identificado',
+                header: 'Familia',
+                meta: { searchable: true },
+            },
+            {
+                accessorKey: 'other_observations',
+                header:'Observaciones',
+            },
 
-    const columnsFlora = [
-        columnHelper.accessor('rescue_date', {
-            header: 'Fecha de rescate',
-            cell: info => dateFormat(info.getValue() as Date),
-            meta: { searchable: true },
-        }),
-        columnHelper.accessor('epiphyte_number', {
-            header: 'Número de epífito',
-            meta: { searchable: true },
-        }),
-        columnHelper.accessor('specie_name', {
-            header: 'Especie',
-            cell: info => <i>{info.getValue()}</i> || 'no identificado',
-            meta: { searchable: true },
-        }),
-        columnHelper.accessor('genus_name', {
-            header: 'Género',
-            cell: info => <i>{info.getValue()}</i> || 'no identificado',
-            meta: { searchable: true },
-        }),
-        columnHelper.accessor('family_name', {
-            header: 'Familia',
-            cell: info => <i>{info.getValue()}</i> || 'no identificado',
-            meta: { searchable: true },
-        }),
-        columnHelper.accessor('other_observations', {
-            header:'Observaciones',
-        }),
+            {
+                accessorFn: row => row.epiphyte_number,
+                id: 'epiphyte_number',
+                header: " ",
+                cell: info => (
+                    <div className='flex space-x-4'>
+                        <button
+                            className="
+                            bg-yellow-500
+                            hover:bg-yellow-700
+                            text-white
+                            font-bold
+                            py-2 px-4
+                            rounded"
+                            onClick={() => {
+                                router.push(`/flora/rescue/${info.getValue()}`)
+                            }}
+                        >
+                            Ver 
+                        </button>
+                    </div>
+                ),
+            }
 
-        columnHelper.accessor("epiphyte_number", {
-            header: () => <span></span>,
-            cell: info => (
-                <div className='flex space-x-4'>
-                <button
-                    className="
-                    bg-yellow-500
-                    hover:bg-yellow-700
-                    text-white
-                    font-bold
-                    py-2 px-4
-                    rounded"
-                    onClick={() => {
-                        router.push(`/flora/rescue/${info.getValue()}`)
-                    }}
-                >
-                   Ver 
-                </button>
-                </div>
-            ),
-        }
-
-        )
-    ]
+            
+        ],
+        [router]
+    );
     return (
         <div>
             <div

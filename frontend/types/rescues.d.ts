@@ -9,7 +9,6 @@ declare global {
         specie_name: string | None;
         genus_name: string | None;
         family_name: string| None;
-        family_name: string | None
         substrate: string | None
         dap_bryophyte: number | None
         height_bryophyte: number | None

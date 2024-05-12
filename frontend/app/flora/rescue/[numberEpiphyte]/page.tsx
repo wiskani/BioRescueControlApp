@@ -15,8 +15,8 @@ import React, {
 
 //Apis imports
 import {
-   GetRescueFloraSpecieByEpiphyteNumber, 
-   GetRelocationFloraSpecieByEpiphyteNumber,
+    GetRescueFloraSpecieByEpiphyteNumber, 
+    GetRelocationFloraSpecieByEpiphyteNumber,
 } from '../../../libs/rescue_flora/ApiRescueFlora';
 
 
@@ -163,22 +163,26 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
 
     return (
         <div>
-             <h1
-                 className="
-                        m-4
-                        text-gl
-                        text-center
-                        font-bold
-                        leading-none
-                        tracking-tight
-                        text-gray-600
-                        md:text-xl
-                        lg:text-xl
-                        dark:text-white
-                        "
-                 >Rescate y traslocación para el número de epífita
-                     <span className='italic'> {params.numberEpiphyte}</span>
-              </h1>
+            <h1
+                className="
+                m-4
+                text-gl
+                text-center
+                font-bold
+                leading-none
+                tracking-tight
+                text-gray-600
+                md:text-xl
+                lg:text-xl
+                dark:text-white
+                "
+            >Rescate y traslocación para el número de epífita:&nbsp;
+                <span
+                    className='italic'
+                >
+                    {params.numberEpiphyte}
+                </span>
+            </h1>
             <div
                 className="
                 flex
@@ -234,16 +238,288 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                         </Polyline>
                         {
                             rescueFloraData?
-                                <FloraRescueSpecieMap data={[rescueFloraData]} radius={55}/> :
+                                <FloraRescueSpecieMap
+                                    data={[rescueFloraData]}
+                                    radius={55}
+                                /> :
                                 null
                         }
                         {
                             isFloraRelocationSpeciesData(relocationFloraData)?
-                                <FloraRelocationSpecieMap data={[relocationFloraData]} radius={55}/> :
+                                <FloraRelocationSpecieMap
+                                    data={[relocationFloraData]}
+                                    radius={55}
+                                /> :
                                 null
                         }
                         <Legend colors={legedColors} labels={legendLabels} />
                     </MapContainer>
+                </div>
+            </div>
+            <div className="container mx-auto px-4 py-20">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                    <div className="w-full mt-6">
+                        <h1
+                            className="
+                            text-gray-900
+                            text-xl
+                            text-center
+                            title-font
+                            font-medium
+                            mb-5
+                            "
+                        >
+                            Datos de rescate 
+                        </h1>
+                        <ol className="max-w-md space-y-1 text-gray-500 list-decimal list-inside dark:text-gray-400">
+                            <li>
+                                <span
+                                    className="font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Fecha de rescate:&nbsp; 
+                                </span>
+                                {
+                                    rescueFloraData?.rescue_date? dateFormat(rescueFloraData.rescue_date): 'No disponible'
+                                }
+
+                            </li>
+                            <li>
+                                <span
+                                    className="font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Especie:&nbsp; 
+                                </span>
+                                {rescueFloraData?.specie_name? rescueFloraData.specie_name: 'No identificada'}
+                            </li>
+                            <li>
+                                <span
+                                    className="font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Género:&nbsp; 
+                                </span>
+                                {rescueFloraData?.genus_name? rescueFloraData.genus_name: 'No identificado'}
+                            </li>
+                            <li>
+                                <span
+                                    className="font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Familia:&nbsp; 
+                                </span>
+                                {rescueFloraData?.family_name? rescueFloraData.family_name: 'No identificada'}
+                            </li>
+                            <li>
+                                <span
+                                    className="font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Sustrato:&nbsp; 
+                                </span>
+                                {rescueFloraData?.substrate? rescueFloraData.substrate: 'No identificado'}
+                            </li>
+                            <li>
+                                <span
+                                    className="font-semibold text-gray-900 dark:text-white"
+                                >
+                                    DAP del forofito:&nbsp; 
+                                </span>
+                                {rescueFloraData?.dap_bryophyte? rescueFloraData.dap_bryophyte: 'No disponible'}
+                            </li>
+                            <li>
+                                <span
+                                    className="font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Altura del forofito:&nbsp; 
+                                </span>
+                                {rescueFloraData?.height_bryophyte? rescueFloraData.height_bryophyte: 'No disponible'}
+                            </li>
+                            <li>
+                                <span
+                                    className="font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Posición del forofito:&nbsp; 
+                                </span>
+                                {rescueFloraData?.bryophyte_position? rescueFloraData.bryophyte_position: 'No disponible'}
+                            </li>
+                            <li>
+                                <span
+                                    className="font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Hábito:&nbsp; 
+                                </span>
+                                {rescueFloraData?.growth_habit? rescueFloraData.growth_habit: 'No disponible'}
+                            </li>
+                            <li>
+                                <span
+                                    className="font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Fenología epífito:&nbsp; 
+                                </span>
+                                {rescueFloraData?.epiphyte_phenology? rescueFloraData.epiphyte_phenology: 'No disponible'}
+                            </li>
+                            <li>
+                                <span
+                                    className="font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Estado sanitario del epífito:&nbsp; 
+                                </span>
+                                {rescueFloraData?.health_status_epiphyte? rescueFloraData.health_status_epiphyte: 'No disponible'}
+                            </li>
+                            <li>
+                                <span
+                                    className="font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Microhabitat:&nbsp; 
+                                </span>
+                                {rescueFloraData?.microhabitat? rescueFloraData.microhabitat: 'No disponible'}
+                            </li>
+                            <li>
+                                <span
+                                    className="font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Especie de forofito:&nbsp; 
+                                </span>
+                                {rescueFloraData?.specie_bryophyte_name? rescueFloraData.specie_bryophyte_name: 'No identificado'}
+                            </li>
+                            <li>
+                                <span
+                                    className="font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Género de forofito:&nbsp; 
+                                </span>
+                                {rescueFloraData?.genus_bryophyte_name? rescueFloraData.genus_bryophyte_name: 'No identificado'}
+                            </li>
+                            <li>
+                                <span
+                                    className="font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Familia de forofito:&nbsp; 
+                                </span>
+                                {rescueFloraData?.family_bryophyte_name? rescueFloraData.family_bryophyte_name: 'No identificado'}
+                            </li>
+                            <li>
+                                <span
+                                    className="font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Otras observaciones:&nbsp; 
+                                </span>
+                                {rescueFloraData?.other_observations? rescueFloraData.other_observations: 'Sin observaciones'}
+                            </li>
+
+
+                        </ol>
+                    </div>
+                    <div className="w-full mt-6">
+                        <h1
+                            className="
+                            text-gray-900
+                            text-xl
+                            text-center
+                            title-font
+                            font-medium
+                            mb-5
+                            "
+                        >
+                            Datos de traslocación 
+                        </h1>
+                        {
+                            isFloraRelocationSpeciesData(relocationFloraData) ?
+                                <ol className="max-w-md space-y-1 text-gray-500 list-decimal list-inside dark:text-gray-400">
+                                    <li>
+                                        <span
+                                            className="font-semibold text-gray-900 dark:text-white"
+                                        >
+                                            Fecha de traslocación:&nbsp; 
+                                        </span>
+                                        {
+                                            relocationFloraData.relocation_date? dateFormat(relocationFloraData.relocation_date): 'No disponible'
+                                        }
+
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="font-semibold text-gray-900 dark:text-white"
+                                        >
+                                            Tamaño de la planta:&nbsp; 
+                                        </span>
+                                        {relocationFloraData.size? relocationFloraData.size: 'No identificado'}
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="font-semibold text-gray-900 dark:text-white"
+                                        >
+                                            Fenología:&nbsp; 
+                                        </span>
+                                        {relocationFloraData.dap_bryophyte? relocationFloraData.dap_bryophyte: 'No disponible'}
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="font-semibold text-gray-900 dark:text-white"
+                                        >
+                                            Zona de Johanson:&nbsp; 
+                                        </span>
+                                        {relocationFloraData.johanson_zone? relocationFloraData.johanson_zone: 'No disponible'}
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="font-semibold text-gray-900 dark:text-white"
+                                        >
+                                            Especie de forofito:&nbsp; 
+                                        </span>
+                                        {relocationFloraData.specie_name_bryophyte? relocationFloraData.specie_name_bryophyte: 'No identificado'}
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="font-semibold text-gray-900 dark:text-white"
+                                        >
+                                            Género de forofito:&nbsp; 
+                                        </span>
+                                        {relocationFloraData.genus_name_bryophyte? relocationFloraData.genus_name_bryophyte: 'No identificado'}
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="font-semibold text-gray-900 dark:text-white"
+                                        >
+                                            Familia de forofito:&nbsp; 
+                                        </span>
+                                        {relocationFloraData.family_name_bryophyte? relocationFloraData.family_name_bryophyte: 'No identificado'}
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="font-semibold text-gray-900 dark:text-white"
+                                        >
+                                            Tipo de corteza:&nbsp; 
+                                        </span>
+                                        {relocationFloraData.bark_type? relocationFloraData.bark_type: 'No disponible'}
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="font-semibold text-gray-900 dark:text-white"
+                                        >
+                                            Lianas infestadas:&nbsp; 
+                                        </span>
+                                        {relocationFloraData.infested_lianas? relocationFloraData.infested_lianas: 'No disponible'}
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="font-semibold text-gray-900 dark:text-white"
+                                        >
+                                            Otras observaciones:&nbsp; 
+                                        </span>
+                                        {relocationFloraData.other_observations? relocationFloraData.other_observations: 'Sin observaciones'}
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="font-semibold text-gray-900 dark:text-white"
+                                        >
+                                            Zona de reunicación:&nbsp; 
+                                        </span>
+                                        {relocationFloraData.relocation_zone? relocationFloraData.relocation_zone: 'No disponible'}
+                                    </li>
+                                </ol>
+                                :
+                                <p>No se realizó reubicación</p>
+
+                        }
+                    </div>
                 </div>
             </div>
         </div>

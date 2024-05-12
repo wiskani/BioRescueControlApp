@@ -178,18 +178,6 @@ export function  TableFilter <T>({ data, columns }: TableProps<T>) {
                             {table.getPageCount()}
                         </strong>
                     </span>
-                    <span className="flex items-center gap-1">
-                        | Go to page:
-                        <input
-                            type="number"
-                            defaultValue={table.getState().pagination.pageIndex + 1}
-                            onChange={e => {
-                                const page = e.target.value ? Number(e.target.value) - 1 : 0
-                                table.setPageIndex(page)
-                            }}
-                            className="border p-1 rounded w-16"
-                        />
-                    </span>
                     <select
                         value={table.getState().pagination.pageSize}
                         onChange={e => {
@@ -230,7 +218,7 @@ function DebouncedInput({
         }, debounce)
 
         return () => clearTimeout(timeout)
-    }, [value, onChange, debounce])
+    }, [value])
 
     return (
         <input {...props} value={value} onChange={e => setValue(e.target.value)} />
