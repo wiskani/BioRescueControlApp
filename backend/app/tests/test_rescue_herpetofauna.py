@@ -1,5 +1,7 @@
 from httpx import Response, AsyncClient
 from typing import Dict, Any, Union
+from datetime import datetime, timezone, timedelta
+
 import pytest
 
 from app.tests.conftest import *
@@ -10,8 +12,11 @@ from app.tests.utils.rescue_herpetofauna import *
 from app.tests.conftest import async_client
 
 from app.crud.rescue_herpetofauna import (
-    get_transect_herpetofauna_with_rescues_and_species_by_specie_id
+    get_transect_herpetofauna_with_rescues_and_species_by_specie_id,
+    getRescuesHerpetoWithSpecies,
         )
+
+from app.schemas.rescue_herpetofauna import RescueHerpetoWithSpecies
 
 """
 TEST CRUD FOR AGE GROUP
@@ -1106,8 +1111,7 @@ async def test_update_transect_herpetofauna_translocation(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    
-    #Create transect herpetofauna translocation
+    # Create transect herpetofauna translocation
     code = random_string()
 
     response: Response = await async_client.post(
@@ -1196,7 +1200,7 @@ async def test_create_point_herpetofauna_translocation(
     async_session: AsyncSession,
 ) -> None:
 
-        code= random_string()
+        code = random_string()
 
         response: Response = await async_client.post(
             "/api/point_herpetofauna_translocation", json={
@@ -1334,7 +1338,7 @@ async def test_delete_point_herpetofauna_translocation(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    #Create point herpetofauna translocation
+    # Create point herpetofauna translocation
     code = random_string()
 
     response: Response = await async_client.post(
@@ -1528,9 +1532,9 @@ async def test_delete_translocation_herpetofauna(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    #create a translocation herpetofauna
+    # create a translocation herpetofauna
     specie_id = await create_specie(async_client)
-    transect_herpetofauna_translocation_id : int = await create_transect_herpetofauna_translocation(async_client)
+    transect_herpetofauna_translocation_id: int = await create_transect_herpetofauna_translocation(async_client)
     mark_herpetofauna_id: int = await create_mark_herpetofauna(async_client)
     code = random_string()
 
@@ -1547,7 +1551,7 @@ async def test_delete_translocation_herpetofauna(
     data = response.json()
     translocation_herpetofauna_id = data["id"]
 
-    #delete translocation herpetofauna
+    # delete translocation herpetofauna
     response: Response = await async_client.delete(
         f"/api/translocation_herpetofauna/{translocation_herpetofauna_id}",
     )
@@ -1566,13 +1570,13 @@ async def test_get_transect_herpetofauna_with_species_and_count_rescues(
     async_client: AsyncClient,
     async_session: AsyncSession,
 ) -> None:
-    #Create a transect herpetofauna with number
+    # Create a transect herpetofauna with number
     transect_herpetofauna_id, number = await create_transect_herpetofaunaWithNumber(async_client)
 
-    #Create a specie with name
+    # Create a specie with name
     specie, name = await create_specieWithName(async_client)
 
-    #Create a rescue herpetofauna
+    # Create a rescue herpetofauna
     rescue_herpetofauna_id : int = await create_rescue_herpetofauna(async_client)
 
     response: Response = await async_client.get(
@@ -1586,19 +1590,20 @@ async def test_get_transect_herpetofauna_with_species_and_count_rescues(
     assert data_1["number"] == number 
     assert data_2["total_rescue"] == 1 
 
-#Test for get transect herpetofauna with species and count rescues by specie id
+
+# Test for get transect herpetofauna with species and count rescues by specie id
 @pytest.mark.asyncio
 async def test_get_transect_herpetofauna_with_species_and_count_rescues_by_specie_id(
         async_client: AsyncClient,
         async_session: AsyncSession,
 ) -> None:
-    #Create a transect herpetofauna with number
+    # Create a transect herpetofauna with number
     transect_herpetofauna_id, number = await create_transect_herpetofaunaWithNumber(async_client)
 
-    #Create a specie with name
+    # Create a specie with name
     specie, name = await create_specieWithName(async_client)
 
-    #Create a rescue herpetofauna 1
+    # Create a rescue herpetofauna 1
     (
             id_rescue1,
             number_transect1,
@@ -1613,7 +1618,7 @@ async def test_get_transect_herpetofauna_with_species_and_count_rescues_by_speci
             specie_name1
             ) = await create_rescue_herpetofaunaWithExtraData(async_client)
 
-    #Create a rescue herpetofauna 2
+    # Create a rescue herpetofauna 2
     (
             id_rescue2,
             number_transect2,
@@ -1644,7 +1649,111 @@ async def test_get_transect_herpetofauna_with_species_and_count_rescues_by_speci
         assert item.total_rescue == 1
 
 
+# Test for rescue herpetofauna with species and count rescues by specie name
+@pytest.mark.asyncio
+async def test_getRescueHerpetofaunaWithSpecies(
+        async_client: AsyncClient,
+        async_session: AsyncSession,
+        ) -> None:
+    # Create a transect herpetofauna
+    number_transect: str = random_string()
+    tower_id: int =  await create_random_tower(async_client)
+    latitude_in: float = random.uniform(-90, 90)
+    longitude_in: float = random.uniform(-180, 180)
+    latitude_out: float = random.uniform(-90, 90)
+    longitude_out: float = random.uniform(-180, 180)
+    response: Response = await async_client.post(
+        "/api/transect_herpetofauna", json={
+            "number": number_transect,
+            "date_in": "2021-10-10T00:00:00",
+            "date_out": "2021-10-12T00:00:00",
+            "latitude_in": latitude_in,
+            "longitude_in": longitude_in,
+            "altitude_in": 100,
+            "latitude_out": latitude_out,
+            "longitude_out": longitude_out,
+            "altitude_out": 100,
+            "tower_id": tower_id
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    transect_id = data["id"]
 
+    # Create a specie with name
+    specie_id, specie_name = await create_specieWithName(async_client)
 
+    # Create age of group
+    response = await async_client.post(
+        "/api/age_group", json={
+            "name": "joven"
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    age_group_id = data["id"]
 
+    # Create a rescue herpetofauna 1
+    response: Response = await async_client.post(
+        "/api/rescue_herpetofauna", json={
+            "number": "R01",
+            "gender": True,
+            "specie_id": specie_id,
+            "transect_herpetofauna_id": transect_id,
+            "age_group_id": age_group_id,
+        },
+    )
+    assert response.status_code == 201
+    # Create a rescue herpetofauna 2
+    response: Response = await async_client.post(
+        "/api/rescue_herpetofauna", json={
+            "number": "R02",
+            "gender": False,
+            "specie_id": specie_id,
+            "transect_herpetofauna_id": transect_id,
+            "age_group_id": age_group_id,
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
 
+    # Get rescue herpetofauna with species
+    result = await getRescuesHerpetoWithSpecies(async_session)
+
+    date_rescue_with_timezone = datetime(2021, 10, 10, tzinfo=timezone.utc)
+
+    # Result expected
+    expected_rescue1 = RescueHerpetoWithSpecies(
+        number="R01",
+        date_rescue=date_rescue_with_timezone,
+        gender="Macho",
+        specie_name=specie_name,
+        age_group_name="joven",
+        altitude_in=100,
+        latitude_in=latitude_in,
+        longitude_in=longitude_in,
+        altitude_out=100,
+        latitude_out=latitude_out,
+        longitude_out=longitude_out,
+        )
+
+    expected_rescue2 = RescueHerpetoWithSpecies(
+        number="R02",
+        date_rescue=date_rescue_with_timezone,
+        gender="Hembra",
+        specie_name=specie_name,
+        age_group_name="joven",
+        altitude_in=100,
+        latitude_in=latitude_in,
+        longitude_in=longitude_in,
+        altitude_out=100,
+        latitude_out=latitude_out,
+        longitude_out=longitude_out,
+        )
+
+    expected_result = [expected_rescue1, expected_rescue2]
+
+    print(f' el resultado es:{result}')
+    print(f' el resultado esperado es:{expected_result}')
+
+    assert result == expected_result

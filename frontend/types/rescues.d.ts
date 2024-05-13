@@ -46,6 +46,21 @@ declare global {
         specie_name: string | null; 
         genus_name: string | null; 
     }
+    
+    interface RescueHerpetoWithSpeciesData {
+        number: string;
+        date_rescue: Date; 
+        gender: string | null;
+        specie_name: string;
+        age_group_name: string | null;
+        altitude_in: number; 
+        latitude_in: number;
+        longitude_in: number; 
+        altitude_out: number; 
+        latitude_out: number; 
+        longitude_out: number; 
+
+    }
 
 }
 

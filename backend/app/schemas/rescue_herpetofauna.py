@@ -206,3 +206,17 @@ class PointHerpetoTransloWithSpecies(BaseModel):
     altitude: int
     specie_names: List[str]
     total_translocation: int
+
+
+class RescueHerpetoWithSpecies(BaseModel):
+    number: str = Field(...,)
+    date_rescue: datetime
+    gender: str | None
+    specie_name: str
+    age_group_name: str | None
+    altitude_in: int
+    latitude_in: float
+    longitude_in: float
+    altitude_out: int
+    latitude_out: float
+    longitude_out: float

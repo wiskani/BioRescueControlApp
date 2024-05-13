@@ -37,6 +37,9 @@ from app.schemas.rescue_herpetofauna import (
     TransectHerpetoWithSpecies,
     TransectHerpetoTransWithSpecies,
     PointHerpetoTransloWithSpecies,
+
+    # Rescue with species
+    RescueHerpetoWithSpecies
 )
 
 from app.models.rescue_herpetofauna import (
@@ -57,18 +60,21 @@ CRUD FOR AGE GROUP
 
 # Get if age group name exists
 async def get_age_group_name(db: AsyncSession, name: str) -> AgeGroup | None:
+    """Get if age group name exists"""
     result = await db.execute(select(AgeGroup).where(AgeGroup.name == name))
     return result.scalars().first()
 
 
 # Get age group by id
 async def get_age_group_by_id(db: AsyncSession, id: int) -> AgeGroup | None:
+    """Get age group by id"""
     result = await db.execute(select(AgeGroup).where(AgeGroup.id == id))
     return result.scalars().first()
 
 
 # Get all age groups
 async def get_all_age_groups(db: AsyncSession) -> List[AgeGroup]:
+    """Get all age groups"""
     age_groups_db = await db.execute(select(AgeGroup))
     return list(age_groups_db.scalars().all())
 
@@ -78,6 +84,7 @@ async def create_age_group(
         db: AsyncSession,
         age_group: AgeGroupCreate
         ) -> AgeGroup:
+    """Create age group"""
     age_group_db = AgeGroup(name=age_group.name)
     db.add(age_group_db)
     await db.commit()
@@ -91,6 +98,7 @@ async def update_age_group(
         age_group_id: int,
         age_group_update: AgeGroupBase
         ) -> AgeGroup:
+    """Update age group"""
     result = await db.execute(
             select(AgeGroup).where(AgeGroup.id == age_group_id)
             )
@@ -108,6 +116,7 @@ async def delete_age_group(
         db: AsyncSession,
         age_group_id: int
         ) -> AgeGroup:
+    """Delete age group"""
     result = await db.execute(
             select(AgeGroup).
             where(AgeGroup.id == age_group_id)
@@ -368,7 +377,9 @@ async def get_rescue_herpetofauna_by_id(
         db: AsyncSession,
         id: int
         ) -> RescueHerpetofauna | None:
-    result = await db.execute(select(RescueHerpetofauna).where(RescueHerpetofauna.id == id))
+    result = await db.execute(
+            select(RescueHerpetofauna).where(RescueHerpetofauna.id == id)
+            )
     return result.scalars().first()
 
 
@@ -944,5 +955,58 @@ async def getPointRelocaWithSpecies(
             altitude=point.altitude,
             specie_names=species,
             total_translocation=total_translocation
+        ))
+    return result
+
+
+async def getRescuesHerpetoWithSpecies(
+        db: AsyncSession
+        ) -> List[RescueHerpetoWithSpecies]:
+    rescues = await get_all_rescue_herpetofauna(db)
+
+    result = []
+
+    for rescue in rescues:
+        specie_id = rescue.specie_id
+        specie = await get_specie_by_id(db, specie_id)
+        if specie:
+            specie_name = specie.specific_epithet
+        else:
+            raise HTTPException(
+                    status_code=404,
+                    detail="Specie not found"
+                    )
+        age_group_id = await get_age_group_by_id(db, rescue.age_group_id)
+        if age_group_id:
+            age_group = age_group_id.name
+        else:
+            age_group = None
+        transect = await get_transect_herpetofauna_by_id(
+                db,
+                rescue.transect_herpetofauna_id
+                )
+        if not transect:
+            raise HTTPException(
+                    status_code=404,
+                    detail="Transect not found"
+                    )
+        gender: str | None = None
+        if rescue.gender is True:
+            gender = "Macho"
+        if rescue.gender is False:
+            gender = "Hembra"
+
+        result.append(RescueHerpetoWithSpecies(
+            number=rescue.number,
+            date_rescue=transect.date_in,
+            gender=gender,
+            specie_name=specie_name,
+            age_group_name=age_group,
+            altitude_in=transect.altitude_in,
+            latitude_in=transect.latitude_in,
+            longitude_in=transect.longitude_in,
+            altitude_out=transect.altitude_out,
+            latitude_out=transect.latitude_out,
+            longitude_out=transect.longitude_out
         ))
     return result
