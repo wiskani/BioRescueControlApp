@@ -61,8 +61,8 @@ const TransectTransloHerpetofaunaSpecieMap: React.FC<TransectTransloHerpetofauna
                                 {
                                     reduceSpecies(transect.specie_names).map(
                                         (specie, index) => (
-                                    <li key={index}>{index+1} {specie}</li>        
-                                ))}
+                                            <li key={index}>{index+1} {specie}</li>        
+                                        ))}
                             </>
                         </div>
                     </Tooltip>

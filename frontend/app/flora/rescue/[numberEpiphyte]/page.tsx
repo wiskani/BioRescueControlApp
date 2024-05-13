@@ -27,7 +27,6 @@ import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 
 //Components imports
 import { LineProyect } from '../../../components/Map/lineProyect';
-import Loading from '../../loading';
 import { dateFormat } from "../../../services/dateFormat";
 
 //import with dynamic

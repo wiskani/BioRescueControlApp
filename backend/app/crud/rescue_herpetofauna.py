@@ -166,7 +166,11 @@ async def get_all_transect_herpetofauna(
 
 
 # Create transect herpetofauna
-async def create_transect_herpetofauna(db: AsyncSession, transect_herpetofauna: TransectHerpetofaunaCreate) -> TransectHerpetofauna | HTTPException:
+async def create_transect_herpetofauna(
+        db: AsyncSession,
+        transect_herpetofauna: TransectHerpetofaunaCreate
+        ) -> TransectHerpetofauna | HTTPException:
+    """Create transect herpetofauna"""
     # Check if transect herpetofauna exists
     transect_herpetofauna_db = TransectHerpetofauna(
         number=transect_herpetofauna.number,
@@ -959,7 +963,63 @@ async def getPointRelocaWithSpecies(
     return result
 
 
-async def getRescuesHerpetoWithSpecies(
+async def getRescueHerpetoWithSpecie(
+        db: AsyncSession,
+        number: str
+        ) -> RescueHerpetoWithSpecies:
+    rescue = await get_rescue_herpetofauna_by_number(db, number)
+
+    if not rescue:
+        raise HTTPException(
+                status_code=404,
+                detail="Rescue not found"
+                )
+
+    specie_id = rescue.specie_id
+    specie = await get_specie_by_id(db, specie_id)
+    if specie:
+        specie_name = specie.specific_epithet
+    else:
+        raise HTTPException(
+                status_code=404,
+                detail="Specie not found"
+                )
+    age_group_id = await get_age_group_by_id(db, rescue.age_group_id)
+    if age_group_id:
+        age_group = age_group_id.name
+    else:
+        age_group = None
+    transect = await get_transect_herpetofauna_by_id(
+            db,
+            rescue.transect_herpetofauna_id
+            )
+    if not transect:
+        raise HTTPException(
+                status_code=404,
+                detail="Transect not found"
+                )
+    gender: str | None = None
+    if rescue.gender is True:
+        gender = "Macho"
+    if rescue.gender is False:
+        gender = "Hembra"
+
+    return RescueHerpetoWithSpecies(
+        number=rescue.number,
+        date_rescue=transect.date_in,
+        gender=gender,
+        specie_name=specie_name,
+        age_group_name=age_group,
+        altitude_in=transect.altitude_in,
+        latitude_in=transect.latitude_in,
+        longitude_in=transect.longitude_in,
+        altitude_out=transect.altitude_out,
+        latitude_out=transect.latitude_out,
+        longitude_out=transect.longitude_out
+    )
+
+
+async def getAllRescuesHerpetoWithSpecies(
         db: AsyncSession
         ) -> List[RescueHerpetoWithSpecies]:
     rescues = await get_all_rescue_herpetofauna(db)

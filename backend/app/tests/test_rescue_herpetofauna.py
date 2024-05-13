@@ -13,7 +13,8 @@ from app.tests.conftest import async_client
 
 from app.crud.rescue_herpetofauna import (
     get_transect_herpetofauna_with_rescues_and_species_by_specie_id,
-    getRescuesHerpetoWithSpecies,
+    getRescueHerpetoWithSpecie,
+    getAllRescuesHerpetoWithSpecies
         )
 
 from app.schemas.rescue_herpetofauna import RescueHerpetoWithSpecies
@@ -1693,6 +1694,86 @@ async def test_getRescueHerpetofaunaWithSpecies(
     data = response.json()
     age_group_id = data["id"]
 
+    # Create a rescue herpetofauna
+    response: Response = await async_client.post(
+        "/api/rescue_herpetofauna", json={
+            "number": "R01",
+            "gender": True,
+            "specie_id": specie_id,
+            "transect_herpetofauna_id": transect_id,
+            "age_group_id": age_group_id,
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+
+    # Get rescue herpetofauna with species
+    result = await getRescueHerpetoWithSpecie(async_session, number="R01")
+
+    date_rescue_with_timezone = datetime(2021, 10, 10, tzinfo=timezone.utc)
+
+    # Result expected
+    expected_rescue = RescueHerpetoWithSpecies(
+        number="R01",
+        date_rescue=date_rescue_with_timezone,
+        gender="Macho",
+        specie_name=specie_name,
+        age_group_name="joven",
+        altitude_in=100,
+        latitude_in=latitude_in,
+        longitude_in=longitude_in,
+        altitude_out=100,
+        latitude_out=latitude_out,
+        longitude_out=longitude_out,
+        )
+
+    assert result == expected_rescue
+
+
+# Test for rescue herpetofauna with species and count rescues by specie name
+@pytest.mark.asyncio
+async def test_getAllRescueHerpetofaunaWithSpecies(
+        async_client: AsyncClient,
+        async_session: AsyncSession,
+        ) -> None:
+    # Create a transect herpetofauna
+    number_transect: str = random_string()
+    tower_id: int =  await create_random_tower(async_client)
+    latitude_in: float = random.uniform(-90, 90)
+    longitude_in: float = random.uniform(-180, 180)
+    latitude_out: float = random.uniform(-90, 90)
+    longitude_out: float = random.uniform(-180, 180)
+    response: Response = await async_client.post(
+        "/api/transect_herpetofauna", json={
+            "number": number_transect,
+            "date_in": "2021-10-10T00:00:00",
+            "date_out": "2021-10-12T00:00:00",
+            "latitude_in": latitude_in,
+            "longitude_in": longitude_in,
+            "altitude_in": 100,
+            "latitude_out": latitude_out,
+            "longitude_out": longitude_out,
+            "altitude_out": 100,
+            "tower_id": tower_id
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    transect_id = data["id"]
+
+    # Create a specie with name
+    specie_id, specie_name = await create_specieWithName(async_client)
+
+    # Create age of group
+    response = await async_client.post(
+        "/api/age_group", json={
+            "name": "joven"
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    age_group_id = data["id"]
+
     # Create a rescue herpetofauna 1
     response: Response = await async_client.post(
         "/api/rescue_herpetofauna", json={
@@ -1718,7 +1799,7 @@ async def test_getRescueHerpetofaunaWithSpecies(
     data = response.json()
 
     # Get rescue herpetofauna with species
-    result = await getRescuesHerpetoWithSpecies(async_session)
+    result = await getAllRescuesHerpetoWithSpecies(async_session)
 
     date_rescue_with_timezone = datetime(2021, 10, 10, tzinfo=timezone.utc)
 
