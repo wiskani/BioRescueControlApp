@@ -363,6 +363,17 @@ export default function Flora() {
                 columns = {columnsFlora}
                 data = {rescueFloraData}
             /> 
+            <div
+                className="flex justify-center"
+            >
+                <button 
+                    type="button"
+                    onClick={() => router.back()}
+                    className="bg-emerald-900  hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded"
+                >
+                    Volver
+                </button>
+            </div>
         </div>
 
 

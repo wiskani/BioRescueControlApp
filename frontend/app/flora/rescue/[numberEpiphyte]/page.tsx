@@ -257,7 +257,14 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                 </div>
             </div>
             <div className="container mx-auto px-4 py-20">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                <div className="
+                    grid
+                    grid-cols-1
+                    sm:grid-cols-2
+                    md:grid-cols-2
+                    lg:grid-cols-2
+                    gap-4"
+                >
                     <div className="w-full mt-6">
                         <h1
                             className="
@@ -271,89 +278,174 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                         >
                             Datos de rescate 
                         </h1>
-                        <ol className="max-w-md space-y-1 text-gray-500 list-decimal list-inside dark:text-gray-400">
+                        <ol className="
+                            max-w-md
+                            space-y-1
+                            text-gray-500
+                            list-decimal
+                            list-inside
+                            dark:text-gray-400"
+                        >
                             <li>
                                 <span
-                                    className="font-semibold text-gray-900 dark:text-white"
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
                                 >
                                     Fecha de rescate:&nbsp; 
                                 </span>
                                 {
-                                    rescueFloraData?.rescue_date? dateFormat(rescueFloraData.rescue_date): 'No disponible'
+                                    rescueFloraData?.rescue_date?
+                                        dateFormat(rescueFloraData.rescue_date):
+                                        'No disponible'
                                 }
 
                             </li>
                             <li>
                                 <span
-                                    className="font-semibold text-gray-900 dark:text-white"
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
                                 >
                                     Especie:&nbsp; 
                                 </span>
-                                {rescueFloraData?.specie_name? rescueFloraData.specie_name: 'No identificada'}
+                                {
+                                    rescueFloraData?.specie_name?
+                                    rescueFloraData.specie_name:
+                                    'No identificada'
+                                }
                             </li>
                             <li>
                                 <span
-                                    className="font-semibold text-gray-900 dark:text-white"
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
                                 >
                                     Género:&nbsp; 
                                 </span>
-                                {rescueFloraData?.genus_name? rescueFloraData.genus_name: 'No identificado'}
+                                {
+                                    rescueFloraData?.genus_name?
+                                        rescueFloraData.genus_name:
+                                        'No identificado'
+                                }
                             </li>
                             <li>
                                 <span
-                                    className="font-semibold text-gray-900 dark:text-white"
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
                                 >
                                     Familia:&nbsp; 
                                 </span>
-                                {rescueFloraData?.family_name? rescueFloraData.family_name: 'No identificada'}
+                                {
+                                    rescueFloraData?.family_name?
+                                        rescueFloraData.family_name:
+                                        'No identificada'
+                                }
                             </li>
                             <li>
                                 <span
-                                    className="font-semibold text-gray-900 dark:text-white"
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
                                 >
                                     Sustrato:&nbsp; 
                                 </span>
-                                {rescueFloraData?.substrate? rescueFloraData.substrate: 'No identificado'}
+                                {
+                                    rescueFloraData?.substrate?
+                                        rescueFloraData.substrate:
+                                        'No identificado'
+                                }
                             </li>
                             <li>
                                 <span
-                                    className="font-semibold text-gray-900 dark:text-white"
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
                                 >
                                     DAP del forofito:&nbsp; 
                                 </span>
-                                {rescueFloraData?.dap_bryophyte? rescueFloraData.dap_bryophyte: 'No disponible'}
+                                {
+                                    rescueFloraData?.dap_bryophyte?
+                                        rescueFloraData.dap_bryophyte:
+                                        'No disponible'
+                                }
                             </li>
                             <li>
                                 <span
-                                    className="font-semibold text-gray-900 dark:text-white"
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
                                 >
                                     Altura del forofito:&nbsp; 
                                 </span>
-                                {rescueFloraData?.height_bryophyte? rescueFloraData.height_bryophyte: 'No disponible'}
+                                {
+                                    rescueFloraData?.height_bryophyte?
+                                        rescueFloraData.height_bryophyte:
+                                        'No disponible'
+                                }
                             </li>
                             <li>
                                 <span
-                                    className="font-semibold text-gray-900 dark:text-white"
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
                                 >
                                     Posición del forofito:&nbsp; 
                                 </span>
-                                {rescueFloraData?.bryophyte_position? rescueFloraData.bryophyte_position: 'No disponible'}
+                                {
+                                    rescueFloraData?.bryophyte_position?
+                                        rescueFloraData.bryophyte_position:
+                                        'No disponible'
+                                }
                             </li>
                             <li>
                                 <span
-                                    className="font-semibold text-gray-900 dark:text-white"
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
                                 >
                                     Hábito:&nbsp; 
                                 </span>
-                                {rescueFloraData?.growth_habit? rescueFloraData.growth_habit: 'No disponible'}
+                                {
+                                    rescueFloraData?.growth_habit?
+                                        rescueFloraData.growth_habit:
+                                        'No disponible'
+                                }
                             </li>
                             <li>
                                 <span
-                                    className="font-semibold text-gray-900 dark:text-white"
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
                                 >
                                     Fenología epífito:&nbsp; 
                                 </span>
-                                {rescueFloraData?.epiphyte_phenology? rescueFloraData.epiphyte_phenology: 'No disponible'}
+                                {
+                                    rescueFloraData?.epiphyte_phenology?
+                                        rescueFloraData.epiphyte_phenology:
+                                        'No disponible'
+                                }
                             </li>
                             <li>
                                 <span
@@ -361,7 +453,11 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                                 >
                                     Estado sanitario del epífito:&nbsp; 
                                 </span>
-                                {rescueFloraData?.health_status_epiphyte? rescueFloraData.health_status_epiphyte: 'No disponible'}
+                                {
+                                    rescueFloraData?.health_status_epiphyte?
+                                        rescueFloraData.health_status_epiphyte:
+                                        'No disponible'
+                                }
                             </li>
                             <li>
                                 <span
@@ -377,7 +473,10 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                                 >
                                     Especie de forofito:&nbsp; 
                                 </span>
-                                {rescueFloraData?.specie_bryophyte_name? rescueFloraData.specie_bryophyte_name: 'No identificado'}
+                                {rescueFloraData?.specie_bryophyte_name?
+                                    rescueFloraData.specie_bryophyte_name:
+                                    'No identificado'
+                                }
                             </li>
                             <li>
                                 <span
@@ -385,7 +484,11 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                                 >
                                     Género de forofito:&nbsp; 
                                 </span>
-                                {rescueFloraData?.genus_bryophyte_name? rescueFloraData.genus_bryophyte_name: 'No identificado'}
+                                {
+                                    rescueFloraData?.genus_bryophyte_name?
+                                        rescueFloraData.genus_bryophyte_name:
+                                        'No identificado'
+                                }
                             </li>
                             <li>
                                 <span
@@ -393,7 +496,11 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                                 >
                                     Familia de forofito:&nbsp; 
                                 </span>
-                                {rescueFloraData?.family_bryophyte_name? rescueFloraData.family_bryophyte_name: 'No identificado'}
+                                {
+                                    rescueFloraData?.family_bryophyte_name?
+                                        rescueFloraData.family_bryophyte_name:
+                                        'No identificado'
+                                }
                             </li>
                             <li>
                                 <span
@@ -401,7 +508,11 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                                 >
                                     Otras observaciones:&nbsp; 
                                 </span>
-                                {rescueFloraData?.other_observations? rescueFloraData.other_observations: 'Sin observaciones'}
+                                {
+                                    rescueFloraData?.other_observations?
+                                        rescueFloraData.other_observations:
+                                        'Sin observaciones'
+                                }
                             </li>
 
 
@@ -422,7 +533,14 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                         </h1>
                         {
                             isFloraRelocationSpeciesData(relocationFloraData) ?
-                                <ol className="max-w-md space-y-1 text-gray-500 list-decimal list-inside dark:text-gray-400">
+                                <ol className="
+                                    max-w-md
+                                    space-y-1
+                                    text-gray-500
+                                    list-decimal
+                                    list-inside
+                                    dark:text-gray-400"
+                                >
                                     <li>
                                         <span
                                             className="font-semibold text-gray-900 dark:text-white"
@@ -430,7 +548,9 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                                             Fecha de traslocación:&nbsp; 
                                         </span>
                                         {
-                                            relocationFloraData.relocation_date? dateFormat(relocationFloraData.relocation_date): 'No disponible'
+                                            relocationFloraData.relocation_date?
+                                                dateFormat(relocationFloraData.relocation_date):
+                                                'No disponible'
                                         }
 
                                     </li>
@@ -448,7 +568,10 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                                         >
                                             Fenología:&nbsp; 
                                         </span>
-                                        {relocationFloraData.dap_bryophyte? relocationFloraData.dap_bryophyte: 'No disponible'}
+                                        {
+                                            relocationFloraData.dap_bryophyte?
+                                                relocationFloraData.dap_bryophyte:
+                                                'No disponible'}
                                     </li>
                                     <li>
                                         <span
@@ -472,7 +595,11 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                                         >
                                             Género de forofito:&nbsp; 
                                         </span>
-                                        {relocationFloraData.genus_name_bryophyte? relocationFloraData.genus_name_bryophyte: 'No identificado'}
+                                        {
+                                            relocationFloraData.genus_name_bryophyte?
+                                                relocationFloraData.genus_name_bryophyte:
+                                                'No identificado'
+                                        }
                                     </li>
                                     <li>
                                         <span
@@ -480,7 +607,11 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                                         >
                                             Familia de forofito:&nbsp; 
                                         </span>
-                                        {relocationFloraData.family_name_bryophyte? relocationFloraData.family_name_bryophyte: 'No identificado'}
+                                        {
+                                            relocationFloraData.family_name_bryophyte?
+                                                relocationFloraData.family_name_bryophyte:
+                                                'No identificado'
+                                        }
                                     </li>
                                     <li>
                                         <span
@@ -488,7 +619,11 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                                         >
                                             Tipo de corteza:&nbsp; 
                                         </span>
-                                        {relocationFloraData.bark_type? relocationFloraData.bark_type: 'No disponible'}
+                                        {
+                                            relocationFloraData.bark_type?
+                                                relocationFloraData.bark_type:
+                                                'No disponible'
+                                        }
                                     </li>
                                     <li>
                                         <span
@@ -496,7 +631,11 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                                         >
                                             Lianas infestadas:&nbsp; 
                                         </span>
-                                        {relocationFloraData.infested_lianas? relocationFloraData.infested_lianas: 'No disponible'}
+                                        {
+                                            relocationFloraData.infested_lianas?
+                                                relocationFloraData.infested_lianas:
+                                                'No disponible'
+                                        }
                                     </li>
                                     <li>
                                         <span
@@ -504,15 +643,27 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                                         >
                                             Otras observaciones:&nbsp; 
                                         </span>
-                                        {relocationFloraData.other_observations? relocationFloraData.other_observations: 'Sin observaciones'}
+                                        {
+                                            relocationFloraData.other_observations?
+                                                relocationFloraData.other_observations:
+                                                'Sin observaciones'
+                                        }
                                     </li>
                                     <li>
                                         <span
-                                            className="font-semibold text-gray-900 dark:text-white"
+                                            className="
+                                            font-semibold
+                                            text-gray-900
+                                            dark:text-white
+                                            "
                                         >
                                             Zona de reunicación:&nbsp; 
                                         </span>
-                                        {relocationFloraData.relocation_zone? relocationFloraData.relocation_zone: 'No disponible'}
+                                        {
+                                            relocationFloraData.relocation_zone?
+                                                relocationFloraData.relocation_zone:
+                                                'No disponible'
+                                        }
                                     </li>
                                 </ol>
                                 :
@@ -521,6 +672,17 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                         }
                     </div>
                 </div>
+            </div>
+            <div
+                className="flex justify-center"
+            >
+                <button 
+                    type="button"
+                    onClick={() => router.back()}
+                    className="bg-emerald-900  hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded"
+                >
+                    Volver
+                </button>
             </div>
         </div>
 
