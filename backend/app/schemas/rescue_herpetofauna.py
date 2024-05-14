@@ -222,7 +222,7 @@ class RescueHerpetoWithSpecies(BaseModel):
     longitude_out: float
 
 
-class TranslocationHerpetoWithSpecie(BaseModel):
+class TranslocationHerpetoWithMark(BaseModel):
     cod: str = Field(...,)
     date: datetime
     latitude: float

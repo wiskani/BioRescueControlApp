@@ -40,7 +40,7 @@ from app.schemas.rescue_herpetofauna import (
 
     # Rescue with species
     RescueHerpetoWithSpecies,
-    TranslocationHerpetoWithSpecie,
+    TranslocationHerpetoWithMark,
 )
 
 from app.models.rescue_herpetofauna import (
@@ -1073,10 +1073,13 @@ async def getAllRescuesHerpetoWithSpecies(
     return result
 
 
-async def getTranslocationHerpetoWithSpecie(
+async def getTranslocationAndMarkHerpetoByNumber(
         db: AsyncSession,
         rescue_number: str
-        ) -> TranslocationHerpetoWithSpecie | None:
+        ) -> TranslocationHerpetoWithMark | None:
+    """
+    Get translocation and mark herpetofauna data by rescue number
+    """
     rescue = await get_rescue_herpetofauna_by_number(db, rescue_number)
 
     if not rescue:
@@ -1117,7 +1120,7 @@ async def getTranslocationHerpetoWithSpecie(
     if not point_db:
         return None
 
-    return TranslocationHerpetoWithSpecie(
+    return TranslocationHerpetoWithMark(
         cod=translocation_db.cod,
         date=point_db.date,
         latitude=point_db.latitude,
@@ -1130,3 +1133,59 @@ async def getTranslocationHerpetoWithSpecie(
         is_photo_mark=mark_db.is_photo_mark,
         is_elastomer_mark=mark_db.is_elastomer_mark
         )
+
+
+async def getTransectTranslocationByNumber(
+        db: AsyncSession,
+        rescue_number: str
+        ) -> List[TransectHerpetofaunaTranslocationBase] | None:
+    """
+    Get transect translocation data by rescue number
+    """
+
+    rescue = await get_rescue_herpetofauna_by_number(db, rescue_number)
+    if not rescue:
+        raise HTTPException(
+                status_code=404,
+                detail="Rescue not found"
+                )
+
+    translocations_db = await db.execute(
+            select(TranslocationHerpetofauna)
+            .where(
+                TranslocationHerpetofauna.specie_id == rescue.specie_id
+                ))
+
+    translocations = list(translocations_db.scalars().all())
+
+    if not translocations:
+        return None
+
+    result = []
+
+    for tranlocation in translocations:
+        transect = await db.execute(
+                select(TransectHerpetofaunaTranslocation)
+                .where(
+                    TransectHerpetofaunaTranslocation.id == tranlocation.transect_herpetofauna_translocation_id
+                    ))
+        transect_db = transect.scalars().first()
+
+        if not transect_db:
+            continue
+
+        # Is transect already in result list
+        if transect_db in result:
+            continue
+
+        result.append(TransectHerpetofaunaTranslocationBase(
+            cod=transect_db.cod,
+            date=transect_db.date,
+            latitude_in=transect_db.latitude_in,
+            longitude_in=transect_db.longitude_in,
+            altitude_in=transect_db.altitude_in,
+            latitude_out=transect_db.latitude_out,
+            longitude_out=transect_db.longitude_out,
+            altitude_out=transect_db.altitude_out
+        ))
+    return result
