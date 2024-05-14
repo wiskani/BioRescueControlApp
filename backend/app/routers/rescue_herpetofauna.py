@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List, Dict
+from typing import List, Dict, Union
 
 from app.schemas.rescue_herpetofauna import (
     # AgeGroup
@@ -45,6 +45,7 @@ from app.schemas.rescue_herpetofauna import (
 
     # Rescue Herpetofauna with species
     RescueHerpetoWithSpecies,
+    PointTranslocationHerpetoWithMark
 )
 
 from app.models.rescue_herpetofauna import (
@@ -121,7 +122,11 @@ from app.crud.rescue_herpetofauna import (
 
     # RescueHerpetofaunaWithSpecies
     getRescueHerpetoWithSpecie,
-    getAllRescuesHerpetoWithSpecies
+    getAllRescuesHerpetoWithSpecies,
+
+    # TranslocationHerpetoWithMark
+    getPointTranslocationAndMarkHerpetoByNumber,
+    getTransectTranslocationByNumber
 )
 
 from app.api.deps import PermissonsChecker, get_db
@@ -919,3 +924,44 @@ async def get_all_herpetofauna_rescue_with_species_api(
     authorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> List[RescueHerpetoWithSpecies]:
     return await getAllRescuesHerpetoWithSpecies(db)
+
+
+# Get translocation herpetofauna with species by number rescue
+@router.get(
+    path="/api/translocation_herpetofauna_with_species/{rescue_number}",
+    response_model=Union[
+        List[PointTranslocationHerpetoWithMark],
+        List[TransectHerpetofaunaTranslocationBase]
+        ],
+    status_code=status.HTTP_200_OK,
+    tags=["Translocation Herpetofauna"],
+    summary="Get translocation herpetofauna with species",
+)
+async def get_translocation_herpetofauna_with_species_api(
+    rescue_number: str,
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin"])),
+) -> Union[
+        List[PointTranslocationHerpetoWithMark],
+        List[TransectHerpetofaunaTranslocationBase]
+        ]:
+
+    translocatios = await getPointTranslocationAndMarkHerpetoByNumber(
+            db,
+            rescue_number
+            )
+    if translocatios is not None:
+        return translocatios
+
+    translocatios = await getTransectTranslocationByNumber(
+            db,
+            rescue_number
+            )
+
+    if translocatios is not None:
+        return translocatios
+
+    raise HTTPException(
+            status_code=404,
+            detail="Translocation herpetofauna not found"
+            )

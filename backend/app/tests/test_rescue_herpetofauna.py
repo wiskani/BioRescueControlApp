@@ -15,13 +15,13 @@ from app.crud.rescue_herpetofauna import (
     get_transect_herpetofauna_with_rescues_and_species_by_specie_id,
     getRescueHerpetoWithSpecie,
     getAllRescuesHerpetoWithSpecies,
-    getTranslocationAndMarkHerpetoByNumber,
+    getPointTranslocationAndMarkHerpetoByNumber,
     getTransectTranslocationByNumber
         )
 
 from app.schemas.rescue_herpetofauna import (
         RescueHerpetoWithSpecies,
-        TranslocationHerpetoWithMark,
+        PointTranslocationHerpetoWithMark,
         TransectHerpetofaunaTranslocationBase
         )
 
@@ -1844,7 +1844,7 @@ async def test_getAllRescueHerpetofaunaWithSpecies(
 
 
 @pytest.mark.asyncio
-async def test_getTranslocationAndMarkHerpetoByNumber(
+async def test_getPointTranslocationAndMarkHerpetoByNumber(
         async_client: AsyncClient,
         async_session: AsyncSession,
         ) -> None:
@@ -1948,7 +1948,7 @@ async def test_getTranslocationAndMarkHerpetoByNumber(
     assert response.status_code == 201
 
     # expected result
-    expected_result = TranslocationHerpetoWithMark(
+    expected_result = PointTranslocationHerpetoWithMark(
         cod=code,
         date=datetime(2021, 10, 10, tzinfo=timezone.utc),
         latitude=1.5,
@@ -1963,7 +1963,7 @@ async def test_getTranslocationAndMarkHerpetoByNumber(
     )
 
     # Get translocation and mark herpeto by number
-    result = await getTranslocationAndMarkHerpetoByNumber(
+    result = await getPointTranslocationAndMarkHerpetoByNumber(
             async_session,
             rescue_number="R01"
             )

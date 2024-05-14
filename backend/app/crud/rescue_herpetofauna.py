@@ -40,7 +40,8 @@ from app.schemas.rescue_herpetofauna import (
 
     # Rescue with species
     RescueHerpetoWithSpecies,
-    TranslocationHerpetoWithMark,
+    PointTranslocationHerpetoWithMark,
+    TransectTranslocationHerpetoWithMark,
 )
 
 from app.models.rescue_herpetofauna import (
@@ -1073,10 +1074,10 @@ async def getAllRescuesHerpetoWithSpecies(
     return result
 
 
-async def getTranslocationAndMarkHerpetoByNumber(
+async def getPointTranslocationAndMarkHerpetoByNumber(
         db: AsyncSession,
         rescue_number: str
-        ) -> TranslocationHerpetoWithMark | None:
+        ) -> PointTranslocationHerpetoWithMark | None:
     """
     Get translocation and mark herpetofauna data by rescue number
     """
@@ -1120,12 +1121,75 @@ async def getTranslocationAndMarkHerpetoByNumber(
     if not point_db:
         return None
 
-    return TranslocationHerpetoWithMark(
+    return PointTranslocationHerpetoWithMark(
         cod=translocation_db.cod,
         date=point_db.date,
         latitude=point_db.latitude,
         longitude=point_db.longitude,
         altitude=point_db.altitude,
+        number_mark=mark_db.number,
+        code_mark=mark_db.code,
+        LHC=mark_db.LHC,
+        weight=mark_db.weight,
+        is_photo_mark=mark_db.is_photo_mark,
+        is_elastomer_mark=mark_db.is_elastomer_mark
+        )
+
+
+async def getTransectTranslocationAndMarkHerpetoByNumber(
+        db: AsyncSession,
+        rescue_number: str
+        ) -> TransectTranslocationHerpetoWithMark | None:
+    """
+    Get translocation and mark herpetofauna data by rescue number
+    """
+    rescue = await get_rescue_herpetofauna_by_number(db, rescue_number)
+
+    if not rescue:
+        raise HTTPException(
+                status_code=404,
+                detail="Rescue not found"
+                )
+
+    # get mark herpetofauna by rescue id
+    mark = await db.execute(
+            select(MarkHerpetofauna)
+            .where(
+                MarkHerpetofauna.rescue_herpetofauna_id == rescue.id
+                ))
+    mark_db = mark.scalars().first()
+
+    if not mark_db:
+        return None
+
+    # get point herpetofauna translocation by mark id
+    translocation = await db.execute(
+            select(TranslocationHerpetofauna)
+            .where(
+                TranslocationHerpetofauna.mark_herpetofauna_id == mark_db.id
+                ))
+    translocation_db = translocation.scalars().first()
+
+    if not translocation_db:
+        return None
+
+    transect = await db.execute(
+            select(TransectHerpetofaunaTranslocation)
+            .where(
+                TransectHerpetofaunaTranslocation.id == translocation_db.transect_herpetofauna_translocation_id
+                ))
+    transect_db = transect.scalars().first()
+
+    if not transect_db:
+        return None
+
+    return TransectTranslocationHerpetoWithMark(
+        cod=translocation_db.cod,
+        date=transect_db.date,
+        latitude_in=transect_db.latitude_in,
+        longitude_in=transect_db.longitude,
+        latitude_out=transect_db.latitude,
+        longitude_out=transect_db.longitude,
         number_mark=mark_db.number,
         code_mark=mark_db.code,
         LHC=mark_db.LHC,
