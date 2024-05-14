@@ -902,7 +902,7 @@ async def get_herpetofauna_rescue_with_species_api(
     number: str,
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
-) -> List[RescueHerpetoWithSpecies]:
+) -> RescueHerpetoWithSpecies:
     return await getRescueHerpetoWithSpecie(db, number)
 
 

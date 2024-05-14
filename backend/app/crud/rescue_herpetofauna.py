@@ -39,7 +39,8 @@ from app.schemas.rescue_herpetofauna import (
     PointHerpetoTransloWithSpecies,
 
     # Rescue with species
-    RescueHerpetoWithSpecies
+    RescueHerpetoWithSpecies,
+    TranslocationHerpetoWithSpecie,
 )
 
 from app.models.rescue_herpetofauna import (
@@ -1070,3 +1071,62 @@ async def getAllRescuesHerpetoWithSpecies(
             longitude_out=transect.longitude_out
         ))
     return result
+
+
+async def getTranslocationHerpetoWithSpecie(
+        db: AsyncSession,
+        rescue_number: str
+        ) -> TranslocationHerpetoWithSpecie | None:
+    rescue = await get_rescue_herpetofauna_by_number(db, rescue_number)
+
+    if not rescue:
+        raise HTTPException(
+                status_code=404,
+                detail="Rescue not found"
+                )
+
+    # get mark herpetofauna by rescue id
+    mark = await db.execute(
+            select(MarkHerpetofauna)
+            .where(
+                MarkHerpetofauna.rescue_herpetofauna_id == rescue.id
+                ))
+    mark_db = mark.scalars().first()
+
+    if not mark_db:
+        return None
+
+    # get point herpetofauna translocation by mark id
+    translocation = await db.execute(
+            select(TranslocationHerpetofauna)
+            .where(
+                TranslocationHerpetofauna.mark_herpetofauna_id == mark_db.id
+                ))
+    translocation_db = translocation.scalars().first()
+
+    if not translocation_db:
+        return None
+
+    point = await db.execute(
+            select(PointHerpetofaunaTranslocation)
+            .where(
+                PointHerpetofaunaTranslocation.id == translocation_db.point_herpetofauna_translocation_id
+                ))
+    point_db = point.scalars().first()
+
+    if not point_db:
+        return None
+
+    return TranslocationHerpetoWithSpecie(
+        cod=translocation_db.cod,
+        date=point_db.date,
+        latitude=point_db.latitude,
+        longitude=point_db.longitude,
+        altitude=point_db.altitude,
+        number_mark=mark_db.number,
+        code_mark=mark_db.code,
+        LHC=mark_db.LHC,
+        weight=mark_db.weight,
+        is_photo_mark=mark_db.is_photo_mark,
+        is_elastomer_mark=mark_db.is_elastomer_mark
+        )

@@ -19,7 +19,7 @@ interface RescueHerpetoMapProps {
 const RescueHerpetoSpecieMap: React.FC<RescueHerpetoMapProps> = ({data}) => {
     const lineOptions = {
         color: 'green',
-        weight: 3,
+        weight: 6,
     };
 
     return (

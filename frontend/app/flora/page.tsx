@@ -28,7 +28,7 @@ import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
 
 //Table imports
-import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 
 //Components imports
 import { LineProyect } from '../components/Map/lineProyect';

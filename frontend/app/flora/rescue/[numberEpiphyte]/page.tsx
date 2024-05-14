@@ -66,13 +66,6 @@ const FloraRelocationSpecieMap = dynamic(
     { ssr: false }
 )
 
-
-//Types
-interface FloraColumns extends FloraRescueSpeciesData{
-    ver: string;
-}
-
-
 export default function Page({ params} : { params: { numberEpiphyte: string } }) {
     const { data: session } = useSession();
     const [rescueFloraData, setRescueFloraData] = useState<FloraRescueSpeciesData | null>(null);

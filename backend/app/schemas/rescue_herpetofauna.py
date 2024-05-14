@@ -220,3 +220,17 @@ class RescueHerpetoWithSpecies(BaseModel):
     altitude_out: int
     latitude_out: float
     longitude_out: float
+
+
+class TranslocationHerpetoWithSpecie(BaseModel):
+    cod: str = Field(...,)
+    date: datetime
+    latitude: float
+    longitude: float
+    altitude: int
+    number_mark: int
+    code_mark: str | None
+    LHC: float | None
+    weight: float | None
+    is_photo_mark: bool
+    is_elastomer_mark: bool
