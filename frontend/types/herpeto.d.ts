@@ -65,7 +65,7 @@ declare global {
         is_elastomer_mark: boolean;
     }
 
-    interface PointTranslocationHerpetoWithMark {
+    interface PointTranslocationHerpetoWithMarkData {
         cod: string;
         date: Date;
         latitude: number;
@@ -89,4 +89,9 @@ declare global {
         longitude_out: number;
         altitude_out: number;
     }
+    type TranslocationHerpetoByNumberRescue = 
+    |TransectTranslocationHerpetoWithMarkData 
+    |PointHerpetoTransloWithMarkData
+    |TransectHerpetofaunaTranslocationData[]
+
 }

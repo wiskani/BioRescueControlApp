@@ -28,36 +28,36 @@ import { dateFormat } from '@/app/services/dateFormat';
 
 //Leaflet dynamic imports
 const MapContainer = dynamic(
-        async () => (await import('react-leaflet')).MapContainer,
-        { ssr: false }  
+    async () => (await import('react-leaflet')).MapContainer,
+    { ssr: false }  
 )
 
 const TileLayer = dynamic(
-        async () => (await import('react-leaflet')).TileLayer,
-        { ssr: false }
+    async () => (await import('react-leaflet')).TileLayer,
+    { ssr: false }
 )
 
 const Polyline = dynamic(
-        async () => (await import('react-leaflet')).Polyline,
-        { ssr: false }
+    async () => (await import('react-leaflet')).Polyline,
+    { ssr: false }
 )
 
 const Tooltip = dynamic(
-        async () => (await import('react-leaflet')).Tooltip,
-        { ssr: false }
+    async () => (await import('react-leaflet')).Tooltip,
+    { ssr: false }
 )
 
 const Pane = dynamic(
-        async () => (await import('react-leaflet')).Pane,
-        { ssr: false }
+    async () => (await import('react-leaflet')).Pane,
+    { ssr: false }
 )
 
 
 //types
 type RescuesSpecieData =
-        | FloraRescueSpeciesData
-        | TransectHerpetoWithSpeciesData
-        | RescueMammalsWithSpecieData 
+| FloraRescueSpeciesData
+| TransectHerpetoWithSpeciesData
+| RescueMammalsWithSpecieData 
 
 //predicados fuctions
 function isFloraRescueSpeciesData(
@@ -77,14 +77,14 @@ function isRescueMammalsWithSpecieData(
 ): data is RescueMammalsWithSpecieData {
     return  data && "cod" in data;
 }
-        
+
 export default function Page({ params} : { params: { specieId: number } }) {
     const { data: session } = useSession();
     const user = session?.user;
     const [rescues, setRescues] = useState<RescuesSpecieData[]>([]);
     const [errorMessage, SetErrorMessage]= useState<string>();
     const router = useRouter();
-    
+
     //For map
     const lineOptions = { color: 'red' }
     const legendOptions : () => string[] = () => {
@@ -98,7 +98,7 @@ export default function Page({ params} : { params: { specieId: number } }) {
             return ['brown', 'red' ]
         }
         return ['red' ]
-        }
+    }
 
     const legendLabels: () => string[] = () => {
         if (isFloraRescueSpeciesData(rescues[0])) {
@@ -120,75 +120,75 @@ export default function Page({ params} : { params: { specieId: number } }) {
             ]
         }
         return ['proyecto 230 kv mizque - sehuencas']
-        }
+    }
 
 
     //Obtain data from api
     const rescuesData = useCallback(
         async (): Promise<RescuesSpecieData[]> => {
             if (user) {
-                    try {
-                        const data = await GetRescuesSpecie({
+                try {
+                    const data = await GetRescuesSpecie({
                         token: user?.token,
                         specie_id: params.specieId
                     });
-                        return data;
-                    } catch (error) {
-                            if (error instanceof Error) {
-                                SetErrorMessage(error.message);
-                                return [];
-                            }
+                    return data;
+                } catch (error) {
+                    if (error instanceof Error) {
+                        SetErrorMessage(error.message);
                         return [];
                     }
+                    return [];
+                }
             }
             else {
                 return [];
-                }
-                }, [user, params.specieId]);
+            }
+        }, [user, params.specieId]);
 
     useEffect(() => {
-                        rescuesData().then((data) => {
-                                setRescues(data);
-                                });
-                        }, [session, rescuesData]);
+        rescuesData().then((data) => {
+            setRescues(data);
+        });
+    }, [session, rescuesData]);
 
 
 
     const renderTable = () => {
-            if (rescues.length > 0) {
-                    if (isFloraRescueSpeciesData(rescues[0])) {
-                            return(
-                                <TableSimple<RescuesSpecieData>
-                                        columns={columnsFlora}
-                                        data={rescues}
-                                /> 
-                                )
-                        }
-                        else if (isTransectHerpetoWithSpeciesData(rescues[0])) {
-                                return(
-                                <TableSimple<RescuesSpecieData>
-                                        columns={columnsHerpeto}
-                                        data={rescues}
-                                /> 
-                                )
-                        }
-                        else if (isRescueMammalsWithSpecieData(rescues[0])) {
-                                return(
-                                <TableSimple<RescuesSpecieData>
-                                        columns={columnsMammals}
-                                        data={rescues}
-                                /> 
-                                )
-                        }
+        if (rescues.length > 0) {
+            if (isFloraRescueSpeciesData(rescues[0])) {
+                return(
+                    <TableSimple<RescuesSpecieData>
+                        columns={columnsFlora}
+                        data={rescues}
+                    /> 
+                )
+            }
+            else if (isTransectHerpetoWithSpeciesData(rescues[0])) {
+                return(
+                    <TableSimple<RescuesSpecieData>
+                        columns={columnsHerpeto}
+                        data={rescues}
+                    /> 
+                )
+            }
+            else if (isRescueMammalsWithSpecieData(rescues[0])) {
+                return(
+                    <TableSimple<RescuesSpecieData>
+                        columns={columnsMammals}
+                        data={rescues}
+                    /> 
+                )
+            }
 
         }
         else {
-                return (
+            return (
                 <div>
 
-                        <p>{errorMessage}</p>
+                    <p>{errorMessage}</p>
                 </div>
-                )
+            )
         }
 
     }
@@ -197,92 +197,92 @@ export default function Page({ params} : { params: { specieId: number } }) {
 
     const columnsFlora = [
         columnHelper.accessor('epiphyte_number', {
-                        header: 'Número de epífito',
-                        footer: info => info.column.id,
-                }),
+            header: 'Número de epífito',
+            footer: info => info.column.id,
+        }),
         columnHelper.accessor('rescue_date', {
-                        header: 'Fecha de rescate',
-                        cell: info => dateFormat(info.getValue() as Date),
-                        footer: info => info.column.id,
-                }),
+            header: 'Fecha de rescate',
+            cell: info => dateFormat(info.getValue() as Date),
+            footer: info => info.column.id,
+        }),
         columnHelper.accessor('specie_name', {
-                        header: 'Especie',
-                        footer: info => info.column.id,
-                }),
+            header: 'Especie',
+            footer: info => info.column.id,
+        }),
         columnHelper.accessor('genus_name', {
-                        header: 'Género',
-                        footer: info => info.column.id,
-                }),
+            header: 'Género',
+            footer: info => info.column.id,
+        }),
         columnHelper.accessor('family_name', {
-                        header: 'Familia',
-                        footer: info => info.column.id,
-                }),
+            header: 'Familia',
+            footer: info => info.column.id,
+        }),
     ]
     const columnsHerpeto = [
         columnHelper.accessor('number', {
-                        header: 'Número de Transecto ',
-                        footer: info => info.column.id,
-                }),
+            header: 'Número de Transecto ',
+            footer: info => info.column.id,
+        }),
         columnHelper.accessor('date_in', {
-                        header: 'Fecha de entrada',
-                        cell: info => dateFormat(info.getValue() as Date),
-                        footer: info => info.column.id,
-                }),
+            header: 'Fecha de entrada',
+            cell: info => dateFormat(info.getValue() as Date),
+            footer: info => info.column.id,
+        }),
         columnHelper.accessor('date_out', {
-                        header: 'fecha de salida',
-                        cell: info => dateFormat(info.getValue() as Date),
-                        footer: info => info.column.id,
-                }),
+            header: 'fecha de salida',
+            cell: info => dateFormat(info.getValue() as Date),
+            footer: info => info.column.id,
+        }),
         columnHelper.accessor('specie_names', {
-                        header: 'especies',
-                        cell: info =>{
-                            const species  = info.getValue() as string[];
-                            return( 
-                                <>
-                                    {
-                                        species.length > 0 ?
-                                        species[0] :
-                                        null
-                                    }
-                                </>
+            header: 'especies',
+            cell: info =>{
+                const species  = info.getValue() as string[];
+                return( 
+                    <>
+                        {
+                            species.length > 0 ?
+                                species[0] :
+                                null
+                        }
+                    </>
                 )
             },
-                        footer: info => info.column.id,
+            footer: info => info.column.id,
         }
         ),
         columnHelper.accessor('total_rescue', {
-                        header: 'Cantidad de rescates',
-                        footer: info => info.column.id,
-                }),
+            header: 'Cantidad de rescates',
+            footer: info => info.column.id,
+        }),
     ]
     const columnsMammals = [
         columnHelper.accessor('cod', {
-                header: 'Código',
-                footer: info => info.column.id,
+            header: 'Código',
+            footer: info => info.column.id,
         }),
         columnHelper.accessor('date', {
-                header: 'Fecha',
-                cell: info => dateFormat(info.getValue() as Date),
-                footer: info => info.column.id,
+            header: 'Fecha',
+            cell: info => dateFormat(info.getValue() as Date),
+            footer: info => info.column.id,
         }),
         columnHelper.accessor('specie_name', {
-                header: 'Especie',
-                footer: info => info.column.id,
+            header: 'Especie',
+            footer: info => info.column.id,
         }),
         columnHelper.accessor('observation', {
-                header: 'Observación',
-                footer: info => info.column.id,
+            header: 'Observación',
+            footer: info => info.column.id,
         }),
-        ]
+    ]
 
 
 
-        return (
+    return (
         <div>
-        {
-            isFloraRescueSpeciesData(rescues[0])
-            ? <h1
-                 className="
+            {
+                isFloraRescueSpeciesData(rescues[0])
+                    ? <h1
+                        className="
                         m-4
                         text-gl
                         text-center
@@ -294,15 +294,15 @@ export default function Page({ params} : { params: { specieId: number } }) {
                         lg:text-xl
                         dark:text-white
                         "
-                 >Rescates para la especie
-                     <span className='italic'> {rescues[0].specie_name}</span>
-              </h1>
-            : null
+                    >Rescates para la especie
+                        <span className='italic'> {rescues[0].specie_name}</span>
+                    </h1>
+                    : null
             }
             {
-            isTransectHerpetoWithSpeciesData(rescues[0])
-            ? <h1
-                 className="
+                isTransectHerpetoWithSpeciesData(rescues[0])
+                    ? <h1
+                        className="
                         m-4
                         text-gl
                         text-center
@@ -314,15 +314,15 @@ export default function Page({ params} : { params: { specieId: number } }) {
                         lg:text-xl
                         dark:text-white
                         "
-                 >Rescates para la especie 
-                      <span className='italic'> {rescues[0].specie_names[0]}</span>
-              </h1>
-            : null
+                    >Rescates para la especie 
+                        <span className='italic'> {rescues[0].specie_names[0]}</span>
+                    </h1>
+                    : null
             }
             {
-            isRescueMammalsWithSpecieData(rescues[0])
-            ? <h1
-                 className="
+                isRescueMammalsWithSpecieData(rescues[0])
+                    ? <h1
+                        className="
                         m-4
                         text-gl
                         text-center

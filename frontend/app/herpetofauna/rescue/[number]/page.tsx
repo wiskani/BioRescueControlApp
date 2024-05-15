@@ -17,7 +17,8 @@ import React, {
 
 //Apis imports
 import {
-    GetRescueHerpetofaunaWithSpecieByNumber
+    GetRescueHerpetofaunaWithSpecieByNumber,
+    GetTranslocationHerpetoByRescueNumber
 } from '@/app/libs/rescue_herpetofaina/ApiRescueHerpetofauna';
 
 //Leaflet imports
@@ -56,8 +57,23 @@ const Legend = dynamic(
 )
 
 const RescueHerpetoSpecieMap = dynamic(
-        () => (import('@/app/components/HerpetoFauna/RescueHerpetoSpecieMap')),
-        { ssr: false }
+    () => (import('@/app/components/HerpetoFauna/RescueHerpetoSpecieMap')),
+    { ssr: false }
+)
+
+const PointTransloHerpetofaunaRescueMap = dynamic(
+    () => (import('@/app/components/HerpetoFauna/PointTransloRescueMap')),
+    { ssr: false }
+)
+
+const TransectTransloHerpetofaunaRescueMap = dynamic(
+    () => (import('@/app/components/HerpetoFauna/TransectoTransloRescueMap')),
+    { ssr: false }
+)
+
+const TransectTransloHerpetofaunaMap = dynamic(
+    () => (import('@/app/components/HerpetoFauna/TransectoTransGenericMap')),
+    { ssr: false }
 )
 
 
@@ -65,8 +81,14 @@ export default function Page({params}: {params: { number: string}}) {
     const { data: session } = useSession();
     const user = session?.user;
     const [rescueData, setRescueData] = useState<RescueHerpetoWithSpeciesData | null>(null)
+    const [
+    translocationData,
+    setTranslocation
+            ] = useState<TranslocationHerpetoByNumberRescue | null>(null)
     const [errorMessage, SetErrorMessage]= useState<string>();
+    const router = useRouter()
 
+    //Api calls
     const rescueDataHerpeto = useCallback(
         async (): Promise<RescueHerpetoWithSpeciesData| null>=>{
             if (user){
@@ -90,27 +112,110 @@ export default function Page({params}: {params: { number: string}}) {
         }, [user, params.number])
 
 
+    const traslocationDataHerpeto = useCallback(
+        async (): Promise<TranslocationHerpetoByNumberRescue | null> =>{
+            if (user){
+                try {
+                    const data= await GetTranslocationHerpetoByRescueNumber({
+                        token: user?.token,
+                        rescue_number: params.number
+                    });
+                    return data;
+                } catch (error) {
+                    if (error instanceof Error) {
+                        SetErrorMessage(error.message)
+                    }
+                    return null;
+                }
+            }
+            else {
+                return null
+            }
+        }, [user, params.number])
+
     useEffect(() => {
         if (!session?.user) {
-                redirect('/')
-            }
+            redirect('/')
+        }
 
         else{
             rescueDataHerpeto().then((data)=>{
                 setRescueData(data)
             })
+            traslocationDataHerpeto().then((data)=>{
+                setTranslocation(data)
+            })
         }
 
-    }, [session, rescueDataHerpeto])
+    }, [session, rescueDataHerpeto, traslocationDataHerpeto])
 
+    //Predicados fuctions
+    function isTransectTranslocationHerpetoWithMarkData(
+        data: TranslocationHerpetoByNumberRescue | null
+    ): data is TransectTranslocationHerpetoWithMarkData {
+        if (data === null) return false;
+        return data && "cod" in data && "latitude_in" in data && data !== null;
+    }
+
+    function isPointTranslocationHerpetoWithMarkData(
+        data: TranslocationHerpetoByNumberRescue | null
+    ): data is PointTranslocationHerpetoWithMarkData {
+        if (data === null) return false;
+        return data
+            && "cod" in data && "latitude" in data && "longitude" in data && "number_mark" in data;
+
+    }
+
+    function isTransectHerpetofaunaTranslocationData(
+        data: TranslocationHerpetoByNumberRescue | null
+    ): data is TransectHerpetofaunaTranslocationData[] {
+        if (data === null) return false;
+        return Array.isArray(data); 
+    }
+
+    //Map options
 
     const lineOptions = { color: 'red' }
+    const legendOptions : () => string[] = () => {
+        if (isPointTranslocationHerpetoWithMarkData(translocationData)) {
+            return ['blue', 'green', 'red' ]
+        }
+        if (isTransectTranslocationHerpetoWithMarkData(translocationData)) {
+            return ['blue', 'green', 'red' ]
+        }
+        if (isTransectHerpetofaunaTranslocationData(translocationData)) {
+            return ['blue', 'green', 'red' ]
+        }
+        return ['green', 'red' ]
+    }
+    const legendLabels: () => string[] = () => {
+        if (isPointTranslocationHerpetoWithMarkData(translocationData)) {
+            return [
+                'puntos lineración',
+                'transcetors de rescate herpetofauna',
+                'proyecto 230 kv mizque - sehuencas'
+            ]
+        }
+        if (isTransectTranslocationHerpetoWithMarkData(translocationData)) {
+            return [
+                'transcetors de liberación herpetofauna',
+                'transcetors de rescate herpetofauna',
+                'proyecto 230 kv mizque - sehuencas'
+            ]
+        }
+        if (isTransectHerpetofaunaTranslocationData(translocationData)) {
+            return [
+                `transectos de liberación para la especie: ${rescueData?.specie_name}`,
+                'transcetors de rescate herpetofauna',
+                'proyecto 230 kv mizque - sehuencas'
+            ]
+        }
+        return [
+            'transcetors de rescate herpetofauna',
+            'proyecto 230 kv mizque - sehuencas'
+        ]
+    }
 
-    const legedColors = ['green', 'red' ]
-    const legendLabels = [
-        'Transcetors de rescate',
-        'Proyecto 230 kV Mizque - Sehuencas'
-    ]
 
     return (
         <div>
@@ -180,7 +285,7 @@ export default function Page({params}: {params: { number: string}}) {
                             attribution='Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>'
                         />
                         <Polyline pathOptions={lineOptions} positions={LineProyect} >
-                           <Tooltip>
+                            <Tooltip>
                                 <div>
                                     <h4>Detalles</h4>
                                     <p>Proyecto 230 kV Mizque - Sehuencas</p>
@@ -190,12 +295,412 @@ export default function Page({params}: {params: { number: string}}) {
                         {
                             rescueData?
                                 <RescueHerpetoSpecieMap
-                                data={[rescueData]}
+                                    data={[rescueData]}
                                 /> : null
                         }
-                        <Legend colors={legedColors} labels={legendLabels} />
+                        {
+                            isPointTranslocationHerpetoWithMarkData(translocationData)?
+                            <PointTransloHerpetofaunaRescueMap
+                                    data={translocationData}
+                                    radius={30}
+                                />
+                            : null
+
+                        }
+                        {
+                            isTransectTranslocationHerpetoWithMarkData(translocationData)?
+                            <TransectTransloHerpetofaunaRescueMap
+                                    data={translocationData}
+                                    weight={5}
+                            />
+                            : null
+                        }
+                        {
+                            isTransectHerpetofaunaTranslocationData(translocationData)?
+                            <TransectTransloHerpetofaunaMap
+                                    data={translocationData}
+                                    weight={5}
+                            />
+                            : null
+                        }
+                        <Legend colors={legendOptions()} labels={legendLabels()} />
                     </MapContainer> 
                 </div>
+            </div>
+            <div className="container mx-auto px-4 py-20">
+                <div className="
+                    grid
+                    grid-cols-1
+                    sm:grid-cols-2
+                    md:grid-cols-2
+                    lg:grid-cols-2
+                    gap-4"
+                >
+                    <div className="w-full mt-6">
+                        <h1
+                            className="
+                            text-gray-900
+                            text-xl
+                            text-center
+                            title-font
+                            font-medium
+                            mb-5
+                            "
+                        >
+                            Datos de rescate 
+                        </h1>
+                        <ol className="
+                            max-w-md
+                            space-y-1
+                            text-gray-500
+                            list-decimal
+                            list-inside
+                            dark:text-gray-400"
+                        >
+                            <li>
+                                <span
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
+                                >
+                                    Fecha de rescate:&nbsp; 
+                                </span>
+                                {
+                                    rescueData?.date_rescue?
+                                        dateFormat(rescueData.date_rescue):
+                                        'No disponible'
+                                }
+
+                            </li>
+                            <li>
+                                <span
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
+                                >
+                                    Especie:&nbsp; 
+                                </span>
+                                {
+                                    rescueData?.specie_name?
+                                    rescueData.specie_name:
+                                    'No identificada'
+                                }
+                            </li>
+                            <li>
+                                <span
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
+                                >
+                                    Sexo:&nbsp; 
+                                </span>
+                                {
+                                    rescueData?.gender?
+                                        rescueData.gender:
+                                        'No identificado'
+                                }
+                            </li>
+                            <li>
+                                <span
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
+                                >
+                                    Grupo de edad:&nbsp; 
+                                </span>
+                                {
+                                    rescueData?.age_group_name?
+                                        rescueData.age_group_name:
+                                        'No identificada'
+                                }
+                            </li>
+
+
+                        </ol>
+                    </div>
+                    <div className="w-full mt-6">
+                        <h1
+                            className="
+                            text-gray-900
+                            text-xl
+                            text-center
+                            title-font
+                            font-medium
+                            mb-5
+                            "
+                        >
+                            Datos de liberación 
+                        </h1>
+                        {
+                            isPointTranslocationHerpetoWithMarkData(translocationData) ?
+                                <ol className="
+                                    max-w-md
+                                    space-y-1
+                                    text-gray-500
+                                    list-decimal
+                                    list-inside
+                                    dark:text-gray-400"
+                                >
+                                    <li>
+                                        <span
+                                            className="
+                                            font-semibold
+                                            text-gray-900
+                                            dark:text-white
+                                            "
+                                        >
+                                            Fecha de liberación:&nbsp; 
+                                        </span>
+                                        {
+                                            translocationData.date?
+                                                dateFormat(translocationData.date):
+                                                'No disponible'
+                                        }
+
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="
+                                            font-semibold
+                                            text-gray-900
+                                            dark:text-white
+                                            "
+                                        >
+                                            Numero de marca:&nbsp; 
+                                        </span>
+                                        {
+                                            translocationData.number_mark?
+                                                translocationData.number_mark:
+                                                'No identificado'
+                                        }
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="
+                                            font-semibold
+                                            text-gray-900
+                                            dark:text-white
+                                            "
+                                        >
+                                            Código:&nbsp; 
+                                        </span>
+                                        {
+                                            translocationData.code_mark?
+                                                translocationData.code_mark:
+                                                'No disponible'
+                                        }
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="
+                                            font-semibold
+                                            text-gray-900
+                                            dark:text-white
+                                            "
+                                        >
+                                            LHC:&nbsp; 
+                                        </span>
+                                        {
+                                            translocationData.LHC?
+                                                translocationData.LHC:
+                                                'No disponible'
+                                        }
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="
+                                            font-semibold
+                                            text-gray-900
+                                            dark:text-white
+                                            "
+                                        >
+                                            Peso:&nbsp; 
+                                        </span>
+                                        {
+                                            translocationData.weight?
+                                                translocationData.weight:
+                                                'No identificado'
+                                        }
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="
+                                            font-semibold
+                                            text-gray-900
+                                            dark:text-white
+                                            "
+                                        >
+                                            Tipo de marcación:&nbsp; 
+                                        </span>
+                                        {
+                                            translocationData.is_photo_mark?
+                                                'fotografía/':
+                                               null 
+                                        }
+                                        {
+                                            translocationData.is_elastomer_mark?
+                                                'elastomero':
+                                               null 
+                                        }
+                                    </li>
+                                </ol>
+                                :
+                                null
+
+                        }
+                        {
+                            isTransectTranslocationHerpetoWithMarkData(translocationData) ?
+                                <ol className="
+                                    max-w-md
+                                    space-y-1
+                                    text-gray-500
+                                    list-decimal
+                                    list-inside
+                                    dark:text-gray-400"
+                                >
+                                    <li>
+                                        <span
+                                            className="
+                                            font-semibold
+                                            text-gray-900
+                                            dark:text-white
+                                            "
+                                        >
+                                            Fecha de liberación:&nbsp; 
+                                        </span>
+                                        {
+                                            translocationData.date?
+                                                dateFormat(translocationData.date):
+                                                'No disponible'
+                                        }
+
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="
+                                            font-semibold
+                                            text-gray-900
+                                            dark:text-white
+                                            "
+                                        >
+                                            Numero de marca:&nbsp; 
+                                        </span>
+                                        {
+                                            translocationData.number_mark?
+                                                translocationData.number_mark:
+                                                'No identificado'
+                                        }
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="
+                                            font-semibold
+                                            text-gray-900
+                                            dark:text-white
+                                            "
+                                        >
+                                            Código:&nbsp; 
+                                        </span>
+                                        {
+                                            translocationData.code_mark?
+                                                translocationData.code_mark:
+                                                'No disponible'
+                                        }
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="
+                                            font-semibold
+                                            text-gray-900
+                                            dark:text-white
+                                            "
+                                        >
+                                            LHC:&nbsp; 
+                                        </span>
+                                        {
+                                            translocationData.LHC?
+                                                translocationData.LHC:
+                                                'No disponible'
+                                        }
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="
+                                            font-semibold
+                                            text-gray-900
+                                            dark:text-white
+                                            "
+                                        >
+                                            Peso:&nbsp; 
+                                        </span>
+                                        {
+                                            translocationData.weight?
+                                                translocationData.weight:
+                                                'No identificado'
+                                        }
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="
+                                            font-semibold
+                                            text-gray-900
+                                            dark:text-white
+                                            "
+                                        >
+                                            Tipo de marcación:&nbsp; 
+                                        </span>
+                                        {
+                                            translocationData.is_photo_mark?
+                                                'fotografía/':
+                                               null 
+                                        }
+                                        {
+                                            translocationData.is_elastomer_mark?
+                                                'elastomero':
+                                               null 
+                                        }
+                                    </li>
+                                </ol>
+                                :
+                                null
+                        }
+                        {
+                            isTransectHerpetofaunaTranslocationData(translocationData) ?
+                                <h1 className="
+                                    max-w-md
+                                    space-y-1
+                                    text-gray-500
+                                    list-decimal
+                                    list-inside
+                                    dark:text-gray-400"
+                                >
+                                no hay datos de liberación
+                                </h1>
+                                :
+                                null
+                        }
+
+                    </div>
+                </div>
+            </div>
+            <div
+                className="flex justify-center"
+            >
+                <button 
+                    type="button"
+                    onClick={() => router.back()}
+                    className="bg-emerald-900  hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded"
+                >
+                    Volver
+                </button>
             </div>
         </div>
 
