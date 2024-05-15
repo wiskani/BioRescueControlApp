@@ -16,12 +16,14 @@ from app.crud.rescue_herpetofauna import (
     getRescueHerpetoWithSpecie,
     getAllRescuesHerpetoWithSpecies,
     getPointTranslocationAndMarkHerpetoByNumber,
+    getTransectTranslocationAndMarkHerpetoByNumber,
     getTransectTranslocationByNumber
         )
 
 from app.schemas.rescue_herpetofauna import (
         RescueHerpetoWithSpecies,
         PointTranslocationHerpetoWithMark,
+        TransectTranslocationHerpetoWithMark,
         TransectHerpetofaunaTranslocationBase
         )
 
@@ -1844,6 +1846,142 @@ async def test_getAllRescueHerpetofaunaWithSpecies(
 
 
 @pytest.mark.asyncio
+async def test_getTransectTranslocationAndMarkHerpetoByNumber(
+        async_client: AsyncClient,
+        async_session: AsyncSession,
+        ) -> None:
+
+    # Create transect herpetofauna translocation
+    codeTransect = random_string()
+
+    response: Response = await async_client.post(
+        "/api/transect_herpetofauna_translocation", json={
+            "cod": codeTransect,
+            "date": "2021-10-10T00:00:00",
+            "latitude_in": 1.5,
+            "longitude_in": 1.5,
+            "altitude_in": 15,
+            "latitude_out": 1.5,
+            "longitude_out": 1.5,
+            "altitude_out": 15,
+        },
+    )
+
+    data = response.json()
+    assert response.status_code == 201
+    transect_herpetofauna_translocation_id = data["id"]
+
+    # Create a transect herpetofauna
+    number_transect: str = random_string()
+    tower_id: int = await create_random_tower(async_client)
+    latitude_in: float = random.uniform(-90, 90)
+    longitude_in: float = random.uniform(-180, 180)
+    latitude_out: float = random.uniform(-90, 90)
+    longitude_out: float = random.uniform(-180, 180)
+    response: Response = await async_client.post(
+        "/api/transect_herpetofauna", json={
+            "number": number_transect,
+            "date_in": "2021-10-10T00:00:00",
+            "date_out": "2021-10-12T00:00:00",
+            "latitude_in": latitude_in,
+            "longitude_in": longitude_in,
+            "altitude_in": 100,
+            "latitude_out": latitude_out,
+            "longitude_out": longitude_out,
+            "altitude_out": 100,
+            "tower_id": tower_id
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    transect_id = data["id"]
+
+    # Create a specie with name
+    specie_id, specie_name = await create_specieWithName(async_client)
+
+    # Create age of group
+    response = await async_client.post(
+        "/api/age_group", json={
+            "name": "joven"
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    age_group_id = data["id"]
+
+    # Create a rescue herpetofauna
+    response: Response = await async_client.post(
+        "/api/rescue_herpetofauna", json={
+            "number": "R01",
+            "gender": True,
+            "specie_id": specie_id,
+            "transect_herpetofauna_id": transect_id,
+            "age_group_id": age_group_id,
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    rescue_herpetofauna_id = data["id"]
+
+    # Create a mark herpetofauna
+    response: Response = await async_client.post(
+        "/api/mark_herpetofauna", json={
+            "date": "2021-10-10T00:00:00",
+            "number": 1,
+            "code": "123456789",
+            "LHC": 1.5,
+            "weight": 1.5,
+            "is_photo_mark": True,
+            "is_elastomer_mark": True,
+            "rescue_herpetofauna_id": rescue_herpetofauna_id
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    mark_herpetofauna_id = data["id"]
+
+    # Create Translocation herpetofauna
+    response: Response = await async_client.post(
+        "/api/translocation_herpetofauna", json={
+            "cod": codeTransect,
+            "transect_herpetofauna_translocation_id": transect_herpetofauna_translocation_id,
+            "point_herpetofauna_translocation_id": None,
+            "specie_id": specie_id,
+            "mark_herpetofauna_id": mark_herpetofauna_id,
+        },
+    )
+    data = response.json()
+    assert response.status_code == 201
+
+    # expected result
+    expected_result = TransectTranslocationHerpetoWithMark(
+        cod=codeTransect,
+        date=datetime(2021, 10, 10, tzinfo=timezone.utc),
+        latitude_in=1.5,
+        longitude_in=1.5,
+        latitude_out=1.5,
+        longitude_out=1.5,
+        number_mark=mark_herpetofauna_id,
+        code_mark="123456789",
+        LHC=1.5,
+        weight=1.5,
+        is_photo_mark=True,
+        is_elastomer_mark=True
+    )
+
+    # Get translocation and mark herpeto by number
+    result = await getTransectTranslocationAndMarkHerpetoByNumber(
+            async_session,
+            rescue_number="R01"
+            )
+
+    print(f'El resultado es {result}')
+    print(f'El resultado esperado es {expected_result}')
+
+    assert result == expected_result
+
+
+@pytest.mark.asyncio
 async def test_getPointTranslocationAndMarkHerpetoByNumber(
         async_client: AsyncClient,
         async_session: AsyncSession,
@@ -2049,8 +2187,5 @@ async def test_getTransectTranslocationByNumber(
             async_session,
             rescue_number=number_rescue
             )
-
-    print(f'El resultado es {result}')
-    print(f'El resultado esperado es {expected_result}')
 
     assert result == expected_result

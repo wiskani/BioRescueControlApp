@@ -25,42 +25,7 @@ declare global {
                 specie_names: string[]; 
                 total_rescue: number;
         }
-
-        interface RescueMammalsWithSpecieData{
-                cod: string; 
-                date: Date; 
-                longitude: number; 
-                latitude: number; 
-                observation: string|null;
-                specie_name: string | null; 
-                genus_name: string | null;
-        }
-
-        interface FloraRescueData {
-                epiphyte_number: number;
-                rescue_date: Date;
-                rescue_area_latitude: number;
-                rescue_area_longitude: number;
-                substrate: string;
-                dap_bryophyte: number;
-                height_bryophyte: number;
-                bryophyte_position: number;
-                growth_habit: string;
-                epiphyte_phenology: string;
-                health_status_epiphyte: string;
-                microhabitat: string;
-                other_observations: string;
-                specie_bryophyte_id: number;
-                genus_bryophyte_id: number;
-                family_bryophyte_id: number;
-                specie_epiphyte_id: number;
-                genus_epiphyte_id: number; 
-                family_epiphyte_id: number;
-                rescue_zone_id: number;
-                id: number;
-        }
         
-
         interface ImageSpecieData {
                 url: string;
                 atribute: string;

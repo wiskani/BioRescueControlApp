@@ -45,7 +45,8 @@ from app.schemas.rescue_herpetofauna import (
 
     # Rescue Herpetofauna with species
     RescueHerpetoWithSpecies,
-    PointTranslocationHerpetoWithMark
+    PointTranslocationHerpetoWithMark,
+    TransectTranslocationHerpetoWithMark
 )
 
 from app.models.rescue_herpetofauna import (
@@ -126,6 +127,7 @@ from app.crud.rescue_herpetofauna import (
 
     # TranslocationHerpetoWithMark
     getPointTranslocationAndMarkHerpetoByNumber,
+    getTransectTranslocationAndMarkHerpetoByNumber,
     getTransectTranslocationByNumber
 )
 
@@ -930,7 +932,8 @@ async def get_all_herpetofauna_rescue_with_species_api(
 @router.get(
     path="/api/translocation_herpetofauna_with_species/{rescue_number}",
     response_model=Union[
-        List[PointTranslocationHerpetoWithMark],
+        PointTranslocationHerpetoWithMark,
+        TransectTranslocationHerpetoWithMark,
         List[TransectHerpetofaunaTranslocationBase]
         ],
     status_code=status.HTTP_200_OK,
@@ -942,24 +945,32 @@ async def get_translocation_herpetofauna_with_species_api(
     db: AsyncSession = Depends(get_db),
     authorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> Union[
-        List[PointTranslocationHerpetoWithMark],
+        PointTranslocationHerpetoWithMark,
+        TransectTranslocationHerpetoWithMark,
         List[TransectHerpetofaunaTranslocationBase]
         ]:
 
-    translocatios = await getPointTranslocationAndMarkHerpetoByNumber(
+    translocations = await getPointTranslocationAndMarkHerpetoByNumber(
             db,
             rescue_number
             )
-    if translocatios is not None:
-        return translocatios
+    if translocations is not None:
+        return translocations
 
-    translocatios = await getTransectTranslocationByNumber(
+    translocations = await getTransectTranslocationAndMarkHerpetoByNumber(
+            db,
+            rescue_number
+            )
+    if translocations is not None:
+        return translocations
+
+    translocations = await getTransectTranslocationByNumber(
             db,
             rescue_number
             )
 
-    if translocatios is not None:
-        return translocatios
+    if translocations is not None:
+        return translocations
 
     raise HTTPException(
             status_code=404,
