@@ -1,4 +1,5 @@
 from httpx import Response, AsyncClient
+from datetime import datetime, timezone, timedelta
 from typing import Dict, Any, Union
 import pytest
 
@@ -10,7 +11,14 @@ from app.tests.conftest import async_client
 
 from app.crud.rescue_mammals import (
         get_rescue_mammal_with_specie_id,
-        get_rescue_mammal_list_with_specie_by_specie_id
+        get_rescue_mammal_list_with_specie_by_specie_id,
+        get_rescue_mammal_with_specie_by_cod,
+        get_release_mammals_with_specie_by_cod
+        )
+
+from app.schemas.rescue_mammals import (
+        RescueMammalsWithSpecieExtended,
+        ReleaseMammalsWithSpecie
         )
 
 
@@ -1116,7 +1124,7 @@ async def test_get_rescue_mammals_with_specie_and_genus_by_id(
     assert get_rescue_mammal_with_specie_id["genus_name"] == genus
 
 
-#test for rescie mammals list witn specie by specie id 
+# test for rescie mammals list witn specie by specie id 
 @pytest.mark.asyncio
 async def test_get_rescue_mammals_with_specie_and_genus_by_specie_id(
         async_client: AsyncClient,
@@ -1134,40 +1142,190 @@ async def test_get_rescue_mammals_with_specie_and_genus_by_specie_id(
 
     result = await get_rescue_mammal_list_with_specie_by_specie_id(async_session, specie_id)
 
-    print(f'el resultado es {result}')
-
     for item in result:
         assert item.cod == cod
         assert item.specie_name == specie
         assert item.genus_name == genus
+
+
+# test for rescue mammals exteded with rescue cod
+@pytest.mark.asyncio
+async def test_get_rescue_mammals_extended_with_rescue_number(
+        async_client: AsyncClient,
+        async_session: AsyncSession,
+) -> None:
+    name_habitat = random_string()
+
+    response = await async_client.post(
+        "api/habitat", json={
+            "name": name_habitat
+        },
+    )
+    data = response.json()
+    assert response.status_code == 201
+    habitat_id = data["id"]
+
+    name_age_group = random_string()
+    response: Response = await async_client.post(
+        "/api/age_group", json={
+            "name": name_age_group
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    age_group_id = data["id"]
+
+    specie_id, specie_name = await create_specieWithName(async_client)
+    cod = random_string()
+
+    response = await async_client.post(
+        "api/rescue_mammals", json={
+            "cod": cod,
+            "date": "2021-10-10T00:00:00",
+            "mark": "mark",
+            "longitude": 1.0,
+            "latitude": 1.0,
+            "altitude": 10,
+            "gender": True,
+            "LT": 1.0,
+            "LC": 1.0,
+            "LP": 1.0,
+            "LO": 1.0,
+            "LA": 1.0,
+            "weight": 10,
+            "observation": "observation",
+            "is_specie_confirmed": True,
+            "habitat_id": habitat_id,
+            "age_group_id": age_group_id,
+            "specie_id": specie_id,
+            "genus_id": None
+            },
+        )
+    assert response.status_code == 201
+
+    result_extended = RescueMammalsWithSpecieExtended(
+            cod=cod,
+            date=datetime(2021, 10, 10, tzinfo=timezone.utc),
+            longitude=1.0,
+            latitude=1.0,
+            altitude=10,
+            observation="observation",
+            specie_name=specie_name,
+            genus_name=None,
+            mark="mark",
+            gender="Macho",
+            LT=1.0,
+            LC=1.0,
+            LP=1.0,
+            LO=1.0,
+            LA=1.0,
+            weight=10,
+            habitat_name=name_habitat,
+            age_group_name=name_age_group,
+            )
+
+    result = await get_rescue_mammal_with_specie_by_cod(async_session, cod)
+
+    assert result.cod == result_extended.cod
+
+
+# test for release mammals with rescue cod
+@pytest.mark.asyncio
+async def test_get_release_mammals_with_rescue_number(
+        async_client: AsyncClient,
+        async_session: AsyncSession,
+) -> None:
+    name_habitat = random_string()
+
+    response = await async_client.post(
+        "api/habitat", json={
+            "name": name_habitat
+        },
+    )
+    data = response.json()
+    assert response.status_code == 201
+    habitat_id = data["id"]
+
+    name_age_group = random_string()
+    response: Response = await async_client.post(
+        "/api/age_group", json={
+            "name": name_age_group
+        },
+    )
+    assert response.status_code == 201
+    data = response.json()
+    age_group_id = data["id"]
+
+    specie_id, specie_name = await create_specieWithName(async_client)
+    rescue_cod = random_string()
+
+    response = await async_client.post(
+        "api/rescue_mammals", json={
+            "cod": rescue_cod,
+            "date": "2021-10-10T00:00:00",
+            "mark": "mark",
+            "longitude": 1.0,
+            "latitude": 1.0,
+            "altitude": 10,
+            "gender": True,
+            "LT": 1.0,
+            "LC": 1.0,
+            "LP": 1.0,
+            "LO": 1.0,
+            "LA": 1.0,
+            "weight": 10,
+            "observation": "observation",
+            "is_specie_confirmed": True,
+            "habitat_id": habitat_id,
+            "age_group_id": age_group_id,
+            "specie_id": specie_id,
+            "genus_id": None
+            },
+        )
+    assert response.status_code == 201
+    data = response.json()
+    rescue_mammals_id = data["id"]
     
+    cod_release = random_string()
+    name_site_release = random_string()
 
+    response = await async_client.post(
+        "api/site_release_mammals", json={
+            "name": name_site_release,
+        },
+    )
+    data = response.json()
+    assert response.status_code == 201
+    site_release_mammals_id = data["id"]
 
+    response = await async_client.post(
+        "api/release_mammals", json={
+            "cod": cod_release,
+            "longitude": 1.0,
+            "latitude": 1.0,
+            "altitude": 10,
+            "sustrate": "substrate",
+            "site_release_mammals_id": site_release_mammals_id,
+            "rescue_mammals_id": rescue_mammals_id,
+        }
+    )
+    data = response.json()
+    assert response.status_code == 201
 
+    result_extended = ReleaseMammalsWithSpecie(
+            cod=cod_release,
+            longitude=1.0,
+            latitude=1.0,
+            altitude=10,
+            sustrate="substrate",
+            site_release_mammals=name_site_release,
+            specie_name=specie_name,
+            genus_name=None,
+            )
 
+    result = await get_release_mammals_with_specie_by_cod(
+            async_session,
+            rescue_cod
+            )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    assert result.cod == result_extended.cod

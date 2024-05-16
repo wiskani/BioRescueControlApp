@@ -18,6 +18,7 @@ from app.schemas.rescue_mammals import (
 
     # RescueMammalsWithSpecie
     RescueMammalsWithSpecie,
+    RescueMammalsWithSpecieExtended,
 
     # RealeaseMammalsWithSpecie
     ReleaseMammalsWithSpecie,
@@ -34,6 +35,8 @@ from app.crud.species import (
         get_specie_by_id,
         get_genus_by_id
 )
+
+from app.crud.rescue_herpetofauna import get_age_group_by_id
 
 # Purpose: CRUD operations for RescueMammals
 
@@ -583,3 +586,133 @@ async def get_release_mammals_with_specie(
             genus_name=genus_name,
         ))
     return result
+
+
+# Get rescue mammal with specie by code rescue
+async def get_rescue_mammal_with_specie_by_cod(
+        db: AsyncSession,
+        rescue_cod: str
+        ) -> RescueMammalsWithSpecieExtended:
+    """
+    Get rescue mammal with specie by code rescue
+    """
+    rescue = await get_rescue_mammal_cod(db, rescue_cod)
+    if rescue is None:
+        raise HTTPException(
+                status_code=404,
+                detail="Rescue Mammal not found"
+                )
+
+    specie_name: str | None
+    genus_name: str | None = None
+    specie_db = await get_specie_by_id(db, rescue.specie_id)
+    if specie_db:
+        specie_name = specie_db.specific_epithet
+        genus_db = await get_genus_by_id(db, specie_db.genus_id)
+        if genus_db:
+            genus_name = genus_db.genus_name
+    else:
+        specie_name = None
+        genus_db = await get_genus_by_id(db, rescue.genus_id)
+        if genus_db:
+            genus_name = genus_db.genus_name
+
+    gender: str | None = None
+    if rescue.gender is True:
+        gender = "Macho"
+    elif rescue.gender is False:
+        gender = "Hembra"
+
+    habitat_db = await get_habitat_id(db, rescue.habitat_id)
+    if habitat_db:
+        habitat_name = habitat_db.name
+    else:
+        habitat_name = None
+
+    age_group_db = await get_age_group_by_id(db, rescue.age_group_id)
+    if age_group_db:
+        age_group_name = age_group_db.name
+    else:
+        age_group_name = None
+
+    return RescueMammalsWithSpecieExtended(
+        cod=rescue.cod,
+        date=rescue.date,
+        longitude=rescue.longitude,
+        latitude=rescue.latitude,
+        observation=rescue.observation,
+        specie_name=specie_name,
+        genus_name=genus_name,
+        mark=rescue.mark,
+        gender=gender,
+        LT=rescue.LT,
+        LC=rescue.LC,
+        LP=rescue.LP,
+        LO=rescue.LO,
+        LA=rescue.LA,
+        weight=rescue.weight,
+        habitat_name=habitat_name,
+        age_group_name=age_group_name,
+    )
+
+
+# Get all realease mammals with specie by cod
+async def get_release_mammals_with_specie_by_cod(
+        db: AsyncSession,
+        rescue_cod: str
+        ) -> ReleaseMammalsWithSpecie:
+    rescue_db = await get_rescue_mammal_cod(db, rescue_cod)
+    if rescue_db is None:
+        raise HTTPException(
+                status_code=404,
+                detail="Rescue Mammal not found"
+                )
+    release_db = await db.execute(
+            select(ReleaseMammals).filter(
+                ReleaseMammals.rescue_mammals_id == rescue_db.id
+                )
+            )
+    release = release_db.scalars().first()
+    if release is None:
+        raise HTTPException(
+                status_code=404,
+                detail="Release Mammal not found"
+                )
+    specie_db = await get_specie_by_id(db, rescue_db.specie_id)
+    specie_name: str | None
+    genus_name: str | None
+    if specie_db:
+        specie_name = specie_db.specific_epithet
+        genus_db = await get_genus_by_id(db, specie_db.genus_id)
+        if genus_db:
+            genus_name = genus_db.genus_name
+        else:
+            genus_name = None
+    else:
+        specie_name = None
+        genus_db = await get_genus_by_id(db, rescue_db.genus_id)
+        if genus_db:
+            genus_name = genus_db.genus_name
+        else:
+            genus_name = None
+
+    site_release_db = await get_site_release_mammal_id(
+            db, release.site_release_mammals_id
+            )
+    if site_release_db:
+        site_release_mammals = site_release_db.name
+    else:
+        raise HTTPException(
+                status_code=404,
+                detail="Site Release Mammal not found"
+                )
+    return ReleaseMammalsWithSpecie(
+            cod=release.cod,
+            longitude=release.longitude,
+            latitude=release.latitude,
+            altitude=release.altitude,
+            sustrate=release.sustrate,
+            site_release_mammals=site_release_mammals,
+            specie_name=specie_name,
+            genus_name=genus_name,
+            )

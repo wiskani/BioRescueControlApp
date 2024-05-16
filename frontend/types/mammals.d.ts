@@ -21,4 +21,18 @@ declare global {
         specie_name: string | null;
         genus_name: string | null;
     }
+
+    interface RescueMammalsWithSpecieExtendedData extends RescueMammalsWithSpecieData {
+        mark: string;
+        gender: stringing | null;
+        LT: number | null;
+        LC: number | null;
+        LP: number | null;
+        LO: number | null;
+        LA: number | null;
+        weight: number | null;
+        habitat_name: string | null;
+        age_group_name: string | null;
+    }
+
 }

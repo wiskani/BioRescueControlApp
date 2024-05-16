@@ -21,7 +21,8 @@ from app.schemas.rescue_mammals import (
 
     # Rescue Mammals with species
     RescueMammalsWithSpecie,
-    ReleaseMammalsWithSpecie
+    ReleaseMammalsWithSpecie,
+    RescueMammalsWithSpecieExtended
 )
 
 from app.models.rescue_mammals import (
@@ -66,7 +67,9 @@ from app.crud.rescue_mammals import (
 
     # Rescue Mammals with species
     get_rescue_mammals_with_specie,
-    get_release_mammals_with_specie
+    get_release_mammals_with_specie,
+    get_rescue_mammal_with_specie_by_cod,
+    get_release_mammals_with_specie_by_cod
 )
 
 from app.api.deps import PermissonsChecker, get_db
@@ -522,3 +525,35 @@ async def get_release_mammals_with_species_api(
     authorized: bool = Depends(PermissonsChecker(["admin"])),
 ) -> List[ReleaseMammalsWithSpecie]:
     return await get_release_mammals_with_specie(db)
+
+
+# Get a rescue mammal with species by rescue_cod
+@router.get(
+    path="/api/rescue_mammals_species/{rescue_cod}",
+    response_model=RescueMammalsWithSpecieExtended,
+    status_code=status.HTTP_200_OK,
+    tags=["Rescue Mammals"],
+    summary="Get a rescue mammal with species by rescue_cod",
+    )
+async def get_rescue_mammal_with_species_by_cod_api(
+    rescue_cod: str,
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
+) -> RescueMammalsWithSpecieExtended | HTTPException:
+    return await get_rescue_mammal_with_specie_by_cod(db, rescue_cod)
+
+
+# Get a release mammal with species by release_cod
+@router.get(
+    path="/api/release_mammals_species/{release_cod}",
+    response_model=ReleaseMammalsWithSpecie,
+    status_code=status.HTTP_200_OK,
+    tags=["Release Mammals"],
+    summary="Get a release mammal with species by release_cod",
+    )
+async def get_release_mammals_with_species_by_cod_api(
+    release_cod: str,
+    db: AsyncSession = Depends(get_db),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
+) -> ReleaseMammalsWithSpecie | HTTPException:
+    return await get_release_mammals_with_specie_by_cod(db, release_cod)

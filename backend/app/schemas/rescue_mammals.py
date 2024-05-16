@@ -140,3 +140,16 @@ class ReleaseMammalsWithSpecie(BaseModel):
     site_release_mammals: str
     specie_name: str | None
     genus_name: str | None
+
+
+class RescueMammalsWithSpecieExtended(RescueMammalsWithSpecie):
+    mark: str
+    gender: str | None
+    LT: float | None
+    LC: float | None
+    LP: float | None
+    LO: float | None
+    LA: float | None
+    weight: float | None
+    habitat_name: str | None
+    age_group_name: str | None
