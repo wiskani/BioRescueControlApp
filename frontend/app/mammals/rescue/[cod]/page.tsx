@@ -140,45 +140,13 @@ export default function Page({params}: {params: { cod: string}}) {
     //Map options
 
     const lineOptions = { color: 'red' }
-    const legendOptions : () => string[] = () => {
-        if (isPointTranslocationHerpetoWithMarkData(translocationData)) {
-            return ['blue', 'green', 'red' ]
-        }
-        if (isTransectTranslocationHerpetoWithMarkData(translocationData)) {
-            return ['blue', 'green', 'red' ]
-        }
-        if (isTransectHerpetofaunaTranslocationData(translocationData)) {
-            return ['blue', 'green', 'red' ]
-        }
-        return ['green', 'red' ]
-    }
-    const legendLabels: () => string[] = () => {
-        if (isPointTranslocationHerpetoWithMarkData(translocationData)) {
-            return [
-                'puntos lineración',
-                'transcetors de rescate herpetofauna',
-                'proyecto 230 kv mizque - sehuencas'
-            ]
-        }
-        if (isTransectTranslocationHerpetoWithMarkData(translocationData)) {
-            return [
-                'transcetors de liberación herpetofauna',
-                'transcetors de rescate herpetofauna',
-                'proyecto 230 kv mizque - sehuencas'
-            ]
-        }
-        if (isTransectHerpetofaunaTranslocationData(translocationData)) {
-            return [
-                `transectos de liberación para la especie: ${rescueData?.specie_name}`,
-                'transcetors de rescate herpetofauna',
-                'proyecto 230 kv mizque - sehuencas'
-            ]
-        }
-        return [
-            'transcetors de rescate herpetofauna',
-            'proyecto 230 kv mizque - sehuencas'
-        ]
-    }
+
+    const legedColors = ['purple','brown', 'red' ]
+    const legendLabels = [
+        'Punto de liberación',
+        'Puntos de rescate',
+        'Proyecto 230 kV Mizque - Sehuencas'
+    ]
 
 
     return (
@@ -200,7 +168,7 @@ export default function Page({params}: {params: { cod: string}}) {
                 <span
                     className='italic'
                 >
-                    {params.number}
+                    {params.cod}
                 </span>
             </h1>
             <div
@@ -258,36 +226,21 @@ export default function Page({params}: {params: { cod: string}}) {
                         </Polyline>
                         {
                             rescueData?
-                                <RescueHerpetoSpecieMap
-                                    data={[rescueData]}
-                                /> : null
+                                <RescueMammalsSingleMap 
+                                    data={rescueData}
+                                    radius={55}
+                                /> :
+                                null
                         }
                         {
-                            isPointTranslocationHerpetoWithMarkData(translocationData)?
-                            <PointTransloHerpetofaunaRescueMap
-                                    data={translocationData}
-                                    radius={30}
-                                />
-                            : null
-
+                            releaseData?
+                                <ReleaseMammalsSingleMap
+                                    data={releaseData}
+                                    radius={55}
+                                /> :
+                                null
                         }
-                        {
-                            isTransectTranslocationHerpetoWithMarkData(translocationData)?
-                            <TransectTransloHerpetofaunaRescueMap
-                                    data={translocationData}
-                                    weight={5}
-                            />
-                            : null
-                        }
-                        {
-                            isTransectHerpetofaunaTranslocationData(translocationData)?
-                            <TransectTransloHerpetofaunaMap
-                                    data={translocationData}
-                                    weight={5}
-                            />
-                            : null
-                        }
-                        <Legend colors={legendOptions()} labels={legendLabels()} />
+                        <Legend colors={legedColors} labels={legendLabels} />
                     </MapContainer> 
                 </div>
             </div>
@@ -332,8 +285,8 @@ export default function Page({params}: {params: { cod: string}}) {
                                     Fecha de rescate:&nbsp; 
                                 </span>
                                 {
-                                    rescueData?.date_rescue?
-                                        dateFormat(rescueData.date_rescue):
+                                    rescueData?.date?
+                                        dateFormat(rescueData.date):
                                         'No disponible'
                                 }
 
@@ -362,11 +315,155 @@ export default function Page({params}: {params: { cod: string}}) {
                                     dark:text-white
                                     "
                                 >
+                                    Género:&nbsp; 
+                                </span>
+                                {
+                                    rescueData?.genus_name?
+                                        rescueData.genus_name:
+                                        'No identificado'
+                                }
+                            </li>
+                            <li>
+                                <span
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
+                                >
+                                    Marca:&nbsp; 
+                                </span>
+                                {
+                                    rescueData?.mark?
+                                        rescueData.mark:
+                                        'No identificado'
+                                }
+                            </li>
+                            <li>
+                                <span
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
+                                >
                                     Sexo:&nbsp; 
                                 </span>
                                 {
                                     rescueData?.gender?
                                         rescueData.gender:
+                                        'No identificado'
+                                }
+                            </li>
+                            <li>
+                                <span
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
+                                >
+                                    LT:&nbsp; 
+                                </span>
+                                {
+                                    rescueData?.LT?
+                                        rescueData.LT:
+                                        'No identificado'
+                                }
+                            </li>
+                            <li>
+                                <span
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
+                                >
+                                    LC:&nbsp; 
+                                </span>
+                                {
+                                    rescueData?.LC?
+                                        rescueData.LC:
+                                        'No identificado'
+                                }
+                            </li>
+                            <li>
+                                <span
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
+                                >
+                                    LP:&nbsp; 
+                                </span>
+                                {
+                                    rescueData?.LP?
+                                        rescueData.LP:
+                                        'No identificado'
+                                }
+                            </li>
+                            <li>
+                                <span
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
+                                >
+                                    LO:&nbsp; 
+                                </span>
+                                {
+                                    rescueData?.LO?
+                                        rescueData.LO:
+                                        'No identificado'
+                                }
+                            </li>
+                            <li>
+                                <span
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
+                                >
+                                    LA:&nbsp; 
+                                </span>
+                                {
+                                    rescueData?.LA?
+                                        rescueData.LA:
+                                        'No identificado'
+                                }
+                            </li>
+                            <li>
+                                <span
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
+                                >
+                                    Peso:&nbsp; 
+                                </span>
+                                {
+                                    rescueData?.weight?
+                                        rescueData.weight:
+                                        'No identificado'
+                                }
+                            </li>
+                            <li>
+                                <span
+                                    className="
+                                    font-semibold
+                                    text-gray-900
+                                    dark:text-white
+                                    "
+                                >
+                                    Hábitat:&nbsp; 
+                                </span>
+                                {
+                                    rescueData?.habitat_name?
+                                        rescueData.habitat_name:
                                         'No identificado'
                                 }
                             </li>
@@ -386,8 +483,6 @@ export default function Page({params}: {params: { cod: string}}) {
                                         'No identificada'
                                 }
                             </li>
-
-
                         </ol>
                     </div>
                     <div className="w-full mt-6">
@@ -404,7 +499,7 @@ export default function Page({params}: {params: { cod: string}}) {
                             Datos de liberación 
                         </h1>
                         {
-                            isPointTranslocationHerpetoWithMarkData(translocationData) ?
+                            releaseData?
                                 <ol className="
                                     max-w-md
                                     space-y-1
@@ -421,76 +516,11 @@ export default function Page({params}: {params: { cod: string}}) {
                                             dark:text-white
                                             "
                                         >
-                                            Fecha de liberación:&nbsp; 
-                                        </span>
-                                        {
-                                            translocationData.date?
-                                                dateFormat(translocationData.date):
-                                                'No disponible'
-                                        }
-
-                                    </li>
-                                    <li>
-                                        <span
-                                            className="
-                                            font-semibold
-                                            text-gray-900
-                                            dark:text-white
-                                            "
-                                        >
-                                            Numero de marca:&nbsp; 
-                                        </span>
-                                        {
-                                            translocationData.number_mark?
-                                                translocationData.number_mark:
-                                                'No identificado'
-                                        }
-                                    </li>
-                                    <li>
-                                        <span
-                                            className="
-                                            font-semibold
-                                            text-gray-900
-                                            dark:text-white
-                                            "
-                                        >
                                             Código:&nbsp; 
                                         </span>
                                         {
-                                            translocationData.code_mark?
-                                                translocationData.code_mark:
-                                                'No disponible'
-                                        }
-                                    </li>
-                                    <li>
-                                        <span
-                                            className="
-                                            font-semibold
-                                            text-gray-900
-                                            dark:text-white
-                                            "
-                                        >
-                                            LHC:&nbsp; 
-                                        </span>
-                                        {
-                                            translocationData.LHC?
-                                                translocationData.LHC:
-                                                'No disponible'
-                                        }
-                                    </li>
-                                    <li>
-                                        <span
-                                            className="
-                                            font-semibold
-                                            text-gray-900
-                                            dark:text-white
-                                            "
-                                        >
-                                            Peso:&nbsp; 
-                                        </span>
-                                        {
-                                            translocationData.weight?
-                                                translocationData.weight:
+                                            releaseData.cod?
+                                                releaseData.cod:
                                                 'No identificado'
                                         }
                                     </li>
@@ -502,17 +532,28 @@ export default function Page({params}: {params: { cod: string}}) {
                                             dark:text-white
                                             "
                                         >
-                                            Tipo de marcación:&nbsp; 
+                                            Sustrato:&nbsp; 
                                         </span>
                                         {
-                                            translocationData.is_photo_mark?
-                                                'fotografía/':
-                                               null 
+                                            releaseData.sustrate?
+                                                releaseData.sustrate:
+                                                'No disponible'
                                         }
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="
+                                            font-semibold
+                                            text-gray-900
+                                            dark:text-white
+                                            "
+                                        >
+                                            Sítio de liberación:&nbsp; 
+                                        </span>
                                         {
-                                            translocationData.is_elastomer_mark?
-                                                'elastomero':
-                                               null 
+                                            releaseData.site_release_mammals?
+                                                releaseData.site_release_mammals:
+                                                'No disponible'
                                         }
                                     </li>
                                 </ol>
@@ -520,138 +561,6 @@ export default function Page({params}: {params: { cod: string}}) {
                                 null
 
                         }
-                        {
-                            isTransectTranslocationHerpetoWithMarkData(translocationData) ?
-                                <ol className="
-                                    max-w-md
-                                    space-y-1
-                                    text-gray-500
-                                    list-decimal
-                                    list-inside
-                                    dark:text-gray-400"
-                                >
-                                    <li>
-                                        <span
-                                            className="
-                                            font-semibold
-                                            text-gray-900
-                                            dark:text-white
-                                            "
-                                        >
-                                            Fecha de liberación:&nbsp; 
-                                        </span>
-                                        {
-                                            translocationData.date?
-                                                dateFormat(translocationData.date):
-                                                'No disponible'
-                                        }
-
-                                    </li>
-                                    <li>
-                                        <span
-                                            className="
-                                            font-semibold
-                                            text-gray-900
-                                            dark:text-white
-                                            "
-                                        >
-                                            Numero de marca:&nbsp; 
-                                        </span>
-                                        {
-                                            translocationData.number_mark?
-                                                translocationData.number_mark:
-                                                'No identificado'
-                                        }
-                                    </li>
-                                    <li>
-                                        <span
-                                            className="
-                                            font-semibold
-                                            text-gray-900
-                                            dark:text-white
-                                            "
-                                        >
-                                            Código:&nbsp; 
-                                        </span>
-                                        {
-                                            translocationData.code_mark?
-                                                translocationData.code_mark:
-                                                'No disponible'
-                                        }
-                                    </li>
-                                    <li>
-                                        <span
-                                            className="
-                                            font-semibold
-                                            text-gray-900
-                                            dark:text-white
-                                            "
-                                        >
-                                            LHC:&nbsp; 
-                                        </span>
-                                        {
-                                            translocationData.LHC?
-                                                translocationData.LHC:
-                                                'No disponible'
-                                        }
-                                    </li>
-                                    <li>
-                                        <span
-                                            className="
-                                            font-semibold
-                                            text-gray-900
-                                            dark:text-white
-                                            "
-                                        >
-                                            Peso:&nbsp; 
-                                        </span>
-                                        {
-                                            translocationData.weight?
-                                                translocationData.weight:
-                                                'No identificado'
-                                        }
-                                    </li>
-                                    <li>
-                                        <span
-                                            className="
-                                            font-semibold
-                                            text-gray-900
-                                            dark:text-white
-                                            "
-                                        >
-                                            Tipo de marcación:&nbsp; 
-                                        </span>
-                                        {
-                                            translocationData.is_photo_mark?
-                                                'fotografía/':
-                                               null 
-                                        }
-                                        {
-                                            translocationData.is_elastomer_mark?
-                                                'elastomero':
-                                               null 
-                                        }
-                                    </li>
-                                </ol>
-                                :
-                                null
-                        }
-                        {
-                            isTransectHerpetofaunaTranslocationData(translocationData) ?
-                                <h1 className="
-                                    max-w-md
-                                    space-y-1
-                                    text-gray-500
-                                    list-decimal
-                                    list-inside
-                                    dark:text-gray-400"
-                                >
-                                no hay datos de liberación
-                                </h1>
-                                :
-                                null
-                        }
-
                     </div>
                 </div>
             </div>
