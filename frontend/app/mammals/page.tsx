@@ -6,9 +6,15 @@ import bannerMammals from "../../public/images/banner-masto.gif"
 import { useSession  } from 'next-auth/react'
 import { redirect } from 'next/navigation';
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation';
 
 //React imports
-import React, { useEffect, useState, useCallback } from "react"
+import React, {
+    useEffect,
+    useState,
+    useCallback,
+    useMemo
+} from "react"
 
 //Apis imports
 import {
@@ -23,10 +29,15 @@ import {
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
 
+//Table imports
+import { ColumnDef } from '@tanstack/react-table';
+
 //Components imports
 import { LineProyect } from '../components/Map/lineProyect';
 import BarChartFamily from '../components/Nivo/BarChartFamily';
+import { TableFilter } from '../components/Table/TableFilter';
 import Loading from './loading';
+import { dateFormat } from "../services/dateFormat";
 
 //import with dynamic
 const MapContainer = dynamic(
@@ -65,6 +76,10 @@ const RealeaseMammalSpecieMap = dynamic(
     { ssr: false }
 )
 
+//Types
+interface MammalsColumns extends RescueMammalsWithSpecieData{
+    ver: string;
+}
 interface BarChartFamilyDataFlex extends BarChartFamilyDataSpa {
     [key: string]: any;
 }
@@ -87,6 +102,7 @@ export default function Flora() {
     )
 
     const [loadingBarChart, setLoadingBarChart] = useState(true)
+    const router = useRouter();
 
     const user = session?.user;
 
@@ -163,6 +179,71 @@ export default function Flora() {
         'Proyecto 230 kV Mizque - Sehuencas'
     ]
 
+    //make columns
+    const columnsMammals = useMemo<ColumnDef<MammalsColumns, any>[]>(
+        () => [
+            {
+                accessorFn: row => row.date,
+                id: 'date',
+                cell: info => dateFormat(info.getValue() as Date),
+                header: 'Fecha de rescate',
+                meta: { searchable: true },
+            },
+            {
+                accessorFn: row => row.cod,
+                id: 'cod',
+                cell: info => info.getValue(),
+                header: 'Código',
+                meta: { searchable: true },
+            },
+            {
+                accessorFn: row => row.specie_name,
+                id: 'specie_name',
+                cell: info => <i>{info.getValue()}</i> || 'no identificado',
+                header: 'Especie',
+                meta: { searchable: true },
+            },
+            {
+                accessorFn: row => row.genus_name,
+                id: 'genus_name',
+                cell: info => <i>{info.getValue()}</i> || 'no identificado',
+                header: 'Género',
+                meta: { searchable: true },
+            },
+            {
+                accessorFn: row => row.observation,
+                id: 'observation',
+                cell: info => <i>{info.getValue()}</i> || 'no identificado',
+                header: 'Obersvación',
+            },
+            {
+                accessorFn: row => row.cod,
+                id: 'cod',
+                header: " ",
+                cell: info => (
+                    <div className='flex space-x-4'>
+                        <button
+                            className="
+                            bg-yellow-500
+                            hover:bg-yellow-700
+                            text-white
+                            font-bold
+                            py-2 px-4
+                            rounded"
+                            onClick={() => {
+                                router.push(`/mammals/rescue/${info.getValue()}`)
+                            }}
+                        >
+                            Ver 
+                        </button>
+                    </div>
+                ),
+            }
+
+            
+        ],
+        [router]
+    );
     return (
         <div>
             <div
@@ -272,6 +353,21 @@ export default function Flora() {
                             <BarChartFamily data={barChartData as BarChartFamilyDataFlex[]} />
                     }
                 </div>
+            </div>
+            <TableFilter <RescueMammalsWithSpecieData>
+                columns = {columnsMammals}
+                data = {rescueMammals}
+            /> 
+            <div
+                className="flex justify-center"
+            >
+                <button 
+                    type="button"
+                    onClick={() => router.back()}
+                    className="bg-emerald-900  hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded"
+                >
+                    Volver
+                </button>
             </div>
         </div>
 

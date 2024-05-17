@@ -1,5 +1,5 @@
 interface TokenWithRescueNumber extends Token {
-    rescue_cod:string
+    cod:string
 }
 
 export const GetRescueMammalsWithSpecies =
@@ -69,7 +69,7 @@ async (props: TokenWithRescueNumber): Promise<RescueMammalsWithSpecieExtendedDat
             },
         };
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}:8080/api/rescue_mammals_species/${props.rescue_cod}`,
+            `${process.env.NEXT_PUBLIC_API_URL}:8080/api/rescue_mammals_species/${props.cod}`,
             requestOptions
         );
 
@@ -99,7 +99,7 @@ async (props: TokenWithRescueNumber): Promise<ReleaseMammalsWithSpecieData>=> {
             },
         };
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}:8080/api/release_mammals_species/${props.rescue_cod}`,
+            `${process.env.NEXT_PUBLIC_API_URL}:8080/api/release_mammals_species/${props.cod}`,
             requestOptions
         );
 

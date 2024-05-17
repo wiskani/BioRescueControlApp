@@ -15,9 +15,9 @@ import React, {
 
 //Apis imports
 import {
-    GetRescueHerpetofaunaWithSpecieByNumber,
-    GetTranslocationHerpetoByRescueNumber
-} from '@/app/libs/rescue_herpetofaina/ApiRescueHerpetofauna';
+    GetRescueMammalsWithSpecieByNumber,
+    GetReleaseMammalsWithSpecieByNumber
+} from '@/app/libs/rescue_mammals/ApiRescueMammalsWithSpecies';
 
 //Leaflet imports
 import 'leaflet/dist/leaflet.css'
@@ -54,46 +54,35 @@ const Legend = dynamic(
     { ssr: false }
 )
 
-const RescueHerpetoSpecieMap = dynamic(
-    () => (import('@/app/components/HerpetoFauna/RescueHerpetoSpecieMap')),
+const RescueMammalsSingleMap = dynamic(
+    () => (import('@/app/components/RescueMammals/RescueMammalsSingleMap')),
+    { ssr: false }
+) 
+
+const ReleaseMammalsSingleMap = dynamic(
+    () => (import('@/app/components/RescueMammals/ReleaseMammalsSingleMap')),
     { ssr: false }
 )
 
-const PointTransloHerpetofaunaRescueMap = dynamic(
-    () => (import('@/app/components/HerpetoFauna/PointTransloRescueMap')),
-    { ssr: false }
-)
-
-const TransectTransloHerpetofaunaRescueMap = dynamic(
-    () => (import('@/app/components/HerpetoFauna/TransectoTransloRescueMap')),
-    { ssr: false }
-)
-
-const TransectTransloHerpetofaunaMap = dynamic(
-    () => (import('@/app/components/HerpetoFauna/TransectoTransGenericMap')),
-    { ssr: false }
-)
-
-
-export default function Page({params}: {params: { number: string}}) {   
+export default function Page({params}: {params: { cod: string}}) {   
     const { data: session } = useSession();
     const user = session?.user;
-    const [rescueData, setRescueData] = useState<RescueHerpetoWithSpeciesData | null>(null)
+    const [rescueData, setRescueData] = useState<RescueMammalsWithSpecieExtendedData | null>(null)
     const [
-    translocationData,
-    setTranslocation
-            ] = useState<TranslocationHerpetoByNumberRescue | null>(null)
+    releaseData,
+    setReleaseData
+            ] = useState<ReleaseMammalsWithSpecieData| null>(null)
     const [errorMessage, SetErrorMessage]= useState<string>();
     const router = useRouter()
 
     //Api calls
-    const rescueDataHerpeto = useCallback(
-        async (): Promise<RescueHerpetoWithSpeciesData| null>=>{
+    const rescueDataMammals = useCallback(
+        async (): Promise<RescueMammalsWithSpecieExtendedData | null>=>{
             if (user){
                 try {
-                    const data= await GetRescueHerpetofaunaWithSpecieByNumber({
+                    const data= await GetRescueMammalsWithSpecieByNumber({
                         token: user?.token,
-                        number: params.number
+                        cod: params.cod
                     });
                     return data;
                 } catch (error) {
@@ -107,16 +96,16 @@ export default function Page({params}: {params: { number: string}}) {
             else {
                 return null
             }
-        }, [user, params.number])
+        }, [user, params.cod])
 
 
-    const traslocationDataHerpeto = useCallback(
-        async (): Promise<TranslocationHerpetoByNumberRescue | null> =>{
+    const releaseDataMammals = useCallback(
+        async (): Promise<ReleaseMammalsWithSpecieData| null> =>{
             if (user){
                 try {
-                    const data= await GetTranslocationHerpetoByRescueNumber({
+                    const data= await GetReleaseMammalsWithSpecieByNumber({
                         token: user?.token,
-                        rescue_number: params.number
+                        cod: params.cod
                     });
                     return data;
                 } catch (error) {
@@ -129,7 +118,7 @@ export default function Page({params}: {params: { number: string}}) {
             else {
                 return null
             }
-        }, [user, params.number])
+        }, [user, params.cod])
 
     useEffect(() => {
         if (!session?.user) {
@@ -137,39 +126,16 @@ export default function Page({params}: {params: { number: string}}) {
         }
 
         else{
-            rescueDataHerpeto().then((data)=>{
+            rescueDataMammals().then((data)=>{
                 setRescueData(data)
             })
-            traslocationDataHerpeto().then((data)=>{
-                setTranslocation(data)
+            releaseDataMammals().then((data)=>{
+                setReleaseData(data)
             })
         }
 
-    }, [session, rescueDataHerpeto, traslocationDataHerpeto])
+    }, [session, rescueDataMammals, releaseDataMammals])
 
-    //Predicados fuctions
-    function isTransectTranslocationHerpetoWithMarkData(
-        data: TranslocationHerpetoByNumberRescue | null
-    ): data is TransectTranslocationHerpetoWithMarkData {
-        if (data === null) return false;
-        return data && "cod" in data && "latitude_in" in data && data !== null;
-    }
-
-    function isPointTranslocationHerpetoWithMarkData(
-        data: TranslocationHerpetoByNumberRescue | null
-    ): data is PointTranslocationHerpetoWithMarkData {
-        if (data === null) return false;
-        return data
-            && "cod" in data && "latitude" in data && "longitude" in data && "number_mark" in data;
-
-    }
-
-    function isTransectHerpetofaunaTranslocationData(
-        data: TranslocationHerpetoByNumberRescue | null
-    ): data is TransectHerpetofaunaTranslocationData[] {
-        if (data === null) return false;
-        return Array.isArray(data); 
-    }
 
     //Map options
 

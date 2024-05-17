@@ -17,7 +17,7 @@ interface RescueMammalsWithSpecieMapProps {
     radius?: number;
 }
 
-const RescueMammalsSpecieSingleMap: React.FC<RescueMammalsWithSpecieMapProps> = ({
+const RescueMammalsSingleMap: React.FC<RescueMammalsWithSpecieMapProps> = ({
     data,
     radius
 }) => {
@@ -64,4 +64,4 @@ const RescueMammalsSpecieSingleMap: React.FC<RescueMammalsWithSpecieMapProps> = 
 
 }
 
-export default RescueMammalsSpecieSingleMap
+export default RescueMammalsSingleMap

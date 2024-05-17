@@ -2,6 +2,9 @@
 import { useState, useEffect} from 'react'
 import dynamic from 'next/dynamic'
 
+//service imports
+import { dateFormat } from '@/app/services/dateFormat';
+
 const Circle = dynamic(
     async () => (await import('react-leaflet')).Circle,
     { ssr: false }
@@ -17,7 +20,7 @@ interface MapProps {
     radius?: number;
 }
 
-const ReleaseMammalsSpecieMap: React.FC<MapProps> = ({
+const ReleaseMammalsSingleMap: React.FC<MapProps> = ({
     data,
     radius
 }) => {
@@ -28,7 +31,7 @@ const ReleaseMammalsSpecieMap: React.FC<MapProps> = ({
 
 
     return (
-        {
+        
             data.longitude && data.latitude ?
         <>
                 <Circle
@@ -36,7 +39,7 @@ const ReleaseMammalsSpecieMap: React.FC<MapProps> = ({
                     radius={radius || 10}
                     center={[
                         data.latitude,
-                        release.longitude
+                        data.longitude
                     ]}
                 >
                     <Tooltip>
@@ -44,27 +47,27 @@ const ReleaseMammalsSpecieMap: React.FC<MapProps> = ({
                             <h4>
                                 Punto de liberación de mastozoología
                             </h4>
-                            <p>Código: {release.cod}</p>
+                            <p>Código: {data.cod}</p>
                             {
-                                release.specie_name?
+                                data.specie_name?
                                     <p>Especie: {
-                                        release.specie_name
+                                        data.specie_name
                                     }</p>:
                                     <p>Especie: No se ha identificado la especie</p>
                             }
                             {
-                                !release.specie_name ?
-                                    <p> Género identificado: {release.genus_name}</p>:
+                                !data.specie_name ?
+                                    <p> Género identificado: {data.genus_name}</p>:
                                     null
                             }
                             {
-                                release.sustrate?
-                                    <p>Sustrato: {release.sustrate}</p>:
+                                data.sustrate?
+                                    <p>Sustrato: {data.sustrate}</p>:
                                     <p>Sustrato: No se ha identificado el sustrato</p>
                             }
                             {
-                                release.site_release_mammals?
-                                    <p>Ubicación: {release.site_release_mammals}</p>:
+                                data.site_release_mammals?
+                                    <p>Ubicación: {data.site_release_mammals}</p>:
                                     <p>Ubicación: No se ha identificado la ubicación</p>
                             }
                         </div>
@@ -74,11 +77,10 @@ const ReleaseMammalsSpecieMap: React.FC<MapProps> = ({
         </>
         :
         null
-        }
 
     )
 
 }
 
-export default ReleaseMammalsSpecieMap
+export default ReleaseMammalsSingleMap
 
