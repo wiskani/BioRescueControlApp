@@ -134,7 +134,7 @@ export default function Page({params}: {params: { cod: string}}) {
             })
         }
 
-    }, [session, rescueDataMammals, releaseDataMammals])
+    }, [session])
 
 
     //Map options

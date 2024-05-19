@@ -88,7 +88,7 @@ export default function UpdateUser({params} : { params: { userId: number}}) {
                 setUserIdData(data);
             });
         }
-    }, [session, userData]);
+    }, [session]);
 
 
     return (

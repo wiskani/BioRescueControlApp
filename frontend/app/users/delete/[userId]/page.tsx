@@ -70,7 +70,7 @@ export default function DeleteUser({ params} : { params: { userId: number } }) {
                 setUserIdData(data);
             });
         }
-    }, [session, userData]);
+    }, [session]);
 
 
     return (

@@ -201,14 +201,7 @@ export default function HerpetoFauna() {
             })
         }
 
-    }, [
-            session,
-            transectDataHerpeto,
-            transectTransDataHerpeto,
-            pointTransDataHerpeto,
-            barChartHerpetoData,
-            rescueDataHerpeto
-        ])
+    }, [session])
 
 
     const lineOptions = { color: 'red' }

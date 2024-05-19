@@ -167,7 +167,7 @@ export default function Flora() {
             })
         }
 
-    }, [session, rescueDataMammals, realeaseDataMammals, barChartDataMammals])
+    }, [session])
 
 
     const lineOptions = { color: 'red' }

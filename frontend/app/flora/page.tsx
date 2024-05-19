@@ -166,7 +166,7 @@ export default function Flora() {
                 setLoadingBarChart(false)
             })
         }
-    }, [session, rescueDataFlora, relocationDataFlora, barChartFloraData])
+    }, [session])
 
 
     const lineOptions = { color: 'red' }

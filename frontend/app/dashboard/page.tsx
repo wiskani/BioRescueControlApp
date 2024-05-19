@@ -169,7 +169,7 @@ export default function Dashboard() {
 
         }
 
-    }, [session, rescueDataFlora, speciesData, transectDataHerpeto, rescueDataMammals, sunburstDataApi])
+    }, [session])
 
 
     const lineOptions = { color: 'red' }

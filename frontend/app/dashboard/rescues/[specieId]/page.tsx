@@ -150,7 +150,7 @@ export default function Page({ params} : { params: { specieId: number } }) {
         rescuesData().then((data) => {
             setRescues(data);
         });
-    }, [session, rescuesData]);
+    }, [session]);
 
 
 

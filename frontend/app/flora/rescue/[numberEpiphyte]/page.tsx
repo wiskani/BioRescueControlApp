@@ -135,7 +135,7 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                 setRelocationFloraData(data)
             })
         }
-    }, [session, rescueDataFlora, relocationDataFlora])
+    }, [session])
 
 
     //predicados fuctions

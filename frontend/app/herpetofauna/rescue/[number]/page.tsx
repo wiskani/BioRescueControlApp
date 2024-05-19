@@ -145,7 +145,7 @@ export default function Page({params}: {params: { number: string}}) {
             })
         }
 
-    }, [session, rescueDataHerpeto, traslocationDataHerpeto])
+    }, [session])
 
     //Predicados fuctions
     function isTransectTranslocationHerpetoWithMarkData(
