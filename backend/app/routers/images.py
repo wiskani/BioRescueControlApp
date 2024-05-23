@@ -23,7 +23,7 @@ router = APIRouter()
 async def create_image_specie(
     image: ImageBase,
     db:AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ):
     if not image.url:
         raise HTTPException(status_code=400, detail="Image url is required")
@@ -56,7 +56,7 @@ async def get_all_images_specie(
 async def get_image_by_id_specie(
     image_id: int,
     db: AsyncSession = Depends(get_db),
-    permissions: str = Depends(PermissonsChecker(["admin"])),
+    permissions: str = Depends(PermissonsChecker(["admin", "user"])),
 ) -> Union[ImageResponse, HTTPException]:
     db_image = get_image_by_id(db, image_id)
     if not db_image:
@@ -74,7 +74,7 @@ async def update_image_by_id_specie(
     image_id: int,
     image: ImageBase,
     db: AsyncSession = Depends(get_db),
-    permissions: str = Depends(PermissonsChecker(["admin"])),
+    permissions: str = Depends(PermissonsChecker(["admin", "user"])),
 ):
     return update_image_by_id(db, image_id, image)
 
@@ -88,7 +88,7 @@ async def update_image_by_id_specie(
 async def delete_image_by_id_specie(
     image_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ):
     return delete_image_by_id(db, image_id)
 
@@ -105,7 +105,7 @@ async def upload_image(
     specie_id: Annotated[int, Form(...)],
     atribute: Annotated[str, Form(...)],
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> Image:
 
     # check imagen foder

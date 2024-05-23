@@ -88,7 +88,7 @@ router: APIRouter = APIRouter()
 async def create_habitat_api(
     new_habitat: HabitatCreate,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> Habitat | HTTPException:
     habitat_db = await get_habitat_name(db, new_habitat.name)
     if habitat_db:
@@ -148,7 +148,7 @@ async def update_habitat_api(
     habitat_id: int,
     habitat_update: HabitatCreate,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> Habitat | HTTPException:
     return await update_habitat(db, habitat_id, habitat_update)
 
@@ -164,7 +164,7 @@ async def update_habitat_api(
 async def delete_habitat_api(
     habitat_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> Habitat | HTTPException:
     habitat_db = await get_habitat_id(db, habitat_id)
     if not habitat_db:
@@ -187,7 +187,7 @@ async def delete_habitat_api(
 async def create_rescue_mammals_api(
     new_rescue_mammals: RescueMammalsCreate,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> RescueMammals | HTTPException:
     rescue_mammals_db = await get_rescue_mammal_cod(db, new_rescue_mammals.cod)
     if rescue_mammals_db:
@@ -247,7 +247,7 @@ async def update_rescue_mammals_api(
     rescue_mammals_id: int,
     rescue_mammals_update: RescueMammalsCreate,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> RescueMammals | HTTPException:
     return await update_rescue_mammal(
             db,
@@ -267,7 +267,7 @@ async def update_rescue_mammals_api(
 async def delete_rescue_mammals_api(
     rescue_mammals_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> RescueMammals | HTTPException:
     rescue_mammals_db = await get_rescue_mammal_id(db, rescue_mammals_id)
     if not rescue_mammals_db:
@@ -290,7 +290,7 @@ async def delete_rescue_mammals_api(
 async def create_site_release_mammals_api(
     new_site_release_mammals: SiteReleaseMammalsCreate,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> SiteReleaseMammals | HTTPException:
     site_release_mammals_db = await get_site_release_mammal_name(
             db,
@@ -356,7 +356,7 @@ async def update_site_release_mammals_api(
     site_release_mammals_id: int,
     site_release_mammals_update: SiteReleaseMammalsCreate,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> SiteReleaseMammals | HTTPException:
     return await update_site_release_mammal(
             db,
@@ -376,7 +376,7 @@ async def update_site_release_mammals_api(
 async def delete_site_release_mammals_api(
     site_release_mammals_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> SiteReleaseMammals | HTTPException:
     site_release_mammals_db = await get_site_release_mammal_id(
             db,
@@ -402,7 +402,7 @@ async def delete_site_release_mammals_api(
 async def create_release_mammals_api(
     new_release_mammals: ReleaseMammalsCreate,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> ReleaseMammals | HTTPException:
     release_mammals_db = await get_release_mammal_cod(
             db,
@@ -465,7 +465,7 @@ async def update_release_mammals_api(
     release_mammals_id: int,
     release_mammals_update: ReleaseMammalsCreate,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> ReleaseMammals | HTTPException:
     return await update_release_mammal(
             db,
@@ -485,7 +485,7 @@ async def update_release_mammals_api(
 async def delete_release_mammals_api(
     release_mammals_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> ReleaseMammals | HTTPException:
     release_mammals_db = await get_release_mammal_id(db, release_mammals_id)
     if not release_mammals_db:
@@ -507,7 +507,7 @@ async def delete_release_mammals_api(
     )
 async def get_rescue_mammals_with_species_api(
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> List[RescueMammalsWithSpecie]:
     return await get_rescue_mammals_with_specie(db)
 
@@ -522,7 +522,7 @@ async def get_rescue_mammals_with_species_api(
     )
 async def get_release_mammals_with_species_api(
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> List[ReleaseMammalsWithSpecie]:
     return await get_release_mammals_with_specie(db)
 

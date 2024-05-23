@@ -41,7 +41,7 @@ const FloraRelocationSpecieMap: React.FC<FloraRelocationSpecieMapProps> = ({
                 >
                     <Tooltip>
                         <div>
-                            <h4>Punto de rescate de flora</h4>
+                            <h4>Punto de relocalización de flora</h4>
                             <p>Código: {relocation.flora_rescue}</p>
                             {
                                 relocation.specie_name_epiphyte?

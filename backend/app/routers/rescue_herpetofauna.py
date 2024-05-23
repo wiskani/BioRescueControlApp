@@ -147,7 +147,7 @@ router: APIRouter = APIRouter()
 async def create_age_group_api(
     new_age_group: AgeGroupCreate,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> AgeGroup | HTTPException:
     age_group_db = await get_age_group_name(db, new_age_group.name)
     if age_group_db:
@@ -167,7 +167,7 @@ async def create_age_group_api(
 )
 async def get_all_age_groups_api(
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> List[AgeGroup]:
     return await get_all_age_groups(db)
 
@@ -183,7 +183,7 @@ async def get_all_age_groups_api(
 async def get_age_group_by_id_api(
     age_group_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> AgeGroup | HTTPException:
     age_group_db = await get_age_group_by_id(db, age_group_id)
     if not age_group_db:
@@ -203,7 +203,7 @@ async def update_age_group_api(
     age_group_id: int,
     age_group_update: AgeGroupBase,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> AgeGroup | HTTPException:
     return await update_age_group(db, age_group_id, age_group_update)
 
@@ -219,7 +219,7 @@ async def update_age_group_api(
 async def delete_age_group_api(
     age_group_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> Dict | HTTPException:
     db_age_group = await get_age_group_by_id(db, age_group_id)
     if not db_age_group:
@@ -239,7 +239,7 @@ async def delete_age_group_api(
 async def create_transect_herpetofauna_api(
     new_transect_herpetofauna: TransectHerpetofaunaCreate,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> TransectHerpetofauna | HTTPException:
     transect_herpetofauna_db = await get_transect_herpetofauna_by_number(db, new_transect_herpetofauna.number)
     if transect_herpetofauna_db:
@@ -257,7 +257,7 @@ async def create_transect_herpetofauna_api(
 )
 async def get_all_transect_herpetofauna_api(
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> List[TransectHerpetofauna]:
     return await get_all_transect_herpetofauna(db)
 
@@ -273,7 +273,7 @@ async def get_all_transect_herpetofauna_api(
 async def get_transect_herpetofauna_by_id_api(
     transect_herpetofauna_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> TransectHerpetofauna | HTTPException:
     transect_herpetofauna_db = await get_transect_herpetofauna_by_id(
             db, transect_herpetofauna_id
@@ -297,7 +297,7 @@ async def update_transect_herpetofauna_api(
     transect_herpetofauna_id: int,
     transect_herpetofauna_update: TransectHerpetofaunaBase,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> TransectHerpetofauna | HTTPException:
     return await update_transect_herpetofauna(db, transect_herpetofauna_id, transect_herpetofauna_update)
 
@@ -313,7 +313,7 @@ async def update_transect_herpetofauna_api(
 async def delete_transect_herpetofauna_api(
     transect_herpetofauna_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> Dict | HTTPException:
     db_transect_herpetofauna = await get_transect_herpetofauna_by_id(db, transect_herpetofauna_id)
     if not db_transect_herpetofauna:
@@ -333,7 +333,7 @@ async def delete_transect_herpetofauna_api(
 async def create_mark_herpetofauna_api(
     new_mark_herpetofauna: MarkHerpetofaunaCreate,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> MarkHerpetofauna | HTTPException:
     mark_herpetofauna_db = await get_mark_herpetofauna_by_number(db, new_mark_herpetofauna.number)
     if mark_herpetofauna_db:
@@ -351,7 +351,7 @@ async def create_mark_herpetofauna_api(
 )
 async def get_all_mark_herpetofauna_api(
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> List[MarkHerpetofauna]:
     return await get_all_mark_herpetofauna(db)
 
@@ -367,7 +367,7 @@ async def get_all_mark_herpetofauna_api(
 async def get_mark_herpetofauna_by_id_api(
     mark_herpetofauna_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> MarkHerpetofauna | HTTPException:
     mark_herpetofauna_db = await get_mark_herpetofauna_by_id(
             db, mark_herpetofauna_id
@@ -391,7 +391,7 @@ async def update_mark_herpetofauna_api(
     mark_herpetofauna_id: int,
     mark_herpetofauna_update: MarkHerpetofaunaBase,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> MarkHerpetofauna | HTTPException:
     return await update_mark_herpetofauna(db, mark_herpetofauna_id, mark_herpetofauna_update)
 
@@ -407,7 +407,7 @@ async def update_mark_herpetofauna_api(
 async def delete_mark_herpetofauna_api(
     mark_herpetofauna_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> Dict | HTTPException:
     db_mark_herpetofauna = await get_mark_herpetofauna_by_id(db, mark_herpetofauna_id)
     if not db_mark_herpetofauna:
@@ -427,7 +427,7 @@ async def delete_mark_herpetofauna_api(
 async def create_rescue_herpetofauna_api(
     new_rescue_herpetofauna: RescueHerpetofaunaCreate,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> RescueHerpetofauna | HTTPException:
     rescue_herpetofauna_db = await get_rescue_herpetofauna_by_number(db, new_rescue_herpetofauna.number)
     if rescue_herpetofauna_db:
@@ -445,7 +445,7 @@ async def create_rescue_herpetofauna_api(
 )
 async def get_all_rescue_herpetofauna_api(
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> List[RescueHerpetofauna]:
     return await get_all_rescue_herpetofauna(db)
 
@@ -461,7 +461,7 @@ async def get_all_rescue_herpetofauna_api(
 async def get_rescue_herpetofauna_by_id_api(
     rescue_herpetofauna_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> RescueHerpetofauna | HTTPException:
     rescue_herpetofauna_db = await get_rescue_herpetofauna_by_id(
             db, rescue_herpetofauna_id
@@ -485,7 +485,7 @@ async def update_rescue_herpetofauna_api(
     rescue_herpetofauna_id: int,
     rescue_herpetofauna_update: RescueHerpetofaunaBase,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> RescueHerpetofauna | HTTPException:
     return await update_rescue_herpetofauna(
             db,
@@ -505,7 +505,7 @@ async def update_rescue_herpetofauna_api(
 async def delete_rescue_herpetofauna_api(
     rescue_herpetofauna_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> Dict | HTTPException:
     db_rescue_herpetofauna = await get_rescue_herpetofauna_by_id(
             db,
@@ -531,7 +531,7 @@ async def delete_rescue_herpetofauna_api(
 async def create_transect_herpetofauna_translocation_api(
     new_transect_herpetofauna_translocation: TransectHerpetofaunaTranslocationCreate,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> TransectHerpetofaunaTranslocation | HTTPException:
     transect_herpeto_fauna_translocation_db = await get_transect_herpetofauna_translocation_by_cod(db, new_transect_herpetofauna_translocation.cod)
     if transect_herpeto_fauna_translocation_db:
@@ -555,7 +555,7 @@ async def create_transect_herpetofauna_translocation_api(
 )
 async def get_all_transect_herpetofauna_translocation_api(
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> List[TransectHerpetofaunaTranslocation]:
     return await get_all_transect_herpetofauna_translocation(db)
 
@@ -571,7 +571,7 @@ async def get_all_transect_herpetofauna_translocation_api(
 async def get_transect_herpetofauna_translocation_by_id_api(
     transect_herpetofauna_translocation_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> TransectHerpetofaunaTranslocation | HTTPException:
     transect_herpetofauna_translocation_db = await get_transect_herpetofauna_translocation_by_id(db, transect_herpetofauna_translocation_id)    
     if not transect_herpetofauna_translocation_db:
@@ -591,7 +591,7 @@ async def update_transect_herpetofauna_translocation_api(
     transect_herpetofauna_translocation_id: int,
     transect_herpetofauna_translocation_update: TransectHerpetofaunaTranslocationBase,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> TransectHerpetofaunaTranslocation | HTTPException:
     return await update_transect_herpetofauna_translocation(
             db,
@@ -611,7 +611,7 @@ async def update_transect_herpetofauna_translocation_api(
 async def delete_transect_herpetofauna_translocation_api(
     transect_herpetofauna_translocation_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> Dict | HTTPException:
     transect_herpetofauna_translocation_db = await get_transect_herpetofauna_translocation_by_id(
             db,
@@ -640,7 +640,7 @@ async def delete_transect_herpetofauna_translocation_api(
 async def create_point_herpetofauna_translocation_api(
     new_point_herpetofauna_translocation: PointHerpetofaunaTranslocationCreate,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> PointHerpetofaunaTranslocation | HTTPException:
     point_herpetofauna_translocation_db = await get_point_herpetofauna_translocation_by_cod(
             db,
@@ -667,7 +667,7 @@ async def create_point_herpetofauna_translocation_api(
 )
 async def get_all_point_herpetofauna_translocation_api(
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> List[PointHerpetofaunaTranslocation]:
     return await get_all_point_herpetofauna_translocation(db)
 
@@ -683,7 +683,7 @@ async def get_all_point_herpetofauna_translocation_api(
 async def get_point_herpetofauna_translocation_by_id_api(
     point_herpetofauna_translocation_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> PointHerpetofaunaTranslocation | HTTPException:
     point_herpetofauna_translocation_db = await get_point_herpetofauna_translocation_by_id(db, point_herpetofauna_translocation_id)
     if not point_herpetofauna_translocation_db:
@@ -703,7 +703,7 @@ async def update_point_herpetofauna_translocation_api(
     point_herpetofauna_translocation_id: int,
     point_herpetofauna_translocation_update: PointHerpetofaunaTranslocationBase,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> PointHerpetofaunaTranslocation | HTTPException:
     return await update_point_herpetofauna_translocation(db, point_herpetofauna_translocation_id, point_herpetofauna_translocation_update)
 
@@ -719,7 +719,7 @@ async def update_point_herpetofauna_translocation_api(
 async def delete_point_herpetofauna_translocation_api(
     point_herpetofauna_translocation_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> Dict | HTTPException:
     point_herpetofauna_translocation_db = await get_point_herpetofauna_translocation_by_id(
             db,
@@ -748,7 +748,7 @@ async def delete_point_herpetofauna_translocation_api(
 async def create_translocation_herpetofauna_api(
     new_translocation_herpetofauna: TranslocationHerpetofaunaCreate,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> TranslocationHerpetofauna | HTTPException:
     translocation_herpetofauna_db = await get_translocation_herpetofauna_by_cod(
             db,
@@ -775,7 +775,7 @@ async def create_translocation_herpetofauna_api(
 )
 async def get_all_translocation_herpetofauna_api(
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> List[TranslocationHerpetofauna]:
     return await get_all_translocation_herpetofauna(db)
 
@@ -791,7 +791,7 @@ async def get_all_translocation_herpetofauna_api(
 async def get_translocation_herpetofauna_by_id_api(
     translocation_herpetofauna_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> TranslocationHerpetofauna | HTTPException:
     translocation_herpetofauna_db = await get_translocation_herpetofauna_by_id(
             db,
@@ -817,7 +817,7 @@ async def update_translocation_herpetofauna_api(
     translocation_herpetofauna_id: int,
     translocation_herpetofauna_update: TranslocationHerpetofaunaBase,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> TranslocationHerpetofauna | HTTPException:
     return await update_translocation_herpetofauna(
             db,
@@ -837,7 +837,7 @@ async def update_translocation_herpetofauna_api(
 async def delete_translocation_herpetofauna_api(
     translocation_herpetofauna_id: int,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> Dict | HTTPException:
     translocation_herpetofauna_db = await get_translocation_herpetofauna_by_id(
             db,
@@ -862,7 +862,7 @@ async def delete_translocation_herpetofauna_api(
 )
 async def get_transect_herpetofauna_with_species_and_count_api(
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> List[TransectHerpetoWithSpecies]:
     return await get_transect_herpetofauna_with_species_and_count_by_name(db)
 
@@ -877,7 +877,7 @@ async def get_transect_herpetofauna_with_species_and_count_api(
 )
 async def get_transect_relocation_with_species_and_count_api(
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> List[TransectHerpetoTransWithSpecies]:
     return await getTransectRelocationWithSpeciesAndCountOfTranslocation(db)
 
@@ -892,7 +892,7 @@ async def get_transect_relocation_with_species_and_count_api(
 )
 async def get_points_relocation_with_species_api(
         db: AsyncSession = Depends(get_db),
-        authorized: bool = Depends(PermissonsChecker(["admin"])),
+        authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
         ) -> List[PointHerpetoTransloWithSpecies]:
     return await getPointRelocaWithSpecies(db)
 
@@ -908,7 +908,7 @@ async def get_points_relocation_with_species_api(
 async def get_herpetofauna_rescue_with_species_api(
     number: str,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> RescueHerpetoWithSpecies:
     return await getRescueHerpetoWithSpecie(db, number)
 
@@ -923,7 +923,7 @@ async def get_herpetofauna_rescue_with_species_api(
 )
 async def get_all_herpetofauna_rescue_with_species_api(
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> List[RescueHerpetoWithSpecies]:
     return await getAllRescuesHerpetoWithSpecies(db)
 
@@ -943,7 +943,7 @@ async def get_all_herpetofauna_rescue_with_species_api(
 async def get_translocation_herpetofauna_with_species_api(
     rescue_number: str,
     db: AsyncSession = Depends(get_db),
-    authorized: bool = Depends(PermissonsChecker(["admin"])),
+    authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
 ) -> Union[
         PointTranslocationHerpetoWithMark,
         TransectTranslocationHerpetoWithMark,

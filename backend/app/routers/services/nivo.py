@@ -36,7 +36,7 @@ router = APIRouter()
         )
 async def get_sunburst_data(
         db: AsyncSession = Depends(get_db),
-        authorized: bool = Depends(PermissonsChecker(["admin"])),
+        authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
         ) -> SunburstBase:
     # get list of families
     flora_families = await get_flora_families_rescues(db)
@@ -63,7 +63,7 @@ async def get_sunburst_data(
         )
 async def get_barchart_data_flora(
         db: AsyncSession = Depends(get_db),
-        authorized: bool = Depends(PermissonsChecker(["admin"])),
+        authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
         ) -> List[BarChartFamily]:
     # get list of families
     flora_families_rescues = await get_flora_families_rescues(db)
@@ -88,7 +88,7 @@ async def get_barchart_data_flora(
         )
 async def get_barchart_data_herpetofauna(
         db: AsyncSession = Depends(get_db),
-        authorized: bool = Depends(PermissonsChecker(["admin"])),
+        authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
         ) -> List[BarChartFamily]:
     # get list of families
     herpetofauna_families_rescues = await get_herpetofauna_families_rescues(db)
@@ -113,7 +113,7 @@ async def get_barchart_data_herpetofauna(
         )
 async def get_barchart_data_mammals(
         db: AsyncSession = Depends(get_db),
-        authorized: bool = Depends(PermissonsChecker(["admin"])),
+        authorized: bool = Depends(PermissonsChecker(["admin", "user"])),
         ) -> List[BarChartFamily]:
     # get list of families
     mammals_families_rescues = await get_mammals_families_rescues(db)
