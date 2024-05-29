@@ -45,7 +45,7 @@ const RescueHerpetoSpecieMap: React.FC<RescueHerpetoMapProps> = ({data}) => {
                                 Transector de rescate
                             </h4>
                             <p>Codigo: {rescue.number}</p>
-                            <p>Especies liberadas: {rescue.specie_name} </p>
+                            <p>Especies rescatadas: {rescue.specie_name} </p>
                         </div>
                     </Tooltip>
                 </Polyline>

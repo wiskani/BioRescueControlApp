@@ -508,7 +508,7 @@ export default function Page({params}: {params: { number: string}}) {
                                         </span>
                                         {
                                             translocationData.LHC?
-                                                translocationData.LHC:
+                                                translocationData.LHC+' cm':
                                                 'No disponible'
                                         }
                                     </li>
@@ -524,7 +524,7 @@ export default function Page({params}: {params: { number: string}}) {
                                         </span>
                                         {
                                             translocationData.weight?
-                                                translocationData.weight:
+                                                translocationData.weight+' gramos':
                                                 'No identificado'
                                         }
                                     </li>
@@ -625,7 +625,7 @@ export default function Page({params}: {params: { number: string}}) {
                                         </span>
                                         {
                                             translocationData.LHC?
-                                                translocationData.LHC:
+                                                translocationData.LHC+' cm':
                                                 'No disponible'
                                         }
                                     </li>
@@ -641,7 +641,7 @@ export default function Page({params}: {params: { number: string}}) {
                                         </span>
                                         {
                                             translocationData.weight?
-                                                translocationData.weight:
+                                                translocationData.weight+' gramos':
                                                 'No identificado'
                                         }
                                     </li>
