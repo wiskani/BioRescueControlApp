@@ -28,33 +28,30 @@ from app.schemas.species import (
     SpeciesResponse,
     SpeciesCreate,
 
-    Genuses,
     GenusesCreate,
     GenusesResponse,
 
-    Families,
     FamiliesCreate,
     FamiliesResponse,
 
-    Orders,
     OrdersCreate,
 
-    Classes,
     ClassesCreate,
 )
+
 from app.schemas.services import (
         SpecieGbif,
-        GenusGbif,
-        FamilyGbif,
         )
 
-from app.models.species import Specie, Genus, Family, Order 
 
-router:APIRouter = APIRouter()
+from app.models.species import Specie, Genus, Family
+
+router: APIRouter = APIRouter()
 
 """
 ENDPOINTS FOR GBIF API
 """
+
 
 # Get species suggestions
 @router.get(
@@ -67,11 +64,12 @@ async def get_species_suggestions_endpoint(
     q: str,
     r: Optional[str] = None,
     autorized: bool = Depends(PermissonsChecker(["admin"])),
-)->Dict:
+) -> Dict:
     """
     Get species suggestions from GBIF API
     """
     return get_species_suggestions(q, r)
+
 
 # Get species details
 @router.get(
@@ -83,81 +81,109 @@ async def get_species_suggestions_endpoint(
 async def get_species_details_endpoint(
     key: str,
     autorized: bool = Depends(PermissonsChecker(["admin"])),
-)-> SpecieGbif|HTTPException:
+) -> SpecieGbif | HTTPException:
     """
     Get species details from GBIF API
     """
     return get_species_details(key)
 
-#createa new specie by key of gbif
+
+# createa new specie by key of gbif
 @router.post(
     path="/api/species_gdif/create",
     tags=["GBIF"],
-    response_model= SpeciesResponse,
+    response_model=SpeciesResponse,
     status_code=status.HTTP_201_CREATED
 )
 async def create_specie_by_key(
     key: str,
     db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
-)->Specie:
+) -> Specie:
     """
     Create a new specie by key of gbif
     """
-    data  = get_species_details(key)
+    data = get_species_details(key)
     if data is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Specie not found")
+        raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Specie not found"
+                )
 
-    #check if class exists
+    # check if class exists
     db_class = await get_class_by_name(db, data.class_)
     if db_class is None:
-        new_class = ClassesCreate(class_name=data.class_, key_gbif=data.classKey)
+        new_class = ClassesCreate(
+                class_name=data.class_,
+                key_gbif=data.classKey
+                )
         db_class = await create_class(db, new_class)
 
-    #check if order exists
+    # check if order exists
     db_order = await get_order_by_name(db, data.order)
     if db_order is None:
-        new_order = OrdersCreate(order_name=data.order, key_gbif=data.orderKey, class__id=db_class.id)
+        new_order = OrdersCreate(
+                order_name=data.order,
+                key_gbif=data.orderKey,
+                class__id=db_class.id
+                )
         db_order = await create_order(db, new_order)
 
-    #check if family exists
+    # check if family exists
     db_family = await get_family_by_name(db, data.family)
     if db_family is None:
-        new_family = FamiliesCreate(family_name=data.family, key_gbif=data.familyKey, order_id=db_order.id)
+        new_family = FamiliesCreate(
+                family_name=data.family,
+                key_gbif=data.familyKey,
+                order_id=db_order.id
+                )
         db_family = await create_family(db, new_family)
 
-    #check if genus exists
+    # check if genus exists
     db_genus = await get_genus_by_name(db, data.genus)
     if db_genus is None:
-        new_genus = GenusesCreate(genus_name=data.genus, key_gbif=data.genusKey, family_id=db_family.id)
+        new_genus = GenusesCreate(
+                genus_name=data.genus,
+                key_gbif=data.genusKey,
+                family_id=db_family.id
+                )
         db_genus = await create_genus(db, new_genus)
 
-    #check if specie exists
+    # check if specie exists
     db_specie = await get_specie_by_name(db, data.scientificName)
-    print (db_specie)
     if db_specie is None:
-        new_specie = SpeciesCreate(scientific_name=data.scientificName, specific_epithet=data.canonicalName, status_id=None, key_gbif=data.speciesKey, genus_id=db_genus.id)
+        new_specie = SpeciesCreate(
+                scientific_name=data.scientificName,
+                specific_epithet=data.canonicalName,
+                status_id=None,
+                key_gbif=data.speciesKey,
+                genus_id=db_genus.id
+                )
         db_specie = await create_specie(db, new_specie)
         return db_specie
 
-    return HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Specie already exists")
+    return HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Specie already exists"
+            )
 
-# create new genus  by key of gbif 
+
+# create new genus  by key of gbif
 @router.post(
     path="/api/genus_gdif/create",
     tags=["GBIF"],
-    response_model= GenusesResponse,
+    response_model=GenusesResponse,
     status_code=status.HTTP_201_CREATED
     )
 async def create_genus_by_key(
     key: str,
     db: AsyncSession = Depends(get_db),
     autorized: bool = Depends(PermissonsChecker(["admin"])),
-)->Genus:
+) -> Genus:
     """
     Create a new genus by key of gbif
     """
-    data  = get_genus_details(key)
+    data = get_genus_details(key)
     if data is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Genus not found")
 
