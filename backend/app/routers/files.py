@@ -145,12 +145,31 @@ async def upload_flora_rescue(
                 )
 
         # convert specie, genus and family epiphyte to id
-        df, specieListWithOutNameE = await addIdSpecieByName(db, df, "especie_epifito", "specie_epiphyte_id")
-        df, genusListWithOutNameE = await addIdGenusByName(db, df, "genero_epifito", "genus_epiphyte_id")
-        df, familyListWithOutNameE = await addIdFamilyByName(db, df, "familia_epifito", "family_epiphyte_id")
+        df, specieListWithOutNameE = await addIdSpecieByName(
+                db,
+                df,
+                "especie_epifito",
+                "specie_epiphyte_id"
+                )
+        df, genusListWithOutNameE = await addIdGenusByName(
+                db,
+                df,
+                "genero_epifito",
+                "genus_epiphyte_id"
+                )
+        df, familyListWithOutNameE = await addIdFamilyByName(
+                db,
+                df,
+                "familia_epifito",
+                "family_epiphyte_id"
+                )
 
-        #convert rescue zone to id
-        df, rescueZoneListWithOutName = await addFloraRescueZoneIdByName(db, df, "zona_rescate")
+        # convert rescue zone to id
+        df, rescueZoneListWithOutName = await addFloraRescueZoneIdByName(
+                db,
+                df,
+                "zona_rescate"
+                )
 
         # Add id boolean column by check
         df = addBooleanByCheck(df, "epifito_confirmado")
