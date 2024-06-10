@@ -72,7 +72,7 @@ def remplace_nan_with_none(df: pd.DataFrame) -> pd.DataFrame:
     # Replace NaN with None
     df = df.fillna('None')
 
-    # chek if NaN is in df 
+    # chek if NaN is in df
     if df.isnull().values.any():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
