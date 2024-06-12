@@ -371,7 +371,7 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                                 </span>
                                 {
                                     rescueFloraData?.dap_bryophyte?
-                                        rescueFloraData.dap_bryophyte:
+                                        rescueFloraData.dap_bryophyte+' cm.':
                                         'No disponible'
                                 }
                             </li>
@@ -387,7 +387,7 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                                 </span>
                                 {
                                     rescueFloraData?.height_bryophyte?
-                                        rescueFloraData.height_bryophyte:
+                                        rescueFloraData.height_bryophyte+' m.':
                                         'No disponible'
                                 }
                             </li>
@@ -552,7 +552,11 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                                         >
                                             Tamaño de la planta:&nbsp; 
                                         </span>
-                                        {relocationFloraData.size? relocationFloraData.size: 'No identificado'}
+                                        {
+                                            relocationFloraData.size?
+                                                relocationFloraData.size+' m.':
+                                                'No identificado'
+                                        }
                                     </li>
                                     <li>
                                         <span
@@ -571,7 +575,11 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                                         >
                                             Zona de Johanson:&nbsp; 
                                         </span>
-                                        {relocationFloraData.johanson_zone? relocationFloraData.johanson_zone: 'No disponible'}
+                                        {
+                                            relocationFloraData.johanson_zone?
+                                                relocationFloraData.johanson_zone:
+                                                'No disponible'
+                                        }
                                     </li>
                                     <li>
                                         <span
@@ -579,7 +587,11 @@ export default function Page({ params} : { params: { numberEpiphyte: string } })
                                         >
                                             Especie de forofito:&nbsp; 
                                         </span>
-                                        {relocationFloraData.specie_name_bryophyte? relocationFloraData.specie_name_bryophyte: 'No identificado'}
+                                        {
+                                            relocationFloraData.specie_name_bryophyte?
+                                                relocationFloraData.specie_name_bryophyte:
+                                                'No identificado'
+                                        }
                                     </li>
                                     <li>
                                         <span
