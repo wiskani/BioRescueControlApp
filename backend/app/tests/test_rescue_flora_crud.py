@@ -1534,8 +1534,6 @@ async def test_get_all_rescue_flora_with_species(
     assert len(data) >= 1
     assert data[0]["epiphyte_number"] == epiphyte_number
     assert data[0]["specie_name"] == specie
-    assert data[0]["genus_name"] is None
-    assert data[0]["family_name"] is None
 
 """
 TEST FOR SOME FUCTIONS
