@@ -31,7 +31,7 @@ class RescueMammals(_database.Base):
             DateTime(timezone=True),
             nullable=False
             )
-    mark: Mapped[str] = mapped_column(String(150), nullable=False)
+    mark: Mapped[str] = mapped_column(String(350), nullable=False)
     longitude: Mapped[float] = mapped_column(Float, nullable=False)
     latitude: Mapped[float] = mapped_column(Float, nullable=False)
     altitude: Mapped[int] = mapped_column(Integer, nullable=False)

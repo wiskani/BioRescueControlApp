@@ -619,11 +619,10 @@ async def addPointTranslocationByCod(
     df : pandas dataframe
     col : str with name of column with point translocation number
     """
-    listTransectNumberRow: list[tuple[int, str]] = []
     colunmId: list[int | None] = []
 
     for _, row in df.iterrows():
-        #conver row[col] to int
+        # conver row[col] to int
         point = await get_point_herpetofauna_translocation_by_cod(db, row[col])
         if point is None:
             colunmId.append(None)

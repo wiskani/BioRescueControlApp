@@ -3,5 +3,5 @@ export const dateFormat = (date: Date): string => {
     const month = dateObj.getMonth() + 1;
     const day = dateObj.getDate();
     const year = dateObj.getFullYear();
-    return `${month}/${day}/${year}`;
+    return `${day}/${month}/${year}`;
 }
