@@ -42,7 +42,7 @@ class RescueMammals(_database.Base):
     LO: Mapped[float] = mapped_column(Float, nullable=True)
     LA: Mapped[float] = mapped_column(Float, nullable=True)
     weight: Mapped[float] = mapped_column(Float, nullable=True)
-    observation: Mapped[str] = mapped_column(String(200), nullable=True)
+    observation: Mapped[str] = mapped_column(String(350), nullable=True)
     is_specie_confirmed: Mapped[bool] = mapped_column(Boolean, nullable=False)
     create_at: Mapped[datetime] = mapped_column(
             DateTime(timezone=True),
