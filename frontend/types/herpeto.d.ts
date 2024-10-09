@@ -91,7 +91,7 @@ declare global {
     }
     type TranslocationHerpetoByNumberRescue = 
     |TransectTranslocationHerpetoWithMarkData 
-    |PointHerpetoTransloWithMarkData
+    |PointTranslocationHerpetoWithMarkData
     |TransectHerpetofaunaTranslocationData[]
 
 }

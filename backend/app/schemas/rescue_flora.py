@@ -53,7 +53,7 @@ class FloraRescueBase(BaseModel):
             examples=["Bueno"]
             )
     microhabitat: str | None = Field(
-            max_length=100,
+            max_length=300,
             examples=["Bosque de ladera"]
             )
     other_observations: str | None = Field(max_length=100)

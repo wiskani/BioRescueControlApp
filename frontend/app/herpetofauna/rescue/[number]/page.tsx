@@ -159,8 +159,7 @@ export default function Page({params}: {params: { number: string}}) {
         data: TranslocationHerpetoByNumberRescue | null
     ): data is PointTranslocationHerpetoWithMarkData {
         if (data === null) return false;
-        return data
-            && "cod" in data && "latitude" in data && "longitude" in data && "number_mark" in data;
+        return data && "cod" in data && "latitude" in data && "longitude" in data && "number_mark" in data;
 
     }
 
