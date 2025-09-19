@@ -246,4 +246,8 @@ next-env.d.ts
 *.JPG
 *.png
 *.jpeg
+
+# exclude db
+docker-compose.db.yaml
+dump.sql
 ```
